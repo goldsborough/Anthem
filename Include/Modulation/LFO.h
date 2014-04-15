@@ -13,7 +13,7 @@
 // Vector comes from Wavetable.h
 
 class EnvSegSeq;
-//class Oscillator;
+class Oscillator;
 class XFadeUnit;
 
 class LFOSeq : public GenUnit
