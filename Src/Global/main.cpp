@@ -7,6 +7,13 @@
 //
 
 #include "Synthesizer.h"
+#include "Global.h"
+#include "Oscillator.h"
+#include "Mixer.h"
+#include "EnvSeg.h"
+#include "Utils.h"
+#include "Envelope.h"
+#include "LFO.h"
 #include <iostream>
 
 int main(int argc, const char * argv[])
@@ -23,18 +30,15 @@ int main(int argc, const char * argv[])
     
     Mixer mixer(false,true);
     
-    EnvSegSeq env(2);
+    LFO lfo;
     
-    env.setSegEndLevel(0, 0.8);
-    env.setSegStartLevel(1, 0.8);
-    env.setSegEndLevel(1, 0.0);
+    lfo.setAmp(0.5);
     
-    env.setSegLen(0, 500);
-    env.setSegLen(1, 500);
+    lfo.setRate(0, 60);
     
     for (int i = 0; i < len; i++)
     {
-        mixer.processTick(osc.tick() * env.tick());
+        mixer.processTick(osc.tick() * lfo.tick());
     }
     
     mixer.play();

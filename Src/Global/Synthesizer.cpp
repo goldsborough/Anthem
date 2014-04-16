@@ -7,6 +7,8 @@
 //
 
 #include "Synthesizer.h"
+#include "Global.h"
+#include "Wavetable.h"
 
 Global global;
 Wavetable wavetable;

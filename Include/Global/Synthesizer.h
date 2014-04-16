@@ -9,13 +9,6 @@
 #ifndef __Synth__Synthesizer__
 #define __Synth__Synthesizer__
 
-#include "Global.h"
-#include "Oscillator.h"
-#include "Mixer.h"
-#include "EnvSeg.h"
-#include "Utils.h"
-#include "Envelope.h"
-
 class Synthesizer
 {
     

@@ -15,9 +15,7 @@ class XFadeUnit
 {
     
 public:
-    
-    virtual void init(bool scale = false) = 0;
-    
+
     void setValue(char value);
     
     float left() { return _data->left; }
@@ -39,19 +37,19 @@ protected:
     XFadeData _table[201];
 };
 
-class XFadeSine : public XFadeUnit
+struct XFadeSine : public XFadeUnit
 {
-    void init(bool scale = false);
+    XFadeSine(bool scale = false);
 };
 
-class XFadeLinear : public XFadeUnit
+struct XFadeLinear : public XFadeUnit
 {
-    void init(bool scale = false);
+    XFadeLinear(bool scale = false);
 };
 
-class XFadeSqrt : public XFadeUnit
+struct XFadeSqrt : public XFadeUnit
 {
-    void init(bool scale = false);
+    XFadeSqrt(bool scale = false);
 };
 
 #endif /* defined(__Vibe__Crossfade__) */

@@ -17,7 +17,7 @@ void XFadeUnit::setValue(char value)
     _data = &_table[value];
 }
 
-void XFadeSine::init(bool scale)
+XFadeSine::XFadeSine(bool scale)
 {
     static const double sqrt2 = sqrt(2) / 2;
     
@@ -43,7 +43,7 @@ void XFadeSine::init(bool scale)
     _data = &_table[100];
 }
 
-void XFadeLinear::init(bool scale)
+XFadeLinear::XFadeLinear(bool scale)
 {
     for (int i = 0; i < 201; i++)
     {
@@ -58,7 +58,7 @@ void XFadeLinear::init(bool scale)
     _data = &_table[100];
 }
 
-void XFadeSqrt::init(bool scale)
+XFadeSqrt::XFadeSqrt(bool scale)
 {
     static const double sqrt2 = sqrt(2) * 2;
     

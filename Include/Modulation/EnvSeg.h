@@ -57,7 +57,7 @@ public:
            Wavetable::Modes modW = Wavetable::NONE, double modDpth = 1,
            unsigned char modR = 1);
     
-    ~EnvSeg() { if (osc != 0) delete osc; }
+    ~EnvSeg();
     
     /******************************************************************//*!
      *

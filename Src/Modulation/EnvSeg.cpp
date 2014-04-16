@@ -41,6 +41,8 @@ EnvSeg::EnvSeg(double startAmp, double endAmp, unsigned long len,
     _calcModFreq();
 }
 
+EnvSeg::~EnvSeg() { if (osc != 0) delete osc; }
+
 void EnvSeg::_calcModFreq()
 {
     // To go from samples to Hertz, simply

@@ -61,7 +61,7 @@ void Wavefile::check_fname(std::string& fname)
             fname.replace(n, 1, "_");
     }
     
-    fname.insert(0, "/Users/petergoldsborough/Documents/Synth/Wavefiles/");
+    fname.insert(0, "/Users/petergoldsborough/Documents/vibe/Wavefiles/");
 }
 
 

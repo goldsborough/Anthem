@@ -25,8 +25,6 @@ Mixer::Mixer(bool directOut,
             {
                 _pan = new XFadeSine;
                 
-                _pan->init();
-                
                 _sampleDataBuffer = new SampleQueue;
                 
                 _directOut = new DirectOutput;
