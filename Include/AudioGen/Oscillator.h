@@ -22,11 +22,11 @@ public:
     
     double tick();
     
-    void setFreq(double frq);
+    void setFreq(double Hz);
     
     void setFreqOffset(double offs) { setFreq(_freq + offs); }
     
-    void setPhaseOffset(int16_t degrees);
+    void setPhaseOffset(short degrees);
     
     void reset() { _ind = _phaseOffset; }
     
@@ -35,7 +35,7 @@ private:
     double _freq;
     
     double _ind; // current WT index
-    double _ind_incr;
+    double _indIncr;
     
     double _phaseOffset;
 };

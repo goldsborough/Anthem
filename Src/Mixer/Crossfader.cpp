@@ -14,13 +14,13 @@ void XFadeUnit::setValue(char value)
     if (value < -100 || value > 100)
         throw std::out_of_range("Cross-fade / Pan value must be between -100 and 100");
     
-    _data = &_table[value];
+    _data = &_table[value + 100];
 }
 
-XFadeSine::XFadeSine(bool scale)
+const double XFadeUnit::sqrt2 = sqrt(2) * 2;
+
+XFadeSine::XFadeSine(bool scale, char initVal)
 {
-    static const double sqrt2 = sqrt(2) / 2;
-    
     for (int i = 0; i < 201; i++)
     {
         float val = (i - 100) / 100.0;
@@ -40,10 +40,10 @@ XFadeSine::XFadeSine(bool scale)
         _table[i].right = rightVal;
     }
     
-    _data = &_table[100];
+    _data = &_table[initVal + 100];
 }
 
-XFadeLinear::XFadeLinear(bool scale)
+XFadeLinear::XFadeLinear(char initVal)
 {
     for (int i = 0; i < 201; i++)
     {
@@ -55,13 +55,11 @@ XFadeLinear::XFadeLinear(bool scale)
         _table[i].right = (1 + val) / 2 ;
     }
     
-    _data = &_table[100];
+    _data = &_table[initVal + 100];
 }
 
-XFadeSqrt::XFadeSqrt(bool scale)
+XFadeSqrt::XFadeSqrt(bool scale, char initVal)
 {
-    static const double sqrt2 = sqrt(2) * 2;
-    
     for (int i = 0; i < 201; i++)
     {
         float val = (i - 100) / 100.0;
@@ -81,5 +79,5 @@ XFadeSqrt::XFadeSqrt(bool scale)
         _table[i].right = rightVal;
     }
     
-    _data = &_table[100];
+    _data = &_table[initVal + 100];
 }

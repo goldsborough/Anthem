@@ -12,7 +12,7 @@
 Envelope::Envelope(unsigned int delay_MS)
                    : EnvSegSeq(5)
 {
-    _segLen = delay_MS * 44.1;
+    _currSegLen = delay_MS * 44.1;
     
     _currSegNum = DEL;
     
@@ -38,16 +38,13 @@ Envelope::Envelope(unsigned int delay_MS)
 
 void Envelope::_changeSeg(int seg)
 {
-    if (_currSegNum > ATK && _segLen > 0)
-        _lastTick = _currSeg->tick();
-    
     _currSegNum = seg;
     
     _currSeg = &_segs[_currSegNum];
     
     _currSample = 0;
     
-    _segLen = _currSeg->getLen();
+    _currSegLen = _currSeg->getLen();
 
     if (_currSegNum == REL)
         _currSeg->setStartLevel(_lastTick);
@@ -62,7 +59,7 @@ void Envelope::_resetLoop()
     
     // no need for connecting segment if the amplitude
     // is the same e.g. for the constant sustain
-    if (_segLen == _segs[_loopStart].getStartLevel())
+    if (_lastTick == _segs[_loopStart].getStartLevel())
         _changeSeg(_loopStart);
     
     else
@@ -75,14 +72,14 @@ void Envelope::_resetLoop()
         
         _currSample = 0;
         
-        _segLen = _hiddenConnecterLen;
+        _currSegLen = _hiddenConnecterLen;
     }
 }
 
 double Envelope::tick()
 {
 
-    if (_currSample++ >= _segLen)
+    if (_currSample++ >= _currSegLen)
     {
 
         if (_currSegNum == REL)
@@ -104,7 +101,7 @@ double Envelope::tick()
         {
             _changeSeg(++_currSegNum);
             
-            if (_segLen == 0)
+            if (_currSegLen == 0)
                 return _lastTick;
         }
 
@@ -113,7 +110,9 @@ double Envelope::tick()
     if (_currSegNum == DEL)
         return 0;
     
-    return _currSeg->tick();
+    _lastTick =  _currSeg->tick();
+    
+    return _lastTick;
 
 }
 

@@ -14,11 +14,14 @@
 std::string getDate();
 
 
-double NoteToFreq(int n);
+double noteToFreq(unsigned short n);
 
 
-unsigned short FreqToNote(double freq);
+unsigned short freqToNote(double freq);
 
+double centToFreq(double freq, int offset);
+
+double semiToFreq(double freq, int offset);
 
 float getPassedTime(unsigned long start);
 

@@ -7,9 +7,10 @@
 //
 
 #include "EnvSeg.h"
-#include "Oscillator.h"
+#include "LFO.h"
 #include "Global.h"
 #include <sstream>
+#include <iostream>
 
 // 60 seconds
 const unsigned long EnvSeg::_maxLen = 2646000;
@@ -33,17 +34,17 @@ EnvSeg::EnvSeg(double startAmp, double endAmp, unsigned long len,
     _calcLevel();
     _calcRate();
     
-    osc = new Oscillator;
+    _lfo = new LFO;
     
     // initalize operator to waveform wanted
     setModWave(modW);
     
-    _calcModFreq();
+    _calcModRate();
 }
 
-EnvSeg::~EnvSeg() { if (osc != 0) delete osc; }
+EnvSeg::~EnvSeg() { delete _lfo; }
 
-void EnvSeg::_calcModFreq()
+void EnvSeg::_calcModRate()
 {
     // To go from samples to Hertz, simply
     // divide the samplerate by the length
@@ -57,7 +58,7 @@ void EnvSeg::_calcModFreq()
     {
         double freq = (global.samplerate / (double) _len) * _modRate;
         
-        osc->setFreq(freq);
+        _lfo->setRate(freq);
     }
 }
 
@@ -184,7 +185,7 @@ void EnvSeg::setLen(unsigned long sampleLen)
     _len = sampleLen;
     
     _calcRate();
-    _calcModFreq();
+    _calcModRate();
 }
 
 void EnvSeg::setStartLevel(double lv)
@@ -233,12 +234,12 @@ void EnvSeg::setModWave(Wavetable::Modes modW)
     // full amplitude is at the beginning and end
     
     if (_modWave == Wavetable::SINE || _modWave == Wavetable::TRIANGLE)
-        osc->setPhaseOffset(90);
+        _lfo->osc.setPhaseOffset(90);
     
     else if (_modWave == Wavetable::SMOOTH_SQUARE)
-        osc->setPhaseOffset(215);
+        _lfo->osc.setPhaseOffset(215);
     
-    osc->setWT(_modWave);
+    _lfo->osc.setWT(_modWave);
 }
 
 void EnvSeg::setModDepth(double dpth)
@@ -258,7 +259,7 @@ void EnvSeg::setModRate(unsigned char rate)
     
     _modRate = rate;
     
-    _calcModFreq();
+    _calcModRate();
 }
 
 double EnvSeg::tick()
@@ -287,38 +288,8 @@ double EnvSeg::tick()
     // Apply modulation oscillator
     if (_modWave != Wavetable::NONE)
     {
-        // I am so super awesome for having managed this
-        // Shoutout to myself
-        
-        /****************************************************************
-         *
-         * First get the value for the full modulation. The oscill-
-         * ator ticks a value between 1 and -1, but we need a value
-         * between 1 and 0 (full modulation or no modulation), so
-         * add 1 first (makes it 0 to 2) and then divide by 2, making
-         * it 0 to 1. Then multiply this oscillation tick by the current
-         * unmodulated value "ret" to get the fully modulated value.
-         *
-         * In the end, this is nothing else than enveloping
-         * the envelope, since the oscillator ticks values between
-         * 0 and 1, which then control whether the enveloping gets
-         * modulated fully (1) or not at all (0) or something in between.
-         *
-         * Then we calculate the difference between the modulated value
-         * and the unmodulated value. This is the change in amplitude
-         * the envelope would have done, were the modulating wave
-         * modulating fully. Since we have the value the envelope
-         * would have changed by, we can just add it to the current
-         * envelope value. This is where the depth variable comes into
-         * play. We have the absolute change between ummodulated and
-         * modulated value, so by controlling how much of this change
-         * gets added, we can control how much of the modulation " goes
-         * through "
-         *
-         *****************************************************************/
-        
         // modulated value
-        double modValue = ((osc->tick() + 1) / 2) * ret;
+        double modValue = _lfo->scaledTick() * ret;
         
         // difference between modulated and unmodulated
         double diff = modValue - ret;
@@ -331,11 +302,11 @@ double EnvSeg::tick()
 }
 
 EnvSegSeq::EnvSegSeq(unsigned int seqLen)
-: _segs(seqLen)
+: _segs(seqLen), _seqLen(seqLen)
 {
     _currSample = 0;
     
-    _segLen = 0;
+    _currSegLen = 0;
     
     _currSegNum = 0;
     
@@ -356,36 +327,36 @@ EnvSegSeq::EnvSegSeq(unsigned int seqLen)
     
 }
 
-void EnvSegSeq::setSegLen(int seg, unsigned int ms)
+void EnvSegSeq::setSegLen(subseg_t seg, unsigned int ms)
 {
     double inSamples = ms * 44.1;
     
     _segs[seg].setLen(inSamples);
     
     if (seg == _currSegNum)
-        _segLen = inSamples;
+        _currSegLen = inSamples;
 }
 
-void EnvSegSeq::_changeSeg(int seg)
+void EnvSegSeq::_changeSeg(subseg_t seg)
 {
     _currSeg = &_segs[_currSegNum];
     
     _currSample = 0;
     
-    _segLen = _currSeg->getLen();
+    _currSegLen = _currSeg->getLen();
 }
 
 void EnvSegSeq::_resetLoop()
 {
     // reset all the loop segments
-    for (int i = _loopEnd; i >= _loopStart; i--)
+    for (subseg_t i = _loopEnd; i > _loopStart; i--)
         _segs[i].reset();
 }
 
 double EnvSegSeq::tick()
 {
     
-    if (_currSample++ >= _segLen)
+    if (_currSample++ >= _currSegLen)
     {
         // Check if we need to reset the loop
         if (_currSegNum == _loopEnd &&
@@ -403,7 +374,7 @@ double EnvSegSeq::tick()
         {
             _changeSeg(++_currSegNum);
             
-            if (_segLen == 0)
+            if (_currSegLen == 0)
                 return _lastTick;
         }
         
@@ -426,7 +397,7 @@ void EnvSegSeq::setLoopMax(unsigned char n)
     }
 };
 
-void EnvSegSeq::setLoopStart(int seg)
+void EnvSegSeq::setLoopStart(subseg_t seg)
 {
     _loopStart = seg;
     
@@ -434,7 +405,7 @@ void EnvSegSeq::setLoopStart(int seg)
         _loopEnd = _loopStart;
 }
 
-void EnvSegSeq::setLoopEnd(int seg)
+void EnvSegSeq::setLoopEnd(subseg_t seg)
 {
     _loopEnd = seg;
     

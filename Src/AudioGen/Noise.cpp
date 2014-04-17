@@ -23,7 +23,7 @@ double Noise::tick()
     // interpolate
     double value = value1 + ((value2 - value1) * indexFract);
     
-    sample = value * _Amp;
+    sample = value * _amp;
     
     double randVal = rand() % (int)(20000 * _Color);
     

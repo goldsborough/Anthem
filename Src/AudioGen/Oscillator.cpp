@@ -12,12 +12,12 @@
 Oscillator::Oscillator(const Wavetable::Modes& mode, double frq,
                        double amp, short phaseOffset)
 {
-    _Amp = amp;
+    _amp = amp;
     
     _mode = mode;
     
     _ind = 0;
-    _ind_incr = 0;
+    _indIncr = 0;
     
     _phaseOffset = 0;
     
@@ -28,10 +28,10 @@ Oscillator::Oscillator(const Wavetable::Modes& mode, double frq,
     setFreq(frq);
 };
 
-void Oscillator::setFreq(double frq)
+void Oscillator::setFreq(double Hz)
 {
-    _freq = frq;
-    _ind_incr = global.tableIncr * frq;
+    _freq = Hz;
+    _indIncr = global.tableIncr * Hz;
 }
 
 void Oscillator::setPhaseOffset(short degrees)
@@ -63,6 +63,9 @@ void Oscillator::setPhaseOffset(short degrees)
 
 double Oscillator::tick()
 {
+    if (_mode == Wavetable::NONE)
+        return 0;
+    
     int indexBase = (int) _ind;         // The truncated integer part
     double indexFract = _ind - indexBase;    // The remaining fractional part
     
@@ -73,12 +76,10 @@ double Oscillator::tick()
     // interpolate
     double value = value1 + ((value2 - value1) * indexFract);
     
-    value *= _Amp;
-    
-    _ind += _ind_incr;
+    _ind += _indIncr;
     
     if ( _ind >= global.wtLen)
         _ind -= global.wtLen;
     
-    return value;
+    return value * _amp;
 }

@@ -44,7 +44,7 @@ public:
     void setDelay(unsigned int millis)
     {
         if (_currSegNum == DEL)
-            _segLen = 44.1 * millis;
+            _currSegLen = 44.1 * millis;
     }
     
     void setSegLevel(int seg, double lv);

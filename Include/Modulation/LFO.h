@@ -9,137 +9,103 @@
 #ifndef __Synth__LFO__
 #define __Synth__LFO__
 
-#include "GenUnits.h"
+#include "ModUnit.h"
+#include "Oscillator.h"
+#include "EnvSeg.h"
 
 class EnvSegSeq;
 class Oscillator;
 class XFadeUnit;
 
-class LFOModeBase : public GenUnit
+struct LFO : public ModUnit
+{
+    LFO(const Wavetable::Modes& wave = Wavetable::SINE)
+    : osc(wave)
+    { }
+    
+    double tick(){ return osc.tick(); }
+    
+    double scaledTick() { return (osc.tick() + 1) / 2; }
+    
+    void setRate(double Hz) { osc.setFreq(Hz); }
+    
+    Oscillator osc;
+};
+
+struct LFOSeq : public ModUnit
+{
+    LFOSeq(unsigned int seqLength = 20);
+    
+    double tick() { return seq.tick(); };
+    
+    void setRate(double Hz);
+    
+    EnvSegSeq seq;
+    
+private:
+    
+    const unsigned int _seqLen;
+};
+
+class LFOUnit : public ModUnit
 {
     
 public:
     
+    enum Modes { LFO, SEQ };
+    
     enum Units { A, B };
+    
+    enum EnvSegs { SegA, SegB };
+    
+    enum EnvAmpPoints { BEG, MID, END};
     
     typedef bool unit_t;
     typedef unsigned int subseg_t;
     
-    LFOModeBase();
+    LFOUnit();
     
-    virtual double first() = 0;
+    ~LFOUnit();
     
-    virtual double second() = 0;
-    
-    virtual void setRate(unit_t unitNum, double Hz) = 0;
-    
-    virtual void setXFade(double value);
-    
-    virtual ~LFOModeBase();
-    
-protected:
-    
-    XFadeUnit * _xfade;
-};
-
-class LFOSeq : public LFOModeBase
-{
-    
-public:
-    
-    LFOSeq();
-    
-    ~LFOSeq();
-    
-    // with crossfading
-    double tick();
-    
-    // without crossfading, seq 0 value
-    double first();
-    
-    // without crossfading, seq 1 value
-    double second();
-    
-    void setWave(unit_t unitNum, subseg_t segNum, Wavetable::Modes wave);
-    
-    void setLevel(unit_t unitNum, subseg_t segNum, double lv);
-    
-    void setRate(unit_t subSeg, double Hz);
-    
-private:
-    
-    EnvSegSeq * _seqs[2];
-    
-    subseg_t _seqMaxCount;
-    
-};
-
-class LFOWave : public LFOModeBase
-{
-
-public:
-    
-    enum Oscs { OscA, OscB };
-    
-    LFOWave();
-    
-    ~LFOWave();
     
     double tick();
     
-    double first();
+    void setMode(unit_t mode) { _mode = mode; }
     
-    double second();
     
-    void setWave(unit_t unitNum, Wavetable::Modes wave);
-    
-    void setPhaseOffset(unit_t unitNum, unsigned short degrees);
-    
-    void setRate(unit_t unitNum, double Hz);
-    
-private:
-    
-    Oscillator * _oscs[2];
-
-};
-
-class LFO : public GenUnit
-{
-    
-public:
-    LFO();
-    
-    ~LFO();
-    
-    enum EnvSegs { SegA, SegB };
-    
-    enum EnvAmpPoints { A, B, C};
-    
-    void setMode(bool mode);
-    
-    void setEnvSegLen(bool envSeg, unsigned short len);
+    void setEnvSegLen(unit_t envSeg, unsigned short len);
     
     void setEnvLevel(unsigned char point, double lv);
     
     void setEnvLoopMax(unsigned char loopNum);
     
-    void setXFade(bool mode, double value);
     
-    double tick();
+    void setLFOWave(unit_t unitNum, Wavetable::Modes wave) { _LFOs[unitNum].osc.setWT(wave); }
     
-    double first();
+    void setLFOPhaseOffset(unit_t unitNum, short degrees) { _LFOs[unitNum].osc.setPhaseOffset(degrees); };
     
-    double second();
     
-    void setRate(bool unitNum, double Hz);
+    void setLFOSeqSegWave(unit_t unitNum, subseg_t segNum, Wavetable::Modes wave);
+    
+    void setLFOSeqSegAmp(unit_t unitNum, subseg_t seg, double amp);
+    
+    void setLFOSeqLoopStart(unit_t unitNum, subseg_t segNum);
+    
+    void setLFOSeqLoopEnd(unit_t unitNum, subseg_t segNum);
+    
+    
+    void setXFade(char value);
+    
+    void setRate(unit_t unitNum, double Hz);
     
 private:
     
-    LFOSeq _lfoSeq;
     
-    LFOWave _lfoWave;
+    struct LFOSeq _LFOSeqs[2];
     
-    LFOModeBase& _currMode;
+    struct LFO _LFOs[2];
+    
+    unit_t _mode;
     
     EnvSegSeq * _env;
     

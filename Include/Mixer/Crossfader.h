@@ -32,6 +32,8 @@ protected:
         float right = 0.5;
     };
     
+    static const double sqrt2;
+    
     XFadeData * _data = 0;
     
     XFadeData _table[201];
@@ -39,17 +41,17 @@ protected:
 
 struct XFadeSine : public XFadeUnit
 {
-    XFadeSine(bool scale = false);
+    XFadeSine(bool scale = false, char initVal = 0);
 };
 
 struct XFadeLinear : public XFadeUnit
 {
-    XFadeLinear(bool scale = false);
+    XFadeLinear(char initVal = 0);
 };
 
 struct XFadeSqrt : public XFadeUnit
 {
-    XFadeSqrt(bool scale = false);
+    XFadeSqrt(bool scale = false, char initVal = 0);
 };
 
 #endif /* defined(__Vibe__Crossfade__) */

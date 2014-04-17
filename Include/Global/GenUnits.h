@@ -18,15 +18,13 @@ public:
     
     virtual double tick() = 0;
     
-    //virtual double * ticks(uint32_t amount) = 0;
-    
-    virtual void setAmp(const double& amp) { _Amp = amp; }
+    virtual void setAmp(const double& amp) { _amp = amp; }
     
     virtual ~GenUnit() {}
     
 protected:
     
-    double _Amp = 1.0;
+    double _amp = 1.0;
 };
 
 class AudioGenUnit : public GenUnit

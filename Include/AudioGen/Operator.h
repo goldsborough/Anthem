@@ -10,32 +10,20 @@
 #define __Synth__Oscillator__
 
 #include "GenUnits.h"
+#include <vector>
 
 class Envelope;
 class Oscillator;
-class Global;
+class ModUnit;
 
 class Operator : public AudioGenUnit
 {
 public:
     
-    /*!
-        @brief      Initializes mode
-        @param      The waveform either as int or enum 'modes' member
-        @throws     Error if out-of-range value
-     */
-    
     Operator(const Wavetable::Modes& md, const double& amp = 0.5);
-    
-    /*!
-        @brief      Returns the current sample for each note
-        @discussion Calls the tick() function on each voice
-        @return     A pointer with _voice_number samples in them
-    */
+
     
     int getVoiceNumber(){ return _voiceNumber; };
-    
-    void setAmp(const double& amp) { _Amp = amp; };
     
     void setFreqOffset(float offs);
     
@@ -56,6 +44,7 @@ private:
     /*!
         @brief chicken soup
     */
+    
     
     int _voiceNumber = 0;
     

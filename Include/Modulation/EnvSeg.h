@@ -9,9 +9,9 @@
 #ifndef __Synth__EnvSeg__
 #define __Synth__EnvSeg__
 
-#include "GenUnits.h"
+#include "ModUnit.h"
 
-class Oscillator;
+class LFO;
 
 /******************************************************************************//*!
  *
@@ -26,7 +26,7 @@ class Oscillator;
  *
  *********************************************************************************/
 
-class EnvSeg : public GenUnit
+class EnvSeg : public ModUnit
 {
     
 public:
@@ -326,7 +326,7 @@ private:
     
     /*************************************************************************//*!
     *
-    *  @brief       Calculates the frequency of the modulation oscillator.
+    *  @brief       Calculates the frequency / rate of the modulation lfo.
     *
     *  @details     Calculates the frequency that the modulation oscillator must have for
     *               a _modRate of 1 to be ONE cycle throughout the segment and multiplies
@@ -338,7 +338,7 @@ private:
     *
     ****************************************************************************/
     
-    void _calcModFreq();
+    void _calcModRate();
     
     /*! Attack, Decay or Sustain identifier */
     ADS _ads;
@@ -380,7 +380,7 @@ private:
     double _offset;
     
     /*! The modulation oscillator */
-    Oscillator * osc;
+    LFO * _lfo;
     
     /*! Maximum possible segment length, a good value is 60 seconds */
     static const unsigned long _maxLen;
@@ -389,60 +389,63 @@ private:
     unsigned long _len;
 };
 
-class EnvSegSeq : public GenUnit
+class EnvSegSeq : public ModUnit
 {
     
 public:
     
     typedef std::vector<EnvSeg> segVector;
+    typedef unsigned int subseg_t;
     
-    EnvSegSeq(unsigned int seqLen);
+    EnvSegSeq(subseg_t seqLen);
 
     virtual double tick();
     
-    virtual void setSegRate(int seg, double rate) { _segs[seg].setRate(rate); }
+    virtual void setSegRate(subseg_t seg, double rate) { _segs[seg].setRate(rate); }
     
-    virtual void setSegStartLevel(int seg, double lv)  { _segs[seg].setStartLevel(lv); }
+    virtual void setSegStartLevel(subseg_t seg, double lv)  { _segs[seg].setStartLevel(lv); }
     
-    virtual void setSegEndLevel(int seg, double lv)  { _segs[seg].setEndLevel(lv); }
+    virtual void setSegEndLevel(subseg_t seg, double lv)  { _segs[seg].setEndLevel(lv); }
     
-    virtual void setSegBothLevels(int seg, double lv) { setSegStartLevel(seg, lv), setSegEndLevel(seg, lv); }
+    virtual void setSegBothLevels(subseg_t seg, double lv) { setSegStartLevel(seg, lv), setSegEndLevel(seg, lv); }
     
-    virtual void setSegModWave(int seg, Wavetable::Modes mod) { _segs[seg].setModWave(mod); }
+    virtual void setSegModWave(subseg_t seg, Wavetable::Modes mod) { _segs[seg].setModWave(mod); }
     
-    virtual void setSegModDepth(int seg, double dpth) { _segs[seg].setModDepth(dpth); }
+    virtual void setSegModDepth(subseg_t seg, double dpth) { _segs[seg].setModDepth(dpth); }
     
-    virtual void setSegModRate(int seg, unsigned char rate) { _segs[seg].setModRate(rate); }
+    virtual void setSegModRate(subseg_t seg, unsigned char rate) { _segs[seg].setModRate(rate); }
     
-    virtual void setSegLen(int seg, unsigned int ms);
+    virtual void setSegLen(subseg_t seg, unsigned int ms);
     
-    virtual void setLoopStart(int seg);
+    virtual void setLoopStart(subseg_t seg);
     
-    virtual void setLoopEnd(int seg);
+    virtual void setLoopEnd(subseg_t seg);
     
     virtual void setLoopMax(unsigned char n);
     
-    virtual void setLoopInf(bool state = true) { _loopInf = state; };
+    virtual void setLoopInf(bool state = true) { _loopInf = state; }
     
-    virtual void setOneShot(bool state = true) { _oneShot = state; };
+    virtual void setOneShot(bool state = true) { _oneShot = state; }
+    
+    virtual subseg_t getSeqLen() { return _seqLen; }
     
     virtual ~EnvSegSeq() {}
     
 protected:
     
-    virtual void _changeSeg(int seg);
+    virtual void _changeSeg(subseg_t seg);
     
     virtual void _resetLoop();
     
     unsigned long _currSample;
     
-    int _currSegNum;
+    subseg_t _currSegNum;
     
-    int _loopStart;
-    int _loopEnd;
+    subseg_t _loopStart;
+    subseg_t _loopEnd;
     
-    int _loopCount;
-    int _loopMax;
+    subseg_t _loopCount;
+    subseg_t _loopMax;
     
     bool _loopInf;
     
@@ -456,9 +459,11 @@ protected:
     
     // The current final
     // sample count
-    unsigned long _segLen;
+    unsigned long _currSegLen;
     
     segVector _segs;
+    
+    const subseg_t _seqLen;
 };
 
 

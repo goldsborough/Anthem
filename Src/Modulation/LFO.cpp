@@ -11,116 +11,32 @@
 #include "Crossfader.h"
 #include "Oscillator.h"
 
-LFOModeBase::LFOModeBase() { _xfade = 0; }
-
-LFOModeBase::~LFOModeBase() {  delete _xfade; }
-
-void LFOModeBase::setXFade(double value) { _xfade->setValue(value); }
-
-LFOSeq::LFOSeq()
+LFOSeq::LFOSeq(unsigned int seqLength)
+: seq(seqLength), _seqLen(seqLength)
 {
-    _seqMaxCount = 16;
+    seq.setLoopStart(0);
+    seq.setLoopEnd(_seqLen - 1);
     
-    _xfade = new XFadeLinear;
-    
-    _seqs[0] = new EnvSegSeq(_seqMaxCount);
-    _seqs[1] = new EnvSegSeq(_seqMaxCount);
+    seq.setLoopInf();
 }
 
-LFOSeq::~LFOSeq()
-{
-    delete _seqs[0];
-    delete _seqs[1];
-}
-
-double LFOSeq::first() { return _seqs[0]->tick(); }
-
-double LFOSeq::second() { return _seqs[1]->tick(); }
-
-// with crossfading
-double LFOSeq::tick()
-{
-    double val_A = _seqs[0]->tick() * _xfade->left();
-    double val_B = _seqs[1]->tick() * _xfade->right();
-    
-    return val_A + val_B;
-}
-
-void LFOSeq::setWave(bool unitNum, unsigned int segNum, Wavetable::Modes wave)
-{
-    if (segNum > _seqMaxCount)
-        throw std::out_of_range("Segment number out of range!");
-    
-    _seqs[unitNum]->setSegModWave(segNum, wave);
-}
-
-void LFOSeq::setLevel(bool unitNum, unsigned int segNum, double lv)
-{
-    if (segNum > _seqMaxCount)
-        throw std::out_of_range("Segment number out of range!");
-    
-    _seqs[unitNum]->setSegBothLevels(segNum, lv);
-}
-
-void LFOSeq::setRate(bool unitNum, double Hz)
+void LFOSeq::setRate(double Hz)
 {
     // get the period, divide up into _segNum pieces
-    double len = (1.0 / Hz) / _seqMaxCount;
+    double len = (1.0 / Hz) / _seqLen;
     
     // seconds to milliseconds
     len *= 1000;
     
     // Set all segment's lengths
-    for (int i = 0; i < _seqMaxCount; i++)
-        _seqs[unitNum]->setSegLen(i, len);
+    for (int i = 0; i < _seqLen; i++)
+        seq.setSegLen(i, len);
 }
 
-LFOWave::LFOWave()
-{
-    _oscs[0] = new Oscillator(Wavetable::SINE,2);
-    _oscs[1] = new Oscillator(Wavetable::SINE,2);
-    
-    _xfade = new XFadeLinear;
-}
-
-LFOWave::~LFOWave()
-{
-    delete _oscs[0];
-    delete _oscs[1];
-}
-
-double LFOWave::tick()
-{
-    double val_A = _oscs[0]->tick() * _xfade->left();
-    double val_B = _oscs[1]->tick() * _xfade->right();
-    
-    return val_A + val_B;
-}
-
-double LFOWave::first() { return _oscs[0]->tick(); }
-
-double LFOWave::second() { return _oscs[1]->tick(); }
-
-void LFOWave::setWave(bool oscNum, Wavetable::Modes wave)
-{
-    _oscs[oscNum]->setWT(wave);
-}
-
-void LFOWave::setPhaseOffset(bool oscNum, unsigned short degrees)
-{
-    _oscs[oscNum]->setPhaseOffset(degrees);
-}
-
-void LFOWave::setRate(unit_t unitNum, double hertz)
-{
-    _oscs[unitNum]->setFreq(hertz);
-}
-
-LFO::LFO()
-: _currMode(_lfoWave)
+LFOUnit::LFOUnit()
 {
     // Change derived type for different crossfading
-    _xfade = new XFadeLinear;
+    _xfade = new XFadeLinear(-100);
     
     _env = new EnvSegSeq(2);
     
@@ -131,38 +47,33 @@ LFO::LFO()
     _env->setOneShot();
 }
 
-LFO::~LFO()
-{
-    delete _env;
-}
+LFOUnit::~LFOUnit() { delete _env; }
 
-double LFO::tick()
+double LFOUnit::tick()
 {
-    double valA = _currMode.first() * _xfade->left();
-    double valB = _currMode.second() * _xfade->right();
+    double valA = (_mode) ? _LFOSeqs[0].tick() : _LFOs[0].tick();
+    double valB = (_mode) ? _LFOSeqs[1].tick() : _LFOs[1].tick();
     
-    return (valA + valB) * _Amp;
-}
-
-void LFO::setMode(bool mode)
-{
-     if (mode)
-         _currMode = _lfoSeq;
+    valA *= _xfade->left();
+    valB *= _xfade->right();
     
-     else _currMode = _lfoWave;
+    return (valA + valB) * _amp;
 }
 
-void LFO::setEnvSegLen(bool envSeg, unsigned short len)
+void LFOUnit::setEnvSegLen(bool envSeg, unsigned short len)
 {
     _env->setSegLen(envSeg, len);
 }
 
-void LFO::setRate(bool unitNum, double Hz)
+void LFOUnit::setRate(bool unitNum, double Hz)
 {
-    _currMode.setRate(unitNum, Hz);
+    if (_mode)
+        _LFOSeqs[unitNum].setRate(Hz);
+    
+    else _LFOs[unitNum].setRate(Hz);
 }
 
-void LFO::setEnvLevel(unsigned char point, double lv)
+void LFOUnit::setEnvLevel(unsigned char point, double lv)
 {
     switch (point)
     {
@@ -181,7 +92,10 @@ void LFO::setEnvLevel(unsigned char point, double lv)
     }
 }
 
-void LFO::setEnvLoopMax(unsigned char loopNum)
+void LFOUnit::setXFade(char value) { _xfade->setValue(value); }
+
+void LFOUnit::setEnvLoopMax(unsigned char loopNum)
 {
     _env->setLoopMax(loopNum);
 }
+

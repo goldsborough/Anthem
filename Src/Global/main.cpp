@@ -26,24 +26,28 @@ int main(int argc, const char * argv[])
     
     uint32_t len = global.samplerate * 5;
     
-    Oscillator osc(Wavetable::Modes::SINE,freq);
+    Oscillator osc(Wavetable::SINE,freq);
     
-    Mixer mixer(false,true);
+    Oscillator osc2(Wavetable::SINE,466.1637615);
     
     LFO lfo;
     
-    lfo.setAmp(0.5);
+    Mixer mixer(false,true);
     
-    lfo.setRate(0, 60);
+    
     
     for (int i = 0; i < len; i++)
     {
-        mixer.processTick(osc.tick() * lfo.tick());
+        
+        double val = osc.tick() * lfo.tick();
+        
+        mixer.processTick(val);
+        
     }
     
     mixer.play();
     
-    //while (global.getPassedTime(start) < 5);
+    //while (getPassedTime(start) < 5);
 
     std::cout << "Total program duration: " << getPassedTime(t) << "\n";
 }

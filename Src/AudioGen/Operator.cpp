@@ -13,7 +13,7 @@
 
 Operator::Operator(const Wavetable::Modes& md, const double& amp)
 {    
-    _Amp = amp;
+    _amp = amp;
     
     _mode = md;
     //_WT = wavetable.getWaveform(_mode);

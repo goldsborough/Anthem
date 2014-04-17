@@ -24,7 +24,7 @@ std::string getDate()
 }
 
 
-double NoteToFreq(uint16_t n)
+double noteToFreq(unsigned short n)
 {
     // Source: http://en.wikipedia.org/wiki/Piano_key_frequencies
     
@@ -34,11 +34,20 @@ double NoteToFreq(uint16_t n)
 }
 
 
-uint16_t FreqToNote(double freq)
+unsigned short freqToNote(double freq)
 {
     return 12 * log2( (freq / 440) ) + 49;
 }
 
+double centToFreq(double freq, int offset)
+{
+    return pow(2, offset / 1200) * freq;
+}
+
+double semiToFreq(double freq, int offset)
+{
+    return pow(2, offset / 12) * freq;
+}
 
 float getPassedTime(clock_t start)
 {

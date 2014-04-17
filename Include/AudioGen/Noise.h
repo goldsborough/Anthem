@@ -11,7 +11,7 @@
 
 #include "GenUnits.h"
 
-class Noise : GenUnit
+class Noise : public GenUnit
 {
     
 public:
@@ -25,11 +25,11 @@ public:
     
     Noise(const Type& type) { _type = type; };
     
+    double tick();
+    
     void setType(const Type& type) { _type = type; };
     
     void setColor(const double& col) {_Color = col; };
-    
-    double tick();
     
 private:
     
