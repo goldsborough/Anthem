@@ -10,7 +10,6 @@
 #define __Synth__Oscillator__
 
 #include "GenUnits.h"
-#include <vector>
 
 class Envelope;
 class Oscillator;
@@ -20,7 +19,7 @@ class Operator : public AudioGenUnit
 {
 public:
     
-    Operator(const Wavetable::Modes& md, const double& amp = 0.5);
+    Operator(const int md, const double& amp = 0.5);
 
     
     int getVoiceNumber(){ return _voiceNumber; };

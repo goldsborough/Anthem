@@ -39,7 +39,7 @@ private:
     
     Type _type;
     
-    double * _WT = wavetable.getNoise();
+    double * _WT = 0;//wavetable.getNoise();
     
 };
 

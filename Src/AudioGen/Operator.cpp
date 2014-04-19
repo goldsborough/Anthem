@@ -11,7 +11,7 @@
 #include "Oscillator.h"
 #include "Wavetable.h"
 
-Operator::Operator(const Wavetable::Modes& md, const double& amp)
+Operator::Operator(const int md, const double& amp)
 {    
     _amp = amp;
     

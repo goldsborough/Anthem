@@ -20,9 +20,12 @@
 		7A03DA0618FD7E9800BCF6A8 /* Wavefile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A03D9F618FD7E9800BCF6A8 /* Wavefile.cpp */; };
 		7A03DA0718FD7E9800BCF6A8 /* Envelope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A03D9F818FD7E9800BCF6A8 /* Envelope.cpp */; };
 		7A03DA0818FD7E9800BCF6A8 /* EnvSeg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A03D9F918FD7E9800BCF6A8 /* EnvSeg.cpp */; };
-		7A03DA0918FD7E9800BCF6A8 /* Filter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A03D9FA18FD7E9800BCF6A8 /* Filter.cpp */; };
 		7A03DA0A18FD7E9800BCF6A8 /* LFO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A03D9FB18FD7E9800BCF6A8 /* LFO.cpp */; };
 		7A2D749A18F5A7DF00A174CA /* libportaudio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A2D749918F5A7DF00A174CA /* libportaudio.a */; };
+		7A383E1018FF2E43009F435B /* Filter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A383E0F18FF2E43009F435B /* Filter.cpp */; };
+		7A383E1518FF56FF009F435B /* ModUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A383E1318FF56FF009F435B /* ModUnit.cpp */; };
+		7A6F20F6190309EA002183F8 /* Parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A6F20F4190309EA002183F8 /* Parser.cpp */; };
+		7A6F20F8190325EA002183F8 /* GenUnits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A6F20F7190325EA002183F8 /* GenUnits.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -53,7 +56,6 @@
 		7A03D9E218FD7E9800BCF6A8 /* Wavefile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Wavefile.h; sourceTree = "<group>"; };
 		7A03D9E418FD7E9800BCF6A8 /* Envelope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Envelope.h; sourceTree = "<group>"; };
 		7A03D9E518FD7E9800BCF6A8 /* EnvSeg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EnvSeg.h; sourceTree = "<group>"; };
-		7A03D9E618FD7E9800BCF6A8 /* Filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Filter.h; sourceTree = "<group>"; };
 		7A03D9E718FD7E9800BCF6A8 /* LFO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LFO.h; sourceTree = "<group>"; };
 		7A03D9EA18FD7E9800BCF6A8 /* Noise.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Noise.cpp; sourceTree = "<group>"; };
 		7A03D9EB18FD7E9800BCF6A8 /* Operator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Operator.cpp; sourceTree = "<group>"; };
@@ -68,11 +70,17 @@
 		7A03D9F618FD7E9800BCF6A8 /* Wavefile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Wavefile.cpp; sourceTree = "<group>"; };
 		7A03D9F818FD7E9800BCF6A8 /* Envelope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Envelope.cpp; sourceTree = "<group>"; };
 		7A03D9F918FD7E9800BCF6A8 /* EnvSeg.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EnvSeg.cpp; sourceTree = "<group>"; };
-		7A03D9FA18FD7E9800BCF6A8 /* Filter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Filter.cpp; sourceTree = "<group>"; };
 		7A03D9FB18FD7E9800BCF6A8 /* LFO.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LFO.cpp; sourceTree = "<group>"; };
-		7A226246188E4F3000AE280A /* Vibe */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = Vibe; path = /Users/petergoldsborough/Documents/Synth/build/Debug/Vibe; sourceTree = "<absolute>"; };
 		7A2D749918F5A7DF00A174CA /* libportaudio.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libportaudio.a; path = ../../../../../usr/local/lib/libportaudio.a; sourceTree = "<group>"; };
 		7A2D749B18F5AC1500A174CA /* libportaudio.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libportaudio.2.dylib; path = ../../../../../usr/local/lib/libportaudio.2.dylib; sourceTree = "<group>"; };
+		7A383E0D18FEA8AC009F435B /* Vibe */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Vibe; sourceTree = BUILT_PRODUCTS_DIR; };
+		7A383E0F18FF2E43009F435B /* Filter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Filter.cpp; sourceTree = "<group>"; };
+		7A383E1218FF2E4C009F435B /* Filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Filter.h; sourceTree = "<group>"; };
+		7A383E1318FF56FF009F435B /* ModUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ModUnit.cpp; path = ../../Include/Modulation/ModUnit.cpp; sourceTree = "<group>"; };
+		7A383E1418FF56FF009F435B /* ModUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ModUnit.h; path = ../Modulation/ModUnit.h; sourceTree = "<group>"; };
+		7A6F20F4190309EA002183F8 /* Parser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Parser.cpp; path = ../../Include/Global/Parser.cpp; sourceTree = "<group>"; };
+		7A6F20F5190309EA002183F8 /* Parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Parser.h; sourceTree = "<group>"; };
+		7A6F20F7190325EA002183F8 /* GenUnits.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GenUnits.cpp; path = ../../Include/Global/GenUnits.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,6 +98,7 @@
 		7A03D9D218FD7E9800BCF6A8 /* Include */ = {
 			isa = PBXGroup;
 			children = (
+				7A383E1118FF2E4C009F435B /* Effects */,
 				7A03D9D318FD7E9800BCF6A8 /* AudioGen */,
 				7A03D9D718FD7E9800BCF6A8 /* Global */,
 				7A03D9DE18FD7E9800BCF6A8 /* Mixer */,
@@ -112,11 +121,13 @@
 			isa = PBXGroup;
 			children = (
 				7A03D9D818FD7E9800BCF6A8 /* GenUnits.h */,
+				7A383E1418FF56FF009F435B /* ModUnit.h */,
 				7A03D9D918FD7E9800BCF6A8 /* Global.h */,
 				7A03D9DA18FD7E9800BCF6A8 /* SampleData.h */,
 				7A03D9DB18FD7E9800BCF6A8 /* Synthesizer.h */,
 				7A03D9DC18FD7E9800BCF6A8 /* Utils.h */,
 				7A03D9DD18FD7E9800BCF6A8 /* Wavetable.h */,
+				7A6F20F5190309EA002183F8 /* Parser.h */,
 			);
 			path = Global;
 			sourceTree = "<group>";
@@ -137,7 +148,6 @@
 			children = (
 				7A03D9E418FD7E9800BCF6A8 /* Envelope.h */,
 				7A03D9E518FD7E9800BCF6A8 /* EnvSeg.h */,
-				7A03D9E618FD7E9800BCF6A8 /* Filter.h */,
 				7A03D9E718FD7E9800BCF6A8 /* LFO.h */,
 			);
 			path = Modulation;
@@ -146,6 +156,7 @@
 		7A03D9E818FD7E9800BCF6A8 /* Src */ = {
 			isa = PBXGroup;
 			children = (
+				7A383E0E18FF2E43009F435B /* Effects */,
 				7A03D9E918FD7E9800BCF6A8 /* AudioGen */,
 				7A03D9ED18FD7E9800BCF6A8 /* Global */,
 				7A03D9F218FD7E9800BCF6A8 /* Mixer */,
@@ -167,6 +178,9 @@
 		7A03D9ED18FD7E9800BCF6A8 /* Global */ = {
 			isa = PBXGroup;
 			children = (
+				7A6F20F7190325EA002183F8 /* GenUnits.cpp */,
+				7A6F20F4190309EA002183F8 /* Parser.cpp */,
+				7A383E1318FF56FF009F435B /* ModUnit.cpp */,
 				7A03D9EF18FD7E9800BCF6A8 /* Synthesizer.cpp */,
 				7A03D9F018FD7E9800BCF6A8 /* Utils.cpp */,
 				7A03D9F118FD7E9800BCF6A8 /* Wavetable.cpp */,
@@ -190,7 +204,6 @@
 			children = (
 				7A03D9F818FD7E9800BCF6A8 /* Envelope.cpp */,
 				7A03D9F918FD7E9800BCF6A8 /* EnvSeg.cpp */,
-				7A03D9FA18FD7E9800BCF6A8 /* Filter.cpp */,
 				7A03D9FB18FD7E9800BCF6A8 /* LFO.cpp */,
 			);
 			path = Modulation;
@@ -204,7 +217,24 @@
 				7A03D9EE18FD7E9800BCF6A8 /* main.cpp */,
 				7A03D9D218FD7E9800BCF6A8 /* Include */,
 				7A03D9E818FD7E9800BCF6A8 /* Src */,
+				7A383E0D18FEA8AC009F435B /* Vibe */,
 			);
+			sourceTree = "<group>";
+		};
+		7A383E0E18FF2E43009F435B /* Effects */ = {
+			isa = PBXGroup;
+			children = (
+				7A383E0F18FF2E43009F435B /* Filter.cpp */,
+			);
+			path = Effects;
+			sourceTree = "<group>";
+		};
+		7A383E1118FF2E4C009F435B /* Effects */ = {
+			isa = PBXGroup;
+			children = (
+				7A383E1218FF2E4C009F435B /* Filter.h */,
+			);
+			path = Effects;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -224,7 +254,7 @@
 			);
 			name = Vibe;
 			productName = Synth;
-			productReference = 7A226246188E4F3000AE280A /* Vibe */;
+			productReference = 7A383E0D18FEA8AC009F435B /* Vibe */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -260,16 +290,19 @@
 			files = (
 				7A03DA0218FD7E9800BCF6A8 /* Wavetable.cpp in Sources */,
 				7A03D9FC18FD7E9800BCF6A8 /* Noise.cpp in Sources */,
+				7A6F20F6190309EA002183F8 /* Parser.cpp in Sources */,
 				7A03DA0118FD7E9800BCF6A8 /* Utils.cpp in Sources */,
-				7A03DA0918FD7E9800BCF6A8 /* Filter.cpp in Sources */,
 				7A03DA0318FD7E9800BCF6A8 /* Crossfader.cpp in Sources */,
 				7A03DA0018FD7E9800BCF6A8 /* Synthesizer.cpp in Sources */,
 				7A03DA0518FD7E9800BCF6A8 /* Mixer.cpp in Sources */,
 				7A03D9FD18FD7E9800BCF6A8 /* Operator.cpp in Sources */,
 				7A03DA0418FD7E9800BCF6A8 /* DirectOutput.cpp in Sources */,
 				7A03DA0818FD7E9800BCF6A8 /* EnvSeg.cpp in Sources */,
+				7A6F20F8190325EA002183F8 /* GenUnits.cpp in Sources */,
 				7A03D9FF18FD7E9800BCF6A8 /* main.cpp in Sources */,
+				7A383E1018FF2E43009F435B /* Filter.cpp in Sources */,
 				7A03DA0618FD7E9800BCF6A8 /* Wavefile.cpp in Sources */,
+				7A383E1518FF56FF009F435B /* ModUnit.cpp in Sources */,
 				7A03DA0A18FD7E9800BCF6A8 /* LFO.cpp in Sources */,
 				7A03D9FE18FD7E9800BCF6A8 /* Oscillator.cpp in Sources */,
 				7A03DA0718FD7E9800BCF6A8 /* Envelope.cpp in Sources */,
@@ -364,6 +397,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					/Users/petergoldsborough/portaudio/include,
 				);
+				"LIBRARY_SEARCH_PATHS[arch=*]" = /usr/local/lib;
 				PRODUCT_NAME = Vibe;
 			};
 			name = Release;

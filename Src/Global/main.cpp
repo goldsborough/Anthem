@@ -7,13 +7,13 @@
 //
 
 #include "Synthesizer.h"
+#include "Wavetable.h"
+#include "Mixer.h"
 #include "Global.h"
 #include "Oscillator.h"
-#include "Mixer.h"
-#include "EnvSeg.h"
+#include "Wavefile.h"
 #include "Utils.h"
-#include "Envelope.h"
-#include "LFO.h"
+
 #include <iostream>
 
 int main(int argc, const char * argv[])
@@ -26,23 +26,16 @@ int main(int argc, const char * argv[])
     
     uint32_t len = global.samplerate * 5;
     
-    Oscillator osc(Wavetable::SINE,freq);
-    
-    Oscillator osc2(Wavetable::SINE,466.1637615);
-    
-    LFO lfo;
+    Oscillator osc(Wavetable::SQUARE,freq);
     
     Mixer mixer(false,true);
     
-    
-    
+
     for (int i = 0; i < len; i++)
     {
-        
-        double val = osc.tick() * lfo.tick();
+        double val = osc.tick();
         
         mixer.processTick(val);
-        
     }
     
     mixer.play();

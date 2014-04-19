@@ -5,34 +5,34 @@
 	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
 	<false/>
 	<key>IDESourceControlProjectIdentifier</key>
-	<string>7AB21D44-3DBF-4030-904F-357888D1837E</string>
+	<string>A3DD0AF1-C23B-471D-8F96-1DC0D0DBAD97</string>
 	<key>IDESourceControlProjectName</key>
 	<string>Vibe</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>4391993E-D5A2-40BC-A116-C1A493718B39</key>
-		<string>https://bitbucket.org/reardensteel/vibe.git</string>
+		<key>2D9C901D-725A-4380-BEE4-0F2166BEEDB5</key>
+		<string>https://bitbucket.org/petergoldsborough/vibe.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>Vibe.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>4391993E-D5A2-40BC-A116-C1A493718B39</key>
+		<key>2D9C901D-725A-4380-BEE4-0F2166BEEDB5</key>
 		<string>../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
-	<string>https://bitbucket.org/reardensteel/vibe.git</string>
+	<string>https://bitbucket.org/petergoldsborough/vibe.git</string>
 	<key>IDESourceControlProjectVersion</key>
 	<integer>110</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>4391993E-D5A2-40BC-A116-C1A493718B39</string>
+	<string>2D9C901D-725A-4380-BEE4-0F2166BEEDB5</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>4391993E-D5A2-40BC-A116-C1A493718B39</string>
+			<string>2D9C901D-725A-4380-BEE4-0F2166BEEDB5</string>
 			<key>IDESourceControlWCCName</key>
 			<string>vibe</string>
 		</dict>

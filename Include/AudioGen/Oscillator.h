@@ -17,7 +17,7 @@ class Oscillator : public AudioGenUnit
 public:
     
     
-    Oscillator(const Wavetable::Modes& mode = Wavetable::NONE, double frq = 1,
+    Oscillator(const int mode = -1, double frq = 1,
                double amp = 1, short phaseOffset = 0);
     
     double tick();

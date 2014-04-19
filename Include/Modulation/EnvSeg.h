@@ -54,7 +54,7 @@ public:
      **************************************************************************************************/
     
     EnvSeg(double startAmp = 0, double endAmp = 0, unsigned long len = 0, double segR = 1,
-           Wavetable::Modes modW = Wavetable::NONE, double modDpth = 1,
+           int modW = -1, double modDpth = 1,
            unsigned char modR = 1);
     
     ~EnvSeg();
@@ -207,7 +207,7 @@ public:
     *
     ****************************************************************************/
     
-    void setModWave(Wavetable::Modes modW);
+    void setModWave(int modW);
     
     /*************************************************************************//*!
     *
@@ -350,7 +350,7 @@ private:
     unsigned long _sample;
     
     /*! Modulation wave */
-    Wavetable::Modes _modWave;
+    int _modWave;
     
     /*! The rate determining the type (lin,log,exp) */
     double _segRate;
@@ -409,7 +409,7 @@ public:
     
     virtual void setSegBothLevels(subseg_t seg, double lv) { setSegStartLevel(seg, lv), setSegEndLevel(seg, lv); }
     
-    virtual void setSegModWave(subseg_t seg, Wavetable::Modes mod) { _segs[seg].setModWave(mod); }
+    virtual void setSegModWave(subseg_t seg, int mod) { _segs[seg].setModWave(mod); }
     
     virtual void setSegModDepth(subseg_t seg, double dpth) { _segs[seg].setModDepth(dpth); }
     

@@ -15,7 +15,7 @@
 
 class ModUnit : public GenUnit
 { public: virtual ~ModUnit() { } };
-
+/*
 class ModDock
 {
     
@@ -50,9 +50,27 @@ private:
     struct ModItem
     {
         ModItem(const ModUnit& m) : mod(m) {}
+ 
+        ModItem(const ModItem& other)
+        : mod(other.mod)
+        {
+            if (&other != this)
+                dpth = other.dpth;
+        }
         
+        void operator= (const ModItem& other)
+        {
+            if (&other != this)
+            {
+                mod = other.mod;
+                dpth = other.dpth;
+            }
+        }
+ 
         const ModUnit& mod;
         Depth dpth;
+        
+        
     };
     
     typedef std::vector<ModItem> modVec;
@@ -66,5 +84,5 @@ private:
     
     double _value;
 };
-
+*/
 #endif /* defined(__Vibe__ModUnit__) */

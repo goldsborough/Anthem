@@ -10,6 +10,9 @@
 #define __Synth__Waveforms__
 
 #include <vector>
+#include <string>
+
+class TextParser;
 
 class Wavetable
 {
@@ -67,82 +70,13 @@ public:
     
     ~Wavetable();
     
-    double * getWaveform(const Modes mode);
+    double * getWaveform(const int mode);
     
-    double * getNoise() { return WT_NOISE; };
+    double * getNoise() { return 0;}//WT_NOISE; }
     
     double * genericWave(std::vector<Wavetable::Partial>& partials);
     
 private:
-    
-     /************************************************************************************//*!
-     * The wtLength was a tricky one to find and reason upon. A compromise must be foun
-     * between a reasonable length or size in KB for it to fit into at least L2 cache but
-     * still be able to give a good resolution for the "compressed" samples. Samples will
-     * later be retrieved via linear interpolation.
-     *
-     * A WT size of 2^12, or 4096 (opimizing the range by using a power of two), is
-     * calculated as follows:
-     *
-     * WaveTableLength * 8 bytes of precision (double) / 1024 = 32KB
-     ****************************************************************************************/
-    
-    unsigned int wtLength;
-    double fund_incr; // the fundamental index increment
-    
-    double* FORMS [23];
-    
-    // STANDARD WAVEFORMS - Fourier Synthesis
-    
-    double* WT_SINE_2Bit;
-    double* WT_SINE_4Bit;
-    double* WT_SINE_8Bit;
-    double* WT_SINE;
-    
-    double* WT_TRIANGLE;
-    
-    double* WT_SAW_2;
-    double* WT_SAW_4;
-    double* WT_SAW_8;
-    double* WT_SAW_16;
-    double* WT_SAW_32;
-    double* WT_SAW;
-    
-    double* WT_RAMP;
-    
-    double* WT_SQUARE_2;
-    double* WT_SQUARE_4;
-    double* WT_SQUARE_8;
-    double* WT_SQUARE_16;
-    double* WT_SQUARE_32;
-    double* WT_SQUARE;
-    
-    // STANDARD WAVEFORMS - Perfect Direct Calculation
-    
-    // Sine is direct anyway
-    
-    double* WT_SQUARE_DIRECT;
-    double* WT_SAW_DIRECT;
-    double* WT_TRI_DIRECT;
-    
-    // STANDARD WAVEFORMS - Smooth Direct Calculation
-    
-    // For modulation waves for the envelopes, it is not
-    // beneficiary to have sharp transition as in square
-    // waves from -1 to 1, which creates a *blip* sound
-    // Therefore, there are smoothed out waveforms here
-    // that are basically functions resembling the square
-    // and sawtooth wave but without sharp transitions
-    
-    double* WT_SQUARE_SMOOTH;
-    double* WT_SAW_SMOOTH;
-    
-    
-    // OTHER WAVEFORMS
-    
-    double* WT_NOISE;
-    
-    double* WT_USER;
     
     // Rounds values within a certain bitWidth
     // to the closest value
@@ -181,6 +115,30 @@ private:
     */
     
     double* genNoise();
+    
+    double* _readWavetable(const int waveNum);
+        
+   /************************************************************************************//*!
+   * The wtLength was a tricky one to find and reason upon. A compromise must be foun
+   * between a reasonable length or size in KB for it to fit into at least L2 cache but
+   * still be able to give a good resolution for the "compressed" samples. Samples will
+   * later be retrieved via linear interpolation.
+   *
+   * A WT size of 2^12, or 4096 (opimizing the range by using a power of two), is
+   * calculated as follows:
+   *
+   * WaveTableLength * 8 bytes of precision (double) / 1024 = 32KB
+   ****************************************************************************************/
+        
+    unsigned int _wtLength;
+
+    double _fundIncr; // the fundamental index increment
+
+    std::vector<double*> _tables;
+        
+    std::vector<std::string> _wtNames;
+    
+    TextParser * _textParser;
 };
 
 extern Wavetable wavetable;

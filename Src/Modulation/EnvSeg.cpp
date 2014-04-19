@@ -9,6 +9,8 @@
 #include "EnvSeg.h"
 #include "LFO.h"
 #include "Global.h"
+#include "Wavetable.h"
+
 #include <sstream>
 #include <iostream>
 
@@ -16,7 +18,7 @@
 const unsigned long EnvSeg::_maxLen = 2646000;
 
 EnvSeg::EnvSeg(double startAmp, double endAmp, unsigned long len,
-               double segR, Wavetable::Modes modW, double modDpth,
+               double segR, int modW, double modDpth,
                unsigned char modR)
 {
     _sample = 0;
@@ -226,7 +228,7 @@ void EnvSeg::setRate(double rate)
     _calcRate();
 }
 
-void EnvSeg::setModWave(Wavetable::Modes modW)
+void EnvSeg::setModWave(int modW)
 {
     _modWave = modW;
     

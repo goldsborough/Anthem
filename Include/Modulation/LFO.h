@@ -19,7 +19,7 @@ class XFadeUnit;
 
 struct LFO : public ModUnit
 {
-    LFO(const Wavetable::Modes& wave = Wavetable::SINE)
+    LFO(const int wave = -1)
     : osc(wave)
     { }
     
@@ -80,12 +80,12 @@ public:
     void setEnvLoopMax(unsigned char loopNum);
     
     
-    void setLFOWave(unit_t unitNum, Wavetable::Modes wave) { _LFOs[unitNum].osc.setWT(wave); }
+    void setLFOWave(unit_t unitNum, int wave) { _LFOs[unitNum].osc.setWT(wave); }
     
     void setLFOPhaseOffset(unit_t unitNum, short degrees) { _LFOs[unitNum].osc.setPhaseOffset(degrees); };
     
     
-    void setLFOSeqSegWave(unit_t unitNum, subseg_t segNum, Wavetable::Modes wave);
+    void setLFOSeqSegWave(unit_t unitNum, subseg_t segNum, int wave);
     
     void setLFOSeqSegAmp(unit_t unitNum, subseg_t seg, double amp);
     

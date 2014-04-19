@@ -8,8 +8,9 @@
 
 #include "Oscillator.h"
 #include "Global.h"
+#include "Wavetable.h"
 
-Oscillator::Oscillator(const Wavetable::Modes& mode, double frq,
+Oscillator::Oscillator(const int mode, double frq,
                        double amp, short phaseOffset)
 {
     _amp = amp;

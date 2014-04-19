@@ -9,8 +9,6 @@
 #ifndef __Synth__GenUnits__
 #define __Synth__GenUnits__
 
-#include "Wavetable.h"
-
 class GenUnit
 {
     
@@ -32,18 +30,9 @@ class AudioGenUnit : public GenUnit
     
 public:
     
-    virtual void setWT(const Wavetable::Modes& mode)
-    {
-        _mode = mode;
-        _WT = wavetable.getWaveform(_mode);
-    }
+    virtual void setWT(const int mode);
     
-    virtual void setWT(double* wt)
-    {
-        _mode = Wavetable::USER;
-        
-        _WT = wt;
-    }
+    virtual void setWT(double* wt);
     
     virtual ~AudioGenUnit() {}
     
@@ -51,7 +40,7 @@ protected:
     
     double * _WT = 0;
     
-    Wavetable::Modes _mode;
+    int _mode;
 };
 
 #endif /* defined(__Synth__GenUnits__) */

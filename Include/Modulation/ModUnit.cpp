@@ -7,7 +7,7 @@
 //
 
 #include "ModUnit.h"
-
+/*
 ModDock::ModDock(index_t modNum, double initVal)
 : _mods(modNum), _value(initVal)
 { }
@@ -47,3 +47,4 @@ void ModDock::setDepth(index_t index, depth_t dpth)
     
     _checkDpth(index);
 }
+*/

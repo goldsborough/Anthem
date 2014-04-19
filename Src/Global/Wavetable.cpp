@@ -8,92 +8,29 @@
 
 #include "Wavetable.h"
 #include "Global.h"
+#include "Parser.h"
+#include <iostream>
 
 void Wavetable::Init(unsigned int wtLen)
 {
-    wtLength = wtLen;
-    fund_incr = twoPI / wtLength;
+    _wtLength = wtLen;
+    _fundIncr = twoPI / _wtLength;
     
-    WT_SINE_2Bit = genWave(0,0,1,2);
-    WT_SINE_4Bit = genWave(0,0,1,4);
-    WT_SINE_8Bit = genWave(0,0,1,8);
-    WT_SINE = genWave(0,0);
+    _textParser = new TextParser("/Users/petergoldsborough/Documents/vibe/Resources/Wavetables/wavetables.txt");
     
-    WT_SQUARE_2 = genWave(1, 2);
-    WT_SQUARE_4 = genWave(1, 4);
-    WT_SQUARE_8 = genWave(1, 8);
-    WT_SQUARE_16 = genWave(1, 16);
-    WT_SQUARE_32 = genWave(1, 32);
-    WT_SQUARE = genWave(1,64);
+    _wtNames = _textParser->readAll();
     
-    /*
-     * The following final ampFactor, the 3rd parameter
-     * to genWave, are factors determined entirely 
-     * empirically that make the waveforms quite exactly
-     * ranging from 1 to -1 in amplitude, since they
-     * would otherwise overflow heavily.
-     */
-    
-    WT_SAW_2 = genWave(2, 2,0.68);
-    WT_SAW_4 = genWave(2, 4,0.625);
-    WT_SAW_8 = genWave(2, 8,0.59);
-    WT_SAW_16 = genWave(2, 16,0.56);
-    WT_SAW_32 = genWave(2, 32,0.55);
-    WT_SAW = genWave(2,64,0.635);
-    
-    WT_TRIANGLE = genWave(4,64,0.82);
-    
-    WT_RAMP = genWave(3,64,0.635);
-    
-    WT_NOISE = genNoise();
-    
-    FORMS[0] = WT_SINE_2Bit;
-    FORMS[1] = WT_SINE_4Bit;
-    FORMS[2] = WT_SINE_8Bit;
-    FORMS[3] = WT_SINE;
-    
-    FORMS[4] = WT_SQUARE_2;
-    FORMS[5] = WT_SQUARE_4;
-    FORMS[6] = WT_SQUARE_8;
-    FORMS[7] = WT_SQUARE_16;
-    FORMS[8] = WT_SQUARE_32;
-    FORMS[9] = WT_SQUARE;
-    
-    
-    FORMS[10] = WT_SAW_2;
-    FORMS[11] = WT_SAW_4;
-    FORMS[12] = WT_SAW_8;
-    FORMS[13] = WT_SAW_16;
-    FORMS[14] = WT_SAW_32;
-    FORMS[15] = WT_SAW;
-    
-    FORMS[16] = WT_TRIANGLE;
-    
-    FORMS[17] = WT_RAMP;
-    
-    WT_SAW_DIRECT = directSaw();
-    WT_SQUARE_DIRECT = directSquare();
-    WT_TRI_DIRECT = directTriangle();
-    
-    FORMS[18] = WT_TRI_DIRECT;
-    FORMS[19] = WT_SQUARE_DIRECT;
-    FORMS[20] = WT_SAW_DIRECT;
-    
-    WT_SQUARE_SMOOTH = smoothSquare();
-    WT_SAW_SMOOTH = smoothSaw();
-    
-    FORMS[21] = WT_SQUARE_SMOOTH;
-    FORMS[22] = WT_SAW_SMOOTH;
-
+    for (int i = 0; i < _wtNames.size(); i++)
+        _tables.push_back( _readWavetable(i) );
 }
 
-double * Wavetable::getWaveform(const Modes mode)
+double * Wavetable::getWaveform(const int mode)
 {
-    if (mode < - 1 && mode > 22)
+    if (mode < 0 || mode > _tables.size() - 1)
         throw std::out_of_range("Mode out of range");
     
     if (mode != NONE)
-        return FORMS[mode];
+        return _tables[mode];
     
     return 0;
 }
@@ -140,7 +77,7 @@ double* Wavetable::genWave(unsigned char wavID,
          half the wavetable to 1 and the other half to 0, thought this will
          never come near to the complex waveforms found naturally. Of course
          those can actually never be formed computationally, since most wave-
-         forms that occur naturally are made up of an uncountable number of
+         _tables that occur naturally are made up of an uncountable number of
          partials. However, we can get very close through additive approaches,
          so by adding integer mutliples of the fundamental pitch in a variety of
          ways:
@@ -185,17 +122,12 @@ double* Wavetable::genWave(unsigned char wavID,
          saw waves. They ascend from 0 to 2 linearly and then descend to 0 linearly again.
          They are created by adding all odd partials with alternating sign for the amplitude.
          
-           /\    /\    /\
-          /  \  /  \  /  \
-         /    \/    \/    \
+            /\    /\    /\
+           /  \  /  \  /  \
+          /    \/    \/    \
      
-     */
-    
-
-
-    
-    /*
-          The wavetable must be initalized as wtLength + 1, as we are using linear interpolation.
+     
+          The wavetable must be initalized as _wtLength + 1, as we are using linear interpolation.
           Say the current sample is sample 12345, at a table length of 4096, the index increment
           per sample in the wavetable is 4096/44100 = 0.0928..., so the index for sample 12345
           would be 1146.60.... This means that we must interpolate between index 1146 and index
@@ -217,7 +149,7 @@ double* Wavetable::genWave(unsigned char wavID,
     
     unsigned int partialTotal = partialNumber + 1;
     
-    double* wt = new double [wtLength + 1];
+    double* wt = new double [_wtLength + 1];
     
     // Allocate memory for partialNumber + 1 entries,
     // so also one for the fundamental frequency
@@ -260,7 +192,7 @@ double* Wavetable::genWave(unsigned char wavID,
     for (unsigned int p = 0; p < partialTotal; p++)
     {
         phase[p] = 0.0;
-        phase_incr[p] = fund_incr * part;
+        phase_incr[p] = _fundIncr * part;
         
         if (wavID == 4) // Triangle
         {
@@ -301,7 +233,7 @@ double* Wavetable::genWave(unsigned char wavID,
         
     }
     
-    for (unsigned int n = 0; n < wtLength; n++)
+    for (unsigned int n = 0; n < _wtLength; n++)
     {
         double value = 0.0;
         
@@ -325,7 +257,7 @@ double* Wavetable::genWave(unsigned char wavID,
     
     // Append the last item for interpolation
     
-    wt[wtLength] = wt[0];
+    wt[_wtLength] = wt[0];
     
     delete [] phase;
     delete [] phase_incr;
@@ -336,7 +268,7 @@ double* Wavetable::genWave(unsigned char wavID,
 
 double* Wavetable::smoothSaw()
 {
-    double* wt = new double[wtLength + 1];
+    double* wt = new double[_wtLength + 1];
     
     // First decrement from 1 to -1 in 9/10 of the cycle,
     // then go back up smoothly the last 1/10 of the cycle
@@ -353,12 +285,12 @@ double* Wavetable::smoothSaw()
     double ind = 0.9;
     
     // Increment value from -1 to 1
-    double ampIncr = 2.0/(wtLength * 0.9);
+    double ampIncr = 2.0/(_wtLength * 0.9);
     
     // Increment value for the time
-    double indIncr = 0.1/(wtLength * 0.1);
+    double indIncr = 0.1/(_wtLength * 0.1);
     
-    for (unsigned int n = 0; n < wtLength; n++)
+    for (unsigned int n = 0; n < _wtLength; n++)
     {
         if (amp > -1)
         {
@@ -394,22 +326,22 @@ double* Wavetable::smoothSaw()
         }
     }
     
-    wt[wtLength] = wt[0];
+    wt[_wtLength] = wt[0];
     
     return wt;
 }
 
 double* Wavetable::smoothSquare()
 {
-    double* wt = new double[wtLength + 1];
+    double* wt = new double[_wtLength + 1];
     
     double ind = 0;
     
-    double incr = 1.0 / wtLength;
+    double incr = 1.0 / _wtLength;
     
     float exp = 50;
 
-    for (unsigned int n = 0; n < wtLength; n++)
+    for (unsigned int n = 0; n < _wtLength; n++)
     {
         double val;
         
@@ -434,11 +366,11 @@ double* Wavetable::smoothSquare()
         
         wt[n] = val;
         
-        if ( (ind += incr) >= wtLength)
-            ind -= wtLength;
+        if ( (ind += incr) >= _wtLength)
+            ind -= _wtLength;
     }
     
-    wt[wtLength] = wt[0];
+    wt[_wtLength] = wt[0];
     
     return wt;
 }
@@ -446,10 +378,10 @@ double* Wavetable::smoothSquare()
 double * Wavetable::directSquare()
 {
     // the sample buffer
-    double * wt = new double [wtLength + 1];
+    double * wt = new double [_wtLength + 1];
     
     // time for one sample
-    double sampleTime = 1.0 / wtLength;
+    double sampleTime = 1.0 / _wtLength;
     
     // the midpoint of the period
     double mid = 0.5;
@@ -457,15 +389,15 @@ double * Wavetable::directSquare()
     double ind = 0;
     
     // fill the sample buffer
-    for (int n = 0; n < wtLength; n++)
+    for (int n = 0; n < _wtLength; n++)
     {
         wt[n] = (ind < mid) ? -1 : 1;
         
-        if ( (ind += sampleTime) >= wtLength)
-            ind -= wtLength;
+        if ( (ind += sampleTime) >= _wtLength)
+            ind -= _wtLength;
     }
     
-    wt[wtLength] = wt[0];
+    wt[_wtLength] = wt[0];
     
     return wt;
 }
@@ -473,16 +405,16 @@ double * Wavetable::directSquare()
 double * Wavetable::directSaw()
 {
     // the sample buffer
-    double * wt = new double [wtLength];
+    double * wt = new double [_wtLength];
     
     // how much we must decrement the count
     // by at each iteration
     // 2.0 because the range is from 1 to -1
-    double incr = 2.0 / wtLength;
+    double incr = 2.0 / _wtLength;
     
     double ind = 1;
     
-    for (int n = 0; n < wtLength; n++)
+    for (int n = 0; n < _wtLength; n++)
     {
         wt[n] = ind;
         
@@ -490,24 +422,24 @@ double * Wavetable::directSaw()
             ind = 1;
     }
     
-    wt[wtLength] = wt[0];
+    wt[_wtLength] = wt[0];
     
     return wt;
 }
 
 double* Wavetable::directTriangle()
 {
-    double* wt = new double[wtLength + 1];
+    double* wt = new double[_wtLength + 1];
     
     double phase = 0;
-    double phaseIncr = twoPI / wtLength;
+    double phaseIncr = twoPI / _wtLength;
     
     // Basierend auf Pseudocode (vgl. Mitchell, 2008)
     
     double triValue;
     double twoDivPi = 2.0/PI;
     
-    for (unsigned int n = 0; n < wtLength; n++)
+    for (unsigned int n = 0; n < _wtLength; n++)
     {
         triValue = (phase * twoDivPi);
         
@@ -522,16 +454,16 @@ double* Wavetable::directTriangle()
         
     }
     
-    wt[wtLength] = wt[0];
+    wt[_wtLength] = wt[0];
     
     return wt;
 }
 
 double* Wavetable::genNoise()
 {
-    double * wt = new double[wtLength + 1];
+    double * wt = new double[_wtLength + 1];
     
-    for (unsigned int n = 0; n < wtLength; n++)
+    for (unsigned int n = 0; n < _wtLength; n++)
     {
         /*
          // We subtract half the maximum range from the generated number
@@ -547,7 +479,7 @@ double* Wavetable::genNoise()
         wt[n] = value;
     }
     
-    wt[wtLength] = wt[0];
+    wt[_wtLength] = wt[0];
     
     return wt;
 }
@@ -555,18 +487,18 @@ double* Wavetable::genNoise()
 double* Wavetable::genericWave(std::vector<Partial>& partials)
 {
     
-    double * wt = new double [wtLength + 1];
+    double * wt = new double [_wtLength + 1];
     
     Partial fund;
     
     fund.number = 1;
     fund.amp = 1;
 
-    fund.phase_incr = fund_incr;
+    fund.phase_incr = _fundIncr;
     
     partials.insert(partials.begin(), fund);
     
-    for (unsigned int n = 0; n < wtLength; n++)
+    for (unsigned int n = 0; n < _wtLength; n++)
     {
         double value = 0.0;
         
@@ -585,17 +517,33 @@ double* Wavetable::genericWave(std::vector<Partial>& partials)
         
     }
     
-    wt[wtLength] = wt[0];
+    wt[_wtLength] = wt[0];
     
     return wt;
     
 }
 
+double * Wavetable::_readWavetable(const int waveNum)
+{
+    double * wt = new double [_wtLength + 1];
+    
+    std::string fname = "/Users/petergoldsborough/Documents/vibe/Resources/Wavetables/" + _wtNames[waveNum] + ".vwt";
+    
+    std::ifstream inFile(fname);
+    
+    if (! inFile.good() || ! inFile.is_open() ||
+        ! inFile.read(reinterpret_cast<char*>(wt), (_wtLength) * sizeof(*wt)) ) // this is part of the if clause
+        throw std::runtime_error("Error reading wavetables!");
+    
+    wt[_wtLength] = wt[0];
+    
+    return wt;
+}
 
 Wavetable::~Wavetable()
 {
-     for (int i = 0; i < 23; i++)
-     {
-     delete [] FORMS[i];
-     }
+     for (int i = 0; i < _tables.size(); i++)
+         delete [] _tables[i];
+    
+    delete _textParser;
 }
