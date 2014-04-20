@@ -88,11 +88,11 @@ private:
     /*!
      @brief      Generates a waveform through Fourier Synthesis
      @discussion
-     @param      ID needed for certain behaviour for some waveforms,
+     @param      wavID needed for certain behaviour for some waveforms,
                  0 = SINE, 1 = SQUARE, 2 = SAW, 3 = RAMP, 4 = TRIANGLE
-     @param      Number of partials to add
-     @param      The factor to mulitply the amplitude values with
-     @param      BitWidth for sine waves
+     @param      partialNumber Number of partials to add
+     @param      ampFactor The factor to mulitply the amplitude values with
+     @param      bitWidth BitWidth for sine waves
      @return     The wavetable
      */
     

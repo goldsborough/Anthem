@@ -78,6 +78,7 @@
 		7A383E1218FF2E4C009F435B /* Filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Filter.h; sourceTree = "<group>"; };
 		7A383E1318FF56FF009F435B /* ModUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ModUnit.cpp; path = ../../Include/Modulation/ModUnit.cpp; sourceTree = "<group>"; };
 		7A383E1418FF56FF009F435B /* ModUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ModUnit.h; path = ../Modulation/ModUnit.h; sourceTree = "<group>"; };
+		7A623943190343B5001DC649 /* Errors.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Errors.h; sourceTree = "<group>"; };
 		7A6F20F4190309EA002183F8 /* Parser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Parser.cpp; path = ../../Include/Global/Parser.cpp; sourceTree = "<group>"; };
 		7A6F20F5190309EA002183F8 /* Parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Parser.h; sourceTree = "<group>"; };
 		7A6F20F7190325EA002183F8 /* GenUnits.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GenUnits.cpp; path = ../../Include/Global/GenUnits.cpp; sourceTree = "<group>"; };
@@ -128,6 +129,7 @@
 				7A03D9DC18FD7E9800BCF6A8 /* Utils.h */,
 				7A03D9DD18FD7E9800BCF6A8 /* Wavetable.h */,
 				7A6F20F5190309EA002183F8 /* Parser.h */,
+				7A623943190343B5001DC649 /* Errors.h */,
 			);
 			path = Global;
 			sourceTree = "<group>";

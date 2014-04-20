@@ -13,11 +13,13 @@
 #include "Oscillator.h"
 #include "Wavefile.h"
 #include "Utils.h"
+#include "Parser.h"
 
 #include <iostream>
 
 int main(int argc, const char * argv[])
 {
+    /*
     clock_t t = clock();
     
     Synthesizer synth;
@@ -26,7 +28,7 @@ int main(int argc, const char * argv[])
     
     uint32_t len = global.samplerate * 5;
     
-    Oscillator osc(Wavetable::SQUARE,freq);
+    Oscillator osc(Wavetable::SAW_2,freq);
     
     Mixer mixer(false,true);
     
@@ -43,5 +45,10 @@ int main(int argc, const char * argv[])
     //while (getPassedTime(start) < 5);
 
     std::cout << "Total program duration: " << getPassedTime(t) << "\n";
+     
+    */
+    
+    XMLParser parser;
+    XMLNode * node = parser.open("/Users/petergoldsborough/Documents/vibe/simple.xml");
 }
 

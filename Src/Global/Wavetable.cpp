@@ -9,6 +9,7 @@
 #include "Wavetable.h"
 #include "Global.h"
 #include "Parser.h"
+#include <fstream>
 #include <iostream>
 
 void Wavetable::Init(unsigned int wtLen)
