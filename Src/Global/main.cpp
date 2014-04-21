@@ -49,6 +49,16 @@ int main(int argc, const char * argv[])
     */
     
     XMLParser parser;
-    XMLNode * node = parser.open("/Users/petergoldsborough/Documents/vibe/simple.xml");
+    XMLNode * node = parser.open("/Users/petergoldsborough/Documents/vibe/books.xml");
+    
+    XMLNode * newNode = new XMLNode;
+    
+    newNode->setTag("random");
+    newNode->setData("I adore chicken soup!");
+    newNode->addAttr("flavor", "chicken");
+    
+    node->getLastChild()->appendChild(newNode);
+    
+    parser.saveToDiffFile(node, "/Users/petergoldsborough/Documents/vibe/simple.xml");
 }
 

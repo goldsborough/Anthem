@@ -55,22 +55,11 @@ std::vector<std::string> TextParser::readAll()
     return _lines;
 }
 
-std::string XMLNode::getAttr(std::string attrKey)
-{
-    if (attrs.find(attrKey) == attrs.end())
-        throw std::invalid_argument("Invalid attribute!");
-    
-    return attrs[attrKey];
-}
-
-bool XMLParser::_isComment(const std::string &str)
-{
-    return (condense(str.begin(), str.end())).substr(0,4) == "<!--";
-}
-
-XMLNode *  XMLParser::open(const std::string& fname)
+XMLNode * XMLParser::open(const std::string& fname)
 {
     std::ifstream file(fname);
+    
+    _fname = fname;
     
     _open = false;
 
@@ -82,13 +71,26 @@ XMLNode *  XMLParser::open(const std::string& fname)
     StrVec vec;
     std::string s,str;
 
-    getline(file, str);
+    getline(file, s,'>');
     
-    _root = _makeNode(str.begin(), str.end(),true);
+    // go back in file
+    file.unget();
     
-    _root->isClosed = true;
+    // get a char
+    s += file.get();
     
-    str = "";
+    _hasHeader = isHeader(s.begin() + 1, s.end() - 1);
+    
+    _root = new XMLNode;
+    
+    if (_hasHeader)
+    {
+        _root = _makeNode(s.begin(), s.end(),true);
+        
+        _root->isClosed = true;
+    }
+    
+    else str += s;
     
     while (getline(file,s)) str += s;
     
@@ -97,6 +99,150 @@ XMLNode *  XMLParser::open(const std::string& fname)
      _makeNodeTree(vec.begin(), vec.end(),_root);
     
     return _root;
+}
+
+bool XMLParser::isHeader(str_cItr begin, str_cItr end)
+{
+    std::string s = condense(begin, end);
+    
+    return *(s.begin()) == '?' && *(s.end() - 1) == '?';
+}
+
+template <class T>
+T XMLParser::lastNonSpace(T begin, T end)
+{
+    return (condense(begin, end)).end();
+}
+
+bool XMLNode::getAttr(std::string& str, const std::string& attrKey)
+{
+    if (! findAttr(attrKey))
+        return false;
+    
+    str = attrs[attrKey];
+    
+    return true;
+}
+
+bool XMLNode::removeAttr(const std::string &key)
+{
+    if (! findAttr(key))
+        return false;
+    
+    attrs.erase(key);
+    
+    return true;
+}
+
+XMLNode::NodeVec XMLNode::getElementsByTagName(const std::string& tagName)
+{
+    NodeVec vec;
+    
+    XMLNode * itr = firstChild;
+    
+    while (itr != 0)
+    {
+        if (itr->tag != tagName)
+            continue;
+        
+        vec.push_back(itr);
+        
+        itr = itr->nextSibling;
+    }
+    
+    return vec;
+}
+
+XMLNode::NodeVec XMLNode::getElementsByAttrName(const std::string& attrName)
+{
+    NodeVec vec;
+    
+    XMLNode * itr = firstChild;
+    
+    while (itr != 0)
+    {
+        if (! findAttr(attrName))
+            continue;
+        
+        vec.push_back(itr);
+        
+        itr = itr->nextSibling;
+    }
+    
+    return vec;
+}
+
+bool XMLNode::insertChild(XMLNode* childOfThisNode, XMLNode * node)
+{
+    if (childOfThisNode == 0 ||
+        childOfThisNode->parent != this)
+        return false;
+    
+    // connect the node with the child
+    node->nextSibling = childOfThisNode;
+    childOfThisNode->prevSibling = node;
+    
+    // if there was a previous sibling, connect it with the node
+    if( childOfThisNode->prevSibling != 0)
+    {
+        node->prevSibling = childOfThisNode->prevSibling;
+        
+        childOfThisNode->prevSibling->nextSibling = node;
+    }
+    
+    return true;
+}
+
+bool XMLNode::removeChild(XMLNode* childOfThisNode)
+{
+    // check if valid node
+    if (childOfThisNode == 0 ||
+        childOfThisNode->parent != this)
+        return false;
+    
+    // if there is a previous sibling
+    // and a next, connect those two
+    if (childOfThisNode->prevSibling != 0 &&
+        childOfThisNode->nextSibling != 0)
+    {
+        // connect the previous and the next
+        childOfThisNode->prevSibling->nextSibling =
+        childOfThisNode->nextSibling;
+        
+        childOfThisNode->nextSibling->prevSibling =
+        childOfThisNode->prevSibling;
+    }
+    
+    // if this is the last child of a node
+    // connect it to the previous if there
+    // is one, else make the parent's last
+    // child pointer be 0
+    if (childOfThisNode == lastChild)
+    {
+        if (childOfThisNode->prevSibling != 0)
+        {
+            lastChild = childOfThisNode->prevSibling;
+            lastChild->nextSibling = 0;
+        }
+        
+        else lastChild = 0;
+    }
+    
+    // same as for last child, but for previous child
+    if (childOfThisNode == firstChild)
+    {
+        if (childOfThisNode->nextSibling != 0)
+        {
+            firstChild = childOfThisNode->nextSibling;
+            firstChild->prevSibling = 0;
+        }
+        
+        else firstChild = 0;
+    }
+    
+    delete childOfThisNode;
+    
+    return true;
 }
 
 XMLParser::StrVec XMLParser::_parse(str_cItr begin, str_cItr end)
@@ -132,6 +278,26 @@ XMLParser::StrVec XMLParser::_parse(str_cItr begin, str_cItr end)
     return vec;
 }
 
+void XMLNode::prependChild(XMLNode *node)
+{
+    if (node == this)
+        throw ParseError("Prepending Node to self");
+    
+    node->parent = this;
+    
+    if (firstChild != 0)
+    {
+        firstChild->prevSibling = node;
+        
+        node->nextSibling = firstChild;
+    }
+    
+    firstChild = node;
+    
+    if (lastChild == 0)
+        lastChild = firstChild;
+}
+
 void XMLNode::appendChild(XMLNode *node)
 {
     if (node == this)
@@ -150,28 +316,6 @@ void XMLNode::appendChild(XMLNode *node)
     
     if (firstChild == 0)
         firstChild = lastChild;
-}
-
-void XMLNode::deleteFirstChild()
-{
-    
-    XMLNode * node = 0;
-    
-    if (firstChild->nextSibling != 0)
-        node = firstChild->nextSibling;
-    
-    delete firstChild;
-    
-    firstChild = node;
-}
-
-void XMLNode::deleteLastChild()
-{
-    XMLNode * node = lastChild->prevSibling;
-    
-    delete lastChild;
-    
-    lastChild = node;
 }
 
 std::string XMLParser::splitOne(XMLParser::str_cItr begin, XMLParser::str_cItr end) const
@@ -194,7 +338,7 @@ std::string XMLParser::condense(str_cItr begin, str_cItr end) const
     return s;
 }
 
-XMLNode::AttrMap XMLParser::getAttrs(str_cItr begin, str_cItr end)
+XMLNode::AttrMap XMLParser::getAttrs(str_cItr begin, str_cItr end) const
 {
     XMLNode::AttrMap attrs;
     
@@ -242,16 +386,6 @@ bool XMLParser::isSelfClosing(str_cItr begin, str_cItr end) const
     return *end == '/';
 }
 
-XMLParser::StrVec_cItr XMLParser::findClosingTag(str_cItr tagBegin, str_cItr tagEnd,
-                                                 StrVec_cItr vecBegin, StrVec_cItr vecEnd) const
-{
-    while (vecBegin != vecEnd &&
-           ! (tagEnd - tagBegin > 2 && *tagBegin == '/'))
-          ++vecBegin;
-    
-    return vecBegin;
-}
-
 XMLNode * XMLParser::_makeNode(str_cItr begin, str_cItr end, bool docHead)
 {
     XMLParser::str_cItr i,j;
@@ -285,34 +419,40 @@ XMLNode * XMLParser::_makeNode(str_cItr begin, str_cItr end, bool docHead)
     
     node->selfClosed = isSelfClosing(curr.begin(), curr.end());
     
-    str_cItr tBegin = node->tag.begin();
-    str_cItr tEnd = node->tag.end();
-    
-    node->isClosing = (tEnd - tBegin > 2 && *tBegin == '/');
-    
     return node;
+}
+
+std::string XMLParser::strip(str_cItr begin, str_cItr end) const
+{
+    while (begin != end && ::isspace(*begin)) ++begin;
+    
+    while (end != begin && ( ::isspace(*end) || *end == '\0' )) --end;
+    
+    return std::string(begin,++end);
 }
 
 XMLParser::StrVec_cItr XMLParser::_makeNodeTree(StrVec_cItr itr, StrVec_cItr end, XMLNode * parent)
 {
     if (std::find(itr->begin(), itr->end(), '<') == itr->end())
-        parent->data += *itr;
+        parent->data += strip(itr->begin(), itr->end());
     
     else
     {
         XMLNode * node;
-        bool isClosingOfPar;
         
         node = _makeNode(itr->begin(), itr->end());
         
-        isClosingOfPar = node->isClosing &&
-                         std::equal(node->tag.begin() + 1, node->tag.end() , parent->tag.begin());
+        bool isClosing = node->tag.end() - node->tag.begin() > 2 &&
+                         *(node->tag.begin()) == '/';
         
         if (node->selfClosed)
             parent->selfClosed = true;
         
-        else if (node->isClosing)
+        else if (isClosing)
         {
+            bool isClosingOfPar = std::equal(node->tag.begin() + 1,
+                                             node->tag.end() , parent->tag.begin());
+            
             if (isClosingOfPar)
             {
                 if (parent->isClosed)
@@ -326,6 +466,7 @@ XMLParser::StrVec_cItr XMLParser::_makeNodeTree(StrVec_cItr itr, StrVec_cItr end
         
         else
         {
+            // append node to current parent
             parent->appendChild(node);
             
             while (! node->isClosed)
@@ -333,7 +474,7 @@ XMLParser::StrVec_cItr XMLParser::_makeNodeTree(StrVec_cItr itr, StrVec_cItr end
                 itr = _makeNodeTree(++itr, end, node);
                 
                 if (itr == end)
-                    throw ParseError("Could not find matchin closing parantheses");
+                    throw ParseError("Could not find matching closing tag!");
             }
         }
     }
@@ -341,18 +482,105 @@ XMLParser::StrVec_cItr XMLParser::_makeNodeTree(StrVec_cItr itr, StrVec_cItr end
     return itr;
 }
 
-void XMLParser::_deleteTree(XMLNode * root)
+std::string XMLParser::_nodeToString(const XMLNode *node, std::string indent, bool docHead) const
 {
-    while (root->firstChild != 0)
-        _deleteTree(root->firstChild);
+    std::string str;
     
-    if (root->parent != 0)
-        root->parent->deleteFirstChild();
+    if (node != 0)
+    {
+        str = "<";
+        
+        if (docHead) str += "?";
+        
+        str += node->tag;
+        
+        for (XMLNode::AttrMap::const_iterator itr = node->attrs.begin(), end = node->attrs.end();
+             itr != end;
+             ++itr)
+        {
+            str += " " + itr->first + "=\"" + itr->second + "\"";
+        }
+        
+        if (docHead) str += "?";
+        
+        if (node->selfClosed) str += "/";
+        
+        str += ">";
+        
+        str = indent + str + "\n";
+        
+        if (node->hasData())
+            str += indent + node->data + "\n";
+    }
     
-    else delete root;
+    return str;
+}
+
+std::string XMLParser::_treeToString(const XMLNode * root, std::string& str, std::string indent) const
+{
+    if (root != 0)
+    {
+        std::string nodeStr = _nodeToString(root,indent);
+        
+        str += nodeStr;
+        
+        if (root->hasChildren())
+            _treeToString(root->firstChild, str,indent + "\t");
+        
+        if (! root->selfClosed)
+        {
+            if (! root->hasChildren() && nodeStr.size() <= 50)
+            {
+                std::string::const_iterator i = std::find(str.rbegin(), str.rend(), '>').base() - 1;
+                
+                while (i != str.end())
+                    if (*i == '\n' || *i == '\t')
+                        i = str.erase(i++);
+                    else ++i;
+                
+            } else str += indent;
+            
+            str += "</" + root->tag + ">\n";
+        }
+        
+        if (! root->isLastChild())
+            _treeToString(root->nextSibling, str,indent);
+    }
+    
+    return str;
+}
+
+void XMLParser::saveToDiffFile(XMLNode * root, const std::string& fname)
+{
+    std::string treeStr;
+    
+    if (_hasHeader)
+        treeStr = _nodeToString(root,"",true);
+    
+    _treeToString(root->firstChild,treeStr);
+    
+    std::ofstream outFile(fname);
+    
+    outFile.write(treeStr.c_str(), treeStr.size());
+    
+    _saved = true;
+}
+
+void XMLParser::_deleteTree(XMLNode * node)
+{
+    while (node->hasChildren())
+        _deleteTree(node->lastChild);
+    
+    if (node->parent != 0)
+        node->parent->removeChild(node);
+    
+    else delete node;
 }
 
 XMLParser::~XMLParser()
 {
+    if (! _saved)
+        saveToSameFile(_root);
+    
     _deleteTree(_root);
 }

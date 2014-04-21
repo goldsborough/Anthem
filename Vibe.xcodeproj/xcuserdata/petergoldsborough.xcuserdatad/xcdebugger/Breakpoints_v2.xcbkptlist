@@ -596,92 +596,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Include/Global/Parser.cpp"
-            timestampString = "419711660.153682"
+            timestampString = "419789226.305808"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "356"
-            endingLineNumber = "356"
+            startingLineNumber = "582"
+            endingLineNumber = "582"
             landmarkName = "XMLParser::~XMLParser()"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Include/Global/Parser.cpp"
-            timestampString = "419698382.099134"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "97"
-            endingLineNumber = "97"
-            landmarkName = "XMLParser::open(const std::string&amp; fname)"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Include/Global/Parser.cpp"
-            timestampString = "419694536.543605"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "74"
-            endingLineNumber = "74"
-            landmarkName = "XMLParser::open(const std::string&amp; fname)"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Include/Global/Parser.cpp"
-            timestampString = "419711121.921411"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "346"
-            endingLineNumber = "346"
-            landmarkName = "XMLParser::_deleteTree(XMLNode * root)"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Include/Global/Parser.cpp"
-            timestampString = "419708674.397487"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "137"
-            endingLineNumber = "137"
-            landmarkName = "XMLNode::appendChild(XMLNode *node)"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Include/Global/Parser.cpp"
-            timestampString = "419711121.921411"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "160"
-            endingLineNumber = "160"
-            landmarkName = "XMLNode::deleteFirstChild()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -692,12 +612,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Include/Global/Parser.cpp"
-            timestampString = "419711121.921411"
+            timestampString = "419787425.116057"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "170"
-            endingLineNumber = "170"
-            landmarkName = "XMLNode::deleteLastChild()"
+            startingLineNumber = "63"
+            endingLineNumber = "63"
+            landmarkName = "XMLParser::open(const std::string&amp; fname)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -708,11 +628,27 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Include/Global/Parser.cpp"
-            timestampString = "419711121.921411"
+            timestampString = "419789226.305808"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "179"
-            endingLineNumber = "179"
+            startingLineNumber = "571"
+            endingLineNumber = "571"
+            landmarkName = "XMLParser::_deleteTree(XMLNode * node)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Include/Global/Parser.cpp"
+            timestampString = "419789138.147617"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "323"
+            endingLineNumber = "323"
             landmarkName = "XMLParser::splitOne(XMLParser::str_cItr begin, XMLParser::str_cItr end)"
             landmarkType = "5">
          </BreakpointContent>
@@ -724,11 +660,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Include/Global/Parser.cpp"
-            timestampString = "419711121.921411"
+            timestampString = "419789138.147617"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "190"
-            endingLineNumber = "190"
+            startingLineNumber = "334"
+            endingLineNumber = "334"
             landmarkName = "XMLParser::condense(str_cItr begin, str_cItr end)"
             landmarkType = "5">
          </BreakpointContent>
@@ -740,27 +676,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Include/Global/Parser.cpp"
-            timestampString = "419711121.921411"
+            timestampString = "419789138.147617"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "199"
-            endingLineNumber = "199"
-            landmarkName = "XMLParser::getAttrs(str_cItr begin, str_cItr end)"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Include/Global/Parser.cpp"
-            timestampString = "419711121.921411"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "257"
-            endingLineNumber = "257"
+            startingLineNumber = "391"
+            endingLineNumber = "391"
             landmarkName = "XMLParser::_makeNode(str_cItr begin, str_cItr end, bool docHead)"
             landmarkType = "5">
          </BreakpointContent>
@@ -768,7 +688,7 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "No"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Src/Global/main.cpp"
@@ -784,16 +704,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "No"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Include/Global/Parser.cpp"
-            timestampString = "419698382.099134"
+            timestampString = "419789138.147617"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "105"
-            endingLineNumber = "105"
-            landmarkName = "XMLParser::_parse(str_cItr begin, str_cItr end)"
+            startingLineNumber = "436"
+            endingLineNumber = "436"
+            landmarkName = "XMLParser::_makeNodeTree(StrVec_cItr itr, StrVec_cItr end, XMLNode * parent)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -804,12 +724,60 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Include/Global/Parser.cpp"
-            timestampString = "419711121.921411"
+            timestampString = "419789226.305808"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "298"
-            endingLineNumber = "298"
-            landmarkName = "XMLParser::_makeNodeTree(StrVec_cItr itr, StrVec_cItr end, XMLNode * parent)"
+            startingLineNumber = "585"
+            endingLineNumber = "585"
+            landmarkName = "XMLParser::~XMLParser()"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Include/Global/Parser.cpp"
+            timestampString = "419789138.147617"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "521"
+            endingLineNumber = "521"
+            landmarkName = "XMLParser::_treeToString(const XMLNode * root, std::string&amp; str, std::string indent)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Include/Global/Parser.cpp"
+            timestampString = "419789226.305808"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "558"
+            endingLineNumber = "558"
+            landmarkName = "XMLParser::saveToDiffFile(XMLNode * root, const std::string&amp; fname)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Include/Global/Parser.cpp"
+            timestampString = "419789138.147617"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "487"
+            endingLineNumber = "487"
+            landmarkName = "XMLParser::_nodeToString(const XMLNode *node, std::string indent, bool docHead)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -820,12 +788,184 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Include/Global/Parser.cpp"
-            timestampString = "419711660.153682"
+            timestampString = "419789138.147617"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "357"
-            endingLineNumber = "357"
-            landmarkName = "XMLParser::~XMLParser()"
+            startingLineNumber = "98"
+            endingLineNumber = "98"
+            landmarkName = "XMLParser::open(const std::string&amp; fname)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Include/Global/Parser.cpp"
+            timestampString = "419789138.147617"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "509"
+            endingLineNumber = "509"
+            landmarkName = "XMLParser::_nodeToString(const XMLNode *node, std::string indent, bool docHead)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Include/Global/Parser.cpp"
+            timestampString = "419789138.147617"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "531"
+            endingLineNumber = "531"
+            landmarkName = "XMLParser::_treeToString(const XMLNode * root, std::string&amp; str, std::string indent)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Include/Global/Parser.cpp"
+            timestampString = "419789138.147617"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "540"
+            endingLineNumber = "540"
+            landmarkName = "XMLParser::_treeToString(const XMLNode * root, std::string&amp; str, std::string indent)"
+            landmarkType = "5">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "XMLParser::_treeToString(XMLNode const*, std::__1::basic_string&lt;char, std::__1::char_traits&lt;char&gt;, std::__1::allocator&lt;char&gt; &gt;&amp;, std::__1::basic_string&lt;char, std::__1::char_traits&lt;char&gt;, std::__1::allocator&lt;char&gt; &gt;) const"
+                  moduleName = "Vibe"
+                  urlString = "file:///Users/petergoldsborough/Documents/vibe/Include/Global/Parser.cpp"
+                  timestampString = "419780322.367045"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "515"
+                  endingLineNumber = "515"
+                  offsetFromSymbolStart = "5051">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "XMLParser::_treeToString(XMLNode const*, std::__1::basic_string&lt;char, std::__1::char_traits&lt;char&gt;, std::__1::allocator&lt;char&gt; &gt;&amp;, std::__1::basic_string&lt;char, std::__1::char_traits&lt;char&gt;, std::__1::allocator&lt;char&gt; &gt;) const"
+                  moduleName = "Vibe"
+                  urlString = "file:///Users/petergoldsborough/Documents/vibe/Include/Global/Parser.cpp"
+                  timestampString = "419780322.367256"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "515"
+                  endingLineNumber = "515"
+                  offsetFromSymbolStart = "5056">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Include/Global/Parser.cpp"
+            timestampString = "419789138.147617"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "541"
+            endingLineNumber = "541"
+            landmarkName = "XMLParser::_treeToString(const XMLNode * root, std::string&amp; str, std::string indent)"
+            landmarkType = "5">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "XMLParser::_treeToString(XMLNode const*, std::__1::basic_string&lt;char, std::__1::char_traits&lt;char&gt;, std::__1::allocator&lt;char&gt; &gt;&amp;, std::__1::basic_string&lt;char, std::__1::char_traits&lt;char&gt;, std::__1::allocator&lt;char&gt; &gt;) const"
+                  moduleName = "Vibe"
+                  urlString = "file:///Users/petergoldsborough/Documents/vibe/Include/Global/Parser.cpp"
+                  timestampString = "419780752.654268"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "513"
+                  endingLineNumber = "513"
+                  offsetFromSymbolStart = "4995">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "XMLParser::_treeToString(XMLNode const*, std::__1::basic_string&lt;char, std::__1::char_traits&lt;char&gt;, std::__1::allocator&lt;char&gt; &gt;&amp;, std::__1::basic_string&lt;char, std::__1::char_traits&lt;char&gt;, std::__1::allocator&lt;char&gt; &gt;) const"
+                  moduleName = "Vibe"
+                  urlString = "file:///Users/petergoldsborough/Documents/vibe/Include/Global/Parser.cpp"
+                  timestampString = "419780752.654556"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "513"
+                  endingLineNumber = "513"
+                  offsetFromSymbolStart = "5000">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Include/Global/Parser.cpp"
+            timestampString = "419789226.305808"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "561"
+            endingLineNumber = "561"
+            landmarkName = "XMLParser::saveToDiffFile(XMLNode * root, const std::string&amp; fname)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Include/Global/Parser.cpp"
+            timestampString = "419789138.147617"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "427"
+            endingLineNumber = "427"
+            landmarkName = "XMLParser::strip(str_cItr begin, str_cItr end)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Include/Global/Parser.cpp"
+            timestampString = "419789138.147617"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "106"
+            endingLineNumber = "106"
+            landmarkName = "XMLParser::isHeader(str_cItr begin, str_cItr end)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
