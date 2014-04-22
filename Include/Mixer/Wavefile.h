@@ -25,9 +25,6 @@ public:
     
     Wavefile(unsigned char ch = 2);
     
-    
-    // RAII-compliant :)
-    
     ~Wavefile(){ f.close(); delete end_buff; };
     
     void write_wav(SampleQueue& smplQ, std::string fname = "");

@@ -14,10 +14,3 @@ void AudioGenUnit::setWT(const int mode)
     _mode = mode;
     _WT = wavetable.getWaveform(_mode);
 }
-
-void AudioGenUnit::setWT(double* wt)
-{
-    _mode = Wavetable::USER;
-    
-    _WT = wt;
-}

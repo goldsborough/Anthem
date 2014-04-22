@@ -32,8 +32,6 @@ public:
     
     virtual void setWT(const int mode);
     
-    virtual void setWT(double* wt);
-    
     virtual ~AudioGenUnit() {}
     
 protected:

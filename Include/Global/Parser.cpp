@@ -8,8 +8,66 @@
 
 #include "Parser.h"
 #include "Errors.h"
+#include "Global.h"
 #include <fstream>
 #include <iostream>
+
+std::string strip(str_cItr begin, str_cItr end)
+{
+    while (begin != end && ::isspace(*begin)) ++begin;
+    
+    while (end != begin && ( ::isspace(*end) || *end == '\0' )) --end;
+    
+    return std::string(begin,++end);
+}
+
+std::vector<std::string> split(str_cItr begin, str_cItr end)
+{
+    std::vector<std::string> vec;
+    
+    str_cItr j = begin;
+    
+    while (j != end)
+    {
+        begin = std::find_if_not(j, end, ::isspace);
+        
+        j = std::find_if(begin,end,::isspace);
+        
+        vec.push_back(std::string(begin,j));
+    }
+    
+    return vec;
+}
+
+std::string splitOne(str_cItr begin, str_cItr end)
+{
+    str_cItr i,j;
+    
+    i = std::find_if_not(begin, end, ::isspace);
+    
+    j = std::find_if(i, end, ::isspace);
+    
+    return std::string(i,j);
+}
+
+std::string condense(str_cItr begin, str_cItr end)
+{
+    std::string s(begin,end);
+    
+    s.erase(std::remove_if(s.begin(), s.end(), ::isspace),s.end());
+    
+    return s;
+}
+
+std::string join(vec_cItr begin, vec_cItr end)
+{
+    std::string s;
+    
+    while (begin != end)
+        s += *begin++;
+    
+    return s;
+}
 
 void TextParser::open(const std::string& fname)
 {
@@ -25,34 +83,92 @@ void TextParser::open(const std::string& fname)
     std::string s;
     
     while (getline(file, s))
-        if (! s.empty() && ! isspace(s[0]) && s[0] != '#')
-            _lines.push_back(s);
+        _file.push_back(split(s.begin(), s.end()));
     
-    _curr = _lines.begin();
-
+    _currLine = _file.begin();
+    
+    _currWord = _currLine->begin();
 }
 
-bool TextParser::readItem(std::string& str)
+std::vector<std::string> TextParser::readAllItems()
 {
-    if (! _open)
-        throw FileNotOpenError();
+    wordVec vec;
     
-    if (_curr++ != _lines.end())
+    for (lineItr line = _file.begin(), fileEnd = _file.end();
+         line != fileEnd;
+         ++line)
     {
-        str = *_curr;
-        return true;
+        if (line->empty())
+            continue;
+        
+        std::string w = *(line->begin());
+        
+        if (w.empty())
+            continue;
+        
+        w = condense(w.begin(),w.end());
+        
+        // skip comment and empty lines
+        if (w[0] == '#')
+            continue;
+        
+        for (wordItr word = line->begin(), lineEnd = line->end();
+             word != lineEnd;
+             ++word)
+        {
+            vec.push_back(*word);
+        }
     }
     
-    return false;
-
+    
+    return vec;
 }
 
-std::vector<std::string> TextParser::readAll()
+std::vector<std::string> readAllLines();
+
+double * VibeWTParser::readWT(const std::string &fname)
 {
-    if (! _open)
+    
+    std::ifstream file(fname);
+    
+    if (! file.is_open())
+        throw FileNotOpenError("Could not find wavetable file: " + fname);
+    
+    if (! file.good())
+        throw FileOpenError("Error opening wavetable: " + fname);
+    
+    char id[4];
+    
+    file.read(id, 4);
+    
+    if (strncmp(id, "VIBE", 4) != 0)
+        throw ParseError("Invalid signature for Vibe file!");
+    
+    int len = global.wtLen + 1;
+    int size = len * sizeof(double);
+    
+    double * wt = new double [len];
+    
+    file.read(reinterpret_cast<char*>(wt), size);
+    
+    return wt;
+}
+
+void VibeWTParser::writeWT(const std::string &fname, double * wt)
+{
+    std::ofstream file(fname);
+    
+    if (! file.is_open())
         throw FileNotOpenError();
     
-    return _lines;
+    if (! file.good())
+        throw FileOpenError();
+    
+    file.write("VIBE", 4);
+    
+    int size = (global.wtLen + 1) * sizeof(double);
+    
+    file.write(reinterpret_cast<char*>(wt), size);
 }
 
 XMLNode * XMLParser::open(const std::string& fname)
@@ -318,31 +434,11 @@ void XMLNode::appendChild(XMLNode *node)
         firstChild = lastChild;
 }
 
-std::string XMLParser::splitOne(XMLParser::str_cItr begin, XMLParser::str_cItr end) const
-{
-    XMLParser::str_cItr i,j;
-    
-    i = std::find_if_not(begin, end, ::isspace);
-    
-    j = std::find_if(i, end, ::isspace);
-    
-    return std::string(i,j);
-}
-
-std::string XMLParser::condense(str_cItr begin, str_cItr end) const
-{
-    std::string s(begin,end);
-    
-    s.erase(std::remove_if(s.begin(), s.end(), ::isspace),s.end());
-
-    return s;
-}
-
 XMLNode::AttrMap XMLParser::getAttrs(str_cItr begin, str_cItr end) const
 {
     XMLNode::AttrMap attrs;
     
-    XMLParser::str_cItr j;
+    str_cItr j;
     
     j = begin;
     
@@ -388,7 +484,7 @@ bool XMLParser::isSelfClosing(str_cItr begin, str_cItr end) const
 
 XMLNode * XMLParser::_makeNode(str_cItr begin, str_cItr end, bool docHead)
 {
-    XMLParser::str_cItr i,j;
+    str_cItr i,j;
     
     i = std::find(begin, end, '<');
     
@@ -420,15 +516,6 @@ XMLNode * XMLParser::_makeNode(str_cItr begin, str_cItr end, bool docHead)
     node->selfClosed = isSelfClosing(curr.begin(), curr.end());
     
     return node;
-}
-
-std::string XMLParser::strip(str_cItr begin, str_cItr end) const
-{
-    while (begin != end && ::isspace(*begin)) ++begin;
-    
-    while (end != begin && ( ::isspace(*end) || *end == '\0' )) --end;
-    
-    return std::string(begin,++end);
 }
 
 XMLParser::StrVec_cItr XMLParser::_makeNodeTree(StrVec_cItr itr, StrVec_cItr end, XMLNode * parent)
@@ -577,7 +664,7 @@ void XMLParser::_deleteTree(XMLNode * node)
     else delete node;
 }
 
-XMLParser::~XMLParser()
+void XMLParser::close()
 {
     if (! _saved)
         saveToSameFile(_root);

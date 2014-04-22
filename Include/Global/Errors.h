@@ -13,20 +13,32 @@
 
 struct FileOpenError : public std::runtime_error
 {
-    FileOpenError() : std::runtime_error("Error opening / reading file!") {}
-    FileOpenError(std::string msg) : std::runtime_error(msg) {}
+    FileOpenError(std::string msg = "Error opening file!")
+    : std::runtime_error(msg) {}
+};
+
+struct FileReadError : public std::runtime_error
+{
+    FileReadError(std::string msg = "Error reading from file!")
+    : std::runtime_error(msg) {}
+};
+
+struct FileWriteError : public std::runtime_error
+{
+    FileWriteError(std::string msg = "Error writing to file!")
+    : std::runtime_error(msg) {}
 };
 
 struct FileNotOpenError : public std::runtime_error
 {
-    FileNotOpenError() : std::runtime_error("No file has been opened!") {}
-    FileNotOpenError(std::string msg) : std::runtime_error(msg) {}
+    FileNotOpenError(std::string msg = "No file has been opened!")
+    : std::runtime_error(msg) {}
 };
 
 struct ParseError : public std::runtime_error
 {
-    ParseError() : std::runtime_error("Error parsing file!") {}
-    ParseError(std::string msg) : std::runtime_error(msg) {}
+    ParseError(std::string msg = "Error parsing file!")
+    : std::runtime_error(msg) {}
 };
 
 #endif

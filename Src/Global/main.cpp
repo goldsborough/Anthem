@@ -19,7 +19,6 @@
 
 int main(int argc, const char * argv[])
 {
-    /*
     clock_t t = clock();
     
     Synthesizer synth;
@@ -28,10 +27,9 @@ int main(int argc, const char * argv[])
     
     uint32_t len = global.samplerate * 5;
     
-    Oscillator osc(Wavetable::SAW_2,freq);
+    Oscillator osc(0,freq);
     
     Mixer mixer(false,true);
-    
 
     for (int i = 0; i < len; i++)
     {
@@ -45,20 +43,6 @@ int main(int argc, const char * argv[])
     //while (getPassedTime(start) < 5);
 
     std::cout << "Total program duration: " << getPassedTime(t) << "\n";
-     
-    */
     
-    XMLParser parser;
-    XMLNode * node = parser.open("/Users/petergoldsborough/Documents/vibe/books.xml");
-    
-    XMLNode * newNode = new XMLNode;
-    
-    newNode->setTag("random");
-    newNode->setData("I adore chicken soup!");
-    newNode->addAttr("flavor", "chicken");
-    
-    node->getLastChild()->appendChild(newNode);
-    
-    parser.saveToDiffFile(node, "/Users/petergoldsborough/Documents/vibe/simple.xml");
 }
 

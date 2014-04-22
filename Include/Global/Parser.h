@@ -13,6 +13,21 @@
 #include <vector>
 #include <map>
 
+typedef std::string::iterator str_Itr;
+typedef std::string::const_iterator str_cItr;
+
+typedef std::vector<std::string>::const_iterator vec_cItr;
+
+std::string condense(str_cItr begin, str_cItr end);
+
+std::string strip(str_cItr begin, str_cItr end);
+
+std::vector<std::string> split(str_cItr begin, str_cItr end);
+
+std::string join(vec_cItr begin, vec_cItr end);
+
+std::string splitOne(str_cItr begin, str_cItr end);
+
 class TextParser
 {
     
@@ -21,23 +36,63 @@ public:
     TextParser() { };
     TextParser(const std::string& fname) { open(fname); }
     
+    ~TextParser() { close(); }
+    
     void open(const std::string& fname);
+    void close(){}
     
-    bool readItem(std::string&);
+    bool readWord(std::string& str);
+    bool readLine(std::string& str);
     
-    std::vector<std::string> readAll();
+    bool appendWord(const std::string& str);
+    bool appendLine(const std::string& str);
+    
+    bool insertWord(const std::string& str);
+    bool insertLine(const std::string& str);
+    
+    bool eraseWord();
+    bool eraseLine();
+    
+    bool replaceWord(const std::string& str);
+    bool replaceLine(const std::string& str);
+    
+    void resetWordItr()
+    { _currWord = _currLine->begin(); }
+    
+    void resetLineItr()
+    { _currLine = _file.begin(); }
+    
+    void moveWord(int count)
+    { std::advance(_currWord, count); }
+    
+    void moveLine(int count)
+    { std::advance(_currLine, count); }
+    
+    std::vector<std::string> readAllItems();
+    std::vector<std::string> readAllLines();
     
 private:
     
-    typedef std::vector<std::string> strVec;
+    typedef std::vector<std::string> wordVec;
+    typedef std::vector<std::vector<std::string>> lineVec;
     
-    strVec _lines;
+    typedef wordVec::iterator wordItr;
+    typedef lineVec::iterator lineItr;
     
-    strVec::const_iterator _curr;
+    lineVec _file;
+
+    wordItr _currWord;
+    lineItr _currLine;
     
     bool _open;
 };
 
+struct VibeWTParser
+{
+    double * readWT(const std::string& fname);
+    
+    void writeWT(const std::string& fname, double * wt);
+};
 
 class XMLNode
 {
@@ -146,9 +201,11 @@ public:
     XMLParser() { };
     XMLParser(const std::string& fname) { open(fname); }
     
-    ~XMLParser();
+    ~XMLParser() { close(); }
     
     XMLNode * open(const std::string& fname);
+    
+    void close();
     
     void saveToDiffFile(XMLNode * root, const std::string& fname);
     
@@ -159,7 +216,6 @@ private:
     typedef std::vector<std::string> StrVec;
     
     typedef StrVec::const_iterator StrVec_cItr;
-    typedef std::string::const_iterator str_cItr;
     
     XMLNode * _makeNode(str_cItr begin, str_cItr end, bool docHead = false);
     
@@ -169,13 +225,7 @@ private:
 
     bool isSelfClosing(str_cItr begin, str_cItr end) const;
     
-    std::string splitOne(str_cItr begin, str_cItr end) const;
-    
     XMLNode::AttrMap getAttrs(str_cItr begin, str_cItr end) const;
-    
-    std::string condense(str_cItr begin, str_cItr end) const;
-    
-    std::string strip(str_cItr begin, str_cItr end) const;
     
     template <class T>
     T lastNonSpace(T begin, T end);
