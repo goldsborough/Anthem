@@ -9,7 +9,7 @@
 #ifndef __Synth__LFO__
 #define __Synth__LFO__
 
-#include "ModUnit.h"
+#include "GenUnits.h"
 #include "Oscillator.h"
 #include "EnvSeg.h"
 
@@ -19,13 +19,13 @@ class XFadeUnit;
 
 struct LFO : public ModUnit
 {
-    LFO(const int wave = -1)
+    LFO(const int wave = 0)
     : osc(wave)
     { }
     
-    double tick(){ return osc.tick(); }
+    double tick() { return osc.tick(); }
     
-    double scaledTick() { return (osc.tick() + 1) / 2; }
+    void setAmp(const double& amp) { osc.setAmp(amp); }
     
     void setRate(double Hz) { osc.setFreq(Hz); }
     

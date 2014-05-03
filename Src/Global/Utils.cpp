@@ -39,14 +39,14 @@ unsigned short freqToNote(double freq)
     return 12 * log2( (freq / 440) ) + 49;
 }
 
-double centToFreq(double freq, int offset)
+double centToFreq(double baseFreq, int centOffset)
 {
-    return pow(2, offset / 1200) * freq;
+    return pow(2, centOffset / 1200) * baseFreq;
 }
 
-double semiToFreq(double freq, int offset)
+double semiToFreq(double baseFreq, int semiToneOffset)
 {
-    return pow(2, offset / 12) * freq;
+    return pow(2, semiToneOffset / 12) * baseFreq;
 }
 
 float getPassedTime(clock_t start)

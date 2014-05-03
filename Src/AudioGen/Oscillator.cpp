@@ -8,19 +8,16 @@
 
 #include "Oscillator.h"
 #include "Global.h"
+#include "Utils.h"
 #include "Wavetable.h"
 
 Oscillator::Oscillator(const int mode, double frq,
                        double amp, short phaseOffset)
+: _ind(0), _indIncr(0), _phaseOffset(0)
 {
     _amp = amp;
     
     _mode = mode;
-    
-    _ind = 0;
-    _indIncr = 0;
-    
-    _phaseOffset = 0;
     
     setPhaseOffset(phaseOffset);
     
@@ -28,6 +25,11 @@ Oscillator::Oscillator(const int mode, double frq,
     
     setFreq(frq);
 };
+
+void Oscillator::setFreqOffset(double Hz)
+{
+    _indIncr = global.tableIncr * Hz;
+}
 
 void Oscillator::setFreq(double Hz)
 {

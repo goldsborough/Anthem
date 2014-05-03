@@ -12,16 +12,11 @@
 #define PI 3.14159265358979
 #define twoPI 6.28318530717958
 
-#include <cstdlib>
 #include <ctime>
-#include <cmath>
-#include <stdexcept>
-#include <vector>
+#include <cstdlib>
 
-class Global
+struct Global
 {
-public:
-    
     void Init(const unsigned int smplr, const unsigned int wavetableLen)
     {
         samplerate = smplr;

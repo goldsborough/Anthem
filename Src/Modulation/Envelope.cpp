@@ -26,12 +26,12 @@ Envelope::Envelope(unsigned int delay_MS)
     setSegLevel(Envelope::ATK, 0.8);
     setSegLen(Envelope::ATK, 500);
     
-    setSegLevel(Envelope::A, 0.3);
-    setSegLen(Envelope::A, 1000);
+    setSegLevel(Envelope::A, 0.5);
+    setSegLen(Envelope::A, 250);
     setSegRate(Envelope::A, 0.1);
 
     setSegRate(Envelope::REL, 0.1);
-    setSegLen(Envelope::REL, 750);
+    setSegLen(Envelope::REL, 500);
     
     _hiddenConnect.setLen(_hiddenConnecterLen);
 }

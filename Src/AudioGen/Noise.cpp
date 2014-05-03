@@ -8,6 +8,7 @@
 
 #include "Noise.h"
 #include "Global.h"
+#include <cstdlib>
 
 double Noise::tick()
 {

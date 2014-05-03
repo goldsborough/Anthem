@@ -14,6 +14,16 @@ class Synthesizer
     
 public:
     
+    // Types of polyphony
+    
+    enum Priority
+    {
+        LAST,      // first voices are replaced by new ones
+        FIRST,     // a key must be released to add a new one
+        HIGHEST,   // lower pitches are released first
+        LOWEST     // higher pitches are released first
+    };
+    
     Synthesizer(unsigned int smplr = 44100, unsigned short wtLen = 4095);
     
     void process();

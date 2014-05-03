@@ -7,7 +7,41 @@
 //
 
 #include "GenUnits.h"
+#include "ModDock.h"
 #include "Wavetable.h"
+
+void GenUnit::setDockMasterDepth(docknum_t dockNum, double lvl)
+{ _mods[dockNum]->setMasterDepth(lvl); }
+
+void GenUnit::setDepth(docknum_t dockNum,
+                       index_t modNum,
+                       double dpth)
+{
+    _mods[dockNum]->setDepth(modNum, dpth);
+}
+
+void GenUnit::attachMod(docknum_t dockNum,
+                        index_t modNum,
+                        ModUnit* mod)
+{
+    _mods[dockNum]->attach(modNum, mod);
+}
+
+void GenUnit::detachMod(docknum_t dockNum,
+                        index_t modNum)
+{
+    _mods[dockNum]->detach(modNum);
+}
+
+GenUnit::~GenUnit()
+{
+    for (std::vector<ModDock*>::iterator itr = _mods.begin(), end = _mods.end();
+         itr != end;
+         ++itr)
+    {
+        delete *itr;
+    }
+}
 
 void AudioGenUnit::setWT(const int mode)
 {

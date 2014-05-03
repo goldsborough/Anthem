@@ -8,6 +8,8 @@
 
 #include "Crossfader.h"
 #include "Global.h"
+#include <stdexcept>
+#include <cmath>
 
 void XFadeUnit::setValue(char value)
 {

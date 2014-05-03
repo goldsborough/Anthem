@@ -10,9 +10,9 @@
 #include "LFO.h"
 #include "Global.h"
 #include "Wavetable.h"
+#include <cmath>
 
 #include <sstream>
-#include <iostream>
 
 // 60 seconds
 const unsigned long EnvSeg::_maxLen = 2646000;
@@ -291,7 +291,7 @@ double EnvSeg::tick()
     if (_modWave != Wavetable::NONE)
     {
         // modulated value
-        double modValue = _lfo->scaledTick() * ret;
+        double modValue = ret + _lfo->tick();
         
         // difference between modulated and unmodulated
         double diff = modValue - ret;

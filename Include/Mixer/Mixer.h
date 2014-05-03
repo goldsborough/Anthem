@@ -19,23 +19,10 @@ class Mixer
     
 public:
     
-    // Types of polyphony
-    
-    enum Priority
-    {
-        LAST,      // first voices are replaced by new ones
-        FIRST,     // a key must be released to add a new one
-        HIGHEST,   // lower pitches are released first
-        LOWEST     // higher pitches are released first
-    };
-    
     Mixer(bool directOut = true,
-          bool waveOut = false,
-          const Priority& priort = LAST);
+          bool waveOut = false);
     
     ~Mixer();
-    
-    void setPriority(const Priority& prt) { _priority = prt; }
     
     void setMasterAmp(const double amp) { _masterAmp = amp; }
     
@@ -59,8 +46,6 @@ private:
     
     bool _sendToWaveFile;
     bool _sendToDirectOutput;
-    
-    Priority _priority;
     
     SampleQueue  *  _sampleDataBuffer;
     

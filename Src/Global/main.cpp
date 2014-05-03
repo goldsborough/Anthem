@@ -7,13 +7,12 @@
 //
 
 #include "Synthesizer.h"
-#include "Wavetable.h"
 #include "Mixer.h"
 #include "Global.h"
-#include "Oscillator.h"
-#include "Wavefile.h"
+#include "Operator.h"
 #include "Utils.h"
-#include "Parser.h"
+#include "Envelope.h"
+#include "LFO.h"
 
 #include <iostream>
 
@@ -25,17 +24,27 @@ int main(int argc, const char * argv[])
     
     double freq = 440;
     
-    uint32_t len = global.samplerate * 5;
+    uint32_t len = global.samplerate * 3;
     
-    Oscillator osc(0,freq);
+    Operator op;
     
-    Mixer mixer(false,true);
+    op.addNote(freq);
+    
+    Mixer mixer(0,1);
+    
+    LFO lfo;
+    
+    lfo.setRate(4);
+    
+    op.attachMod(Operator::FREQ_SEMI, 0, &lfo);
+    
+    op.setDepth(Operator::FREQ_SEMI, 0, 0.5);
 
     for (int i = 0; i < len; i++)
     {
-        double val = osc.tick();
+        double t = op.tick();
         
-        mixer.processTick(val);
+        mixer.processTick(t);
     }
     
     mixer.play();
@@ -43,6 +52,6 @@ int main(int argc, const char * argv[])
     //while (getPassedTime(start) < 5);
 
     std::cout << "Total program duration: " << getPassedTime(t) << "\n";
-    
+ 
 }
 

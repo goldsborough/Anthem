@@ -10,7 +10,7 @@
 #include "Global.h"
 #include "Parser.h"
 #include <fstream>
-#include <iostream>
+#include <cmath>
 
 void Wavetable::Init(unsigned int wtLen)
 {
@@ -26,7 +26,7 @@ void Wavetable::Init(unsigned int wtLen)
         _tables.push_back( _readWavetable(i) );
      
      */
-    
+    /*
     VibeWTParser parser;
     
     partVec vec;
@@ -37,18 +37,20 @@ void Wavetable::Init(unsigned int wtLen)
     }
     
     parser.writeWT("/Users/petergoldsborough/Documents/vibe/Resources/Wavetables/saw64.vwt", genWave(vec,0.635));
-    
-    _tables.push_back( _readWavetable(16) );
+    */
+    _tables.push_back( _readWavetable(3) );
     
 }
 
 double * Wavetable::getWaveform(const int mode)
 {
+    if (mode == NONE)
+        return 0;
+    
     if (mode < 0 || mode >= _tables.size())
         throw std::out_of_range("Mode out of range");
     
-    if (mode != NONE)
-        return _tables[mode];
+    return _tables[mode];
     
     return 0;
 }
@@ -94,17 +96,45 @@ double * Wavetable::genWave(const partVec& partials,
     double * phase = new double [partials.size()];
     double * phaseIncr = new double [partials.size()];
     
+    /**********************************************************
+    *
+    *  The Lanczos sigma constant, aka sigma approximation,
+    *  is a method of minimizing the effect of the Gibbs
+    *  phenomenon, which leads to ripples and horns towards the
+    *  ends of additively synthesized waveforms. It is defined
+    *  as:
+    *
+    *  s = sin(x) / x
+    *
+    *  Where x is:
+    *
+    *  x = nπ / M
+    *
+    *  M being the total number of partials and n the current
+    *  partial number (the fundamental frequency is seen as
+    *  the first partial). π / M can be calculated
+    *  loop-invariantly and is then mulitplied by each partial
+    *  number, respectively.
+    *
+    **********************************************************/
+    
+    // constant sigma constant part
     double sigmaK = PI / partials.size();
+    
+    // variable part
     double sigmaV;
     
     // convert the binary bitwidth to decimal
     bitWidth = pow(2, bitWidth);
     
+    // fill the arrays with the respective partial values
     for (unsigned short p = 0; p < partials.size(); p++)
     {
         const Partial& partial = partials[p];
         
         phase[p] = partial.phaseOffs;
+        
+        // fundIncr is two π / tablelength
         phaseIncr[p] = _fundIncr * partial.num;
         
         amp[p] = partial.amp * masterAmp;
@@ -121,6 +151,7 @@ double * Wavetable::genWave(const partVec& partials,
     {
         double value = 0.0;
         
+        // do additive magic
         for (unsigned short p = 0; p < partials.size(); p++)
         {
             value += sin(phase[p]) * amp[p];

@@ -16,7 +16,6 @@ class Oscillator : public AudioGenUnit
     
 public:
     
-    
     Oscillator(const int mode = -1, double frq = 1,
                double amp = 1, short phaseOffset = 0);
     
@@ -24,7 +23,9 @@ public:
     
     void setFreq(double Hz);
     
-    void setFreqOffset(double offs) { setFreq(_freq + offs); }
+    double getFreq() { return _freq; }
+    
+    void setFreqOffset(double Hz);
     
     void setPhaseOffset(short degrees);
     

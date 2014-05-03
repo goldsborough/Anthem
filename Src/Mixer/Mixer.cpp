@@ -14,11 +14,8 @@
 #include "SampleData.h"
 
 Mixer::Mixer(bool directOut,
-             bool waveOut,
-             const Priority& priort)
-
+             bool waveOut)
             : _sendToDirectOutput(directOut),
-            _priority(priort),
             _sendToWaveFile(waveOut),
             _masterAmp(1)
 

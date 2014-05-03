@@ -9,7 +9,8 @@
 #ifndef __Synth__EnvSeg__
 #define __Synth__EnvSeg__
 
-#include "ModUnit.h"
+#include "GenUnits.h"
+#include <vector>
 
 class LFO;
 

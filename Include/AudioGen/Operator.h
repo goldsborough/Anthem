@@ -6,48 +6,48 @@
 //  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
 //
 
-#ifndef __Synth__Oscillator__
-#define __Synth__Oscillator__
+#ifndef __Synth__Operator__
+#define __Synth__Operator__
 
 #include "GenUnits.h"
 
-class Envelope;
 class Oscillator;
-class ModUnit;
 
 class Operator : public AudioGenUnit
 {
+    
 public:
     
-    Operator(const int md, const double& amp = 0.5);
-
+    enum ModDocks
+    {
+        AMP,
+        FREQ_SEMI,
+        FREQ_CENT
+    };
     
-    int getVoiceNumber(){ return _voiceNumber; };
+    Operator(const int md = 0, const double amp = 1);
     
-    void setFreqOffset(float offs);
+    ~Operator();
+    
+    double tick();
+    
+    void setSemis(double semis);
+    void setCents(double cents);
+    
+    void setWT (const int mode);
     
     void addNote(const double frq);
-    void remNote(int ind);
     
-    double tick()
-    {
-        return 0;
-    }
+    void relNote(index_t ind);
     
 private:
     
-    // vector?
+    typedef std::vector<Oscillator*> oscVec;
     
-    //std::vector<Oscillator> _voices;
+    oscVec _oscs;
     
-    /*!
-        @brief chicken soup
-    */
+    unsigned short _semis, _cents;
     
-    
-    int _voiceNumber = 0;
-    
-    float _freqOffset = 0.0;
 };
 
-#endif /* defined(__Synth__Oscillator__) */
+#endif /* defined(__Synth__Operator__) */
