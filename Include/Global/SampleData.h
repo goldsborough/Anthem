@@ -22,7 +22,7 @@ struct SampleData
     {}
     
     template <class T>
-    SampleData& operator*= (T value)
+    SampleData& operator*= (T& value)
     {
         left *= value;
         right *= value;
