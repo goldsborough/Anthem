@@ -1,0 +1,7 @@
+dependencies: /Users/petergoldsborough/Documents/Synth/Src/Mixer.cpp \
+  /Users/petergoldsborough/Documents/Synth/Include/Mixer.h \
+  /Users/petergoldsborough/Documents/Synth/Include/DirectOutput.h \
+  /Users/petergoldsborough/portaudio/include/portaudio.h \
+  /Users/petergoldsborough/Documents/Synth/Include/Wavefile.h \
+  /Users/petergoldsborough/Documents/Synth/Include/SampleData.h \
+  /Users/petergoldsborough/Documents/Synth/Include/Global.h

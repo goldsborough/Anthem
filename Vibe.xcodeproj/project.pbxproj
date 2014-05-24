@@ -23,7 +23,7 @@
 		7A03DA0A18FD7E9800BCF6A8 /* LFO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A03D9FB18FD7E9800BCF6A8 /* LFO.cpp */; };
 		7A2D749A18F5A7DF00A174CA /* libportaudio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A2D749918F5A7DF00A174CA /* libportaudio.a */; };
 		7A383E1018FF2E43009F435B /* Filter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A383E0F18FF2E43009F435B /* Filter.cpp */; };
-		7A383E1518FF56FF009F435B /* ModUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A383E1318FF56FF009F435B /* ModUnit.cpp */; };
+		7A383E1518FF56FF009F435B /* ModDock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A383E1318FF56FF009F435B /* ModDock.cpp */; };
 		7A6F20F6190309EA002183F8 /* Parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A6F20F4190309EA002183F8 /* Parser.cpp */; };
 		7A6F20F8190325EA002183F8 /* GenUnits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A6F20F7190325EA002183F8 /* GenUnits.cpp */; };
 /* End PBXBuildFile section */
@@ -60,7 +60,7 @@
 		7A03D9EA18FD7E9800BCF6A8 /* Noise.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Noise.cpp; sourceTree = "<group>"; };
 		7A03D9EB18FD7E9800BCF6A8 /* Operator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Operator.cpp; sourceTree = "<group>"; };
 		7A03D9EC18FD7E9800BCF6A8 /* Oscillator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Oscillator.cpp; sourceTree = "<group>"; };
-		7A03D9EE18FD7E9800BCF6A8 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = Src/Global/main.cpp; sourceTree = "<group>"; };
+		7A03D9EE18FD7E9800BCF6A8 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = Src/Global/main.cpp; sourceTree = "<group>"; usesTabs = 0; };
 		7A03D9EF18FD7E9800BCF6A8 /* Synthesizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Synthesizer.cpp; sourceTree = "<group>"; };
 		7A03D9F018FD7E9800BCF6A8 /* Utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Utils.cpp; sourceTree = "<group>"; };
 		7A03D9F118FD7E9800BCF6A8 /* Wavetable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Wavetable.cpp; sourceTree = "<group>"; };
@@ -76,8 +76,8 @@
 		7A383E0D18FEA8AC009F435B /* Vibe */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Vibe; sourceTree = BUILT_PRODUCTS_DIR; };
 		7A383E0F18FF2E43009F435B /* Filter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Filter.cpp; sourceTree = "<group>"; };
 		7A383E1218FF2E4C009F435B /* Filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Filter.h; sourceTree = "<group>"; };
-		7A383E1318FF56FF009F435B /* ModUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ModUnit.cpp; path = ../../Include/Modulation/ModUnit.cpp; sourceTree = "<group>"; };
-		7A383E1418FF56FF009F435B /* ModUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ModUnit.h; path = ../Modulation/ModUnit.h; sourceTree = "<group>"; };
+		7A383E1318FF56FF009F435B /* ModDock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ModDock.cpp; path = ../../Include/Modulation/ModDock.cpp; sourceTree = "<group>"; };
+		7A383E1418FF56FF009F435B /* ModDock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ModDock.h; path = ../Modulation/ModDock.h; sourceTree = "<group>"; };
 		7A623943190343B5001DC649 /* Errors.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Errors.h; sourceTree = "<group>"; };
 		7A6F20F4190309EA002183F8 /* Parser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Parser.cpp; path = ../../Include/Global/Parser.cpp; sourceTree = "<group>"; };
 		7A6F20F5190309EA002183F8 /* Parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Parser.h; sourceTree = "<group>"; };
@@ -122,7 +122,7 @@
 			isa = PBXGroup;
 			children = (
 				7A03D9D818FD7E9800BCF6A8 /* GenUnits.h */,
-				7A383E1418FF56FF009F435B /* ModUnit.h */,
+				7A383E1418FF56FF009F435B /* ModDock.h */,
 				7A03D9D918FD7E9800BCF6A8 /* Global.h */,
 				7A03D9DA18FD7E9800BCF6A8 /* SampleData.h */,
 				7A03D9DB18FD7E9800BCF6A8 /* Synthesizer.h */,
@@ -181,11 +181,11 @@
 			isa = PBXGroup;
 			children = (
 				7A6F20F7190325EA002183F8 /* GenUnits.cpp */,
-				7A6F20F4190309EA002183F8 /* Parser.cpp */,
-				7A383E1318FF56FF009F435B /* ModUnit.cpp */,
+				7A383E1318FF56FF009F435B /* ModDock.cpp */,
 				7A03D9EF18FD7E9800BCF6A8 /* Synthesizer.cpp */,
 				7A03D9F018FD7E9800BCF6A8 /* Utils.cpp */,
 				7A03D9F118FD7E9800BCF6A8 /* Wavetable.cpp */,
+				7A6F20F4190309EA002183F8 /* Parser.cpp */,
 			);
 			path = Global;
 			sourceTree = "<group>";
@@ -304,7 +304,7 @@
 				7A03D9FF18FD7E9800BCF6A8 /* main.cpp in Sources */,
 				7A383E1018FF2E43009F435B /* Filter.cpp in Sources */,
 				7A03DA0618FD7E9800BCF6A8 /* Wavefile.cpp in Sources */,
-				7A383E1518FF56FF009F435B /* ModUnit.cpp in Sources */,
+				7A383E1518FF56FF009F435B /* ModDock.cpp in Sources */,
 				7A03DA0A18FD7E9800BCF6A8 /* LFO.cpp in Sources */,
 				7A03D9FE18FD7E9800BCF6A8 /* Oscillator.cpp in Sources */,
 				7A03DA0718FD7E9800BCF6A8 /* Envelope.cpp in Sources */,

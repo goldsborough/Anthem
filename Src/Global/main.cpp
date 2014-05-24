@@ -13,6 +13,7 @@
 #include "Utils.h"
 #include "Envelope.h"
 #include "LFO.h"
+#include "Wavetable.h"
 
 #include <iostream>
 
@@ -32,14 +33,13 @@ int main(int argc, const char * argv[])
     
     Mixer mixer(0,1);
     
-    LFO lfo;
+    LFO lfo(WavetableDB::SAW_2);
     
-    lfo.setRate(4);
+   op.attachMod(Operator::FREQ_SEMI, 0, &lfo);
     
-    op.attachMod(Operator::FREQ_SEMI, 0, &lfo);
+   op.setDepth(Operator::FREQ_SEMI, 0, 0.5);
     
-    op.setDepth(Operator::FREQ_SEMI, 0, 0.5);
-
+    
     for (int i = 0; i < len; i++)
     {
         double t = op.tick();
