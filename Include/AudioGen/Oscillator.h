@@ -23,9 +23,9 @@ public:
     
     void setFreq(double Hz);
     
-    double getFreq() { return _freq; }
+    void setSemis(short semis, bool permanent = false);
     
-    void setFreqOffset(double Hz);
+    void setCents(short cents, bool permanent = false);
     
     void setPhaseOffset(short degrees);
     

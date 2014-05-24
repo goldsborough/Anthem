@@ -9,6 +9,8 @@
 #ifndef __Vibe__mParser__
 #define __Vibe__mParser__
 
+#include "Wavetable.h"
+
 #include <string>
 #include <vector>
 #include <map>
@@ -56,11 +58,17 @@ public:
     bool replaceWord(const std::string& str);
     bool replaceLine(const std::string& str);
     
-    void resetWordItr()
+    void toLineStart()
     { _currWord = _currLine->begin(); }
     
-    void resetLineItr()
+    void toFileStart()
     { _currLine = _file.begin(); }
+    
+    void toLineEnd()
+    { _currWord = _currLine->end(); }
+    
+    void toFileEnd()
+    { _currLine = _file.end(); }
     
     void moveWord(int count)
     { std::advance(_currWord, count); }
@@ -89,9 +97,9 @@ private:
 
 struct VibeWTParser
 {
-    double * readWT(const std::string& fname);
+    Wavetable readWT(const std::string& fname);
     
-    void writeWT(const std::string& fname, double * wt);
+    void writeWT(const std::string& fname, const Wavetable& wt);
 };
 
 class XMLNode

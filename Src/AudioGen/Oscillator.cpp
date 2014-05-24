@@ -21,14 +21,38 @@ Oscillator::Oscillator(const int mode, double frq,
     
     setPhaseOffset(phaseOffset);
     
-    _WT = wavetable.getWaveform(_mode);
+    _WT = wavetableDB.getWaveform(_mode);
     
     setFreq(frq);
 };
 
-void Oscillator::setFreqOffset(double Hz)
+void Oscillator::setSemis(short semis, bool permanent)
 {
-    _indIncr = global.tableIncr * Hz;
+    if (semis == 0) return;
+    
+    double newFreq = semiToFreq(_freq, semis);
+    
+    if (newFreq < global.nyquistLimit)
+    {
+        _indIncr = global.tableIncr * newFreq;
+        
+        if (permanent) _freq = newFreq;
+    }
+    
+}
+
+void Oscillator::setCents(short cents, bool permanent)
+{
+    if (cents == 0) return;
+    
+    double newFreq = centToFreq(_freq, cents);
+    
+    if (newFreq < global.nyquistLimit)
+    {
+        _indIncr = global.tableIncr * newFreq;
+        
+        if (permanent) _freq = newFreq;
+    }
 }
 
 void Oscillator::setFreq(double Hz)
@@ -66,18 +90,10 @@ void Oscillator::setPhaseOffset(short degrees)
 
 double Oscillator::tick()
 {
-    if (_mode == Wavetable::NONE)
+    if (_mode == WavetableDB::NONE)
         return 0;
     
-    int indexBase = (int) _ind;         // The truncated integer part
-    double indexFract = _ind - indexBase;    // The remaining fractional part
-    
-    // grab the two items in-between which the actual value lies
-    double value1 = _WT[indexBase];
-    double value2 = _WT[indexBase+1];
-    
-    // interpolate
-    double value = value1 + ((value2 - value1) * indexFract);
+    double value = _WT.interpolate(_ind);
     
     _ind += _indIncr;
     

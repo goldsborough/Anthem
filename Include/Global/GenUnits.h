@@ -10,6 +10,7 @@
 #define __Synth__GenUnits__
 
 #include <vector>
+#include "Wavetable.h"
 
 class ModDock;
 class ModUnit;
@@ -50,7 +51,6 @@ protected:
 
 class AudioGenUnit : public GenUnit
 {
-    
 public:
     
     virtual void setWT(const int mode);
@@ -59,12 +59,12 @@ public:
     
 protected:
     
-    double * _WT = 0;
+    Wavetable _WT;
     
     int _mode;
 };
 
-class ModUnit : public GenUnit
-{ public: virtual ~ModUnit() { } };
+struct ModUnit : public GenUnit
+{ virtual ~ModUnit() { } };
 
 #endif /* defined(__Synth__GenUnits__) */

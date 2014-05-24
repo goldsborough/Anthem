@@ -21,22 +21,29 @@ double ModDock::tick()
 {
     double dp = 0.0;
     
+    // if not in use, no need to tick
     if (_usedDocks == 0)
         return dp;
     
+    // gather all ticks from all modulation sources and
+    // add them together
     for (index_t i = 0; i < _dockSize; i++)
         if (_mods[i].mod)
             dp += _mods[i].mod->tick() * _mods[i].dpth;
     
-    return dp / _usedDocks * _masterDpth;
+    // get average modulation value and multiply
+    // by master depth
+    return (dp / _usedDocks) * _masterDpth;
 }
 
 double ModDock::checkAndTick(const double val,
                              const double base,
                              const double max)
 {
+    // get the offset value
     double t = val + (max * tick());
     
+    // do boundary checking
     if (t > max) t = max;
     
     else if (t < base) t = base;

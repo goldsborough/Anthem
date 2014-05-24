@@ -11,13 +11,13 @@
 #include "Wavetable.h"
 
 Global global;
-Wavetable wavetable;
+WavetableDB wavetableDB;
 
 Synthesizer::Synthesizer(unsigned int smplr, unsigned short wtLen)
 
 {
     global.Init(smplr,wtLen);
-    wavetable.Init(wtLen);
+    wavetableDB.Init(wtLen);
 }
 
 

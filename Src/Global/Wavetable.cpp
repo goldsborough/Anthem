@@ -9,150 +9,189 @@
 #include "Wavetable.h"
 #include "Global.h"
 #include "Parser.h"
+
+#include <string>
 #include <fstream>
 #include <cmath>
 
-void Wavetable::Init(unsigned int wtLen)
+
+
+
+#include <iostream>
+
+
+template <class T>
+LookupTable<T>::LookupTable(T * ptr, size_t size)
 {
-    _wtLength = wtLen;
-    _fundIncr = twoPI / _wtLength;
-    
-    TextParser textParser("/Users/petergoldsborough/Documents/vibe/Resources/Wavetables/wavetables.txt");
-    
-    _wtNames = textParser.readAllItems();
-    
-    /*
-    for (int i = 0; i < _wtNames.size(); i++)
-        _tables.push_back( _readWavetable(i) );
-     
-     */
-    /*
-    VibeWTParser parser;
-    
-    partVec vec;
-    
-    for (int i = 1; i <= 64; i++)
-    {
-        vec.push_back(Partial(i, 1.0/i));
-    }
-    
-    parser.writeWT("/Users/petergoldsborough/Documents/vibe/Resources/Wavetables/saw64.vwt", genWave(vec,0.635));
-    */
-    _tables.push_back( _readWavetable(3) );
-    
+    _data = ptr;
+    _size = size;
 }
 
-double * Wavetable::getWaveform(const int mode)
+template <class T>
+LookupTable<T>::LookupTable(const LookupTable<T>& other)
 {
-    if (mode == NONE)
-        return 0;
-    
-    if (mode < 0 || mode >= _tables.size())
-        throw std::out_of_range("Mode out of range");
-    
-    return _tables[mode];
-    
-    return 0;
-}
-
-
-void Wavetable::round(double& val, unsigned int bitWidth)
-{
-    double factor = 1.0/bitWidth;
-    
-    std::vector<double> vec;
-    
-    // Fill vector with all possible values
-    
-    for (double i = -1.0; i <= 1.0; i += factor) vec.push_back(i);
-    
-    // Find the first value that is bigger than the current num,
-    // then compute the midpoint between the current and the next
-    // value and see whether it is is bigger than or smaller than
-    // that and round appropriately
-    
-    for (uint32_t i = 0; i < vec.size() - 1; i++)
+    if (&other != this)
     {
-        if (val <= vec[i + 1])
-        {
-            double mid = vec[i] + (factor/2);
-            
-            if (val < mid) val = vec[i];
-
-            else val = vec[i + 1];
-
-            break;
-        }
+        _size = other._size; // use other's size
+        
+        // fill data with other's data
+        for (size_t i = 0; i < _size; ++i)
+        { _data[i] = other._data[i]; }
     }
 }
 
-double * Wavetable::genWave(const partVec& partials,
-                            double masterAmp, bool sigmaAprox,
-                            unsigned int bitWidth)
+template <class T>
+T LookupTable<T>::operator[] (const size_t ind) const
 {
-    double * wt = new double [_wtLength + 1];
+    if (! _data)
+        throw TableUninitializedError();
     
-    double * amp = new double [partials.size()];
-    double * phase = new double [partials.size()];
-    double * phaseIncr = new double [partials.size()];
+    if (ind >= _size)
+        throw TableLengthError();
+    
+    return _data[ind];
+}
+
+template <class T>
+LookupTable<T>& LookupTable<T>::operator= (const LookupTable<T>&  other)
+{
+    if (&other != this)
+    {
+        _size = other._size;
+        
+        // get rid of current data
+        delete [] _data;
+        
+        // copy other's data
+        for (size_t i = 0; i < _size; ++i)
+        { _data[i] = other._wt[i]; }
+    }
+    
+    return *this;
+}
+
+template <class T>
+T LookupTable<T>::interpolate(const double ind) const
+{
+    if (! _data)
+        throw TableUninitializedError();
+    
+    if (ind >= _size)
+        throw TableLengthError();
+    
+    int indexBase = (int) ind;         // The truncated integer part
+    double indexFract = ind - indexBase;    // The remaining fractional part
+    
+    // grab the two items in-between which the actual value lies
+    double value1 = _data[indexBase];
+    double value2 = _data[indexBase+1];
+    
+    // interpolate
+    double value = value1 + ((value2 - value1) * indexFract);
+    
+    return value;
+}
+
+
+void round(double& val, unsigned int bitWidth)
+{
+    double factor = 1.0 / bitWidth;
+    
+    double n = val / factor;
+    
+    int nFloor = (int) n;
+    
+    if (n > 0)
+    {
+        if (n - nFloor >= 0.5) nFloor++;
+    }
+    
+    else if (n + nFloor <= -0.5)
+        nFloor--;
+    
+    val = nFloor * factor;
+}
+
+
+template <class PartItr>
+Wavetable::Wavetable(PartItr start, PartItr end, size_t wtLen, double masterAmp,
+                     bool sigmaAprox, unsigned int bitWidth)
+
+: _refptr(new size_t(1))
+{
+    // calculate number of partials
+    size_t partNum = end - start;
+    
+    _data = new double [wtLen + 1];
+    
+    double * amp = new double [partNum];        // the amplitudes
+    double * phase = new double [partNum];      // the current phase
+    double * phaseIncr = new double [partNum];  // the phase increments
     
     /**********************************************************
-    *
-    *  The Lanczos sigma constant, aka sigma approximation,
-    *  is a method of minimizing the effect of the Gibbs
-    *  phenomenon, which leads to ripples and horns towards the
-    *  ends of additively synthesized waveforms. It is defined
-    *  as:
-    *
-    *  s = sin(x) / x
-    *
-    *  Where x is:
-    *
-    *  x = nπ / M
-    *
-    *  M being the total number of partials and n the current
-    *  partial number (the fundamental frequency is seen as
-    *  the first partial). π / M can be calculated
-    *  loop-invariantly and is then mulitplied by each partial
-    *  number, respectively.
-    *
-    **********************************************************/
+     *
+     *  The Lanczos sigma constant, aka sigma approximation,
+     *  is a method of minimizing the effect of the Gibbs
+     *  phenomenon, which leads to ripples and horns towards the
+     *  ends of additively synthesized waveforms. It is defined
+     *  as:
+     *
+     *  s = sin(x) / x
+     *
+     *  Where x is:
+     *
+     *  x = nπ / M
+     *
+     *  M being the total number of partials and n the current
+     *  partial number (the fundamental frequency is seen as
+     *  the first partial). π / M can be calculated
+     *  loop-invariantly and is then mulitplied by each partial
+     *  number, respectively.
+     *
+     **********************************************************/
     
     // constant sigma constant part
-    double sigmaK = PI / partials.size();
+    double sigmaK = PI / partNum;
     
     // variable part
     double sigmaV;
     
-    // convert the binary bitwidth to decimal
+    // convert the bit number to decimal
     bitWidth = pow(2, bitWidth);
     
+    // the fundamental increment of one period
+    // in radians
+    static double fundIncr = twoPI / wtLen;
+    
     // fill the arrays with the respective partial values
-    for (unsigned short p = 0; p < partials.size(); p++)
+    for (size_t p = 0; start != end; ++p, ++start)
     {
-        const Partial& partial = partials[p];
-        
-        phase[p] = partial.phaseOffs;
+        // initial phase
+        phase[p] = start->phaseOffs;
         
         // fundIncr is two π / tablelength
-        phaseIncr[p] = _fundIncr * partial.num;
+        phaseIncr[p] = fundIncr * start->num;
         
-        amp[p] = partial.amp * masterAmp;
+        // reduce amplitude if necessary
+        amp[p] = start->amp * masterAmp;
         
+        // apply sigma approximation conditionally
         if (sigmaAprox)
         {
-            sigmaV = sigmaK * partial.num;
+            // following the formula
+            sigmaV = sigmaK * start->num;
             
             amp[p] *= sin(sigmaV) / sigmaV;
         }
     }
     
-    for (unsigned int n = 0; n < _wtLength; n++)
+    // fill the wavetable
+    for (unsigned int n = 0; n < wtLen; n++)
     {
-        double value = 0.0;
+        double value = 0;
         
         // do additive magic
-        for (unsigned short p = 0; p < partials.size(); p++)
+        for (unsigned short p = 0; p < partNum; p++)
         {
             value += sin(phase[p]) * amp[p];
             
@@ -162,26 +201,126 @@ double * Wavetable::genWave(const partVec& partials,
                 phase[p] -= twoPI;
         }
         
+        // round if necessary
         if (bitWidth < 65536)
             round(value, bitWidth);
         
-        wt[n] = value;
+        _data[n] = value;
         
     }
     
     // Append the last item for interpolation
-    
-    wt[_wtLength] = wt[0];
+    _data[wtLen] = _data[0];
     
     delete [] phase;
     delete [] phaseIncr;
     delete [] amp;
-    
-    return wt;
-    
 }
 
-double* Wavetable::smoothSaw()
+Wavetable::Wavetable(const Wavetable& other)
+{
+    if (&other != this)
+    {
+        // copy data
+        _data = other._data;
+        _size = other._size;
+        
+        _refptr = other._refptr;
+        
+        // now one more instance is pointing to
+        // the same data
+        ++(*_refptr);
+    }
+}
+
+Wavetable& Wavetable::operator=(const Wavetable &other)
+{
+    if (&other != this)
+    {
+        // delete current data if this is the last
+        // instance pointing to this data
+        if (! --(*_refptr))
+        {
+            delete [] _data;
+            delete _refptr;
+        }
+        
+        // copy other's data
+        _data = other._data;
+        _size = other._size;
+        
+        _refptr = other._refptr;
+        
+        // one more pointing to this data now
+        ++(*_refptr);
+    }
+    
+    return *this;
+}
+
+Wavetable::~Wavetable()
+{
+    // disable base destructor
+    _baseDestructorEnabled = false;
+    
+    if (--(*_refptr) == 0)
+    {
+        delete [] _data;
+        delete _refptr;
+    }
+}
+
+Wavetable& Wavetable::makeUnique()
+{
+    if ((*_refptr) > 1)
+    {
+        --(*_refptr);
+        
+        _refptr = new size_t(1);
+        
+        double * temp = _data;
+        
+        _data = new double [_size];
+        
+        for (size_t i = 0; i < _size; ++i) _data[i] = temp[i];
+    }
+    
+    return *this;
+}
+
+void WavetableDB::Init(unsigned int wtLen)
+{
+    _wtLength = wtLen;
+    _fundIncr = twoPI / _wtLength;
+    
+    TextParser textParser("/Users/petergoldsborough/Documents/vibe/Resources/Wavetables/wavetables.txt");
+    
+    VibeWTParser wtParser;
+    
+    std::string fname;
+    
+    std::vector<std::string> names = textParser.readAllItems();
+    
+    for (int i = 0; i < names.size(); i++)
+    {
+        fname = "/Users/petergoldsborough/Documents/vibe/Resources/Wavetables/" + names[i] + ".vwt";
+        
+        _tables.push_back(wtParser.readWT(fname));
+    }
+    
+}
+Wavetable& WavetableDB::getWaveform(const int mode)
+{
+    if (mode == NONE)
+        return _noneTable;
+    
+    if (mode < 0 || mode >= _tables.size())
+        throw std::out_of_range("Mode out of range");
+    
+    return _tables[mode];
+}
+
+Wavetable WavetableDB::smoothSaw()
 {
     double* wt = new double[_wtLength + 1];
     
@@ -195,7 +334,7 @@ double* Wavetable::smoothSaw()
     double amp = 1;
     
     // The second part is measured in time, going from 0.9
-    // to 1 (of the wavetable period)
+    // to 1 (of the WavetableDB period)
     
     double ind = 0.9;
     
@@ -245,10 +384,10 @@ double* Wavetable::smoothSaw()
     
     wt[_wtLength] = wt[0];
     
-    return wt;
+    return Wavetable(wt,_wtLength);
 }
 
-double* Wavetable::smoothSquare()
+Wavetable WavetableDB::smoothSquare()
 {
     double* wt = new double[_wtLength + 1];
     
@@ -289,10 +428,10 @@ double* Wavetable::smoothSquare()
     
     wt[_wtLength] = wt[0];
     
-    return wt;
+    return Wavetable(wt,_wtLength);
 }
 
-double * Wavetable::directSquare()
+Wavetable WavetableDB::directSquare()
 {
     // the sample buffer
     double * wt = new double [_wtLength + 1];
@@ -316,10 +455,10 @@ double * Wavetable::directSquare()
     
     wt[_wtLength] = wt[0];
     
-    return wt;
+    return Wavetable(wt,_wtLength);
 }
 
-double * Wavetable::directSaw()
+Wavetable WavetableDB::directSaw()
 {
     // the sample buffer
     double * wt = new double [_wtLength];
@@ -341,10 +480,10 @@ double * Wavetable::directSaw()
     
     wt[_wtLength] = wt[0];
     
-    return wt;
+    return Wavetable(wt,_wtLength);
 }
 
-double* Wavetable::directTriangle()
+Wavetable WavetableDB::directTriangle()
 {
     double* wt = new double[_wtLength + 1];
     
@@ -373,10 +512,10 @@ double* Wavetable::directTriangle()
     
     wt[_wtLength] = wt[0];
     
-    return wt;
+    return Wavetable(wt,_wtLength);
 }
 
-double* Wavetable::genNoise()
+Wavetable WavetableDB::genNoise()
 {
     double * wt = new double[_wtLength + 1];
     
@@ -398,20 +537,5 @@ double* Wavetable::genNoise()
     
     wt[_wtLength] = wt[0];
     
-    return wt;
-}
-
-double * Wavetable::_readWavetable(const int waveNum)
-{
-    std::string fname = "/Users/petergoldsborough/Documents/vibe/Resources/Wavetables/" + _wtNames[waveNum] + ".vwt";
-    
-    VibeWTParser parser;
-    
-    return parser.readWT(fname);
-}
-
-Wavetable::~Wavetable()
-{
-     for (int i = 0; i < _tables.size(); i++)
-         delete [] _tables[i];
+    return Wavetable(wt,_wtLength);
 }

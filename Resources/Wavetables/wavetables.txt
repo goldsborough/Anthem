@@ -16,26 +16,26 @@
 #								#
 #################################################################
 
+sine
 sine_2
 sine_4
 sine_8
-sine
 
+square
 square_2
 square_4
 square_8
 square_16
 square_32
 square_64
-square
 
+saw
 saw_2
 saw_4
 saw_8
 saw_16
 saw_32
 saw_64
-saw
 
 triangle
 

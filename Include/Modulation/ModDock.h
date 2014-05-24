@@ -32,7 +32,8 @@ public:
     void setMasterDepth(depth_t dpth)
     { _masterDpth = dpth; }
     
-    bool inUse() { return (_usedDocks > 0 && _masterDpth > 0); }
+    bool inUse()
+    { return (_usedDocks > 0 && _masterDpth > 0); }
     
     void setDepth(index_t index, depth_t dpth);
     

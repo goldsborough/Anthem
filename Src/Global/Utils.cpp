@@ -46,7 +46,7 @@ double centToFreq(double baseFreq, int centOffset)
 
 double semiToFreq(double baseFreq, int semiToneOffset)
 {
-    return pow(2, semiToneOffset / 12) * baseFreq;
+    return pow(2, semiToneOffset / 12.0) * baseFreq;
 }
 
 float getPassedTime(clock_t start)

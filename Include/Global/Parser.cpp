@@ -126,9 +126,8 @@ std::vector<std::string> TextParser::readAllItems()
 
 std::vector<std::string> readAllLines();
 
-double * VibeWTParser::readWT(const std::string &fname)
+Wavetable VibeWTParser::readWT(const std::string &fname)
 {
-    
     std::ifstream file(fname);
     
     if (! file.is_open())
@@ -151,10 +150,10 @@ double * VibeWTParser::readWT(const std::string &fname)
     
     file.read(reinterpret_cast<char*>(wt), size);
     
-    return wt;
+    return Wavetable(wt,global.wtLen);
 }
 
-void VibeWTParser::writeWT(const std::string &fname, double * wt)
+void VibeWTParser::writeWT(const std::string &fname, const Wavetable& wt)
 {
     std::ofstream file(fname);
     
@@ -168,7 +167,7 @@ void VibeWTParser::writeWT(const std::string &fname, double * wt)
     
     int size = (global.wtLen + 1) * sizeof(double);
     
-    file.write(reinterpret_cast<char*>(wt), size);
+    file.write(reinterpret_cast<char*>(wt._data), size);
 }
 
 XMLNode * XMLParser::open(const std::string& fname)

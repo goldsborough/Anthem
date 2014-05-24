@@ -19,8 +19,6 @@ Operator::Operator(const int md, const double amp)
     _mode = md;
     
     _mods = {new ModDock(4), new ModDock(2), new ModDock(2) };
-    
-    _WT = wavetable.getWaveform(_mode);
 }
 
 Operator::~Operator()
@@ -35,40 +33,40 @@ Operator::~Operator()
 
 void Operator::setWT (const int mode)
 {
+    _mode = mode;
+    
     for (oscVec::iterator itr = _oscs.begin(), end = _oscs.end();
          itr != end;
          ++itr)
     {
-        (*itr)->setWT(mode);
+        (*itr)->setWT(_mode);
     }
 }
 
 void Operator::setSemis(double semis)
 {
-    _semis = semis;
-    
     for (oscVec::iterator itr = _oscs.begin(), end = _oscs.end();
          itr != end;
          ++itr)
     {
-        (*itr)->setFreqOffset(semiToFreq((*itr)->getFreq(), semis));
+        (*itr)->setSemis(semis);
     }
 }
 
 void Operator::setCents(double cents)
 {
-    _cents = cents;
-    
     for (oscVec::iterator itr = _oscs.begin(), end = _oscs.end();
          itr != end;
          ++itr)
     {
-        (*itr)->setFreq(centToFreq((*itr)->getFreq(), cents));
+        (*itr)->setCents(cents);
     }
 }
 
 void Operator::addNote(const double frq)
-{ _oscs.push_back(new Oscillator(_mode,frq)); }
+{
+    _oscs.push_back(new Oscillator(_mode,frq));
+}
 
 void Operator::relNote(index_t ind)
 {
@@ -83,15 +81,14 @@ double Operator::tick()
     
     if (_mods[FREQ_SEMI]->inUse())
     {
-        _semis = _mods[FREQ_SEMI]->checkAndTick(_semis, -64, 64);
-        setSemis(_semis);
+        short semiOffs = _mods[FREQ_SEMI]->checkAndTick(_semis, -48, 48);
+        setSemis(semiOffs);
     }
     
     if (_mods[FREQ_CENT]->inUse())
     {
-        _cents = _mods[FREQ_CENT]->checkAndTick(_cents, 0, 100);
-        
-        setCents(_cents);
+        short centOffs = _mods[FREQ_CENT]->checkAndTick(_cents, 0, 100);
+        setCents(centOffs);
     }
     
     for (oscVec::iterator itr = _oscs.begin(), end = _oscs.end();

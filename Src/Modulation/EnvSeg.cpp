@@ -235,10 +235,10 @@ void EnvSeg::setModWave(int modW)
     // Do some phase offsetting so that the part with
     // full amplitude is at the beginning and end
     
-    if (_modWave == Wavetable::SINE || _modWave == Wavetable::TRIANGLE)
+    if (_modWave == WavetableDB::SINE || _modWave == WavetableDB::TRIANGLE)
         _lfo->osc.setPhaseOffset(90);
     
-    else if (_modWave == Wavetable::SMOOTH_SQUARE)
+    else if (_modWave == WavetableDB::SMOOTH_SQUARE)
         _lfo->osc.setPhaseOffset(215);
     
     _lfo->osc.setWT(_modWave);
@@ -288,7 +288,7 @@ double EnvSeg::tick()
     ret = (ret * _diff) + _offset;
     
     // Apply modulation oscillator
-    if (_modWave != Wavetable::NONE)
+    if (_modWave != WavetableDB::NONE)
     {
         // modulated value
         double modValue = ret + _lfo->tick();
