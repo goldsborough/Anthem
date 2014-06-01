@@ -1,190 +1,0 @@
-TVibe
-v6
-r1
-cCheck dependencies
-cCompileC build/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/DirectOutput.o /Users/petergoldsborough/Documents/Synth/Src/DirectOutput.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
-cCompileC build/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/Operator.o /Users/petergoldsborough/Documents/Synth/Src/Operator.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
-cCompileC build/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/Wavetable.o /Users/petergoldsborough/Documents/Synth/Src/Wavetable.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
-cCompileC build/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/Wavefile.o /Users/petergoldsborough/Documents/Synth/Src/Wavefile.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/SDKSettings.plist
-c0000000052D1C7E9000000000000044C
-t1389479913
-s1100
-
-N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/CoreServices/SystemVersion.plist
-c00000000531F831D00000000000001DE
-t1394574109
-s478
-
-N/Users/petergoldsborough/Documents/Synth/Src/DirectOutput.cpp
-c00000000534CE5620000000000000B7A
-t1397548386
-s2938
-
-N/Users/petergoldsborough/Documents/Synth/Src/Filter.cpp
-c00000000534CFEC200000000000000E1
-t1397554882
-s225
-
-N/Users/petergoldsborough/Documents/Synth/Src/Operator.cpp
-c00000000534CF4190000000000000286
-t1397552153
-s646
-
-N/Users/petergoldsborough/Documents/Synth/Src/Wavefile.cpp
-c00000000534CF19000000000000008F6
-t1397551504
-s2294
-
-N/Users/petergoldsborough/Documents/Synth/Src/Wavetable.cpp
-c00000000534D0A3A0000000000003F7C
-t1397557818
-s16252
-
-N/Users/petergoldsborough/Documents/Synth/build/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/DirectOutput.o
-t2
-s0
-
-N/Users/petergoldsborough/Documents/Synth/build/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/Filter.o
-t2
-s0
-
-N/Users/petergoldsborough/Documents/Synth/build/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/Operator.o
-t2
-s0
-
-N/Users/petergoldsborough/Documents/Synth/build/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/Wavefile.o
-t2
-s0
-
-N/Users/petergoldsborough/Documents/Synth/build/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/Wavetable.o
-t2
-s0
-
-CCheck dependencies
-r0
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection18"Check dependencies18"Check dependencies76e1a75f42fdb841^0284bb5f42fdb841^---0#1#1#--18"Check dependencies36"4350992D-19E3-446F-9283-ACF4067CF1D6-
-
-CCompileC build/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/DirectOutput.o /Users/petergoldsborough/Documents/Synth/Src/DirectOutput.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
-s419250783.736822
-e419250784.685849
-r1
-xCompileC
-xbuild/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/DirectOutput.o
-x/Users/petergoldsborough/Documents/Synth/Src/DirectOutput.cpp
-xnormal
-xx86_64
-xc++
-xcom.apple.compilers.llvm.clang.1_0.compiler
-d/Users/petergoldsborough/Documents/Synth/Src/DirectOutput.cpp
-d/Users/petergoldsborough/Documents/Synth/Include/DirectOutput.h
-d/Users/petergoldsborough/portaudio/include/portaudio.h
-d/Users/petergoldsborough/Documents/Synth/Include/Global.h
-d/Users/petergoldsborough/Documents/Synth/Include/SampleData.h
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection69"Compile /Users/petergoldsborough/Documents/Synth/Src/DirectOutput.cpp180"[1mCompileC[0m build/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/DirectOutput.o [1mSrc/DirectOutput.cpp[0m normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compilerd7ddbc5f42fdb841^fb94af6042fdb841^---0#0#1#-19%DVTDocumentLocation2@68"file:///Users/petergoldsborough/Documents/Synth/Src/DirectOutput.cpp0000000000000000^2760"[1mCompileC[0m build/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/DirectOutput.o [1mSrc/DirectOutput.cpp[0m normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/petergoldsborough/Documents/Synth    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x c++ -arch x86_64 -fmessage-length=80 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -fcolor-diagnostics -std=gnu++11 -stdlib=libc++ -Wno-trigraphs -fpascal-strings -Os -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-non-virtual-dtor -Wno-overloaded-virtual -Wno-exit-time-destructors -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wno-newline-eof -Wno-c++11-extensions -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wdeprecated-declarations -Winvalid-offsetof -mmacosx-version-min=10.9 -g -fvisibility=hidden -fvisibility-inlines-hidden -Wno-sign-conversion -iquote /Users/petergoldsborough/Documents/Synth/build/Vibe.build/Release/Vibe.build/Vibe-generated-files.hmap -I/Users/petergoldsborough/Documents/Synth/build/Vibe.build/Release/Vibe.build/Vibe-own-target-headers.hmap -I/Users/petergoldsborough/Documents/Synth/build/Vibe.build/Release/Vibe.build/Vibe-all-target-headers.hmap -iquote /Users/petergoldsborough/Documents/Synth/build/Vibe.build/Release/Vibe.build/Vibe-project-headers.hmap -I/Users/petergoldsborough/Documents/Synth/build/Release/include -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include -I/Users/petergoldsborough/portaudio/include -I/Users/petergoldsborough/Documents/Synth/build/Vibe.build/Release/Vibe.build/DerivedSources/x86_64 -I/Users/petergoldsborough/Documents/Synth/build/Vibe.build/Release/Vibe.build/DerivedSources -F/Users/petergoldsborough/Documents/Synth/build/Release -MMD -MT dependencies -MF /Users/petergoldsborough/Documents/Synth/build/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/DirectOutput.d --serialize-diagnostics /Users/petergoldsborough/Documents/Synth/build/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/DirectOutput.dia -c /Users/petergoldsborough/Documents/Synth/Src/DirectOutput.cpp -o /Users/petergoldsborough/Documents/Synth/build/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/DirectOutput.o36"0FB1D4F6-1053-4937-A477-1D04229B27E0-
-b3FDFD693-D125-463E-87F6-21BE50A40E2C
-
-CCompileC build/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/EnvSeg.o /Users/petergoldsborough/Documents/Synth/Src/EnvSeg.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
-r0
-
-CCompileC build/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/Envelope.o /Users/petergoldsborough/Documents/Synth/Src/Envelope.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
-r0
-
-CCompileC build/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/Filter.o /Users/petergoldsborough/Documents/Synth/Src/Filter.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
-r0
-
-CCompileC build/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/LFO.o /Users/petergoldsborough/Documents/Synth/Src/LFO.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
-r0
-
-CCompileC build/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/Mixer.o /Users/petergoldsborough/Documents/Synth/Src/Mixer.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
-r0
-
-CCompileC build/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/Noise.o /Users/petergoldsborough/Documents/Synth/Include/Noise.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
-r0
-
-CCompileC build/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/Operator.o /Users/petergoldsborough/Documents/Synth/Src/Operator.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
-s419250783.737318
-e419250784.283898
-r0
-xCompileC
-xbuild/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/Operator.o
-x/Users/petergoldsborough/Documents/Synth/Src/Operator.cpp
-xnormal
-xx86_64
-xc++
-xcom.apple.compilers.llvm.clang.1_0.compiler
-oIn file included from /Users/petergoldsborough/Documents/Synth/Src/Operator.cpp:10:
-oIn file included from /Users/petergoldsborough/Documents/Synth/Include/Envelope.h:12:
-o[1m/Users/petergoldsborough/Documents/Synth/Include/EnvSeg.h:60:31: [0m[0;1;35mwarning: [0m[1m
-o      deleting pointer to incomplete type 'Oscillator' may cause undefined
-o      behavior [-Wdelete-incomplete][0m
-o    ~EnvSeg() { if (osc != 0) delete osc; }
-o[0;1;32m                              ^      ~~~
-o[0mIn file included from /Users/petergoldsborough/Documents/Synth/Src/Operator.cpp:9:
-o[1m/Users/petergoldsborough/Documents/Synth/Include/Operator.h:15:7: [0m[0;1;30mnote: [0mforward
-o      declaration of 'Oscillator'[0m
-oclass Oscillator;
-o[0;1;32m      ^
-o[0m[1m/Users/petergoldsborough/Documents/Synth/Src/Operator.cpp:11:10: [0m[0;1;31mfatal error: [0m[1m
-o      'Oscillator.h' file not found[0m
-o#include "Oscillator.h"
-o[0;1;32m         ^
-o[0m1 warning and 1 error generated.
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection65"Compile /Users/petergoldsborough/Documents/Synth/Src/Operator.cpp172"[1mCompileC[0m build/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/Operator.o [1mSrc/Operator.cpp[0m normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler1adebc5f42fdb841^72a3486042fdb841^-970"In file included from /Users/petergoldsborough/Documents/Synth/Src/Operator.cpp:10:In file included from /Users/petergoldsborough/Documents/Synth/Include/Envelope.h:12:[1m/Users/petergoldsborough/Documents/Synth/Include/EnvSeg.h:60:31: [0m[0;1;35mwarning: [0m[1m      deleting pointer to incomplete type 'Oscillator' may cause undefined      behavior [-Wdelete-incomplete][0m    ~EnvSeg() { if (osc != 0) delete osc; }[0;1;32m                              ^      ~~~[0mIn file included from /Users/petergoldsborough/Documents/Synth/Src/Operator.cpp:9:[1m/Users/petergoldsborough/Documents/Synth/Include/Operator.h:15:7: [0m[0;1;30mnote: [0mforward      declaration of 'Oscillator'[0mclass Oscillator;[0;1;32m      ^[0m[1m/Users/petergoldsborough/Documents/Synth/Src/Operator.cpp:11:10: [0m[0;1;31mfatal error: [0m[1m      'Oscillator.h' file not found[0m#include "Oscillator.h"[0;1;32m         ^[0m1 warning and 1 error generated.2(36%IDEClangDiagnosticActivityLogMessage2@77"Deleting pointer to incomplete type 'Oscillator' may cause undefined behavior-419250784#18446744073709551615#0#3(2@83"In file included from /Users/petergoldsborough/Documents/Synth/Src/Operator.cpp:10:-419250784#18446744073709551615#0#-0#27"com.apple.dt.IDE.diagnostic23%DVTTextDocumentLocation3@64"file:///Users/petergoldsborough/Documents/Synth/Src/Operator.cpp0000000000000000^9#9#9#9#179#0#21"Apple LLVM 5.0 Notice--2@85"In file included from /Users/petergoldsborough/Documents/Synth/Include/Envelope.h:12:-419250784#18446744073709551615#0#-0#27"com.apple.dt.IDE.diagnostic3@66"file:///Users/petergoldsborough/Documents/Synth/Include/Envelope.h0000000000000000^11#9#11#9#212#0#21"Apple LLVM 5.0 Notice--2@35"Forward declaration of 'Oscillator'-419250784#18446744073709551615#0#-0#27"com.apple.dt.IDE.diagnostic3@66"file:///Users/petergoldsborough/Documents/Synth/Include/Operator.h0000000000000000^14#6#14#6#252#0#21"Apple LLVM 5.0 Notice--1#27"com.apple.dt.IDE.diagnostic3@64"file:///Users/petergoldsborough/Documents/Synth/Include/EnvSeg.h0000000000000000^59#30#59#30#2203#0#14"Semantic Issue1(3@64"file:///Users/petergoldsborough/Documents/Synth/Include/EnvSeg.h0000000000000000^59#37#59#40#2210#0#-2@29"'Oscillator.h' file not found-419250784#18446744073709551615#0#-2#27"com.apple.dt.IDE.diagnostic3@64"file:///Users/petergoldsborough/Documents/Synth/Src/Operator.cpp0000000000000000^10#9#10#9#201#0#29"Lexical or Preprocessor Issue--0#0#1#-19%DVTDocumentLocation4@64"file:///Users/petergoldsborough/Documents/Synth/Src/Operator.cpp0000000000000000^2736"[1mCompileC[0m build/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/Operator.o [1mSrc/Operator.cpp[0m normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/petergoldsborough/Documents/Synth    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x c++ -arch x86_64 -fmessage-length=80 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -fcolor-diagnostics -std=gnu++11 -stdlib=libc++ -Wno-trigraphs -fpascal-strings -Os -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-non-virtual-dtor -Wno-overloaded-virtual -Wno-exit-time-destructors -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wno-newline-eof -Wno-c++11-extensions -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wdeprecated-declarations -Winvalid-offsetof -mmacosx-version-min=10.9 -g -fvisibility=hidden -fvisibility-inlines-hidden -Wno-sign-conversion -iquote /Users/petergoldsborough/Documents/Synth/build/Vibe.build/Release/Vibe.build/Vibe-generated-files.hmap -I/Users/petergoldsborough/Documents/Synth/build/Vibe.build/Release/Vibe.build/Vibe-own-target-headers.hmap -I/Users/petergoldsborough/Documents/Synth/build/Vibe.build/Release/Vibe.build/Vibe-all-target-headers.hmap -iquote /Users/petergoldsborough/Documents/Synth/build/Vibe.build/Release/Vibe.build/Vibe-project-headers.hmap -I/Users/petergoldsborough/Documents/Synth/build/Release/include -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include -I/Users/petergoldsborough/portaudio/include -I/Users/petergoldsborough/Documents/Synth/build/Vibe.build/Release/Vibe.build/DerivedSources/x86_64 -I/Users/petergoldsborough/Documents/Synth/build/Vibe.build/Release/Vibe.build/DerivedSources -F/Users/petergoldsborough/Documents/Synth/build/Release -MMD -MT dependencies -MF /Users/petergoldsborough/Documents/Synth/build/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/Operator.d --serialize-diagnostics /Users/petergoldsborough/Documents/Synth/build/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/Operator.dia -c /Users/petergoldsborough/Documents/Synth/Src/Operator.cpp -o /Users/petergoldsborough/Documents/Synth/build/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/Operator.o36"C2BFCB43-A508-43B6-BC82-105EC7D7563C-
-b3FDFD693-D125-463E-87F6-21BE50A40E2C
-
-CCompileC build/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/Oscillator.o /Users/petergoldsborough/Documents/Synth/Oscillator.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
-r0
-
-CCompileC build/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/Synthesizer.o /Users/petergoldsborough/Documents/Synth/Src/Synthesizer.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
-r0
-
-CCompileC build/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/Utils.o /Users/petergoldsborough/Documents/Synth/Src/Utils.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
-r0
-
-CCompileC build/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/Wavefile.o /Users/petergoldsborough/Documents/Synth/Src/Wavefile.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
-s419250783.738994
-e419250784.987872
-r1
-xCompileC
-xbuild/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/Wavefile.o
-x/Users/petergoldsborough/Documents/Synth/Src/Wavefile.cpp
-xnormal
-xx86_64
-xc++
-xcom.apple.compilers.llvm.clang.1_0.compiler
-d/Users/petergoldsborough/Documents/Synth/Src/Wavefile.cpp
-d/Users/petergoldsborough/Documents/Synth/Include/Wavefile.h
-d/Users/petergoldsborough/Documents/Synth/Include/SampleData.h
-d/Users/petergoldsborough/Documents/Synth/Include/Global.h
-d/Users/petergoldsborough/Documents/Synth/Include/Utils.h
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection65"Compile /Users/petergoldsborough/Documents/Synth/Src/Wavefile.cpp172"[1mCompileC[0m build/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/Wavefile.o [1mSrc/Wavefile.cpp[0m normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compilera14abd5f42fdb841^93e5fc6042fdb841^---0#0#1#-19%DVTDocumentLocation2@64"file:///Users/petergoldsborough/Documents/Synth/Src/Wavefile.cpp0000000000000000^2736"[1mCompileC[0m build/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/Wavefile.o [1mSrc/Wavefile.cpp[0m normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/petergoldsborough/Documents/Synth    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x c++ -arch x86_64 -fmessage-length=80 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -fcolor-diagnostics -std=gnu++11 -stdlib=libc++ -Wno-trigraphs -fpascal-strings -Os -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-non-virtual-dtor -Wno-overloaded-virtual -Wno-exit-time-destructors -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wno-newline-eof -Wno-c++11-extensions -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wdeprecated-declarations -Winvalid-offsetof -mmacosx-version-min=10.9 -g -fvisibility=hidden -fvisibility-inlines-hidden -Wno-sign-conversion -iquote /Users/petergoldsborough/Documents/Synth/build/Vibe.build/Release/Vibe.build/Vibe-generated-files.hmap -I/Users/petergoldsborough/Documents/Synth/build/Vibe.build/Release/Vibe.build/Vibe-own-target-headers.hmap -I/Users/petergoldsborough/Documents/Synth/build/Vibe.build/Release/Vibe.build/Vibe-all-target-headers.hmap -iquote /Users/petergoldsborough/Documents/Synth/build/Vibe.build/Release/Vibe.build/Vibe-project-headers.hmap -I/Users/petergoldsborough/Documents/Synth/build/Release/include -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include -I/Users/petergoldsborough/portaudio/include -I/Users/petergoldsborough/Documents/Synth/build/Vibe.build/Release/Vibe.build/DerivedSources/x86_64 -I/Users/petergoldsborough/Documents/Synth/build/Vibe.build/Release/Vibe.build/DerivedSources -F/Users/petergoldsborough/Documents/Synth/build/Release -MMD -MT dependencies -MF /Users/petergoldsborough/Documents/Synth/build/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/Wavefile.d --serialize-diagnostics /Users/petergoldsborough/Documents/Synth/build/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/Wavefile.dia -c /Users/petergoldsborough/Documents/Synth/Src/Wavefile.cpp -o /Users/petergoldsborough/Documents/Synth/build/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/Wavefile.o36"9A7BFE36-072E-4881-A905-2F82223A6884-
-b3FDFD693-D125-463E-87F6-21BE50A40E2C
-
-CCompileC build/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/Wavetable.o /Users/petergoldsborough/Documents/Synth/Src/Wavetable.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
-s419250783.737691
-e419250784.686219
-r1
-xCompileC
-xbuild/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/Wavetable.o
-x/Users/petergoldsborough/Documents/Synth/Src/Wavetable.cpp
-xnormal
-xx86_64
-xc++
-xcom.apple.compilers.llvm.clang.1_0.compiler
-d/Users/petergoldsborough/Documents/Synth/Src/Wavetable.cpp
-d/Users/petergoldsborough/Documents/Synth/Include/Wavetable.h
-d/Users/petergoldsborough/Documents/Synth/Include/Global.h
-lSLF06#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection66"Compile /Users/petergoldsborough/Documents/Synth/Src/Wavetable.cpp174"[1mCompileC[0m build/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/Wavetable.o [1mSrc/Wavetable.cpp[0m normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler99f3bc5f42fdb841^d89caf6042fdb841^---0#0#1#-19%DVTDocumentLocation2@65"file:///Users/petergoldsborough/Documents/Synth/Src/Wavetable.cpp0000000000000000^2742"[1mCompileC[0m build/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/Wavetable.o [1mSrc/Wavetable.cpp[0m normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/petergoldsborough/Documents/Synth    export LANG=en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x c++ -arch x86_64 -fmessage-length=80 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -fcolor-diagnostics -std=gnu++11 -stdlib=libc++ -Wno-trigraphs -fpascal-strings -Os -Wno-missing-field-initializers -Wno-missing-prototypes -Werror=return-type -Werror=deprecated-objc-isa-usage -Werror=objc-root-class -Wno-non-virtual-dtor -Wno-overloaded-virtual -Wno-exit-time-destructors -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wshorten-64-to-32 -Wno-newline-eof -Wno-c++11-extensions -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk -fasm-blocks -fstrict-aliasing -Wdeprecated-declarations -Winvalid-offsetof -mmacosx-version-min=10.9 -g -fvisibility=hidden -fvisibility-inlines-hidden -Wno-sign-conversion -iquote /Users/petergoldsborough/Documents/Synth/build/Vibe.build/Release/Vibe.build/Vibe-generated-files.hmap -I/Users/petergoldsborough/Documents/Synth/build/Vibe.build/Release/Vibe.build/Vibe-own-target-headers.hmap -I/Users/petergoldsborough/Documents/Synth/build/Vibe.build/Release/Vibe.build/Vibe-all-target-headers.hmap -iquote /Users/petergoldsborough/Documents/Synth/build/Vibe.build/Release/Vibe.build/Vibe-project-headers.hmap -I/Users/petergoldsborough/Documents/Synth/build/Release/include -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include -I/Users/petergoldsborough/portaudio/include -I/Users/petergoldsborough/Documents/Synth/build/Vibe.build/Release/Vibe.build/DerivedSources/x86_64 -I/Users/petergoldsborough/Documents/Synth/build/Vibe.build/Release/Vibe.build/DerivedSources -F/Users/petergoldsborough/Documents/Synth/build/Release -MMD -MT dependencies -MF /Users/petergoldsborough/Documents/Synth/build/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/Wavetable.d --serialize-diagnostics /Users/petergoldsborough/Documents/Synth/build/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/Wavetable.dia -c /Users/petergoldsborough/Documents/Synth/Src/Wavetable.cpp -o /Users/petergoldsborough/Documents/Synth/build/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/Wavetable.o36"6FA46AE5-F985-4580-9825-58A12C5C8585-
-b3FDFD693-D125-463E-87F6-21BE50A40E2C
-
-CCompileC build/Vibe.build/Release/Vibe.build/Objects-normal/x86_64/main.o /Users/petergoldsborough/Documents/Synth/Src/main.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
-r0
-
-CGenerateDSYMFile /Users/petergoldsborough/Documents/Synth/build/Release/Vibe.dSYM /Users/petergoldsborough/Documents/Synth/build/Release/Vibe
-r0
-
-CLd /Users/petergoldsborough/Documents/Synth/build/Release/Vibe normal x86_64
-r0
-
