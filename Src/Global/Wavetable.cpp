@@ -95,21 +95,24 @@ T LookupTable<T>::interpolate(const double ind) const
 
 void round(double& val, unsigned int bitWidth)
 {
+    // the rounding factor
     double factor = 1.0 / bitWidth;
-    
+
     double n = val / factor;
     
     int nFloor = (int) n;
     
+    // if the division is greater 0.5, round to the next whole factor
+    // else take the floor value
+    
     if (n > 0)
     {
-        if (n - nFloor >= 0.5) nFloor++;
+        if (n - nFloor >= 0.5)
+            val = (nFloor + 1) * factor;
     }
     
     else if (n + nFloor <= -0.5)
-        nFloor--;
-    
-    val = nFloor * factor;
+        val = (nFloor - 1) * factor;
 }
 
 
@@ -206,7 +209,6 @@ Wavetable::Wavetable(PartItr start, PartItr end, size_t wtLen, double masterAmp,
             round(value, bitWidth);
         
         _data[n] = value;
-        
     }
     
     // Append the last item for interpolation
@@ -307,7 +309,6 @@ void WavetableDB::Init(unsigned int wtLen)
         
         _tables.push_back(wtParser.readWT(fname));
     }
-    
 }
 Wavetable& WavetableDB::getWaveform(const int mode)
 {
@@ -356,13 +357,13 @@ Wavetable WavetableDB::smoothSaw()
         
         else
         {
-            /*********************************************************************
+            /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
              *
              * The smooth transition is nothing else than a function I found
              * empirically in graphing software (GeoGebra). There are actually
              * two functions. The first increments from -1 to 0 (amp) from 0.9
-             * to 0.95 (time). This function is positive and right-shifted 0.9.
-             * This first function meets the second function in (0.95,0), which
+             * to 0.95 (time). This function is positive and right-shifted by 0.9
+             * This first function intersects the second function in (0.95,0) which
              * is basically the same function but with negative coefficient and
              * right shifted by 1. It is best to put these functions in graphing
              * software to get a clear picture. In any case, these functions are
@@ -370,7 +371,7 @@ Wavetable WavetableDB::smoothSaw()
              * so the function is progressive and the second part has a positive
              * curvature and is degressive.
              *
-             *********************************************************************/
+             * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
             
             if (ind < 0.95)
                 wt[n] = 400 * pow(ind - 0.9,2) - 1;

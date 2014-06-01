@@ -19,3 +19,12 @@
 *.exe
 *.out
 *.app
+
+# Other files
+*.xcodeproj
+
+# Folders
+build
+Other
+Wavefiles
+Doxygen

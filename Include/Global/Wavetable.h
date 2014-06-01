@@ -52,7 +52,7 @@ public:
     
     LookupTable(const LookupTable& other);
     
-    virtual ~LookupTable() // does not have to be virtual
+    virtual ~LookupTable()
     {
         if (_baseDestructorEnabled)
             delete [] _data;

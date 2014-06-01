@@ -1,3 +1,3 @@
-# This is my README
+# Vibe
 
 Such synth, very code, so design
