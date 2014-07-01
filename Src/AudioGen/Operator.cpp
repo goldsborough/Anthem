@@ -104,8 +104,3 @@ double Operator::tick()
     else
         return val * _amp;
 }
-
-
-
-
-

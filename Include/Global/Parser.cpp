@@ -10,7 +10,14 @@
 #include "Errors.h"
 #include "Global.h"
 #include <fstream>
+
+
+
+
 #include <iostream>
+
+
+
 
 std::string strip(str_cItr begin, str_cItr end)
 {
@@ -69,19 +76,93 @@ std::string join(vec_cItr begin, vec_cItr end)
     return s;
 }
 
-void TextParser::open(const std::string& fname)
+void TextParser::save()
 {
-    std::ifstream file(fname);
+    // save to file ...
     
-    _open = false;
     
-    if (! file.good() || ! file.is_open())
+    
+    _file.clear();
+}
+
+void TextParser::eraseWord()
+{
+    _currWord = _currLine->erase(_currWord);
+    
+    if (_currWord == _currLine->end()) moveWord(-1);
+}
+
+void TextParser::eraseLine()
+{
+    _currLine = _file.erase(_currLine);
+    
+    if (_currLine == _file.end()) moveLine(-1);
+}
+
+void TextParser::replaceLine(const std::string &str)
+{
+    eraseLine();
+    
+    insertInFile(str);
+}
+
+void TextParser::replaceWord(const std::string& str)
+{
+    eraseWord();
+    
+    insertInLine(str);
+}
+
+void TextParser::insertInLine(const std::string& str)
+{
+    wordVec vec = split(str.begin(), str.end());
+
+    // insert all words (last word first)
+    for (std::vector<std::string>::const_reverse_iterator itr = vec.rbegin(), end = vec.rend();
+         itr != end;
+         ++itr)
+    {
+        _currWord = _currLine->insert(_currWord, *itr);
+    }
+}
+
+void TextParser::appendToLine(const std::string& str)
+{
+    // split line into words
+    wordVec vec = split(str.begin(), str.end());
+    
+    toLineEnd();
+    
+    // append all to line
+    for (wordItr itr = vec.begin(), end = vec.end();
+         itr != end;
+         ++itr)
+    {
+        _currLine->push_back(*itr);
+    }
+    
+    // first new word
+    moveWord(1);
+}
+
+void TextParser::newFile(const std::string &fname)
+{
+    _fname = fname;
+    _currLine = _file.begin();
+}
+
+void TextParser::openFile(const std::string& fname)
+{
+    std::fstream file(fname, std::ios::in | std::ios::out);
+    
+    if (! file.is_open() || ! file.good())
         throw FileOpenError();
-    
-    _open = true;
-    
+        
     std::string s;
     
+    _fname = fname;
+    
+    // grab all lines and process them
     while (getline(file, s))
         _file.push_back(split(s.begin(), s.end()));
     
@@ -98,33 +179,59 @@ std::vector<std::string> TextParser::readAllItems()
          line != fileEnd;
          ++line)
     {
-        if (line->empty())
-            continue;
-        
-        std::string w = *(line->begin());
-        
-        if (w.empty())
-            continue;
-        
-        w = condense(w.begin(),w.end());
-        
-        // skip comment and empty lines
-        if (w[0] == '#')
-            continue;
-        
-        for (wordItr word = line->begin(), lineEnd = line->end();
-             word != lineEnd;
-             ++word)
+        if (! line->empty())
         {
-            vec.push_back(*word);
+            // check for comment-only lines by grabbing the first word
+            std::string w = *(line->begin());
+            
+            // check if line is a comment, else make into string and store in vector
+            if (! w.empty() && condense(w.begin(), w.end())[0] != '#')
+            {
+                for (wordItr word = line->begin(), lineEnd = line->end();
+                     word != lineEnd;
+                     ++word)
+                {
+                    vec.push_back(*word);
+                }
+            }
         }
     }
-    
     
     return vec;
 }
 
-std::vector<std::string> readAllLines();
+std::vector<std::string> TextParser::readAllLines()
+{
+    wordVec vec;
+    
+    for (lineItr line = _file.begin(), fileEnd = _file.end();
+         line != fileEnd;
+         ++line)
+    {
+        if (! line->empty())
+        {
+            // check for comment-only lines by grabbing the first word
+            std::string w = *(line->begin());
+            
+            // check if line is a comment, else make into string and store in vector
+            if (! w.empty() && condense(w.begin(), w.end())[0] != '#')
+            {
+                std::string lineStr;
+                
+                for (wordItr word = line->begin(), end = line->end();
+                     word != end;
+                     ++word)
+                {
+                    lineStr += (*word);
+                }
+                
+                vec.push_back(lineStr);
+            }
+        }
+    }
+    
+    return vec;
+}
 
 Wavetable VibeWTParser::readWT(const std::string &fname)
 {
@@ -446,7 +553,7 @@ XMLNode::AttrMap XMLParser::getAttrs(str_cItr begin, str_cItr end) const
         // find first non-space char
         begin = std::find_if_not(j, end, ::isspace);
         
-        // find '='
+        // find '=', lambda expression
         j = std::find_if(begin, end, [&] (const char& c) { return c == '='; });
         
         // from the first non-space char to the '=' is the key
@@ -458,6 +565,7 @@ XMLNode::AttrMap XMLParser::getAttrs(str_cItr begin, str_cItr end) const
         
         begin = std::find(j, end, '\"');
         
+        // need to increment begin to get the content anyway
         j = std::find(++begin, end, '\"');
         
         // the value is between the parantheses

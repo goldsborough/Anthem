@@ -10,8 +10,6 @@
 #include "GenUnits.h"
 #include <stdexcept>
 
-#include <iostream>
-
 ModDock::ModDock(index_t dockSize)
 : _mods(new ModItem [dockSize]), _dockSize(dockSize),
   _usedDocks(0), _masterDpth(1)

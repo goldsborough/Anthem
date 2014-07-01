@@ -14,12 +14,6 @@
 #include <fstream>
 #include <cmath>
 
-
-
-
-#include <iostream>
-
-
 template <class T>
 LookupTable<T>::LookupTable(T * ptr, size_t size)
 {
@@ -303,7 +297,7 @@ void WavetableDB::Init(unsigned int wtLen)
     
     std::vector<std::string> names = textParser.readAllItems();
     
-    for (int i = 0; i < names.size(); i++)
+    for (int i = 0; i < names.size(); ++i)
     {
         fname = "/Users/petergoldsborough/Documents/vibe/Resources/Wavetables/" + names[i] + ".vwt";
         

@@ -36,39 +36,57 @@ class TextParser
 public:
     
     TextParser() { };
-    TextParser(const std::string& fname) { open(fname); }
     
-    ~TextParser() { close(); }
+    void openFile(const std::string& fname);
+    void newFile(const std::string& fname);
     
-    void open(const std::string& fname);
-    void close(){}
+    void save();
     
-    bool readWord(std::string& str);
-    bool readLine(std::string& str);
+    std::string currWord()
+    { return *_currWord; }
     
-    bool appendWord(const std::string& str);
-    bool appendLine(const std::string& str);
+    std::string currLine()
+    { return join(_currLine->begin(), _currLine->end()); }
     
-    bool insertWord(const std::string& str);
-    bool insertLine(const std::string& str);
+    void appendToLine(const std::string& str);
     
-    bool eraseWord();
-    bool eraseLine();
+    void appendToFile(const std::string& str)
+    {
+        _file.push_back(split(str.begin(), str.end()));
+        
+        toFileEnd();
+    }
     
-    bool replaceWord(const std::string& str);
-    bool replaceLine(const std::string& str);
+    void insertInLine(const std::string& str);
+    
+    void insertInFile(const std::string& str)
+    { _currLine = _file.insert(_currLine, split(str.begin(),str.end()));}
+    
+    void eraseWord();
+    
+    void eraseLine();
+    
+    void replaceWord(const std::string& str);
+    
+    void replaceLine(const std::string& str);
     
     void toLineStart()
     { _currWord = _currLine->begin(); }
     
     void toFileStart()
-    { _currLine = _file.begin(); }
+    {
+        _currLine = _file.begin();
+        _currWord = _currLine->begin();
+    }
     
     void toLineEnd()
-    { _currWord = _currLine->end(); }
+    { _currWord = _currLine->end() - 1; }
     
     void toFileEnd()
-    { _currLine = _file.end(); }
+    {
+        _currLine = _file.end() - 1;
+        _currWord = _currLine->begin();
+    }
     
     void moveWord(int count)
     { std::advance(_currWord, count); }
@@ -92,7 +110,7 @@ private:
     wordItr _currWord;
     lineItr _currLine;
     
-    bool _open;
+    std::string _fname;
 };
 
 struct VibeWTParser

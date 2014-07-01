@@ -14,11 +14,31 @@
 #include "Envelope.h"
 #include "LFO.h"
 #include "Wavetable.h"
+#include "Parser.h"
 
 #include <iostream>
 
 int main(int argc, const char * argv[])
 {
+    TextParser parser;
+    
+    parser.openFile("~/Users/petergoldsborough/Documents/file.txt");
+    
+    parser.appendToFile("Hello I am jerry Jackson");
+    parser.appendToFile("Hello Jerry Jackson I am Woodmike");
+    
+    parser.moveWord(2);
+    
+    parser.insertInLine("the Great");
+    parser.moveWord(2);
+    parser.eraseWord();
+    parser.moveWord(-2);
+    parser.insertInLine("Jackson");
+    parser.appendToLine("Johnny");
+    
+    parser.save();
+    
+    /*
     clock_t t = clock();
     
     Synthesizer synth;
@@ -52,6 +72,6 @@ int main(int argc, const char * argv[])
     //while (getPassedTime(start) < 5);
 
     std::cout << "Total program duration: " << getPassedTime(t) << "\n";
- 
+ */
 }
 
