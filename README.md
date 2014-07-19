@@ -1,3 +1,3 @@
 # Vibe
 
-Such synth, very code, so design
+FM synthesizer, development stage.

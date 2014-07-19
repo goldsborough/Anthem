@@ -22,6 +22,7 @@
 
 # Other files
 *.xcodeproj
+*~
 
 # Folders
 build
