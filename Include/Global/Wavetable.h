@@ -55,7 +55,7 @@ public:
     virtual ~LookupTable()
     {
         if (_baseDestructorEnabled)
-            delete [] _data;
+        { delete [] _data; }
     }
     
     LookupTable& operator= (const LookupTable& other);
@@ -113,11 +113,6 @@ private:
     
     size_t * _refptr;
 };
-
-// Rounds values within a certain bitWidth
-// to the closest value
-
-void round(double& val, unsigned int bitWidth);
 
 /*****************************************************************************//*!
 *

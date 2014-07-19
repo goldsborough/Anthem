@@ -12,7 +12,7 @@
 class XFadeUnit;
 class DirectOutput;
 class Wavefile;
-class SampleQueue;
+class SampleBuffer;
 
 class Mixer
 {
@@ -47,7 +47,7 @@ private:
     bool _sendToWaveFile;
     bool _sendToDirectOutput;
     
-    SampleQueue  *  _sampleDataBuffer;
+    SampleBuffer  *  _sampleDataBuffer;
     
     DirectOutput * _directOut;
     

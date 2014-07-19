@@ -1,20 +1,33 @@
 //
 //  Filter.h
-//  Synth
+//  Vibe
 //
 //  Created by Peter Goldsborough on 13/04/14.
 //  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
 //
 
-#ifndef __Synth__Filter__
-#define __Synth__Filter__
+#ifndef __Vibe__Filter__
+#define __Vibe__Filter__
 
-class Filter
+#include <vector>
+
+class SampleBuffer;
+
+typedef std::vector<unsigned short> ImpulseResponse;
+
+class FIR_Filter
 {
+public:
     
-    void foo();
+    FIR_Filter(const ImpulseResponse& ir)
+    : _ir(ir)
+    { }
     
-    void bar();
+    void convolute(SampleBuffer& queue);
+    
+private:
+    
+    ImpulseResponse _ir;
 };
 
-#endif /* defined(__Synth__Filter__) */
+#endif /* defined(__Vibe__Filter__) */

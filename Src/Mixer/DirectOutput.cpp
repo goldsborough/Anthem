@@ -10,7 +10,7 @@
 #include "Global.h"
 #include "SampleData.h"
 
-SampleQueue DirectOutput::_dataBuffer;
+SampleBuffer DirectOutput::_dataBuffer;
 
 DirectOutput::DirectOutput(unsigned char ltncy)
 {

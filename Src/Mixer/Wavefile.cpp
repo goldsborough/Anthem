@@ -65,7 +65,7 @@ void Wavefile::check_fname(std::string& fname)
 }
 
 
-void Wavefile::write_wav(SampleQueue& smplQ, std::string fname)
+void Wavefile::write_wav(SampleBuffer& smplQ, std::string fname)
 {
     
     unsigned long total_samples = (unsigned long) smplQ.size();

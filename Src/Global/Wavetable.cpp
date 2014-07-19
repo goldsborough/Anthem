@@ -73,22 +73,24 @@ T LookupTable<T>::interpolate(const double ind) const
     if (ind >= _size)
         throw TableLengthError();
     
-    int indexBase = (int) ind;         // The truncated integer part
+    int indexBase = (int) ind;              // The truncated integer part
     double indexFract = ind - indexBase;    // The remaining fractional part
     
     // grab the two items in-between which the actual value lies
     double value1 = _data[indexBase];
     double value2 = _data[indexBase+1];
     
-    // interpolate
-    double value = value1 + ((value2 - value1) * indexFract);
+    // interpolate: integer part + (fractional part * difference between value2 and value1)
+    double final = value1 + ((value2 - value1) * indexFract);
     
-    return value;
+    return final;
 }
 
 
 void round(double& val, unsigned int bitWidth)
 {
+    // mind = blown
+    
     // the rounding factor
     double factor = 1.0 / bitWidth;
 
@@ -102,11 +104,11 @@ void round(double& val, unsigned int bitWidth)
     if (n > 0)
     {
         if (n - nFloor >= 0.5)
-            val = (nFloor + 1) * factor;
+        { val = (nFloor + 1) * factor; }
     }
     
     else if (n + nFloor <= -0.5)
-        val = (nFloor - 1) * factor;
+    { val = (nFloor - 1) * factor; }
 }
 
 

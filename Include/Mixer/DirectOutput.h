@@ -12,7 +12,7 @@
 #include "portaudio.h"
 
 class SampleData;
-class SampleQueue;
+class SampleBuffer;
 
 class DirectOutput
 {
@@ -44,7 +44,7 @@ private:
     
     static SampleData getSampleDataFromQueue();
     
-    static SampleQueue _dataBuffer;
+    static SampleBuffer _dataBuffer;
     
 };
 

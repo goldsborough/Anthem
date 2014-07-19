@@ -260,7 +260,7 @@ std::vector<std::string> TextParsley::getAllWords()
              word != lineEnd;
              ++word)
             {
-                vec.push_back(*word);
+                if(! word->empty()) vec.push_back(*word);
             }
     }
     

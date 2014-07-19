@@ -34,12 +34,13 @@ int main(int argc, const char * argv[])
     
     Mixer mixer(0,1);
     
+    /*
     LFO lfo(WavetableDB::SAW_2);
     
    op.attachMod(Operator::FREQ_SEMI, 0, &lfo);
     
    op.setDepth(Operator::FREQ_SEMI, 0, 0.5);
-    
+   */
     
     for (int i = 0; i < len; i++)
     {

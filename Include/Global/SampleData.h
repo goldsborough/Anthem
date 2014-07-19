@@ -9,17 +9,17 @@
 #ifndef __Synth__SampleData__
 #define __Synth__SampleData__
 
-#include <queue>
+#include <deque>
 
 struct SampleData
 {
     SampleData(const double& val = 0)
     : left(val), right(val)
-    {};
+    { }
     
     SampleData(double lf, double ri)
     : left(lf), right(ri)
-    {}
+    { }
     
     template <class T>
     SampleData& operator*= (T& value)
@@ -34,38 +34,46 @@ struct SampleData
     double right;
 };
 
-class SampleQueue
+/* Deque instead of queue because you can traverse it */
+
+class SampleBuffer
 {
 public:
     
-    typedef std::queue<SampleData>::size_type size_type;
+    typedef std::deque<SampleData>::size_type size_type;
     
+    // A deque/queue has no function to return the first element
+    // and delete it from the queue. Only std::deque and std::list
+    // have that. That's why this function pops and returns an item.
     SampleData getpop()
     {
-        SampleData sampleD = _queue.front();
+        SampleData sampleD = _buffer.front();
         
-        _queue.pop();
+        _buffer.pop_front();
         
         return sampleD;
     }
     
-    void push(const SampleData& item) { _queue.push(item); };
+    SampleData& operator[] (size_type index) { return _buffer[index]; }
+    const SampleData& operator[] (size_type index) const { return _buffer[index]; }
     
-    void pop() { _queue.pop(); };
+    void push(const SampleData& item) { _buffer.push_front(item); };
     
-    SampleData& front() { return _queue.front(); };
-    const SampleData& front() const { return _queue.front(); };
+    void pop() { _buffer.pop_front(); };
     
-    SampleData& back() { return _queue.back(); };
-    const SampleData& back() const { return _queue.back(); };
+    SampleData& front() { return _buffer.front(); };
+    const SampleData& front() const { return _buffer.front(); };
     
-    bool empty() {return _queue.empty(); };
+    SampleData& back() { return _buffer.back(); };
+    const SampleData& back() const { return _buffer.back(); };
     
-    size_type size() const { return _queue.size(); };
+    bool empty() const {return _buffer.empty(); };
+    
+    size_type size() const { return _buffer.size(); };
     
 private:
     
-    std::queue<SampleData> _queue;
+    std::deque<SampleData> _buffer;
 };
 
 

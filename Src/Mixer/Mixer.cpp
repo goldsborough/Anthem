@@ -13,21 +13,18 @@
 #include "Wavefile.h"
 #include "SampleData.h"
 
-Mixer::Mixer(bool directOut,
-             bool waveOut)
-            : _sendToDirectOutput(directOut),
-            _sendToWaveFile(waveOut),
-            _masterAmp(1)
+Mixer::Mixer(bool directOut, bool waveOut)
 
-            {
-                _pan = new XFadeSine;
-                
-                _sampleDataBuffer = new SampleQueue;
-                
-                _directOut = new DirectOutput;
-                
-                _waveOut = new Wavefile;
-            }
+: _sendToDirectOutput(directOut), _sendToWaveFile(waveOut), _masterAmp(1)
+{
+    _pan = new XFadeSine;
+    
+    _sampleDataBuffer = new SampleBuffer;
+    
+    _directOut = new DirectOutput;
+    
+    _waveOut = new Wavefile;
+}
 
 void Mixer::processTick(const double smpl)
 {

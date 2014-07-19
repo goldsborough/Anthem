@@ -7,9 +7,14 @@
 //
 
 #include "Filter.h"
+#include "SampleData.h"
+
+
+
 #include <iostream>
 
-void Filter::bar()
+
+void FIR_Filter::convolute(SampleBuffer& queue)
 {
-    std::cout << "";
+    
 }

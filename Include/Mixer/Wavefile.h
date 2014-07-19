@@ -12,7 +12,7 @@
 #include <stdint.h>
 #include <fstream>
 
-class SampleQueue;
+class SampleBuffer;
 
 class Wavefile
 {
@@ -27,7 +27,7 @@ public:
     
     ~Wavefile(){ f.close(); delete end_buff; };
     
-    void write_wav(SampleQueue& smplQ, std::string fname = "");
+    void write_wav(SampleBuffer& smplQ, std::string fname = "");
     
     double * read_wav(const std::string& fname);
     
