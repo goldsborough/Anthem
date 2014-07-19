@@ -27,10 +27,10 @@ XFadeSine::XFadeSine(bool scale, char initVal)
     {
         float val = (i - 100) / 100.0;
         
-        float leftVal = sin((1 -  val) / 2 * PI/2);
+        float leftVal = sin((1 -  val) / 2 * Global::pi/2);
         
         // Do not equal up to 1
-        float rightVal = sin((1 + val) / 2 * PI/2);
+        float rightVal = sin((1 + val) / 2 * Global::pi/2);
         
         if (scale)
         {

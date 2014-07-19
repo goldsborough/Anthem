@@ -8,7 +8,7 @@
 
 #include "Wavetable.h"
 #include "Global.h"
-#include "Parser.h"
+#include "Parsley.h"
 
 #include <string>
 #include <fstream>
@@ -148,7 +148,7 @@ Wavetable::Wavetable(PartItr start, PartItr end, size_t wtLen, double masterAmp,
      **********************************************************/
     
     // constant sigma constant part
-    double sigmaK = PI / partNum;
+    double sigmaK = Global::pi / partNum;
     
     // variable part
     double sigmaV;
@@ -158,7 +158,7 @@ Wavetable::Wavetable(PartItr start, PartItr end, size_t wtLen, double masterAmp,
     
     // the fundamental increment of one period
     // in radians
-    static double fundIncr = twoPI / wtLen;
+    static double fundIncr = Global::twoPi / wtLen;
     
     // fill the arrays with the respective partial values
     for (size_t p = 0; start != end; ++p, ++start)
@@ -194,8 +194,8 @@ Wavetable::Wavetable(PartItr start, PartItr end, size_t wtLen, double masterAmp,
             
             phase[p] += phaseIncr[p];
             
-            if (phase[p] >= twoPI)
-                phase[p] -= twoPI;
+            if (phase[p] >= Global::twoPi)
+                phase[p] -= Global::twoPi;
         }
         
         // round if necessary
@@ -284,19 +284,21 @@ Wavetable& Wavetable::makeUnique()
     return *this;
 }
 
-void WavetableDB::Init(unsigned int wtLen)
+void WavetableDB::init(unsigned int wtLen)
 {
     _wtLength = wtLen;
-    _fundIncr = twoPI / _wtLength;
+    _fundIncr = Global::twoPi / _wtLength;
     
-    TextParser textParser("/Users/petergoldsborough/Documents/vibe/Resources/Wavetables/wavetables.txt");
+    // The wavetable configuration file
+    TextParsley textParser("/Users/petergoldsborough/Documents/vibe/Resources/Wavetables/wavetables.txt");
     
     VibeWTParser wtParser;
     
     std::string fname;
     
-    std::vector<std::string> names = textParser.readAllItems();
+    std::vector<std::string> names = textParser.getAllWords();
     
+    // Fetch all wavetable names and read their respective data files
     for (int i = 0; i < names.size(); ++i)
     {
         fname = "/Users/petergoldsborough/Documents/vibe/Resources/Wavetables/" + names[i] + ".vwt";
@@ -483,12 +485,12 @@ Wavetable WavetableDB::directTriangle()
     double* wt = new double[_wtLength + 1];
     
     double phase = 0;
-    double phaseIncr = twoPI / _wtLength;
+    double phaseIncr = Global::twoPi / _wtLength;
     
     // Basierend auf Pseudocode (vgl. Mitchell, 2008)
     
     double triValue;
-    double twoDivPi = 2.0/PI;
+    double twoDivPi = 2.0/Global::pi;
     
     for (unsigned int n = 0; n < _wtLength; n++)
     {
@@ -500,8 +502,8 @@ Wavetable WavetableDB::directTriangle()
         
         wt[n] = triValue;
         
-        if ( (phase += phaseIncr) >= PI)
-            phase -= twoPI;
+        if ( (phase += phaseIncr) >= Global::pi)
+            phase -= Global::twoPi;
         
     }
     

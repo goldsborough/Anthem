@@ -28,10 +28,10 @@ double Noise::tick()
     
     double randVal = rand() % (int)(20000 * _Color);
     
-    _ind += global.tableIncr * randVal;
+    _ind += Global::tableIncr * randVal;
     
-    if (_ind  >= global.wtLen)
-        _ind -= global.wtLen;
+    if (_ind  >= Global::wtLen)
+        _ind -= Global::wtLen;
     
     return sample;
 }

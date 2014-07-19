@@ -1,13 +1,13 @@
 //
 //  Errors.h
-//  Vibe
+//  Parsley
 //
 //  Created by Peter Goldsborough on 20/04/14.
 //  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
 //
 
-#ifndef Vibe_Errors_h
-#define Vibe_Errors_h
+#ifndef __Parsley_Errors__
+#define __Parsley_Errors__
 
 #include <stdexcept>
 

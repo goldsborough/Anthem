@@ -27,7 +27,7 @@ Wavefile::Wavefile(unsigned char ch)
     
 	wh.channels = channels;    // 1 = mono, 2 = stereo
     
-	wh.samplerate = global.samplerate;
+	wh.samplerate = Global::samplerate;
     
     wh.bits = 16;
 	wh.align = (channels * wh.bits) / 8;

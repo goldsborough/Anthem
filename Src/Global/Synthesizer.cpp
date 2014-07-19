@@ -10,14 +10,13 @@
 #include "Global.h"
 #include "Wavetable.h"
 
-Global global;
 WavetableDB wavetableDB;
 
 Synthesizer::Synthesizer(unsigned int smplr, unsigned short wtLen)
 
 {
-    global.Init(smplr,wtLen);
-    wavetableDB.Init(wtLen);
+    Global::init(smplr,wtLen);
+    wavetableDB.init(wtLen);
 }
 
 

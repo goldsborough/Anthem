@@ -1,25 +1,18 @@
 //
-//  TextParser.cpp
-//  Vibe
+//  Parser.cpp
+//  Exercises
 //
-//  Created by Peter Goldsborough on 19/04/14.
+//  Created by Peter Goldsborough on 07/07/14.
 //  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
 //
 
-#include "Parser.h"
-#include "Errors.h"
 #include "Global.h"
+#include "Parsley.h"
+#include "ParsleyErrors.h"
+
 #include <fstream>
 
-
-
-
-#include <iostream>
-
-
-
-
-std::string strip(str_cItr begin, str_cItr end)
+std::string strip(Str_cItr begin, Str_cItr end)
 {
     while (begin != end && ::isspace(*begin)) ++begin;
     
@@ -28,11 +21,11 @@ std::string strip(str_cItr begin, str_cItr end)
     return std::string(begin,++end);
 }
 
-std::vector<std::string> split(str_cItr begin, str_cItr end)
+std::vector<std::string> split(Str_cItr begin, Str_cItr end)
 {
     std::vector<std::string> vec;
     
-    str_cItr j = begin;
+    Str_cItr j = begin;
     
     while (j != end)
     {
@@ -46,9 +39,9 @@ std::vector<std::string> split(str_cItr begin, str_cItr end)
     return vec;
 }
 
-std::string splitOne(str_cItr begin, str_cItr end)
+std::string splitOne(Str_cItr begin, Str_cItr end)
 {
-    str_cItr i,j;
+    Str_cItr i,j;
     
     i = std::find_if_not(begin, end, ::isspace);
     
@@ -57,7 +50,7 @@ std::string splitOne(str_cItr begin, str_cItr end)
     return std::string(i,j);
 }
 
-std::string condense(str_cItr begin, str_cItr end)
+std::string condense(Str_cItr begin, Str_cItr end)
 {
     std::string s(begin,end);
     
@@ -66,171 +59,14 @@ std::string condense(str_cItr begin, str_cItr end)
     return s;
 }
 
-std::string join(vec_cItr begin, vec_cItr end)
+std::string join(Vec_Itr begin, Vec_Itr end, const std::string& str = " ")
 {
     std::string s;
     
     while (begin != end)
-        s += *begin++;
+    { s += *begin++ + str; }
     
     return s;
-}
-
-void TextParser::save()
-{
-    // save to file ...
-    
-    
-    
-    _file.clear();
-}
-
-void TextParser::eraseWord()
-{
-    _currWord = _currLine->erase(_currWord);
-    
-    if (_currWord == _currLine->end()) moveWord(-1);
-}
-
-void TextParser::eraseLine()
-{
-    _currLine = _file.erase(_currLine);
-    
-    if (_currLine == _file.end()) moveLine(-1);
-}
-
-void TextParser::replaceLine(const std::string &str)
-{
-    eraseLine();
-    
-    insertInFile(str);
-}
-
-void TextParser::replaceWord(const std::string& str)
-{
-    eraseWord();
-    
-    insertInLine(str);
-}
-
-void TextParser::insertInLine(const std::string& str)
-{
-    wordVec vec = split(str.begin(), str.end());
-
-    // insert all words (last word first)
-    for (std::vector<std::string>::const_reverse_iterator itr = vec.rbegin(), end = vec.rend();
-         itr != end;
-         ++itr)
-    {
-        _currWord = _currLine->insert(_currWord, *itr);
-    }
-}
-
-void TextParser::appendToLine(const std::string& str)
-{
-    // split line into words
-    wordVec vec = split(str.begin(), str.end());
-    
-    toLineEnd();
-    
-    // append all to line
-    for (wordItr itr = vec.begin(), end = vec.end();
-         itr != end;
-         ++itr)
-    {
-        _currLine->push_back(*itr);
-    }
-    
-    // first new word
-    moveWord(1);
-}
-
-void TextParser::newFile(const std::string &fname)
-{
-    _fname = fname;
-    _currLine = _file.begin();
-}
-
-void TextParser::openFile(const std::string& fname)
-{
-    std::fstream file(fname, std::ios::in | std::ios::out);
-    
-    if (! file.is_open() || ! file.good())
-        throw FileOpenError();
-        
-    std::string s;
-    
-    _fname = fname;
-    
-    // grab all lines and process them
-    while (getline(file, s))
-        _file.push_back(split(s.begin(), s.end()));
-    
-    _currLine = _file.begin();
-    
-    _currWord = _currLine->begin();
-}
-
-std::vector<std::string> TextParser::readAllItems()
-{
-    wordVec vec;
-    
-    for (lineItr line = _file.begin(), fileEnd = _file.end();
-         line != fileEnd;
-         ++line)
-    {
-        if (! line->empty())
-        {
-            // check for comment-only lines by grabbing the first word
-            std::string w = *(line->begin());
-            
-            // check if line is a comment, else make into string and store in vector
-            if (! w.empty() && condense(w.begin(), w.end())[0] != '#')
-            {
-                for (wordItr word = line->begin(), lineEnd = line->end();
-                     word != lineEnd;
-                     ++word)
-                {
-                    vec.push_back(*word);
-                }
-            }
-        }
-    }
-    
-    return vec;
-}
-
-std::vector<std::string> TextParser::readAllLines()
-{
-    wordVec vec;
-    
-    for (lineItr line = _file.begin(), fileEnd = _file.end();
-         line != fileEnd;
-         ++line)
-    {
-        if (! line->empty())
-        {
-            // check for comment-only lines by grabbing the first word
-            std::string w = *(line->begin());
-            
-            // check if line is a comment, else make into string and store in vector
-            if (! w.empty() && condense(w.begin(), w.end())[0] != '#')
-            {
-                std::string lineStr;
-                
-                for (wordItr word = line->begin(), end = line->end();
-                     word != end;
-                     ++word)
-                {
-                    lineStr += (*word);
-                }
-                
-                vec.push_back(lineStr);
-            }
-        }
-    }
-    
-    return vec;
 }
 
 Wavetable VibeWTParser::readWT(const std::string &fname)
@@ -250,14 +86,14 @@ Wavetable VibeWTParser::readWT(const std::string &fname)
     if (strncmp(id, "VIBE", 4) != 0)
         throw ParseError("Invalid signature for Vibe file!");
     
-    int len = global.wtLen + 1;
+    int len = Global::wtLen + 1;
     int size = len * sizeof(double);
     
     double * wt = new double [len];
     
     file.read(reinterpret_cast<char*>(wt), size);
     
-    return Wavetable(wt,global.wtLen);
+    return Wavetable(wt,Global::wtLen);
 }
 
 void VibeWTParser::writeWT(const std::string &fname, const Wavetable& wt)
@@ -272,27 +108,199 @@ void VibeWTParser::writeWT(const std::string &fname, const Wavetable& wt)
     
     file.write("VIBE", 4);
     
-    int size = (global.wtLen + 1) * sizeof(double);
+    int size = (Global::wtLen + 1) * sizeof(double);
     
     file.write(reinterpret_cast<char*>(wt._data), size);
 }
 
-XMLNode * XMLParser::open(const std::string& fname)
+void TextParsley::close()
+{
+    if(_closed) return;
+    
+    std::ofstream f(_fname);
+    
+    std::string output;
+    
+    for(lineVec::const_iterator line = _file.begin(), lineEnd = _file.end();
+        line != lineEnd;
+        ++line)
+    {
+        for(wordVec::const_iterator word = line->begin(), wordEnd = line->end();
+            word != wordEnd;
+            ++word)
+        {
+            output += *word + " ";
+        }
+        
+        output += "\n";
+    }
+    
+    f << output;
+    
+    _file.clear();
+    
+    _closed = true;
+}
+
+void TextParsley::insertInFile(const std::string& str)
+{
+    _currLine = _file.insert(_currLine, split(str.begin(),str.end()));
+}
+
+void TextParsley::appendToFile(const std::string& str)
+{
+    _file.push_back(split(str.begin(), str.end()));
+    
+    toFileEnd();
+}
+
+std::string TextParsley::currLine()
+{
+    return join(_currLine->begin(), _currLine->end());
+}
+
+void TextParsley::eraseWord()
+{
+    _currWord = _currLine->erase(_currWord);
+    
+    if (_currWord == _currLine->end()) moveWord(-1);
+}
+
+void TextParsley::eraseLine()
+{
+    _currLine = _file.erase(_currLine);
+    
+    if (_currLine == _file.end()) moveLine(-1);
+}
+
+void TextParsley::replaceLine(const std::string &str)
+{
+    eraseLine();
+    
+    insertInFile(str);
+}
+
+void TextParsley::replaceWord(const std::string& str)
+{
+    eraseWord();
+    
+    insertInLine(str);
+}
+
+void TextParsley::insertInLine(const std::string& str)
+{
+    wordVec vec = split(str.begin(), str.end());
+    
+    // insert all words (last word first)
+    for (std::vector<std::string>::const_reverse_iterator itr = vec.rbegin(), end = vec.rend();
+         itr != end;
+         ++itr)
+    {
+        _currWord = _currLine->insert(_currWord, *itr);
+    }
+}
+
+void TextParsley::appendToLine(const std::string& str)
+{
+    // split line into words
+    wordVec vec = split(str.begin(), str.end());
+    
+    toLineEnd();
+    
+    // append all to line
+    for (wordItr itr = vec.begin(), end = vec.end();
+         itr != end;
+         ++itr)
+    {
+        _currLine->push_back(*itr);
+    }
+    
+    // first new word
+    moveWord(1);
+}
+
+void TextParsley::open(const std::string& fname)
 {
     std::ifstream file(fname);
     
+    if (! file.good())
+        throw FileOpenError();
+    
     _fname = fname;
     
-    _open = false;
+    _currLine = _file.begin();
+    
+    if (file.is_open())
+    {
+        std::string s;
+        
+        // grab all lines and process them, if not empty and not a comment
+        while (getline(file, s))
+        {
+            if (! s.empty() && condense(s.begin(), s.end())[0] != '#')
+            {
+                _file.push_back(split(s.begin(), s.end()));
+            }
+        }
+        
+        _currLine = _file.begin();
+        _currWord = _currLine->begin();
+    }
+}
 
+std::vector<std::string> TextParsley::getAllWords()
+{
+    wordVec vec;
+    
+    for (lineItr line = _file.begin(), fileEnd = _file.end();
+         line != fileEnd;
+         ++line)
+    {
+        for (wordItr word = line->begin(), lineEnd = line->end();
+             word != lineEnd;
+             ++word)
+            {
+                vec.push_back(*word);
+            }
+    }
+    
+    return vec;
+}
+
+std::vector<std::string> TextParsley::getAllLines()
+{
+    wordVec vec;
+    
+    for (lineItr line = _file.begin(), fileEnd = _file.end();
+         line != fileEnd;
+         ++line)
+    {
+        std::string lineStr;
+        
+        for (wordItr word = line->begin(), end = line->end();
+             word != end;
+             ++word)
+        {
+            lineStr += (*word);
+        }
+        
+        vec.push_back(lineStr);
+    }
+    
+    return vec;
+}
+
+ParsleyNode * Parsley::parse(const std::string& fname)
+{
+    std::ifstream file(fname);
+    
     if (! file.good() || ! file.is_open())
         throw FileOpenError();
     
-    _open = true;
-    
     StrVec vec;
     std::string s,str;
-
+    
+    // grab first line to see if it has a header
     getline(file, s,'>');
     
     // go back in file
@@ -301,73 +309,81 @@ XMLNode * XMLParser::open(const std::string& fname)
     // get a char
     s += file.get();
     
-    _hasHeader = isHeader(s.begin() + 1, s.end() - 1);
+    // see if it is an XML header
+    bool hasHeader = _isHeader(s.begin() + 1, s.end() - 1);
     
-    _root = new XMLNode;
-    
-    if (_hasHeader)
-    {
-        _root = _makeNode(s.begin(), s.end(),true);
-        
-        _root->isClosed = true;
-    }
-    
-    else str += s;
+    if (!hasHeader) str += s;
     
     while (getline(file,s)) str += s;
     
     vec = _parse(str.begin(), str.end());
     
-     _makeNodeTree(vec.begin(), vec.end(),_root);
+    // _makeNodeTree needs a parent to be passed
+    // for the recursion to work, so pass this
+    // "pseudo-parent"
+    ParsleyNode* pseudo = new ParsleyNode;
     
-    return _root;
+    _makeNodeTree(vec.begin(), vec.end(),pseudo);
+    
+    // the root is then the first child of this pseudo-parent
+    ParsleyNode* ret = pseudo->firstChild;
+    
+    // remove pseudo-parent
+    pseudo->firstChild = pseudo->lastChild = 0;
+    delete pseudo;
+    
+    return ret;
 }
 
-bool XMLParser::isHeader(str_cItr begin, str_cItr end)
+bool Parsley::_isHeader(Str_cItr begin, Str_cItr end)
 {
     std::string s = condense(begin, end);
     
-    return *(s.begin()) == '?' && *(s.end() - 1) == '?';
+    return *(s.begin()) == '?' && *(s.end() - 1) == '?' && s.substr(1,3) == "xml";
 }
 
 template <class T>
-T XMLParser::lastNonSpace(T begin, T end)
+T Parsley::_lastNonSpace(T begin, T end)
 {
     return (condense(begin, end)).end();
 }
 
-bool XMLNode::getAttr(std::string& str, const std::string& attrKey)
+std::string ParsleyNode::getAttr(const std::string& attrKey)
 {
     if (! findAttr(attrKey))
-        return false;
+    { throw ParseError("Could not find attribute key: " + attrKey); }
     
-    str = attrs[attrKey];
-    
-    return true;
+    return attrs[attrKey];
 }
 
-bool XMLNode::removeAttr(const std::string &key)
+void ParsleyNode::removeAttr(const std::string &key)
 {
     if (! findAttr(key))
-        return false;
+    { throw ParseError("Could not find attribute key: " + key); }
     
     attrs.erase(key);
-    
-    return true;
 }
 
-XMLNode::NodeVec XMLNode::getElementsByTagName(const std::string& tagName)
+ParsleyNode* ParsleyNode::getNthChild(unsigned int n) const
+{
+    ParsleyNode* node = firstChild;
+    
+    while(n-- && node)
+    { node = firstChild->nextSibling; }
+    
+    return node;
+}
+
+ParsleyNode::NodeVec ParsleyNode::getElementsByTagName(const std::string& tagName)
 {
     NodeVec vec;
     
-    XMLNode * itr = firstChild;
+    ParsleyNode * itr = firstChild;
     
     while (itr != 0)
     {
-        if (itr->tag != tagName)
-            continue;
-        
-        vec.push_back(itr);
+        if (itr->tag == tagName)
+        { vec.push_back(itr); }
         
         itr = itr->nextSibling;
     }
@@ -375,18 +391,23 @@ XMLNode::NodeVec XMLNode::getElementsByTagName(const std::string& tagName)
     return vec;
 }
 
-XMLNode::NodeVec XMLNode::getElementsByAttrName(const std::string& attrName)
+void ParsleyNode::insertData(const std::string::size_type ind, const std::string& newData)
+{
+    if (ind < data.size()) data.insert(ind, newData);
+    
+    else throw ParseError("Index out ouf bounds!");
+}
+
+ParsleyNode::NodeVec ParsleyNode::getElementsByAttrName(const std::string& attrName)
 {
     NodeVec vec;
     
-    XMLNode * itr = firstChild;
+    ParsleyNode * itr = firstChild;
     
     while (itr != 0)
     {
-        if (! findAttr(attrName))
-            continue;
-        
-        vec.push_back(itr);
+        if (itr->findAttr(attrName))
+        { vec.push_back(itr); }
         
         itr = itr->nextSibling;
     }
@@ -394,7 +415,7 @@ XMLNode::NodeVec XMLNode::getElementsByAttrName(const std::string& attrName)
     return vec;
 }
 
-bool XMLNode::insertChild(XMLNode* childOfThisNode, XMLNode * node)
+bool ParsleyNode::insertChild(ParsleyNode* childOfThisNode, ParsleyNode * node)
 {
     if (childOfThisNode == 0 ||
         childOfThisNode->parent != this)
@@ -415,7 +436,7 @@ bool XMLNode::insertChild(XMLNode* childOfThisNode, XMLNode * node)
     return true;
 }
 
-bool XMLNode::removeChild(XMLNode* childOfThisNode)
+bool ParsleyNode::removeChild(ParsleyNode* childOfThisNode)
 {
     // check if valid node
     if (childOfThisNode == 0 ||
@@ -467,14 +488,14 @@ bool XMLNode::removeChild(XMLNode* childOfThisNode)
     return true;
 }
 
-XMLParser::StrVec XMLParser::_parse(str_cItr begin, str_cItr end)
+Parsley::StrVec Parsley::_parse(Str_cItr begin, Str_cItr end)
 {
     StrVec vec;
     
     std::string s;
     
-    str_cItr i = begin;
-    str_cItr j = i;
+    Str_cItr i = begin;
+    Str_cItr j = i;
     
     while (j != end)
     {
@@ -500,7 +521,7 @@ XMLParser::StrVec XMLParser::_parse(str_cItr begin, str_cItr end)
     return vec;
 }
 
-void XMLNode::prependChild(XMLNode *node)
+void ParsleyNode::prependChild(ParsleyNode *node)
 {
     if (node == this)
         throw ParseError("Prepending Node to self");
@@ -520,7 +541,7 @@ void XMLNode::prependChild(XMLNode *node)
         lastChild = firstChild;
 }
 
-void XMLNode::appendChild(XMLNode *node)
+void ParsleyNode::appendChild(ParsleyNode *node)
 {
     if (node == this)
         throw ParseError("Appending Node to self");
@@ -540,11 +561,11 @@ void XMLNode::appendChild(XMLNode *node)
         firstChild = lastChild;
 }
 
-XMLNode::AttrMap XMLParser::getAttrs(str_cItr begin, str_cItr end) const
+ParsleyNode::AttrMap Parsley::_getAttrs(Str_cItr begin, Str_cItr end) const
 {
-    XMLNode::AttrMap attrs;
+    ParsleyNode::AttrMap attrs;
     
-    str_cItr j;
+    Str_cItr j;
     
     j = begin;
     
@@ -582,16 +603,16 @@ XMLNode::AttrMap XMLParser::getAttrs(str_cItr begin, str_cItr end) const
     return attrs;
 }
 
-bool XMLParser::isSelfClosing(str_cItr begin, str_cItr end) const
+bool Parsley::_isSelfClosing(Str_cItr begin, Str_cItr end) const
 {
     while (end != begin && isspace(*end--));
     
     return *end == '/';
 }
 
-XMLNode * XMLParser::_makeNode(str_cItr begin, str_cItr end, bool docHead)
+ParsleyNode * Parsley::_makeNode(Str_cItr begin, Str_cItr end, bool docHead)
 {
-    str_cItr i,j;
+    Str_cItr i,j;
     
     i = std::find(begin, end, '<');
     
@@ -610,35 +631,37 @@ XMLNode * XMLParser::_makeNode(str_cItr begin, str_cItr end, bool docHead)
         throw ParseError("Empty tag found!");
     
     std::string tag = splitOne(curr.begin(), curr.end());
-
+    
     curr.erase(0,tag.size());
     
-    XMLNode::AttrMap attrs = getAttrs(curr.begin(), curr.end());
+    ParsleyNode::AttrMap attrs = _getAttrs(curr.begin(), curr.end());
     
-    XMLNode * node = new XMLNode;
+    ParsleyNode * node = new ParsleyNode;
     
     node->tag = tag;
     node->attrs = attrs;
     
-    node->selfClosed = isSelfClosing(curr.begin(), curr.end());
+    node->selfClosed = _isSelfClosing(curr.begin(), curr.end());
     
     return node;
 }
 
-XMLParser::StrVec_cItr XMLParser::_makeNodeTree(StrVec_cItr itr, StrVec_cItr end, XMLNode * parent)
+Parsley::StrVec_cItr Parsley::_makeNodeTree(StrVec_cItr itr, StrVec_cItr end, ParsleyNode * parent)
 {
     if (std::find(itr->begin(), itr->end(), '<') == itr->end())
         parent->data += strip(itr->begin(), itr->end());
     
     else
     {
-        XMLNode * node;
+        ParsleyNode* node;
         
         node = _makeNode(itr->begin(), itr->end());
         
-        bool isClosing = node->tag.end() - node->tag.begin() > 2 &&
-                         *(node->tag.begin()) == '/';
+        // check if the node is a closing tag
+        bool isClosing = (node->tag.end() - node->tag.begin() > 2 &&
+                          *(node->tag.begin()) == '/');
         
+        // if this is a closing tag, close the parent
         if (node->selfClosed)
             parent->selfClosed = true;
         
@@ -650,12 +673,12 @@ XMLParser::StrVec_cItr XMLParser::_makeNodeTree(StrVec_cItr itr, StrVec_cItr end
             if (isClosingOfPar)
             {
                 if (parent->isClosed)
-                    throw ParseError("Found duplicate closing tag for opening tag");
+                    throw ParseError("Found duplicate closing tag for opening tag: " + parent->tag);
                 
                 parent->isClosed = true;
                 
             } else
-                throw ParseError("Found closing tag that does not close current node!");
+                throw ParseError("Found closing tag: " + node->tag + "that does not close current node!");
         }
         
         else
@@ -676,7 +699,7 @@ XMLParser::StrVec_cItr XMLParser::_makeNodeTree(StrVec_cItr itr, StrVec_cItr end
     return itr;
 }
 
-std::string XMLParser::_nodeToString(const XMLNode *node, std::string indent, bool docHead) const
+std::string Parsley::_nodeToString(const ParsleyNode *node, std::string indent, bool docHead) const
 {
     std::string str;
     
@@ -688,7 +711,7 @@ std::string XMLParser::_nodeToString(const XMLNode *node, std::string indent, bo
         
         str += node->tag;
         
-        for (XMLNode::AttrMap::const_iterator itr = node->attrs.begin(), end = node->attrs.end();
+        for (ParsleyNode::AttrMap::const_iterator itr = node->attrs.begin(), end = node->attrs.end();
              itr != end;
              ++itr)
         {
@@ -710,7 +733,7 @@ std::string XMLParser::_nodeToString(const XMLNode *node, std::string indent, bo
     return str;
 }
 
-std::string XMLParser::_treeToString(const XMLNode * root, std::string& str, std::string indent) const
+std::string Parsley::_treeToString(const ParsleyNode * root, std::string& str, std::string indent) const
 {
     if (root != 0)
     {
@@ -737,44 +760,37 @@ std::string XMLParser::_treeToString(const XMLNode * root, std::string& str, std
             str += "</" + root->tag + ">\n";
         }
         
-        if (! root->isLastChild())
+        if (root->parent && !root->isLastChild())
             _treeToString(root->nextSibling, str,indent);
     }
     
     return str;
 }
 
-void XMLParser::saveToDiffFile(XMLNode * root, const std::string& fname)
+void Parsley::save(ParsleyNode* node,
+                   const std::string& fname,
+                   bool deleteTree,
+                   bool addHeader)
 {
+    static std::string headerStr = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
     std::string treeStr;
     
-    if (_hasHeader)
-        treeStr = _nodeToString(root,"",true);
+    if (addHeader)
+    { treeStr = headerStr; }
     
-    _treeToString(root->firstChild,treeStr);
+    _treeToString(node,treeStr);
     
     std::ofstream outFile(fname);
     
-    outFile.write(treeStr.c_str(), treeStr.size());
+    outFile << treeStr;
     
-    _saved = true;
+    outFile.close();
+    
+    if (deleteTree) delete node;
 }
 
-void XMLParser::_deleteTree(XMLNode * node)
+ParsleyNode::~ParsleyNode()
 {
-    while (node->hasChildren())
-        _deleteTree(node->lastChild);
-    
-    if (node->parent != 0)
-        node->parent->removeChild(node);
-    
-    else delete node;
-}
-
-void XMLParser::close()
-{
-    if (! _saved)
-        saveToSameFile(_root);
-    
-    _deleteTree(_root);
+    while(hasChildren())
+    { removeFirstChild(); }
 }

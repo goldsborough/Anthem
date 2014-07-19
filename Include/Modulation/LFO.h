@@ -67,11 +67,9 @@ public:
     
     ~LFOUnit();
     
-    
     double tick();
     
     void setMode(unit_t mode) { _mode = mode; }
-    
     
     void setEnvSegLen(unit_t envSeg, unsigned short len);
     
@@ -79,11 +77,9 @@ public:
     
     void setEnvLoopMax(unsigned char loopNum);
     
-    
     void setLFOWave(unit_t unitNum, int wave) { _LFOs[unitNum].osc.setWT(wave); }
     
     void setLFOPhaseOffset(unit_t unitNum, short degrees) { _LFOs[unitNum].osc.setPhaseOffset(degrees); };
-    
     
     void setLFOSeqSegWave(unit_t unitNum, subseg_t segNum, int wave);
     

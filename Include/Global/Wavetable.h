@@ -89,8 +89,10 @@ public:
     { _baseDestructorEnabled = false; }
     
     template <class PartItr>
-    Wavetable(PartItr start, PartItr end, size_t wtLen, double masterAmp = 1,
-              bool sigmaAprox = false, unsigned int bitWidth = 16);
+    Wavetable(PartItr start, PartItr end,
+              size_t wtLen, double masterAmp = 1,
+              bool sigmaAprox = false,
+              unsigned int bitWidth = 16);
     
     Wavetable(double * ptr, size_t wtLength)
     : _refptr(new size_t(1))
@@ -230,7 +232,7 @@ public:
         SMOOTH_SAW,
     };
     
-    void Init(const unsigned int wtLen);
+    void init(const unsigned int wtLen);
     
     Wavetable& getWaveform(const int mode);
     
@@ -271,6 +273,7 @@ private:
     std::vector<Wavetable> _tables;
 };
 
+// One global instance
 extern WavetableDB wavetableDB;
 
 #endif /* defined(__Synth__Waveforms__) */

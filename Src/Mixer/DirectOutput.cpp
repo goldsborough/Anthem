@@ -23,7 +23,7 @@ DirectOutput::DirectOutput(unsigned char ltncy)
                                 0, /* no input */
                                 2,
                                 paFloat32,
-                                global.samplerate,
+                                Global::samplerate,
                                 256,
                                 &paCallback,
                                 &data

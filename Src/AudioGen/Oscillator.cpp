@@ -32,9 +32,9 @@ void Oscillator::setSemis(short semis, bool permanent)
     
     double newFreq = semiToFreq(_freq, semis);
     
-    if (newFreq < global.nyquistLimit)
+    if (newFreq < Global::nyquistLimit)
     {
-        _indIncr = global.tableIncr * newFreq;
+        _indIncr = Global::tableIncr * newFreq;
         
         if (permanent) _freq = newFreq;
     }
@@ -47,9 +47,9 @@ void Oscillator::setCents(short cents, bool permanent)
     
     double newFreq = centToFreq(_freq, cents);
     
-    if (newFreq < global.nyquistLimit)
+    if (newFreq < Global::nyquistLimit)
     {
-        _indIncr = global.tableIncr * newFreq;
+        _indIncr = Global::tableIncr * newFreq;
         
         if (permanent) _freq = newFreq;
     }
@@ -58,7 +58,7 @@ void Oscillator::setCents(short cents, bool permanent)
 void Oscillator::setFreq(double Hz)
 {
     _freq = Hz;
-    _indIncr = global.tableIncr * Hz;
+    _indIncr = Global::tableIncr * Hz;
 }
 
 void Oscillator::setPhaseOffset(short degrees)
@@ -82,7 +82,7 @@ void Oscillator::setPhaseOffset(short degrees)
     // by 360 to get e.g. 1/4 and multiply by the wavetablelength
     // to get the number of samples to shift by
     
-    _phaseOffset = ((global.wtLen + 1) * degrees) / 360.0;
+    _phaseOffset = ((Global::wtLen + 1) * degrees) / 360.0;
     
     // Add new offset
     _ind += _phaseOffset;
@@ -97,8 +97,8 @@ double Oscillator::tick()
     
     _ind += _indIncr;
     
-    if ( _ind >= global.wtLen)
-        _ind -= global.wtLen;
+    if ( _ind >= Global::wtLen)
+        _ind -= Global::wtLen;
     
     return value * _amp;
 }

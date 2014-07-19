@@ -26,8 +26,6 @@ public:
     
     Synthesizer(unsigned int smplr = 44100, unsigned short wtLen = 4095);
     
-    void process();
-    
 };
 
 #endif /* defined(__Synth__Synthesizer__) */

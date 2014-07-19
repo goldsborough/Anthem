@@ -58,7 +58,7 @@ void EnvSeg::_calcModRate()
     
     if (_len > 0)
     {
-        double freq = (global.samplerate / (double) _len) * _modRate;
+        double freq = (Global::samplerate / (double) _len) * _modRate;
         
         _lfo->setRate(freq);
     }

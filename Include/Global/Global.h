@@ -9,36 +9,25 @@
 #ifndef __Synth__Global__
 #define __Synth__Global__
 
-#define PI 3.14159265358979
-#define twoPI 6.28318530717958
-
 #include <ctime>
 #include <cstdlib>
 
-struct Global
-{
-    void Init(const unsigned int smplr, const unsigned int wavetableLen)
-    {
-        samplerate = smplr;
-        nyquistLimit = smplr/2;
-        
-        wtLen = wavetableLen;
-        
-        tableIncr = ((double) wtLen) / smplr;
-        
-        srand((unsigned)time(0));
-    }
-    
-    unsigned int samplerate;
-    
-    unsigned int nyquistLimit;
-    
-    unsigned int wtLen;
-    
-    double tableIncr;
-    
-};
+// http://goo.gl/748HMW
 
-extern Global global;
+namespace Global
+{
+    const double pi = 3.14159265358979;
+    const double twoPi = 6.28318530717958;
+    
+    extern unsigned int samplerate;
+    
+    extern unsigned int nyquistLimit;
+    
+    extern unsigned int wtLen;
+    
+    extern double tableIncr;
+    
+    extern void init(const unsigned int smplr, const unsigned int wavetableLen);
+};
 
 #endif /* defined(__Synth__Globals__) */

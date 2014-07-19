@@ -18,7 +18,7 @@ Envelope::Envelope(unsigned int delay_MS)
     
     // Found this to be a good and not too long length.
     // For 44100 this is 1102.5 ~ 1102 samples
-    _hiddenConnecterLen = global.samplerate / 40;
+    _hiddenConnecterLen = Global::samplerate / 40;
     
     _loopStart = NONE;
     _loopEnd   = NONE;
