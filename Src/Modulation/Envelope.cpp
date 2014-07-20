@@ -120,7 +120,7 @@ void Envelope::setLoopStart(int seg)
 {
     
     if (seg >= REL || seg <= ATK)
-        throw std::out_of_range("Invalid loop segment, can only loop from Segments A to D!");
+        throw std::invalid_argument("Invalid loop segment, can only loop from Segments A to D!");
     
     _loopStart = seg;
 
@@ -133,7 +133,7 @@ void Envelope::setLoopStart(int seg)
 void Envelope::setLoopEnd(int seg)
 {
     if (seg >= REL || seg <= ATK)
-        throw std::out_of_range("Invalid loop segment, can only loop from Segments A to D!");
+        throw std::invalid_argument("Invalid loop segment, can only loop from Segments A to D!");
     
     _loopEnd = seg;
     
@@ -146,7 +146,7 @@ void Envelope::setLoopEnd(int seg)
 void Envelope::setSegLevel(int seg, double lv)
 {
     if (seg >= REL || seg <= DEL)
-        throw std::out_of_range("Invalid segment for setting the level!");
+        throw std::invalid_argument("Invalid segment for setting the level!");
     
     _segs[seg].setEndLevel(lv);
     _segs[seg + 1].setStartLevel(lv);

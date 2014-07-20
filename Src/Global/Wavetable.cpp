@@ -303,7 +303,7 @@ void WavetableDB::init(unsigned int wtLen)
     // Fetch all wavetable names and read their respective data files
     for (int i = 0; i < names.size(); ++i)
     {
-        fname = "/Users/petergoldsborough/Documents/vibe/Resources/Wavetables/" + names[i] + ".vwt";
+        fname = "/Users/petergoldsborough/Documents/vibe/Resources/Wavetables/" + names[i] + ".wavetable";
         
         _tables.push_back(wtParser.readWT(fname));
     }
@@ -314,7 +314,7 @@ Wavetable& WavetableDB::getWaveform(const int mode)
         return _noneTable;
     
     if (mode < 0 || mode >= _tables.size())
-        throw std::out_of_range("Mode out of range");
+        throw std::invalid_argument("Mode out of range");
     
     return _tables[mode];
 }

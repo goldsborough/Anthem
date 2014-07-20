@@ -52,10 +52,10 @@ double ModDock::checkAndTick(const double val,
 void ModDock::setDepth(index_t index, depth_t dpth)
 {
     if (index < 0 || index >= _dockSize || ! _mods[index].mod)
-        throw std::out_of_range("Invalid modDock index given!");
+        throw std::invalid_argument("Invalid modDock index given!");
     
     else if (dpth < 0 || dpth > 1)
-        throw std::out_of_range("Invalid depth, not between 0 and 1");
+        throw std::invalid_argument("Invalid depth, not between 0 and 1");
     
     _mods[index].dpth = dpth;
 }
@@ -63,7 +63,7 @@ void ModDock::setDepth(index_t index, depth_t dpth)
 void ModDock::attach(index_t index, ModUnit* mod)
 {
     if (index < 0 || index >= _dockSize)
-        throw std::out_of_range("Invalid modDock index given!");
+        throw std::invalid_argument("Invalid modDock index given!");
     
     if (! mod) _usedDocks--;
     

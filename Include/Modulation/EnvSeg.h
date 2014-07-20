@@ -79,7 +79,7 @@ public:
      *
      *  @param      sampleLen Length of the segment in __samples__.
      *
-     *  @exception  Throws std::out_of_range if len > _maxLen (60 seconds)
+     *  @exception  Throws std::invalid_argument if len > _maxLen (60 seconds)
      *
      *************************************************************************/
     
@@ -114,7 +114,7 @@ public:
     *
     *  @see         _calcRate()
     *
-    *  @exception   Throws std::out_of_range if the range is not between 0 and 2
+    *  @exception   Throws std::invalid_argument if the range is not between 0 and 2
     *
     ****************************************************************************/
     
@@ -133,7 +133,7 @@ public:
     *
     *  @see         _calcLevel()
     *
-    *  @exception   Throws std::out_of_range if lv is not between 0 and 1.
+    *  @exception   Throws std::invalid_argument if lv is not between 0 and 1.
     *
     ****************************************************************************/
     
@@ -152,7 +152,7 @@ public:
     *
     *  @see         _calcLevel()
     *
-    *  @exception   Throws std::out_of_range if lv is not between 0 and 1.
+    *  @exception   Throws std::invalid_argument if lv is not between 0 and 1.
     *
     ****************************************************************************/
     
@@ -243,7 +243,7 @@ public:
     *
     *  @param       dpth The depth between 0 and 1
     *
-    *  @exception   Throws std::out_of_range if dpth less than 0 or greater 1
+    *  @exception   Throws std::invalid_argument if dpth less than 0 or greater 1
     *
     ****************************************************************************/
     

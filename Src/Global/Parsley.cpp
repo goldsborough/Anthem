@@ -234,13 +234,9 @@ void TextParsley::open(const std::string& fname)
     {
         std::string s;
         
-        // grab all lines and process them, if not empty and not a comment
         while (getline(file, s))
         {
-            if (! s.empty() && condense(s.begin(), s.end())[0] != '#')
-            {
-                _file.push_back(split(s.begin(), s.end()));
-            }
+            _file.push_back(split(s.begin(), s.end()));
         }
         
         _currLine = _file.begin();
@@ -256,12 +252,23 @@ std::vector<std::string> TextParsley::getAllWords()
          line != fileEnd;
          ++line)
     {
-        for (wordItr word = line->begin(), lineEnd = line->end();
-             word != lineEnd;
-             ++word)
+        if (! line->empty())
+        {
+            // check for comment-only lines by grabbing the first word
+            std::string w = *(line->begin());
+            
+            // check if line is a comment, else make into string and store in vector
+            if (! w.empty() && condense(w.begin(), w.end())[0] != '#')
             {
-                if(! word->empty()) vec.push_back(*word);
+                for (wordItr word = line->begin(), lineEnd = line->end();
+                     word != lineEnd;
+                     ++word)
+                {
+                    if (! word->empty())
+                    { vec.push_back(*word); }
+                }
             }
+        }
     }
     
     return vec;
@@ -275,16 +282,27 @@ std::vector<std::string> TextParsley::getAllLines()
          line != fileEnd;
          ++line)
     {
-        std::string lineStr;
-        
-        for (wordItr word = line->begin(), end = line->end();
-             word != end;
-             ++word)
+        if (! line->empty())
         {
-            lineStr += (*word);
+            // check for comment-only lines by grabbing the first word
+            std::string w = *(line->begin());
+            
+            // check if line is a comment, else make into string and store in vector
+            if (! w.empty() && condense(w.begin(), w.end())[0] != '#')
+            {
+                std::string lineStr;
+                
+                for (wordItr word = line->begin(), end = line->end();
+                     word != end;
+                     ++word)
+                {
+                    if (! word->empty())
+                    { lineStr += (*word); }
+                }
+                
+                vec.push_back(lineStr);
+            }
         }
-        
-        vec.push_back(lineStr);
     }
     
     return vec;

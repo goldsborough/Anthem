@@ -14,7 +14,7 @@
 void XFadeUnit::setValue(char value)
 {
     if (value < -100 || value > 100)
-        throw std::out_of_range("Cross-fade / Pan value must be between -100 and 100");
+        throw std::invalid_argument("Cross-fade / Pan value must be between -100 and 100");
     
     _data = &_table[value + 100];
 }

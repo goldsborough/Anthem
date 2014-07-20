@@ -181,7 +181,7 @@ void EnvSeg::setLen(unsigned long sampleLen)
         
         error += ss.str();
         
-        throw std::out_of_range(error);
+        throw std::invalid_argument(error);
     }
     
     _len = sampleLen;
@@ -193,7 +193,7 @@ void EnvSeg::setLen(unsigned long sampleLen)
 void EnvSeg::setStartLevel(double lv)
 {
     if (lv > 1 || lv < 0)
-        throw std::out_of_range("Level must be between 0 and 1");
+        throw std::invalid_argument("Level must be between 0 and 1");
     
     _startLevel = lv;
     
@@ -204,7 +204,7 @@ void EnvSeg::setStartLevel(double lv)
 void EnvSeg::setEndLevel(double lv)
 {
     if (lv > 1 || lv < 0)
-        throw std::out_of_range("Level must be between 0 and 1");
+        throw std::invalid_argument("Level must be between 0 and 1");
     
     _endLevel = lv;
     
@@ -221,7 +221,7 @@ void EnvSeg::setBothLevels(double lv)
 void EnvSeg::setRate(double rate)
 {
     if (rate > 2 || rate < 0)
-        throw std::out_of_range("Rate must be between 0 and 2");
+        throw std::invalid_argument("Rate must be between 0 and 2");
     
     _segRate = rate;
     
@@ -249,7 +249,7 @@ void EnvSeg::setModDepth(double dpth)
     // Go von deepar
     
     if (dpth > 1 || dpth < 0)
-        throw std::out_of_range("Modulation depth must be betwee 0 and 1");
+        throw std::invalid_argument("Modulation depth must be betwee 0 and 1");
     
     _modDepth = dpth;
 }

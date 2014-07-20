@@ -10,7 +10,7 @@
 #define __Vibe__Crossfade__
 
 // Base class
-// Others differ only in wavetable generation methods
+// Others differ only in table generation methods
 class XFadeUnit
 {
     

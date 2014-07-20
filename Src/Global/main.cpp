@@ -14,6 +14,7 @@
 #include "Envelope.h"
 #include "LFO.h"
 #include "Wavetable.h"
+#include "Filter.h"
 
 #include <iostream>
 
@@ -34,6 +35,8 @@ int main(int argc, const char * argv[])
     
     Mixer mixer(0,1);
     
+    Filter filter(Filter::LOW_PASS);
+    
     /*
     LFO lfo(WavetableDB::SAW_2);
     
@@ -45,6 +48,8 @@ int main(int argc, const char * argv[])
     for (int i = 0; i < len; i++)
     {
         double t = op.tick();
+        
+        filter.process(t);
         
         mixer.processTick(t);
     }

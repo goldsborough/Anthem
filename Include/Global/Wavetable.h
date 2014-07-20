@@ -37,10 +37,10 @@ public:
         { }
     };
     
-    struct TableLengthError : public std::out_of_range
+    struct TableLengthError : public std::invalid_argument
     {
         TableLengthError(const char * msg = "Table index requested is out of range!")
-        : std::out_of_range(msg)
+        : std::invalid_argument(msg)
         { }
     };
     
