@@ -14,14 +14,16 @@
 #include <cmath>
 
 // References: http://www.musicdsp.org/files/Audio-EQ-Cookbook.txt
+// http://www.earlevel.com/main/2013/10/13/biquad-calculator-v2/
 // and the BasicSynth of course
+
 
 Filter::Filter(const unsigned short& mode,
        const double& cutoff,
        const double& q,
        const double& gain)
-: _delayInA(0), _delayInB(0), _delayOutA(0), _delayOutB(0),
-  _mode(mode), _cutoff(cutoff), _q(q), _gain(gain)
+: _delayA(0), _delayB(0), _mode(mode),
+  _cutoff(cutoff), _q(q), _gain(gain)
 {
     // Initial coefficients
     _calcCoefs();
@@ -29,16 +31,20 @@ Filter::Filter(const unsigned short& mode,
 
 void Filter::process(double &sample)
 {
-    double out = (sample * _coefB0) + (_delayInA * _coefB1) + (_delayInB * _coefB2)
-               - (_delayOutA * _coefA1) - (_delayOutB * _coefA2);
     
-    _delayInB = _delayInA;
-    _delayInA = sample;
+    double temp = sample
+                - (_coefA1 * _delayA)
+                - (_coefA2 * _delayB);
     
-    _delayOutB = _delayOutA;
-    _delayOutA = out;
+    sample = (_coefB0 * temp)
+           + (_coefB1 * _delayA)
+           + (_coefB2 * _delayB);
     
-    sample = out * _gain;
+    
+    _delayB = _delayA;
+    _delayA = temp;
+    
+    sample *= _gain;
     
 }
 
@@ -54,6 +60,7 @@ void Filter::_calcCoefs()
     
     double a0,a1,a2,b0,b1,b2;
     
+    // Took out some constants
     a0 = 1.0 + alpha;
     a1 = -2.0 * cosine;
     a2 = 1.0 - alpha;

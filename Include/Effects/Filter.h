@@ -59,11 +59,8 @@ private:
     
     double _gain;
     
-    double _delayInA;
-    double _delayInB;
-    
-    double _delayOutA;
-    double _delayOutB;
+    double _delayA;
+    double _delayB;
     
     double _coefA1;
     double _coefA2;
