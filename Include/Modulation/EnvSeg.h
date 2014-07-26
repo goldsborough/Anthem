@@ -220,7 +220,7 @@ public:
     *               a rate of 10 means there will be 10 cycles, or oscillations
     *               going through the segment. This means that the rate can
     *               actually be modified either through this function or just
-    *               by changin the length.
+    *               by changing the length.
     *
     *  @param       rate The modulation rate, ranging from 0 to 255.
     *

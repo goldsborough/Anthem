@@ -42,7 +42,7 @@ int main(int argc, const char * argv[])
     
     Mixer mixer(0,1);
     
-    Filter filter(Filter::HIGH_PASS,1000);
+    Filter filter(Filter::ALL_PASS,1000);
     
     for (int i = 0; i < len; i++)
     {

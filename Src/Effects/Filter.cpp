@@ -31,7 +31,6 @@ Filter::Filter(const unsigned short& mode,
 
 void Filter::process(double &sample)
 {
-    
     double temp = sample
                 - (_coefA1 * _delayA)
                 - (_coefA2 * _delayB);
@@ -65,6 +64,8 @@ void Filter::_calcCoefs()
     a1 = -2.0 * cosine;
     a2 = 1.0 - alpha;
     
+    b1 = -2 * cosine;
+    
     switch (_mode)
     {
         case LOW_PASS:
@@ -97,7 +98,6 @@ void Filter::_calcCoefs()
         case BAND_REJECT:
         {
             b0 = 1;
-            b1 = -2 * cosine;
             b2 = 1;
 
             break;
@@ -106,7 +106,6 @@ void Filter::_calcCoefs()
         case ALL_PASS:
         {
             b0 = 1 - alpha;
-            b1 = -2 * cosine;
             b2 = 1 + alpha;
             
             break;
@@ -117,7 +116,6 @@ void Filter::_calcCoefs()
             double A = pow(10, (_gain/40));
         
             b0 = 1 + (alpha * A);
-            b1 = -2 * cosine;
             b2 = 1 - (alpha * A);
             
             a0 = 1.0 + (alpha / A);
@@ -198,10 +196,7 @@ void Filter::setQ(const double& q)
 
 void Filter::setGain(const short& gain)
 {
-    if (_mode < PEAK)
-    { throw std::invalid_argument("Gain only available for shelf and peak filters! "); }
-        
-    else if (gain < -20 || gain > 0)
+    if (gain < -20 || gain > 0)
     { throw std::invalid_argument("Gain out of range, must be between -20dB and 0dB! "); }
         
     _gain = Util::dbToAmp(1,gain);
