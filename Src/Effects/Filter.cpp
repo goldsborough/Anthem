@@ -35,16 +35,17 @@ void Filter::process(double &sample)
                 - (_coefA1 * _delayA)
                 - (_coefA2 * _delayB);
     
-    sample = (_coefB0 * temp)
-           + (_coefB1 * _delayA)
-           + (_coefB2 * _delayB);
+    double out = (_coefB0 * temp)
+               + (_coefB1 * _delayA)
+               + (_coefB2 * _delayB);
     
     
     _delayB = _delayA;
     _delayA = temp;
     
-    sample *= _gain;
+    out *= _gain;
     
+    _dryWet(sample, out);
 }
 
 void Filter::_calcCoefs()

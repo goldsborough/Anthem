@@ -15,6 +15,7 @@
 #include "LFO.h"
 #include "Wavetable.h"
 #include "Filter.h"
+#include "EffectUnit.h"
 
 #include <iostream>
 
@@ -42,7 +43,9 @@ int main(int argc, const char * argv[])
     
     Mixer mixer(0,1);
     
-    Filter filter(Filter::ALL_PASS,1000);
+    Filter filter(Filter::LOW_PASS,440);
+    
+    filter.setDryWet(0);
     
     for (int i = 0; i < len; i++)
     {

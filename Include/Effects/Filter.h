@@ -9,6 +9,8 @@
 #ifndef __Vibe__Filter__
 #define __Vibe__Filter__
 
+#include "EffectUnit.h"
+
 /*************************************************************************//*!
 *
 *  @brief       Bi-Quad Filter.
@@ -18,7 +20,8 @@
 *               can be found here: http://goo.gl/XiA8jo
 *
 ****************************************************************************/
-class Filter
+
+class Filter : public EffectUnit
 {
 
 public:

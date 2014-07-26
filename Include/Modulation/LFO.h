@@ -89,7 +89,6 @@ public:
     
     void setLFOSeqLoopEnd(unit_t unitNum, subseg_t segNum);
     
-    
     void setXFade(char value);
     
     void setRate(unit_t unitNum, double Hz);
