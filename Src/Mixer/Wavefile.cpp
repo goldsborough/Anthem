@@ -8,7 +8,7 @@
 
 #include "Wavefile.h"
 #include "Global.h"
-#include "Utils.h"
+#include "Util.h"
 #include "SampleData.h"
 
 Wavefile::Wavefile(unsigned char ch)
@@ -39,7 +39,7 @@ Wavefile::Wavefile(unsigned char ch)
 void Wavefile::check_fname(std::string& fname)
 {
     if (fname.empty())
-        fname = std::string(getDate());
+        fname = std::string(Util::getDate());
     
     typedef std::string::size_type szt;
     

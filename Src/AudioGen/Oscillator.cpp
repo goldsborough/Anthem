@@ -8,7 +8,7 @@
 
 #include "Oscillator.h"
 #include "Global.h"
-#include "Utils.h"
+#include "Util.h"
 #include "Wavetable.h"
 
 Oscillator::Oscillator(const int mode, double frq,
@@ -30,7 +30,7 @@ void Oscillator::setSemis(short semis, bool permanent)
 {
     if (semis == 0) return;
     
-    double newFreq = semiToFreq(_freq, semis);
+    double newFreq = Util::semiToFreq(_freq, semis);
     
     if (newFreq < Global::nyquistLimit)
     {
@@ -45,7 +45,7 @@ void Oscillator::setCents(short cents, bool permanent)
 {
     if (cents == 0) return;
     
-    double newFreq = centToFreq(_freq, cents);
+    double newFreq = Util::centToFreq(_freq, cents);
     
     if (newFreq < Global::nyquistLimit)
     {

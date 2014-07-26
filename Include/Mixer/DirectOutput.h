@@ -9,7 +9,7 @@
 #ifndef __Synth__DirectOutput__
 #define __Synth__DirectOutput__
 
-#include "portaudio.h"
+#include <portaudio.h>
 
 class SampleData;
 class SampleBuffer;
@@ -40,9 +40,9 @@ public:
     
 private:
     
-    PaStream * stream;
+    PaStream * _stream;
     
-    static SampleData getSampleDataFromQueue();
+    static SampleData _getSampleDataFromQueue();
     
     static SampleBuffer _dataBuffer;
     

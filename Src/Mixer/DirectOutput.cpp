@@ -19,7 +19,7 @@ DirectOutput::DirectOutput(unsigned char ltncy)
     SampleData * data;
     
     err = Pa_OpenDefaultStream(
-                                &stream,
+                                &_stream,
                                 0, /* no input */
                                 2,
                                 paFloat32,
@@ -48,7 +48,7 @@ void DirectOutput::processTick(const double &value)
 }
 
 
-SampleData DirectOutput::getSampleDataFromQueue()
+SampleData DirectOutput::_getSampleDataFromQueue()
 {
     SampleData smplD;
     
@@ -60,7 +60,7 @@ SampleData DirectOutput::getSampleDataFromQueue()
 
 void DirectOutput::play()
 {
-    PaError err = Pa_StartStream( stream );
+    PaError err = Pa_StartStream( _stream );
     
     if( err != paNoError )
         throw std::runtime_error(Pa_GetErrorText( err ));
@@ -68,7 +68,7 @@ void DirectOutput::play()
 
 void DirectOutput::stop()
 {
-    PaError err = Pa_StopStream( stream );
+    PaError err = Pa_StopStream( _stream );
     
     if( err != paNoError )
         throw std::runtime_error(Pa_GetErrorText( err ));
@@ -88,7 +88,7 @@ int DirectOutput::paCallback( const void *inputBuffer, void *outputBuffer,
     
     for( unsigned int n = 0; n < framesPerBuffer; n++ )
     {
-        SampleData smplD = getSampleDataFromQueue();
+        SampleData smplD = _getSampleDataFromQueue();
         
         outSampleData->left = smplD.left;
         outSampleData->right = smplD.right;
@@ -104,15 +104,15 @@ DirectOutput::~DirectOutput()
 {
     PaError err;
     
-    if (Pa_IsStreamActive (stream))
+    if (Pa_IsStreamActive (_stream))
     {
-        err = Pa_AbortStream(stream);
+        err = Pa_AbortStream(_stream);
         
         if( err != paNoError )
             throw std::runtime_error(Pa_GetErrorText( err ));
     }
     
-    err = Pa_CloseStream( stream );
+    err = Pa_CloseStream( _stream );
     
     if( err != paNoError )
         throw std::runtime_error(Pa_GetErrorText( err ));

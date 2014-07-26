@@ -10,7 +10,7 @@
 #include "Mixer.h"
 #include "Global.h"
 #include "Operator.h"
-#include "Utils.h"
+#include "Util.h"
 #include "Envelope.h"
 #include "LFO.h"
 #include "Wavetable.h"
@@ -20,7 +20,6 @@
 
 int main(int argc, const char * argv[])
 {
-    
     clock_t t = clock();
     
     Synthesizer synth;
@@ -33,17 +32,17 @@ int main(int argc, const char * argv[])
     
     op.addNote(freq);
     
+    LFO lfo;
+    
+    lfo.setRate(1);
+    
+    op.attachMod(Operator::FREQ_SEMI, 0, &lfo);
+    
+    op.setDepth(Operator::FREQ_SEMI, 0, 0.5);
+    
     Mixer mixer(0,1);
     
-    Filter filter(Filter::LOW_PASS);
-    
-    /*
-    LFO lfo(WavetableDB::SAW_2);
-    
-   op.attachMod(Operator::FREQ_SEMI, 0, &lfo);
-    
-   op.setDepth(Operator::FREQ_SEMI, 0, 0.5);
-   */
+    Filter filter(Filter::PEAK,1000);
     
     for (int i = 0; i < len; i++)
     {
@@ -58,7 +57,7 @@ int main(int argc, const char * argv[])
     
     //while (getPassedTime(start) < 5);
 
-    std::cout << "Total program duration: " << getPassedTime(t) << "\n";
+    std::cout << "Total program duration: " << Util::getPassedTime(t) << "\n";
  
 }
 

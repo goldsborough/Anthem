@@ -21,16 +21,19 @@ double ModDock::tick()
     
     // if not in use, no need to tick
     if (_usedDocks == 0)
-        return dp;
+    { return dp; }
     
     // gather all ticks from all modulation sources and
     // add them together
     for (index_t i = 0; i < _dockSize; i++)
+    {
         if (_mods[i].mod)
+        {
             dp += _mods[i].mod->tick() * _mods[i].dpth;
+        }
+    }
     
-    // get average modulation value and multiply
-    // by master depth
+    // get average modulation value and multiply by master depth
     return (dp / _usedDocks) * _masterDpth;
 }
 

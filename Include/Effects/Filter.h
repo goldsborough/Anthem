@@ -30,8 +30,8 @@ public:
     };
     
     Filter(const unsigned short& mode,
-           const double& cutoff = 0.5,
-           const double& bw = 0.5,
+           const double& cutoff,
+           const double& q = 1,
            const double& gain = 1);
     
     void process(double& sample);
@@ -42,7 +42,7 @@ public:
     
     // Sets Q factor, but bandwidth is easier to understand
     // for the user
-    void setBandWidth(const double& bw);
+    void setQ(const double& q);
     
     void setGain(const short& gain);
     
@@ -59,8 +59,11 @@ private:
     
     double _gain;
     
-    double _delayA;
-    double _delayB;
+    double _delayInA;
+    double _delayInB;
+    
+    double _delayOutA;
+    double _delayOutB;
     
     double _coefA1;
     double _coefA2;

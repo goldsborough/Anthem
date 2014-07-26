@@ -10,7 +10,7 @@
 #include "Wavetable.h"
 #include "Oscillator.h"
 #include "ModDock.h"
-#include "Utils.h"
+#include "Util.h"
 
 Operator::Operator(const int md, const double amp)
 {    
