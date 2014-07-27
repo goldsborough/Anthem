@@ -35,20 +35,23 @@ int main(int argc, const char * argv[])
     
     Mixer mixer(0,1);
     
-    Delay delay(1.5);
+    op.setAmp(0.8);
     
-    for (int i = 0; i < 10000; ++i)
-    {
-        mixer.processTick(0);
-    }
+    Echo echo(0.2,20,1);
     
-    for (int i = 0; i < len - 10000; i++)
+    for (int i = 0; i < len; ++i)
     {
-        double t = op.tick();
+        double tick = op.tick();
         
-        //delay.process(t);
+        if (i < Global::samplerate) echo.process(tick);
         
-        mixer.processTick(t);
+        else
+        {
+            tick=0;
+            echo.process(tick);
+        }
+        
+        mixer.processTick(tick);
     }
     
     mixer.play();

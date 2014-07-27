@@ -11,20 +11,51 @@
 
 #include "EffectUnit.h"
 
-#include <deque>
-
 class Delay : public EffectUnit
 {
     
 public:
     
-    Delay(const double& delayTime = 0.5);
+    typedef unsigned long size_t;
+    typedef double* iterator;
+    
+    Delay(const double& maxDelay,
+          const double& decayTime = 1,
+          const double& feedbackLevel = 0);
+    
+    virtual ~Delay();
+    
+    virtual void process(double& sample);
+    
+    virtual void setDelayTime(const double& delayTime);
+    
+    virtual void setDecay(unsigned int decayTime);
+    
+    virtual void setFeedback(const double& feedbackLevel);
+    
+protected:
+    
+    iterator _end;
+    iterator _curr;
+    iterator _tap;
+    
+    double _decay;
+    double _feedback;
+    
+    double * _buffer;
+};
+
+struct Echo : public Delay
+{
+    
+    Echo(const double& maxTime,
+         const double& decayTime = 1,
+         const double& feedbackLevel = 0)
+    : Delay(maxTime,decayTime,feedbackLevel)
+    { }
     
     void process(double& sample);
-    
-private:
-    
-    std::deque<double> _buffer;
+
 };
 
 #endif /* defined(__Vibe__Delay__) */

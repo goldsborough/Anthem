@@ -13,9 +13,11 @@
 #include "Wavefile.h"
 #include "SampleData.h"
 
+#include <iostream>
+
 Mixer::Mixer(bool directOut, bool waveOut)
 
-: _sendToDirectOutput(directOut), _sendToWaveFile(waveOut), _masterAmp(1)
+: _sendToDirectOutput(directOut), _sendToWaveFile(waveOut), _masterAmp(0.5)
 {
     _pan = new XFadeSine;
     
@@ -36,6 +38,16 @@ void Mixer::processTick(const double smpl)
     smplD.right *= _pan->right();
     
     smplD *= _masterAmp;
+    
+#ifdef VIBE_DEBUG
+    
+    if (smplD.left > 1 || smplD.right < -1
+        || smplD.right > 1 || smplD.right < -1)
+    {
+        std::cerr << "WARNING: Amplitude overflow!" << std::endl;
+    }
+    
+#endif
     
     if (_sendToWaveFile)
     { _sampleDataBuffer->push(smplD); }

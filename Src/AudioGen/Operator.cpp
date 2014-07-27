@@ -99,8 +99,7 @@ double Operator::tick()
     }
     
     if (_mods[AMP]->inUse())
-        return val * _mods[AMP]->checkAndTick(_amp,0,1);
+    { return val * _mods[AMP]->checkAndTick(_amp,0,1); }
     
-    else
-        return val * _amp;
+    else return val * _amp;
 }
