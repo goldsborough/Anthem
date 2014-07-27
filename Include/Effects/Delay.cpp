@@ -12,12 +12,12 @@
 #include <cmath>
 #include <stdexcept>
 
-Delay::Delay(const double& maxDelay,
+Delay::Delay(const double& delayLen,
              const double& decayTime,
              const double& decayRate,
              const double& feedbackLevel)
 {
-    size_t capacity = (int) (maxDelay * Global::samplerate);
+    size_t capacity = (int) (delayLen * Global::samplerate);
     
     _buffer = new double[capacity];
     
@@ -38,10 +38,10 @@ void Delay::setDecayRate(const double &decayRate)
     _decayRate = decayRate;
 }
 
-void Delay::setDelayTime(const double& delayTime)
+void Delay::setDelayLen(const double& delayLen)
 {
     // First assign the new buffer tap point
-    _tap = _buffer + (int)(delayTime * Global::samplerate);
+    _tap = _buffer + (int)(delayLen * Global::samplerate);
     
     // Then we check if this tap point is too far out
     if (_end - _tap <= 0)
