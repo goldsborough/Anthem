@@ -7,3 +7,18 @@
 //
 
 #include "Delay.h"
+#include "Global.h"
+
+Delay::Delay(const double& delayTime)
+{
+    _buffer.resize(delayTime * Global::samplerate);
+}
+
+void Delay::process(double& sample)
+{
+    _buffer.push_back(sample);
+    
+    sample = _buffer.front();
+    
+    _buffer.pop_front();
+}

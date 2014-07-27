@@ -42,9 +42,9 @@ public:
     
     typedef std::deque<SampleData>::size_type size_type;
     
-    // A deque/queue has no function to return the first element
-    // and delete it from the queue. Only std::deque and std::list
-    // have that. That's why this function pops and returns an item.
+    SampleBuffer(const size_type& size = 0)
+    { _buffer.resize(size); }
+
     SampleData getpop()
     {
         SampleData sampleD = _buffer.front();
@@ -54,10 +54,13 @@ public:
         return sampleD;
     }
     
+    void resize(const size_type& newSize)
+    { _buffer.resize(newSize); }
+    
     SampleData& operator[] (size_type index) { return _buffer[index]; }
     const SampleData& operator[] (size_type index) const { return _buffer[index]; }
     
-    void push(const SampleData& item) { _buffer.push_front(item); };
+    void push(const SampleData& item) { _buffer.push_back(item); };
     
     void pop() { _buffer.pop_front(); };
     

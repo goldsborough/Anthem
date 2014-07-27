@@ -11,15 +11,20 @@
 
 #include "EffectUnit.h"
 
+#include <deque>
+
 class Delay : public EffectUnit
 {
     
 public:
     
-    Delay() { }
+    Delay(const double& delayTime = 0.5);
     
-    void process(double& sample)
-    { }
+    void process(double& sample);
+    
+private:
+    
+    std::deque<double> _buffer;
 };
 
 #endif /* defined(__Vibe__Delay__) */

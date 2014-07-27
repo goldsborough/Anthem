@@ -9,6 +9,7 @@
 #include "GenUnits.h"
 #include "ModDock.h"
 #include "Wavetable.h"
+#include <stdexcept>
 
 void GenUnit::setDockMasterDepth(docknum_t dockNum, double lvl)
 { _mods[dockNum]->setMasterDepth(lvl); }
@@ -17,6 +18,10 @@ void GenUnit::setDepth(docknum_t dockNum,
                        index_t modNum,
                        double dpth)
 {
+    
+    if (dpth > 1 || dpth < 0)
+    { throw std::invalid_argument("Depth must be between 0 and 1!");}
+    
     _mods[dockNum]->setDepth(modNum, dpth);
 }
 

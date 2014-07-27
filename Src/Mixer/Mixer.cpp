@@ -38,10 +38,10 @@ void Mixer::processTick(const double smpl)
     smplD *= _masterAmp;
     
     if (_sendToWaveFile)
-        _sampleDataBuffer->push(smplD);
+    { _sampleDataBuffer->push(smplD); }
     
     if (_sendToDirectOutput)
-        _directOut->processTick(smplD);
+    { _directOut->processTick(smplD); }
 }
 
 void Mixer::setPanning(const char pan)

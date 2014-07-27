@@ -15,19 +15,13 @@ public:
     
     virtual ~EffectUnit() { }
     
-    virtual void setDryWet(const double& dw)
-    { _dw = dw; }
+    virtual void setDryWet(const double& dw);
     
     virtual void process(double& sample) = 0;
     
 protected:
     
-    void _dryWet(double& originalSample, const double& processedSample)
-    {
-        double diff = processedSample - originalSample;
-        
-        originalSample += (diff * _dw);
-    }
+    void _dryWet(double& originalSample, const double& processedSample);
     
     double _dw = 1;
 };

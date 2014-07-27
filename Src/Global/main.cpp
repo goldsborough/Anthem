@@ -15,7 +15,7 @@
 #include "LFO.h"
 #include "Wavetable.h"
 #include "Filter.h"
-#include "EffectUnit.h"
+#include "Delay.h"
 
 #include <iostream>
 
@@ -33,25 +33,20 @@ int main(int argc, const char * argv[])
     
     op.addNote(freq);
     
-    LFO lfo;
-    
-    lfo.setRate(1);
-    
-    op.attachMod(Operator::FREQ_SEMI, 0, &lfo);
-    
-    op.setDepth(Operator::FREQ_SEMI, 0, 0.5);
-    
     Mixer mixer(0,1);
     
-    Filter filter(Filter::LOW_PASS,440);
+    Delay delay(1.5);
     
-    filter.setDryWet(0);
+    for (int i = 0; i < 10000; ++i)
+    {
+        mixer.processTick(0);
+    }
     
-    for (int i = 0; i < len; i++)
+    for (int i = 0; i < len - 10000; i++)
     {
         double t = op.tick();
         
-        filter.process(t);
+        //delay.process(t);
         
         mixer.processTick(t);
     }
