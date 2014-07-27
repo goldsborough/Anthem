@@ -20,8 +20,9 @@ public:
     typedef double* iterator;
     
     Delay(const double& maxDelay,
-          const double& decayTime = 1,
-          const double& feedbackLevel = 0);
+          const double& decayTime = 10,
+          const double& decayRate = 0.005,
+          const double& feedbackLevel = 1);
     
     virtual ~Delay();
     
@@ -29,7 +30,9 @@ public:
     
     virtual void setDelayTime(const double& delayTime);
     
-    virtual void setDecay(unsigned int decayTime);
+    virtual void setDecayTime(unsigned int decayTime);
+    
+    virtual void setDecayRate(const double& decayRate);
     
     virtual void setFeedback(const double& feedbackLevel);
     
@@ -39,7 +42,9 @@ protected:
     iterator _curr;
     iterator _tap;
     
-    double _decay;
+    double _decayValue;
+    double _decayRate;
+    
     double _feedback;
     
     double * _buffer;
@@ -48,10 +53,11 @@ protected:
 struct Echo : public Delay
 {
     
-    Echo(const double& maxTime,
-         const double& decayTime = 1,
-         const double& feedbackLevel = 0)
-    : Delay(maxTime,decayTime,feedbackLevel)
+    Echo(const double& maxDelay,
+         const double& decayTime = 10,
+         const double& decayRate = 0.005,
+         const double& feedbackLevel = 1)
+    : Delay(maxDelay,decayTime,decayRate,feedbackLevel)
     { }
     
     void process(double& sample);

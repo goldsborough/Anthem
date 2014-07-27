@@ -27,7 +27,7 @@ int main(int argc, const char * argv[])
     
     double freq = 440;
     
-    uint32_t len = Global::samplerate * 3;
+    uint32_t len = Global::samplerate * 5;
     
     Operator op;
     
@@ -35,15 +35,17 @@ int main(int argc, const char * argv[])
     
     Mixer mixer(0,1);
     
+    mixer.setMasterAmp(0.8);
+    
     op.setAmp(0.8);
     
-    Echo echo(0.2,20,1);
+    Echo echo(0.25);
     
     for (int i = 0; i < len; ++i)
     {
         double tick = op.tick();
         
-        if (i < Global::samplerate) echo.process(tick);
+        if (i < (Global::samplerate * 0.25)) echo.process(tick);
         
         else
         {

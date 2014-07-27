@@ -14,6 +14,7 @@
 
 Delay::Delay(const double& maxDelay,
              const double& decayTime,
+             const double& decayRate,
              const double& feedbackLevel)
 {
     size_t capacity = (int) (maxDelay * Global::samplerate);
@@ -25,7 +26,16 @@ Delay::Delay(const double& maxDelay,
     _tap = _end;
     
     setFeedback(feedbackLevel);
-    setDecay(decayTime);
+    setDecayRate(decayRate);
+    setDecayTime(decayTime);
+}
+
+void Delay::setDecayRate(const double &decayRate)
+{
+    if (decayRate > 1 || decayRate < 0)
+    { throw std::invalid_argument("Decay rate must be between 0 and 1!"); }
+    
+    _decayRate = decayRate;
 }
 
 void Delay::setDelayTime(const double& delayTime)
@@ -51,7 +61,7 @@ void Delay::setFeedback(const double& feedbackLevel)
     _feedback = feedbackLevel;
 }
 
-void Delay::setDecay(unsigned int decayTime)
+void Delay::setDecayTime(unsigned int decayTime)
 {
     /******************************************************************
     *
@@ -76,12 +86,12 @@ void Delay::setDecay(unsigned int decayTime)
     
     double decayExponent = ((double) delayLen) / decayTime;
     
-    _decay = pow(0.001, decayExponent);
+    _decayValue = pow(_decayRate, decayExponent);
 }
 
 void Delay::process(double &sample)
 {
-    double delay = *_curr * _decay;
+    double delay = *_curr * _decayValue;
     
     *_curr++ = sample + (delay * _feedback);
     
@@ -98,7 +108,7 @@ Delay::~Delay()
 
 void Echo::process(double &sample)
 {
-    double delay = *_curr * _decay;
+    double delay = *_curr * _decayValue;
     
     *_curr++ = sample + (delay * _feedback);
     
