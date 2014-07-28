@@ -11,7 +11,7 @@
 
 #include <portaudio.h>
 
-class SampleData;
+class Sample;
 class SampleBuffer;
 
 class DirectOutput
@@ -30,7 +30,7 @@ public:
                           PaStreamCallbackFlags statusFlags,
                           void *userData ) ;
     
-    void processTick(const SampleData& smplD);
+    void processTick(const Sample& sample);
     
     void processTick(const double& value);
     
@@ -42,7 +42,7 @@ private:
     
     PaStream * _stream;
     
-    static SampleData _getSampleDataFromQueue();
+    static Sample _getSampleFromQueue();
     
     static SampleBuffer _dataBuffer;
     

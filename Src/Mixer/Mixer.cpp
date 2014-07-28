@@ -11,7 +11,7 @@
 #include "Crossfader.h"
 #include "DirectOutput.h"
 #include "Wavefile.h"
-#include "SampleData.h"
+#include "Sample.h"
 
 #include <iostream>
 
@@ -28,21 +28,19 @@ Mixer::Mixer(bool directOut, bool waveOut)
     _waveOut = new Wavefile;
 }
 
-void Mixer::processTick(const double smpl)
+void Mixer::process(const double& sample)
 {
-    _sample = smpl;
+    Sample smpl(sample);
     
-    SampleData smplD(smpl,smpl);
+    smpl.left *= _pan->left();
+    smpl.right *= _pan->right();
     
-    smplD.left *= _pan->left();
-    smplD.right *= _pan->right();
-    
-    smplD *= _masterAmp;
+    smpl *= _masterAmp;
     
 #ifdef VIBE_DEBUG
     
-    if (smplD.left > 1 || smplD.right < -1
-        || smplD.right > 1 || smplD.right < -1)
+    if (smpl.left > 1 || smpl.right < -1
+        || smpl.right > 1 || smpl.right < -1)
     {
         std::cerr << "WARNING: Amplitude overflow!" << std::endl;
     }
@@ -50,10 +48,10 @@ void Mixer::processTick(const double smpl)
 #endif
     
     if (_sendToWaveFile)
-    { _sampleDataBuffer->push(smplD); }
+    { _sampleDataBuffer->push(smpl); }
     
     if (_sendToDirectOutput)
-    { _directOut->processTick(smplD); }
+    { _directOut->processTick(smpl); }
 }
 
 void Mixer::setPanning(const char pan)
@@ -66,7 +64,7 @@ void Mixer::play()
     if (_stopped)
     {
         if (_sendToDirectOutput)
-            _directOut->play();
+        { _directOut->play(); }
         
         _stopped = false;
     }
@@ -79,10 +77,10 @@ void Mixer::stop()
         _stopped = true;
         
         if (_sendToDirectOutput)
-            _directOut->stop();
+        { _directOut->stop(); }
         
         if (_sendToWaveFile)
-            _waveOut->write_wav(*_sampleDataBuffer);
+        { _waveOut->write_wav(*_sampleDataBuffer); }
     }
 }
 

@@ -13,6 +13,10 @@ class EffectUnit
 {
 public:
     
+    EffectUnit()
+    : _dw(0.5)
+    { }
+    
     virtual ~EffectUnit() { }
     
     virtual void setDryWet(const double& dw);
@@ -23,7 +27,7 @@ protected:
     
     void _dryWet(double& originalSample, const double& processedSample);
     
-    double _dw = 1;
+    double _dw;
 };
 
 

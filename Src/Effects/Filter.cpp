@@ -29,7 +29,7 @@ Filter::Filter(const unsigned short& mode,
     _calcCoefs();
 }
 
-void Filter::process(double &sample)
+void Filter::process(double& sample)
 {
     double temp = sample
                 - (_coefA1 * _delayA)

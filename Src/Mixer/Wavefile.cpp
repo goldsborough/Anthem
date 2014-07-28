@@ -9,7 +9,7 @@
 #include "Wavefile.h"
 #include "Global.h"
 #include "Util.h"
-#include "SampleData.h"
+#include "Sample.h"
 
 Wavefile::Wavefile(unsigned char ch)
 {
@@ -83,7 +83,7 @@ void Wavefile::write_wav(SampleBuffer& smplQ, std::string fname)
     
     for (unsigned long n = 0; n < total_samples*2;)
     {
-        const SampleData& SD = smplQ.getpop();
+        const Sample& SD = smplQ.getpop();
         
         end_buff[n++] = SD.left * 32767;
         end_buff[n++] = SD.right * 32767;

@@ -28,15 +28,13 @@ public:
     
     void setPanning(const char pan);
     
-    void processTick(const double smpl);
+    void process(const double& sample);
     
     void play();
     
     void stop();
     
 private:
-    
-    double _sample;
     
     double _masterAmp;
 

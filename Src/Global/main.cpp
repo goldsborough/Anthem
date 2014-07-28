@@ -16,6 +16,7 @@
 #include "Wavetable.h"
 #include "Filter.h"
 #include "Delay.h"
+#include "Sample.h"
 
 #include <iostream>
 
@@ -35,25 +36,21 @@ int main(int argc, const char * argv[])
     
     Mixer mixer(0,1);
     
-    mixer.setMasterAmp(0.8);
-    
-    op.setAmp(0.8);
-    
-    Echo echo(0.25);
+    Delay echo(0.2,10,0.01,1);
     
     for (int i = 0; i < len; ++i)
     {
         double tick = op.tick();
         
-        if (i < (Global::samplerate * 0.25)) echo.process(tick);
+        if (i < (Global::samplerate * 3)) echo.process(tick);
         
         else
         {
-            tick=0;
+            tick = 0;
             echo.process(tick);
         }
         
-        mixer.processTick(tick);
+        mixer.process(tick);
     }
     
     mixer.play();

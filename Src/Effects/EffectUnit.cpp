@@ -19,7 +19,5 @@ void EffectUnit::setDryWet(const double& dw)
 
 void EffectUnit::_dryWet(double &originalSample, const double &processedSample)
 {
-    double diff = processedSample - originalSample;
-    
-    originalSample += (diff * _dw);
+    originalSample = (originalSample * (1 - _dw)) + (processedSample * _dw);
 }

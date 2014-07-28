@@ -8,7 +8,7 @@
 
 #include "DirectOutput.h"
 #include "Global.h"
-#include "SampleData.h"
+#include "Sample.h"
 
 SampleBuffer DirectOutput::_dataBuffer;
 
@@ -16,7 +16,7 @@ DirectOutput::DirectOutput(unsigned char ltncy)
 {
     PaError err = Pa_Initialize();
     
-    SampleData * data;
+    Sample * data;
     
     err = Pa_OpenDefaultStream(
                                 &_stream,
@@ -33,29 +33,29 @@ DirectOutput::DirectOutput(unsigned char ltncy)
         throw std::runtime_error(Pa_GetErrorText( err ));
 }
 
-void DirectOutput::processTick(const SampleData& smplD)
+void DirectOutput::processTick(const Sample& sample)
 {
     //long x = _dataBuffer.size();
     
-    _dataBuffer.push(smplD);
+    _dataBuffer.push(sample);
 }
 
 void DirectOutput::processTick(const double &value)
 {
-    SampleData smplD(value);
+    Sample sample(value);
     
-    _dataBuffer.push(smplD);
+    _dataBuffer.push(sample);
 }
 
 
-SampleData DirectOutput::_getSampleDataFromQueue()
+Sample DirectOutput::_getSampleFromQueue()
 {
-    SampleData smplD;
+    Sample sample;
     
     if (! _dataBuffer.empty())
-        smplD =  _dataBuffer.getpop();
+        sample =  _dataBuffer.getpop();
     
-    return smplD;
+    return sample;
 }
 
 void DirectOutput::play()
@@ -81,20 +81,20 @@ int DirectOutput::paCallback( const void *inputBuffer, void *outputBuffer,
                              void *userData )
 {
     
-    SampleData * outSampleData = ( SampleData * ) userData;
+    Sample * outSample = ( Sample * ) userData;
     float * out = (float*)outputBuffer;
     
     while (_dataBuffer.size() < framesPerBuffer);
     
     for( unsigned int n = 0; n < framesPerBuffer; n++ )
     {
-        SampleData smplD = _getSampleDataFromQueue();
+        Sample sample = _getSampleFromQueue();
         
-        outSampleData->left = smplD.left;
-        outSampleData->right = smplD.right;
+        outSample->left = sample.left;
+        outSample->right = sample.right;
         
-        *out++ = outSampleData->left;
-        *out++ = outSampleData->right;
+        *out++ = outSample->left;
+        *out++ = outSample->right;
     }
     
     return 0;

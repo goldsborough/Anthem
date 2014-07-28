@@ -89,13 +89,13 @@ void Delay::setDecayTime(unsigned int decayTime)
     _decayValue = pow(_decayRate, decayExponent);
 }
 
-void Delay::process(double &sample)
+void Delay::process(double& sample)
 {
     double delay = *_curr * _decayValue;
     
-    *_curr++ = sample + (delay * _feedback);
+    *_curr = sample + (delay * _feedback);
     
-    if (_curr == _tap)
+    if (++_curr == _tap)
     { _curr = _buffer; }
     
     _dryWet(sample, delay);
@@ -104,18 +104,4 @@ void Delay::process(double &sample)
 Delay::~Delay()
 {
     delete [] _buffer;
-}
-
-void Echo::process(double &sample)
-{
-    double delay = *_curr * _decayValue;
-    
-    *_curr++ = sample + (delay * _feedback);
-    
-    if (_curr == _tap)
-    { _curr = _buffer; }
-    
-    delay += sample;
-    
-    _dryWet(sample, delay);
 }
