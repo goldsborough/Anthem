@@ -28,19 +28,17 @@ Mixer::Mixer(bool directOut, bool waveOut)
     _waveOut = new Wavefile;
 }
 
-void Mixer::process(const double& sample)
+void Mixer::process(Sample& sample)
 {
-    Sample smpl(sample);
+    sample.left *= _pan->left();
+    sample.right *= _pan->right();
     
-    smpl.left *= _pan->left();
-    smpl.right *= _pan->right();
-    
-    smpl *= _masterAmp;
+    sample *= _masterAmp;
     
 #ifdef VIBE_DEBUG
     
-    if (smpl.left > 1 || smpl.right < -1
-        || smpl.right > 1 || smpl.right < -1)
+    if (sample.left > 1 || sample.right < -1
+        || sample.right > 1 || sample.right < -1)
     {
         std::cerr << "WARNING: Amplitude overflow!" << std::endl;
     }
@@ -48,10 +46,10 @@ void Mixer::process(const double& sample)
 #endif
     
     if (_sendToWaveFile)
-    { _sampleDataBuffer->push(smpl); }
+    { _sampleDataBuffer->push(sample); }
     
     if (_sendToDirectOutput)
-    { _directOut->processTick(smpl); }
+    { _directOut->processTick(sample); }
 }
 
 void Mixer::setPanning(const char pan)

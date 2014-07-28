@@ -13,6 +13,7 @@ class XFadeUnit;
 class DirectOutput;
 class Wavefile;
 class SampleBuffer;
+class Sample;
 
 class Mixer
 {
@@ -28,7 +29,7 @@ public:
     
     void setPanning(const char pan);
     
-    void process(const double& sample);
+    void process(Sample& sample);
     
     void play();
     
