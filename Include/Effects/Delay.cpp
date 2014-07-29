@@ -17,13 +17,12 @@ Delay::Delay(const double& delayLen,
              const double& decayRate,
              const double& feedbackLevel)
 {
-    size_t capacity = (int) (delayLen * Global::samplerate);
+    _delayLen = (delayLen * Global::samplerate);
     
-    _buffer = new double[capacity];
+    _buffer = new double[_delayLen];
     
-    _curr = _buffer;
-    _end = _curr + capacity;
-    _tap = _end;
+    _write = _buffer;
+    _end = _capacity = _buffer + _delayLen;
     
     setFeedback(feedbackLevel);
     setDecayRate(decayRate);
@@ -38,19 +37,24 @@ void Delay::setDecayRate(const double &decayRate)
     _decayRate = decayRate;
 }
 
-void Delay::setDelayLen(const double& delayLen)
+void Delay::setDelayLen(double delayLen)
 {
-    // First assign the new buffer tap point
-    _tap = _buffer + (int)(delayLen * Global::samplerate);
+    if (delayLen < 0)
+    { throw std::invalid_argument("Delay length cannot be negative!"); }
     
-    // Then we check if this tap point is too far out
-    if (_end - _tap <= 0)
-    { throw std::invalid_argument("Tap position cannot be higher than maximum delay line length!"); }
+    delayLen *= Global::samplerate;
     
-    // If the write point is farther progressed than the new tap point, we need
-    // to wrap the write pointer back to 0 again
-    else if (_tap - _curr <= 0)
-    { _curr = _buffer; }
+    _delayLen = delayLen; // automatically to int
+    
+    // First assign the new buffer end point
+    _end = _buffer + _delayLen;
+    
+    // Then we check if this end point is too far out
+    if (_capacity - _end <= 0)
+    { throw std::invalid_argument("Delay end position cannot be higher than maximum delay line length!"); }
+    
+    _readInt = (int) delayLen;
+    _readFract = delayLen - (double) _readInt;
 }
 
 void Delay::setFeedback(const double& feedbackLevel)
@@ -61,44 +65,65 @@ void Delay::setFeedback(const double& feedbackLevel)
     _feedback = feedbackLevel;
 }
 
-void Delay::setDecayTime(unsigned int decayTime)
+void Delay::setDecayTime(double decayTime)
 {
-    /******************************************************************
-    *
-    * The decay is specified as the base^decayLevel, where the base
-    * is the level of attenuation we want once the decay is finished
-    * (0.001 = -60dB) and the exponent the total delay time divided
-    * by the decay time.
-    *
-    * Because a high decay value leads to a quicker amplitude rise
-    * for low decay times, the decay time has to be somehow proportional
-    * to the decay time. I found a range between 0 and 20 times the decay
-    * time to be very appropriate.
-    *
-    *******************************************************************/
     
-    if (decayTime > 20)
+    decayTime *= Global::samplerate;
+    
+    if (decayTime > _delayLen)
     { throw std::invalid_argument("Decay cannot be more than 20 times or less than the delay time!"); }
     
-    unsigned long delayLen = _tap - _buffer;
-    
-    decayTime *= delayLen;
-    
-    double decayExponent = ((double) delayLen) / decayTime;
+    double decayExponent = ((double) _delayLen) / decayTime;
     
     _decayValue = pow(_decayRate, decayExponent);
 }
 
+void Delay::_incr()
+{
+    if (++_write >= _end)
+    { _write = _buffer; }
+}
+
 void Delay::process(double& sample)
 {
-    double delay = *_curr * _decayValue;
+    iterator read = _write - _readInt;
     
-    *_curr = sample + (delay * _feedback);
+    // Check if we need to wrap around
+    if (read < _buffer)
+    { read += _delayLen; }
     
-    if (++_curr == _tap)
-    { _curr = _buffer; }
+    // If the read index is equal to the write index
+    // we need to first write the new sample
+    if (_readInt == 0)
+    {
+        *_write = sample;
+        
+        _incr();
+    }
     
-    _dryWet(sample, delay);
+    // First add integer part
+    double output = *read;
+    
+    // Then decrement read position (and check)
+    if (--read < _buffer)
+    { read = _end; }
+    
+    // And finally add the fractional part of the
+    // previous sample
+    output += (*read - output) * _readFract;
+    
+    // Apply decay
+    output *= _decayValue;
+
+    // If the sample hasn't been written yet, write it now
+    if (_readInt > 0)
+    {
+        *_write = sample + (output * _feedback);
+        
+        _incr();
+    }
+    
+    _dryWet(sample, output);
 }
 
 Delay::~Delay()

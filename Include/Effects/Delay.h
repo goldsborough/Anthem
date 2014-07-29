@@ -39,8 +39,8 @@ public:
     *
     **************************************************************************************************/
     
-    Delay(const double& delayLen,
-          const double& decayTime = 10,
+    Delay(const double& delayLen = 10,
+          const double& decayTime = 0,
           const double& decayRate = 0.005,
           const double& feedbackLevel = 1);
     
@@ -68,7 +68,7 @@ public:
     *
     ****************************************************************************/
     
-    virtual void setDelayLen(const double& delayLen);
+    virtual void setDelayLen(double delayLen);
     
     /*************************************************************************//*!
     *
@@ -78,7 +78,7 @@ public:
     *
     ****************************************************************************/
     
-    virtual void setDecayTime(unsigned int decayTime);
+    virtual void setDecayTime(double decayTime);
     
     /*************************************************************************//*!
     *
@@ -103,14 +103,26 @@ public:
     
 protected:
     
-    /*! The pointer to the end of the whole delay line (total capacity, not tap point) */
+    /*! Increments and boundary checks the write pointer */
+    void _incr();
+    
+    /*! Integral part of the read position */
+    int _readInt;
+    
+    /*! Fractional part of the read position */
+    double _readFract;
+    
+    /*! Pointer to the actual end of the delay line (total capacity) */
+    iterator _capacity;
+    
+    /*! The pointer to the end of the current delay line  */
     iterator _end;
     
-    /*! The pointer to the current delay line index */
-    iterator _curr;
+    /*! The pointer to the write index */
+    iterator _write;
     
-    /*! The current end of the delay line, or tap point */
-    iterator _tap;
+    /*! Size of the current delay line, equal to _end - _buffer */
+    unsigned int _delayLen;
     
     /*! The attenuation value with which to multiply the output */
     double _decayValue;

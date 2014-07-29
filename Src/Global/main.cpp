@@ -36,28 +36,31 @@ int main(int argc, const char * argv[])
     
     Mixer mixer(0,1);
     
-    Delay echo1(0.21,10,0.01,1);
-    Delay echo2(0.21,10,0.01,1);
+    Delay echo;
+    
+    echo.setDelayLen(0.04);
+    
+    echo.setDecayTime(1);
+    
+    echo.setDryWet(0.1);
     
     for (int i = 0; i < len; ++i)
     {
         double tick = op.tick();
-        
-        Sample sample(tick);
-        
+
         if (i < (Global::samplerate * 3))
         {
-           echo1.process(sample.left);
-           echo2.process(sample.right);
+           echo.process(tick);
         }
         
         else
         {
-            sample = 0;
+            tick = 0;
             
-            echo1.process(sample.left);
-            echo2.process(sample.right);
+            echo.process(tick);
         }
+
+        Sample sample(tick);
         
         mixer.process(sample);
     }
