@@ -51,5 +51,5 @@ GenUnit::~GenUnit()
 void AudioGenUnit::setWT(const int mode)
 {
     _mode = mode;
-    _WT = wavetableDB.getWaveform(_mode);
+    _WT = wavetableDB[_mode];
 }

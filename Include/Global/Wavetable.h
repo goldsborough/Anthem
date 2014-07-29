@@ -229,7 +229,9 @@ public:
     
     void init(const unsigned int wtLen);
     
-    Wavetable& getWaveform(const int mode);
+    Wavetable& operator[] (const int& mode);
+    
+    const Wavetable& operator[] (const int& mode) const;
     
 private:
     

@@ -9,6 +9,8 @@
 #ifndef Vibe_EffectUnit_h
 #define Vibe_EffectUnit_h
 
+class Sample;
+
 class EffectUnit
 {
 public:
@@ -28,6 +30,17 @@ protected:
     void _dryWet(double& originalSample, const double& processedSample);
     
     double _dw;
+};
+
+struct StereoEffect
+{
+    StereoEffect(EffectUnit* leftEffect, EffectUnit* rightEffect)
+    : left()
+    { }
+    void process(Sample& sample);
+    
+    EffectUnit* left;
+    EffectUnit* channelB;
 };
 
 

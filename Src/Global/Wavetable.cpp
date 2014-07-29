@@ -308,7 +308,19 @@ void WavetableDB::init(unsigned int wtLen)
         _tables.push_back(wtParser.readWT(fname));
     }
 }
-Wavetable& WavetableDB::getWaveform(const int mode)
+
+Wavetable& WavetableDB::operator[](const int& mode)
+{
+    if (mode == NONE)
+        return _noneTable;
+    
+    if (mode < 0 || mode >= _tables.size())
+        throw std::invalid_argument("Mode out of range");
+    
+    return _tables[mode];
+}
+
+const Wavetable& WavetableDB::operator[](const int& mode) const
 {
     if (mode == NONE)
         return _noneTable;

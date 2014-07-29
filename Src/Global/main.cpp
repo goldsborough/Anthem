@@ -36,8 +36,8 @@ int main(int argc, const char * argv[])
     
     Mixer mixer(0,1);
     
-    Delay echo1(0.2,10,0.01,1);
-    Delay echo2(0.2,10,0.01,1);
+    Delay echo1(0.21,10,0.01,1);
+    Delay echo2(0.21,10,0.01,1);
     
     for (int i = 0; i < len; ++i)
     {

@@ -21,7 +21,7 @@ Oscillator::Oscillator(const int mode, double frq,
     
     setPhaseOffset(phaseOffset);
     
-    _WT = wavetableDB.getWaveform(_mode);
+    _WT = wavetableDB[_mode];
     
     setFreq(frq);
 };
