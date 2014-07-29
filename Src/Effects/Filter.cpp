@@ -29,23 +29,23 @@ Filter::Filter(const unsigned short& mode,
     _calcCoefs();
 }
 
-void Filter::process(double& sample)
+double Filter::process(const double& sample)
 {
     double temp = sample
                 - (_coefA1 * _delayA)
                 - (_coefA2 * _delayB);
     
-    double out = (_coefB0 * temp)
-               + (_coefB1 * _delayA)
-               + (_coefB2 * _delayB);
+    double output = (_coefB0 * temp)
+                  + (_coefB1 * _delayA)
+                  + (_coefB2 * _delayB);
     
     
     _delayB = _delayA;
     _delayA = temp;
     
-    out *= _gain;
+    output *= _gain;
     
-    _dryWet(sample, out);
+    return _dryWet(sample, output);
 }
 
 void Filter::_calcCoefs()

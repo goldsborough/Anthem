@@ -23,25 +23,13 @@ public:
     
     virtual void setDryWet(const double& dw);
     
-    virtual void process(double& sample) = 0;
+    virtual double process(const double& sample) = 0;
     
 protected:
     
-    void _dryWet(double& originalSample, const double& processedSample);
+    double _dryWet(const double& originalSample, const double& processedSample);
     
     double _dw;
 };
-
-struct StereoEffect
-{
-    StereoEffect(EffectUnit* leftEffect, EffectUnit* rightEffect)
-    : left()
-    { }
-    void process(Sample& sample);
-    
-    EffectUnit* left;
-    EffectUnit* channelB;
-};
-
 
 #endif

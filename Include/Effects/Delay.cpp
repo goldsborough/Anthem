@@ -27,6 +27,9 @@ Delay::Delay(const double& delayLen,
     setFeedback(feedbackLevel);
     setDecayRate(decayRate);
     setDecayTime(decayTime);
+    
+    _readInt = (int) _delayLen;
+    _readFract = _delayLen - (double) _readInt;
 }
 
 void Delay::setDecayRate(const double &decayRate)
@@ -67,11 +70,7 @@ void Delay::setFeedback(const double& feedbackLevel)
 
 void Delay::setDecayTime(double decayTime)
 {
-    
     decayTime *= Global::samplerate;
-    
-    if (decayTime > _delayLen)
-    { throw std::invalid_argument("Decay cannot be more than 20 times or less than the delay time!"); }
     
     double decayExponent = ((double) _delayLen) / decayTime;
     
@@ -84,7 +83,7 @@ void Delay::_incr()
     { _write = _buffer; }
 }
 
-void Delay::process(double& sample)
+double Delay::process(const double& sample)
 {
     iterator read = _write - _readInt;
     
@@ -123,7 +122,7 @@ void Delay::process(double& sample)
         _incr();
     }
     
-    _dryWet(sample, output);
+    return _dryWet(sample, output);
 }
 
 Delay::~Delay()

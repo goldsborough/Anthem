@@ -35,31 +35,35 @@ int main(int argc, const char * argv[])
     op.addNote(freq);
     
     Mixer mixer(0,1);
+    /*
+    Delay one(0.0437,1.5,0.001);
+    Delay two(0.0411,1.5,0.001);
+    Delay three(0.0371,1.5,0.001);
+    Delay four(0.0297,1.5,0.001);
     
-    Delay echo;
+    one.setDryWet(1);
+    two.setDryWet(1);
+    three.setDryWet(1);
+    four.setDryWet(1);*/
     
-    echo.setDelayLen(0.04);
-    
-    echo.setDecayTime(1);
-    
-    echo.setDryWet(0.1);
+    Delay a(0.2,2);
     
     for (int i = 0; i < len; ++i)
     {
         double tick = op.tick();
-
+        
         if (i < (Global::samplerate * 3))
         {
-           echo.process(tick);
+            tick = a.process(tick);
         }
         
         else
         {
             tick = 0;
             
-            echo.process(tick);
+            tick = a.process(tick);
         }
-
+        
         Sample sample(tick);
         
         mixer.process(sample);
@@ -67,9 +71,7 @@ int main(int argc, const char * argv[])
     
     mixer.play();
     
-    //while (getPassedTime(start) < 5);
-
     std::cout << "Total program duration: " << Util::getPassedTime(t) << "\n";
- 
+    
 }
 
