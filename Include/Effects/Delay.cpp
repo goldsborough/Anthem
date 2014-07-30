@@ -47,7 +47,8 @@ void Delay::setDelayLen(double delayLen)
     
     delayLen *= Global::samplerate;
     
-    _delayLen = delayLen; // automatically to int
+    // automatic conversion to int
+    _delayLen = delayLen;
     
     // First assign the new buffer end point
     _end = _buffer + _delayLen;
@@ -58,6 +59,8 @@ void Delay::setDelayLen(double delayLen)
     
     _readInt = (int) delayLen;
     _readFract = delayLen - (double) _readInt;
+    
+    _calcDecay();
 }
 
 void Delay::setFeedback(const double& feedbackLevel)
@@ -70,9 +73,17 @@ void Delay::setFeedback(const double& feedbackLevel)
 
 void Delay::setDecayTime(double decayTime)
 {
-    decayTime *= Global::samplerate;
+    if (decayTime < 0)
+    { throw std::invalid_argument("Decay time must be greater 0!"); }
     
-    double decayExponent = ((double) _delayLen) / decayTime;
+    _decayTime = decayTime * Global::samplerate;
+    
+    _calcDecay();
+}
+
+void Delay::_calcDecay()
+{
+    double decayExponent = ((double) _delayLen) / _decayTime;
     
     _decayValue = pow(_decayRate, decayExponent);
 }
@@ -128,4 +139,45 @@ double Delay::process(const double& sample)
 Delay::~Delay()
 {
     delete [] _buffer;
+}
+
+double AllPassDelay::process(const double &sample)
+{
+    iterator read = _write - _readInt;
+    
+    // Check if we need to wrap around
+    if (read < _buffer)
+    { read += _delayLen; }
+    
+    // If the read index is equal to the write index
+    // we need to first write the new sample
+    if (_readInt == 0)
+    {
+        *_write = sample;
+        
+        _incr();
+    }
+    
+    // First add integer part
+    double outputA = *read;
+    
+    // Then decrement read position (and check)
+    if (--read < _buffer)
+    { read = _end; }
+    
+    // And finally add the fractional part of the
+    // previous sample
+    outputA += (*read - outputA) * _readFract;
+    
+    double outputB = sample - (outputA * _decayValue);
+    
+    // If the sample hasn't been written yet, write it now
+    if (_readInt > 0)
+    {
+        *_write = outputB;
+        
+        _incr();
+    }
+    
+    return outputA + (outputB * _decayValue);
 }

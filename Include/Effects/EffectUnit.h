@@ -15,8 +15,8 @@ class EffectUnit
 {
 public:
     
-    EffectUnit()
-    : _dw(0.5)
+    EffectUnit(const double& dryWet = 1)
+    : _dw(dryWet)
     { }
     
     virtual ~EffectUnit() { }

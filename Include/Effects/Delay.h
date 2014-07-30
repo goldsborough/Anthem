@@ -41,7 +41,7 @@ public:
     
     Delay(const double& delayLen = 10,
           const double& decayTime = 0,
-          const double& decayRate = 0.005,
+          const double& decayRate = 0.001,
           const double& feedbackLevel = 1);
     
     virtual ~Delay();
@@ -103,6 +103,9 @@ public:
     
 protected:
     
+    /*! Calculates the _decayValue based on _decayRate and _decayTime */
+    void _calcDecay();
+    
     /*! Increments and boundary checks the write pointer */
     void _incr();
     
@@ -130,11 +133,26 @@ protected:
     /*! The rate of decay, or fade-out of the delay signal */
     double _decayRate;
     
+    /*! The total decay time */
+    double _decayTime;
+    
     /*! The value determining how much of the output signal is fed back into the delay line*/
     double _feedback;
     
     /*! The delay line */
     double * _buffer;
+};
+
+struct AllPassDelay : public Delay
+{
+    AllPassDelay(const double& delayLen = 10,
+                 const double& decayTime = 0,
+                 const double& decayRate = 0.001,
+                 const double& feedbackLevel = 1)
+    : Delay(delayLen,decayTime,decayRate,feedbackLevel)
+    { }
+    
+    double process(const double& sample);
 };
 
 #endif /* defined(__Vibe__Delay__) */

@@ -17,6 +17,7 @@
 #include "Filter.h"
 #include "Delay.h"
 #include "Sample.h"
+#include "Reverb.h"
 
 #include <iostream>
 
@@ -28,41 +29,24 @@ int main(int argc, const char * argv[])
     
     double freq = 440;
     
-    uint32_t len = Global::samplerate * 5;
+    uint32_t len = Global::samplerate * 10;
     
     Operator op;
     
     op.addNote(freq);
     
     Mixer mixer(0,1);
-    /*
-    Delay one(0.0437,1.5,0.001);
-    Delay two(0.0411,1.5,0.001);
-    Delay three(0.0371,1.5,0.001);
-    Delay four(0.0297,1.5,0.001);
     
-    one.setDryWet(1);
-    two.setDryWet(1);
-    three.setDryWet(1);
-    four.setDryWet(1);*/
-    
-    Delay a(0.2,2);
+    Reverb reverb(3.4567,0.005);
     
     for (int i = 0; i < len; ++i)
     {
         double tick = op.tick();
         
-        if (i < (Global::samplerate * 3))
-        {
-            tick = a.process(tick);
-        }
+        if (i > (Global::samplerate * 2))
+        { tick = 0; }
         
-        else
-        {
-            tick = 0;
-            
-            tick = a.process(tick);
-        }
+        tick = reverb.process(tick);
         
         Sample sample(tick);
         
@@ -74,4 +58,5 @@ int main(int argc, const char * argv[])
     std::cout << "Total program duration: " << Util::getPassedTime(t) << "\n";
     
 }
+
 
