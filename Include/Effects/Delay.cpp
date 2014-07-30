@@ -181,3 +181,8 @@ double AllPassDelay::process(const double &sample)
     
     return outputA + (outputB * _decayValue);
 }
+
+double Echo::process(const double &sample)
+{
+    return sample + Delay::process(sample);
+}

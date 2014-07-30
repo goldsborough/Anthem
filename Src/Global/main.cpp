@@ -43,7 +43,7 @@ int main(int argc, const char * argv[])
     {
         double tick = op.tick();
         
-        if (i > (Global::samplerate * 2))
+        if (i > (Global::samplerate * 3))
         { tick = 0; }
         
         tick = reverb.process(tick);

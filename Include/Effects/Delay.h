@@ -56,6 +56,8 @@ public:
     *
     *  @param       sample The sample to be processed by the delay line.
     *
+    *  @return      The new sample.
+    *
     ****************************************************************************/
     
     virtual double process(const double& sample);
@@ -143,6 +145,15 @@ protected:
     double * _buffer;
 };
 
+/************************************************************************************************//*!
+*
+*  @brief       All-pass-delay class
+*
+*  @details     This class is an extension of the Delay class and necessary to implement the 
+*               Schroeder Reverb. It essentially changes the color of the tone (by filtering).
+*
+*************************************************************************************************/
+
 struct AllPassDelay : public Delay
 {
     AllPassDelay(const double& delayLen = 10,
@@ -151,6 +162,55 @@ struct AllPassDelay : public Delay
                  const double& feedbackLevel = 1)
     : Delay(delayLen,decayTime,decayRate,feedbackLevel)
     { }
+    
+    /*! @copydoc Delay::process() */
+    double process(const double& sample);
+};
+
+/************************************************************************************************//*!
+*
+*  @brief       Echo class
+*
+*  @details     This class is the same as the Delay class, except for the fact that it sums the
+*               the input with the output of the delay line before returning.                                                                                                   
+*
+*************************************************************************************************/
+
+struct Echo : public Delay
+{
+    /************************************************************************************************//*!
+    *
+    *  @brief       Constructs an Echo object.
+    *
+    *  @param       delayLen The length of the delay in seconds.
+    *
+    *  @param       decayTime The time for the signal to fade out after the impulse stops.
+    *
+    *  @param       decayRate The rate of decay/fade-out.
+    *
+    *  @param       feedbackLevel How much of the output to feed back into the delay line.
+    *                                                                                                   
+    *************************************************************************************************/
+    
+    Echo(const double& delayLen = 10,
+         const double& decayTime = 0,
+         const double& decayRate = 0.001,
+         const double& feedbackLevel = 1)
+    : Delay(delayLen,decayTime,decayRate,feedbackLevel)
+    { }
+    
+    /************************************************************************************************//*!
+    *
+    *  @brief       Processes a sample.
+    *
+    *  @details     A sample is processed by running the Delay::process() function on it and summing
+    *               it with the original sample.
+    *
+    *  @param       sample The sample to process.
+    *
+    *  @return      The new sample.
+    *
+    *************************************************************************************************/
     
     double process(const double& sample);
 };

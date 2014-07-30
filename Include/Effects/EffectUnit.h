@@ -23,6 +23,16 @@ public:
     
     virtual void setDryWet(const double& dw);
     
+    /************************************************************************************************//*!
+    *
+    *  @brief       Processes a sample.
+    *
+    *  @param       sample The sample to process.
+    *
+    *  @return      The new sample.
+    *
+    *************************************************************************************************/
+    
     virtual double process(const double& sample) = 0;
     
 protected:
