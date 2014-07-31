@@ -1,18 +1,15 @@
 //
-//  Reverb.h
+//  Effects.h
 //  Vibe
 //
-//  Created by Peter Goldsborough on 30/07/14.
+//  Created by Peter Goldsborough on 31/07/14.
 //  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
 //
 
-#ifndef __Vibe__Reverb__
-#define __Vibe__Reverb__
+#ifndef __Vibe__Effects__
+#define __Vibe__Effects__
 
-#include "EffectUnit.h"
-
-class Delay;
-class AllPassDelay;
+#include "Delay.h"
 
 /************************************************************************************************//*!
 *
@@ -21,7 +18,7 @@ class AllPassDelay;
 *  @details     The reverb algorithm currently implemented is the well-known and moderately
 *               popular Schroeder-Reverb, which is made up of four parallel comb filters/delay
 *               lines and two all-pass filters in series. It is a good first reverb effect but
-*               will definitely need re-implementation some time (soon).                                                                                                    
+*               will definitely need re-implementation some time (soon).
 *
 *************************************************************************************************/
 
@@ -50,7 +47,7 @@ public:
     
     /*! @copydoc EffectUnit::process() */
     
-    double process(const double& sample);
+    double process(double sample);
     
     
     /************************************************************************************************//*!
@@ -63,7 +60,7 @@ public:
     
     void setReverbTime(const double& reverbTime);
     
-  
+    
     /************************************************************************************************//*!
     *
     *  @brief       Sets the reverberation (decay) rate.
@@ -90,7 +87,7 @@ public:
     void setDryWet(const double& dw);
     
 private:
-
+    
     /*! The input signal attenuation factor */
     double _attenuation;
     
@@ -102,4 +99,86 @@ private:
     
 };
 
-#endif /* defined(__Vibe__Reverb__) */
+/************************************************************************************************//*!
+*
+*  @brief       Echo class
+*
+*  @details     This class is the same as the Delay class, except for the fact that it sums the
+*               the input with the output of the delay line before returning.
+*
+*************************************************************************************************/
+
+struct Echo : public Delay
+{
+    /************************************************************************************************//*!
+    *
+    *  @brief       Constructs an Echo object.
+    *
+    *  @param       delayLen The length of the delay in seconds.
+    *
+    *  @param       decayTime The time for the signal to fade out after the impulse stops.
+    *
+    *  @param       decayRate The rate of decay/fade-out.
+    *
+    *  @param       feedbackLevel How much of the output to feed back into the delay line.
+    *                                                                                                   
+    *************************************************************************************************/
+    
+    Echo(const double& delayLen = 10,
+         const double& decayTime = 0,
+         const double& decayRate = 0.001,
+         const double& feedbackLevel = 1)
+    : Delay(delayLen,decayTime,decayRate,feedbackLevel)
+    { }
+    
+    /************************************************************************************************//*!
+    *
+    *  @brief       Processes a sample.
+    *
+    *  @details     A sample is processed by running the Delay::process() function on it and summing
+    *               it with the original sample.
+    *
+    *  @param       sample The sample to process.
+    *
+    *  @return      The new sample.
+    *
+    *************************************************************************************************/
+    
+    double process(double sample)
+    { return sample + Delay::process(sample); }
+};
+
+class LFO;
+
+class Flanger : public EffectUnit
+{
+public:
+    
+    Flanger(const double& center = 0.01,
+            const double& depth = 0.01,
+            const double& rate = 0.15,
+            const double& feedback = 0);
+    
+    ~Flanger();
+    
+    double process(double sample);
+    
+    void setFeedback(const double& feedback);
+    
+    void setCenter(const double& center);
+    
+    void setDepth(const double& depth);
+    
+    void setRate(const double& rate);
+    
+private:
+    
+    double _center;
+    double _depth;
+    double _feedback;
+    
+    LFO* _lfo;
+    Delay _delay;
+};
+
+#endif /* defined(__Vibe__Effects__) */

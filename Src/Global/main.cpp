@@ -17,7 +17,7 @@
 #include "Filter.h"
 #include "Delay.h"
 #include "Sample.h"
-#include "Reverb.h"
+#include "Effects.h"
 
 #include <iostream>
 
@@ -29,7 +29,7 @@ int main(int argc, const char * argv[])
     
     double freq = 440;
     
-    uint32_t len = Global::samplerate * 10;
+    uint32_t len = Global::samplerate * 5;
     
     Operator op;
     
@@ -37,16 +37,13 @@ int main(int argc, const char * argv[])
     
     Mixer mixer(0,1);
     
-    Reverb reverb(3.4567,0.005);
+    Flanger flanger;
     
     for (int i = 0; i < len; ++i)
     {
         double tick = op.tick();
         
-        if (i > (Global::samplerate * 3))
-        { tick = 0; }
-        
-        tick = reverb.process(tick);
+        tick = flanger.process(tick);
         
         Sample sample(tick);
         

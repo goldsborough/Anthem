@@ -33,7 +33,7 @@ public:
     *
     *************************************************************************************************/
     
-    virtual double process(const double& sample) = 0;
+    virtual double process(double sample) = 0;
     
 protected:
     

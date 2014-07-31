@@ -15,7 +15,7 @@
 
 // References: http://www.musicdsp.org/files/Audio-EQ-Cookbook.txt
 // http://www.earlevel.com/main/2013/10/13/biquad-calculator-v2/
-// and the BasicSynth of course
+// and BasicSynth of course
 
 
 Filter::Filter(const unsigned short& mode,
@@ -29,7 +29,7 @@ Filter::Filter(const unsigned short& mode,
     _calcCoefs();
 }
 
-double Filter::process(const double& sample)
+double Filter::process(double sample)
 {
     double temp = sample
                 - (_coefA1 * _delayA)

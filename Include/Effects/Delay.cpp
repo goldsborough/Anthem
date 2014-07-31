@@ -16,8 +16,9 @@ Delay::Delay(const double& delayLen,
              const double& decayTime,
              const double& decayRate,
              const double& feedbackLevel)
+: _delayCapacity(delayLen * Global::samplerate)
 {
-    _delayLen = (delayLen * Global::samplerate);
+    _delayLen = _delayCapacity;
     
     _buffer = new double[_delayLen];
     
@@ -91,10 +92,20 @@ void Delay::_calcDecay()
 void Delay::_incr()
 {
     if (++_write >= _end)
-    { _write = _buffer; }
+    { _write -= _delayLen; }
 }
 
-double Delay::process(const double& sample)
+double Delay::offset(const unsigned int &offset)
+{
+    double * ret = _write - offset;
+    
+    if (ret < _buffer)
+    { ret += _delayLen; }
+    
+    return *ret;
+}
+
+double Delay::process(double sample)
 {
     iterator read = _write - _readInt;
     
@@ -141,7 +152,7 @@ Delay::~Delay()
     delete [] _buffer;
 }
 
-double AllPassDelay::process(const double &sample)
+double AllPassDelay::process(double sample)
 {
     iterator read = _write - _readInt;
     
@@ -180,9 +191,4 @@ double AllPassDelay::process(const double &sample)
     }
     
     return outputA + (outputB * _decayValue);
-}
-
-double Echo::process(const double &sample)
-{
-    return sample + Delay::process(sample);
 }

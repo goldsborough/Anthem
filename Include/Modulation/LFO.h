@@ -19,8 +19,9 @@ class XFadeUnit;
 
 struct LFO : public ModUnit
 {
-    LFO(const int wave = 0)
-    : osc(wave)
+    LFO(const int& wave = 0,
+        const double& rate = 1)
+    : osc(wave,rate)
     { }
     
     double tick() { return osc.tick(); }

@@ -40,7 +40,7 @@ public:
     **************************************************************************************************/
     
     Delay(const double& delayLen = 10,
-          const double& decayTime = 0,
+          const double& decayTime = 1,
           const double& decayRate = 0.001,
           const double& feedbackLevel = 1);
     
@@ -60,7 +60,7 @@ public:
     *
     ****************************************************************************/
     
-    virtual double process(const double& sample);
+    virtual double process(double sample);
     
     /*************************************************************************//*!
     *
@@ -103,6 +103,16 @@ public:
     
     virtual void setFeedback(const double& feedbackLevel);
     
+    /************************************************************************************************//*!
+    *
+    *  @brief       Determines the amount of output fed back into the delay line.
+    *
+    *  @param       feedbackLevel How much of the output values should be fed back (between 0 and 1).
+    *
+    *************************************************************************************************/
+    
+    virtual double offset(const unsigned int& offset);
+    
 protected:
     
     /*! Calculates the _decayValue based on _decayRate and _decayTime */
@@ -125,6 +135,9 @@ protected:
     
     /*! The pointer to the write index */
     iterator _write;
+    
+    /*! Actual, total size of the delay line */
+    const unsigned int _delayCapacity;
     
     /*! Size of the current delay line, equal to _end - _buffer */
     unsigned int _delayLen;
@@ -164,55 +177,6 @@ struct AllPassDelay : public Delay
     { }
     
     /*! @copydoc Delay::process() */
-    double process(const double& sample);
+    double process(double sample);
 };
-
-/************************************************************************************************//*!
-*
-*  @brief       Echo class
-*
-*  @details     This class is the same as the Delay class, except for the fact that it sums the
-*               the input with the output of the delay line before returning.                                                                                                   
-*
-*************************************************************************************************/
-
-struct Echo : public Delay
-{
-    /************************************************************************************************//*!
-    *
-    *  @brief       Constructs an Echo object.
-    *
-    *  @param       delayLen The length of the delay in seconds.
-    *
-    *  @param       decayTime The time for the signal to fade out after the impulse stops.
-    *
-    *  @param       decayRate The rate of decay/fade-out.
-    *
-    *  @param       feedbackLevel How much of the output to feed back into the delay line.
-    *                                                                                                   
-    *************************************************************************************************/
-    
-    Echo(const double& delayLen = 10,
-         const double& decayTime = 0,
-         const double& decayRate = 0.001,
-         const double& feedbackLevel = 1)
-    : Delay(delayLen,decayTime,decayRate,feedbackLevel)
-    { }
-    
-    /************************************************************************************************//*!
-    *
-    *  @brief       Processes a sample.
-    *
-    *  @details     A sample is processed by running the Delay::process() function on it and summing
-    *               it with the original sample.
-    *
-    *  @param       sample The sample to process.
-    *
-    *  @return      The new sample.
-    *
-    *************************************************************************************************/
-    
-    double process(const double& sample);
-};
-
 #endif /* defined(__Vibe__Delay__) */

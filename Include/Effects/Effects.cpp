@@ -6,8 +6,10 @@
 //  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
 //
 
-#include "Reverb.h"
+#include "Effects.h"
 #include "Delay.h"
+#include "LFO.h"
+#include "Global.h"
 
 #include <stdexcept>
 #include <cmath>
@@ -45,14 +47,14 @@ void Reverb::setDryWet(const double& dw)
     { _attenuation = 0.25; }
 }
 
-double Reverb::process(const double& sample)
+double Reverb::process(double sample)
 {
-    double copy = sample * _attenuation;
+    sample *= _attenuation;
     double output = 0;
     
     for (unsigned short i = 0; i < 4; ++i)
     {
-        output += _delays[i]->process(copy);
+        output += _delays[i]->process(sample);
     }
     
     output = _allPasses[1]->process(_allPasses[0]->process(output));
@@ -94,4 +96,97 @@ Reverb::~Reverb()
     
     delete [] _delays;
     delete [] _allPasses;
+}
+
+/*
+ class Flanger : public EffectUnit
+ {
+ public:
+ 
+ Flanger(const double& center,
+ const double& depth,
+ const double& rate,
+ const double& feedback);
+ 
+ ~Flanger();
+ 
+ double process(double sample);
+ 
+ void setFeedback(const double& feedback);
+ 
+ void setCenter(const double& center);
+ 
+ void setDepth(const double& depth);
+ 
+ void setRate(const double& rate);
+ 
+ private:
+ 
+ double _center;
+ double _depth;
+ double _feedback;
+ 
+ LFO* _lfo;
+ Delay _delay;
+ };
+*/
+
+Flanger::Flanger(const double& center,
+                 const double& depth,
+                 const double& rate,
+                 const double& feedback)
+: _center(center), _depth(depth/2),
+  _feedback(feedback), _lfo(new LFO(0,rate))
+{
+    _delay.setDecayTime(0.01);
+}
+
+void Flanger::setRate(const double& rate)
+{
+    _lfo->setRate(rate);
+}
+
+void Flanger::setCenter(const double& center)
+{
+    _center = center;
+    
+    if (_center - _depth < 0)
+    { _center = (_center / 2.0); }
+    
+    _delay.setDelayLen(_center);
+}
+
+void Flanger::setDepth(const double& depth)
+{
+    _depth = depth;
+    
+    if (_center - _depth < 0)
+    { _center = (_center / 2.0); }
+}
+
+void Flanger::setFeedback(const double& feedback)
+{
+    if (feedback < 0 || feedback > 1)
+    { throw std::invalid_argument("Feedback must be between 0 and 1!"); }
+    
+    _feedback = feedback;
+}
+
+double Flanger::process(double sample)
+{
+    double output = sample;
+    
+    if (_feedback)
+    { output -= _delay.offset(_center * Global::samplerate) * _feedback; }
+    
+    _delay.setDelayLen(_center + (_depth * _lfo->tick()));
+    
+    output += _delay.process(output);
+    
+    return _dryWet(sample, output);
+}
+
+Flanger::~Flanger()
+{
+    delete _lfo;
 }

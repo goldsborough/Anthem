@@ -11,6 +11,8 @@
 #include "Util.h"
 #include "Wavetable.h"
 
+#include <stdexcept>
+
 Oscillator::Oscillator(const int mode, double frq,
                        double amp, short phaseOffset)
 : _ind(0), _indIncr(0), _phaseOffset(0)
@@ -57,6 +59,9 @@ void Oscillator::setCents(short cents, bool permanent)
 
 void Oscillator::setFreq(double Hz)
 {
+    if (Hz < 0 || Hz > Global::nyquistLimit)
+    { throw std::invalid_argument("Frequency must be greater 0 and less than the nyquist limit!"); }
+    
     _freq = Hz;
     _indIncr = Global::tableIncr * Hz;
 }
@@ -90,8 +95,7 @@ void Oscillator::setPhaseOffset(short degrees)
 
 double Oscillator::tick()
 {
-    if (_mode == WavetableDB::NONE)
-        return 0;
+    if (_mode == WavetableDB::NONE) return 0;
     
     double value = _WT.interpolate(_ind);
     

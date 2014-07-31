@@ -11,6 +11,8 @@
 #include "Crossfader.h"
 #include "Oscillator.h"
 
+#include <stdexcept>
+
 LFOSeq::LFOSeq(unsigned int seqLength)
 : seq(seqLength), _seqLen(seqLength)
 {
@@ -22,6 +24,9 @@ LFOSeq::LFOSeq(unsigned int seqLength)
 
 void LFOSeq::setRate(double Hz)
 {
+    if (Hz < 0)
+    { throw std::invalid_argument("Rate cannot be greater zero!"); }
+    
     // get the period, divide up into _segNum pieces
     double len = (1.0 / Hz) / _seqLen;
     
