@@ -1,6 +1,6 @@
 //
 //  EffectUni.cpp
-//  Vibe
+//  Anthem
 //
 //  Created by Peter Goldsborough on 27/07/14.
 //  Copyright (c) 2014 Peter Goldsborough. All rights reserved.

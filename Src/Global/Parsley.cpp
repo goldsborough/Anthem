@@ -69,7 +69,7 @@ std::string join(Vec_Itr begin, Vec_Itr end, const std::string& str = " ")
     return s;
 }
 
-Wavetable VibeWTParser::readWT(const std::string &fname)
+Wavetable AnthemWTParser::readWT(const std::string &fname)
 {
     std::ifstream file(fname);
     
@@ -84,7 +84,7 @@ Wavetable VibeWTParser::readWT(const std::string &fname)
     file.read(id, 4);
     
     if (strncmp(id, "VIBE", 4) != 0)
-        throw ParseError("Invalid signature for Vibe file!");
+        throw ParseError("Invalid signature for Anthem file!");
     
     int len = Global::wtLen + 1;
     int size = len * sizeof(double);
@@ -96,7 +96,7 @@ Wavetable VibeWTParser::readWT(const std::string &fname)
     return Wavetable(wt,Global::wtLen);
 }
 
-void VibeWTParser::writeWT(const std::string &fname, const Wavetable& wt)
+void AnthemWTParser::writeWT(const std::string &fname, const Wavetable& wt)
 {
     std::ofstream file(fname);
     

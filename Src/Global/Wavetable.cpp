@@ -294,7 +294,7 @@ void WavetableDB::init(unsigned int wtLen)
     // The wavetable configuration file
     TextParsley textParser("/Users/petergoldsborough/Documents/vibe/Resources/Wavetables/wavetables.txt");
     
-    VibeWTParser wtParser;
+    AnthemWTParser wtParser;
     
     std::string fname;
     

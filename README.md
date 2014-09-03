@@ -1,3 +1,3 @@
-# Vibe
+# Anthem
 
 FM synthesizer, development stage.

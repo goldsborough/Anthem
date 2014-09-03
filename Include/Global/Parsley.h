@@ -772,7 +772,7 @@ private:
     bool selfClosed = false;
 };
 
-struct VibeWTParser
+struct AnthemWTParser
 {
     Wavetable readWT(const std::string& fname);
     

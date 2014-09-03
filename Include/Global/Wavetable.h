@@ -82,7 +82,7 @@ class Wavetable : public LookupTable<double>
     
 public:
     
-    friend class VibeWTParser;
+    friend class AnthemWTParser;
     
     Wavetable()
     : _refptr(new size_t(1))

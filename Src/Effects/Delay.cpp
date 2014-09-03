@@ -1,6 +1,6 @@
 //
 //  Delay.cpp
-//  Anthem
+//  Vibe
 //
 //  Created by Peter Goldsborough on 26/07/14.
 //  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
@@ -16,9 +16,8 @@ Delay::Delay(const double& delayLen,
              const double& decayTime,
              const double& decayRate,
              const double& feedbackLevel)
-: _delayCapacity(delayLen * Global::samplerate)
 {
-    _delayLen = _delayCapacity;
+    _delayLen = (delayLen * Global::samplerate);
     
     _buffer = new double[_delayLen];
     
@@ -92,20 +91,10 @@ void Delay::_calcDecay()
 void Delay::_incr()
 {
     if (++_write >= _end)
-    { _write -= _delayLen; }
+    { _write = _buffer; }
 }
 
-double Delay::offset(const unsigned int &offset)
-{
-    double * ret = _write - offset;
-    
-    if (ret < _buffer)
-    { ret += _delayLen; }
-    
-    return *ret;
-}
-
-double Delay::process(double sample)
+double Delay::process(const double& sample)
 {
     iterator read = _write - _readInt;
     
@@ -132,6 +121,9 @@ double Delay::process(double sample)
     // And finally add the fractional part of the
     // previous sample
     output += (*read - output) * _readFract;
+    
+    // Apply decay
+    output *= _decayValue;
 
     // If the sample hasn't been written yet, write it now
     if (_readInt > 0)
@@ -141,9 +133,6 @@ double Delay::process(double sample)
         _incr();
     }
     
-    // Apply decay
-    output *= _decayValue;
-    
     return _dryWet(sample, output);
 }
 
@@ -152,7 +141,7 @@ Delay::~Delay()
     delete [] _buffer;
 }
 
-double AllPassDelay::process(double sample)
+double AllPassDelay::process(const double &sample)
 {
     iterator read = _write - _readInt;
     
@@ -174,7 +163,7 @@ double AllPassDelay::process(double sample)
     
     // Then decrement read position (and check)
     if (--read < _buffer)
-    { read += _delayLen; }
+    { read = _end; }
     
     // And finally add the fractional part of the
     // previous sample
@@ -191,4 +180,9 @@ double AllPassDelay::process(double sample)
     }
     
     return outputA + (outputB * _decayValue);
+}
+
+double Echo::process(const double &sample)
+{
+    return sample + Delay::process(sample);
 }

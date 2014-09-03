@@ -39,6 +39,8 @@ int main(int argc, const char * argv[])
     
     Flanger flanger;
     
+    flanger.setDryWet(0.7);
+    
     for (int i = 0; i < len; ++i)
     {
         double tick = op.tick();
@@ -55,5 +57,3 @@ int main(int argc, const char * argv[])
     std::cout << "Total program duration: " << Util::getPassedTime(t) << "\n";
     
 }
-
-

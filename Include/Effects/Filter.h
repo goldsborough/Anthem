@@ -1,13 +1,13 @@
 //
 //  Filter.h
-//  Vibe
+//  Anthem
 //
 //  Created by Peter Goldsborough on 13/04/14.
 //  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
 //
 
-#ifndef __Vibe__Filter__
-#define __Vibe__Filter__
+#ifndef __Anthem__Filter__
+#define __Anthem__Filter__
 
 #include "EffectUnit.h"
 
@@ -15,7 +15,7 @@
 *
 *  @brief       Bi-Quad Filter.
 *
-*  @details     This is Vibe's main filter class. It is an IIR, Bi-Quad
+*  @details     This is Anthem's main filter class. It is an IIR, Bi-Quad
 *               filter implemented in Direct Form II. Lots of great
 *               can be found here: http://goo.gl/XiA8jo
 *
@@ -173,4 +173,4 @@ private:
     double _coefB2;
 };
 
-#endif /* defined(__Vibe__Filter__) */
+#endif /* defined(__Anthem__Filter__) */

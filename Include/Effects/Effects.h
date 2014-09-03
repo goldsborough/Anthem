@@ -1,13 +1,13 @@
 //
 //  Effects.h
-//  Vibe
+//  Anthem
 //
 //  Created by Peter Goldsborough on 31/07/14.
 //  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
 //
 
-#ifndef __Vibe__Effects__
-#define __Vibe__Effects__
+#ifndef __Anthem__Effects__
+#define __Anthem__Effects__
 
 #include "Delay.h"
 
@@ -181,4 +181,4 @@ private:
     Delay _delay;
 };
 
-#endif /* defined(__Vibe__Effects__) */
+#endif /* defined(__Anthem__Effects__) */

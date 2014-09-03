@@ -1,6 +1,6 @@
 //
 //  Reverb.cpp
-//  Vibe
+//  Anthem
 //
 //  Created by Peter Goldsborough on 30/07/14.
 //  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
@@ -98,47 +98,14 @@ Reverb::~Reverb()
     delete [] _allPasses;
 }
 
-/*
- class Flanger : public EffectUnit
- {
- public:
- 
- Flanger(const double& center,
- const double& depth,
- const double& rate,
- const double& feedback);
- 
- ~Flanger();
- 
- double process(double sample);
- 
- void setFeedback(const double& feedback);
- 
- void setCenter(const double& center);
- 
- void setDepth(const double& depth);
- 
- void setRate(const double& rate);
- 
- private:
- 
- double _center;
- double _depth;
- double _feedback;
- 
- LFO* _lfo;
- Delay _delay;
- };
-*/
-
 Flanger::Flanger(const double& center,
                  const double& depth,
                  const double& rate,
                  const double& feedback)
 : _center(center), _depth(depth/2),
-  _feedback(feedback), _lfo(new LFO(0,rate))
+  _feedback(feedback), _lfo(new LFO(0,rate)),
+  _delay(10,1,1,0)
 {
-    _delay.setDecayTime(0.01);
 }
 
 void Flanger::setRate(const double& rate)
@@ -150,18 +117,12 @@ void Flanger::setCenter(const double& center)
 {
     _center = center;
     
-    if (_center - _depth < 0)
-    { _center = (_center / 2.0); }
-    
     _delay.setDelayLen(_center);
 }
 
 void Flanger::setDepth(const double& depth)
 {
     _depth = depth;
-    
-    if (_center - _depth < 0)
-    { _center = (_center / 2.0); }
 }
 
 void Flanger::setFeedback(const double& feedback)
@@ -179,7 +140,9 @@ double Flanger::process(double sample)
     if (_feedback)
     { output -= _delay.offset(_center * Global::samplerate) * _feedback; }
     
-    _delay.setDelayLen(_center + (_depth * _lfo->tick()));
+    double val = _center + (_depth * _lfo->tick());
+    
+    _delay.setDelayLen(val);
     
     output += _delay.process(output);
     

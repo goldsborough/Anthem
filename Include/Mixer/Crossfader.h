@@ -1,13 +1,13 @@
 //
 //  Crossfade.h
-//  Vibe
+//  Anthem
 //
 //  Created by Peter Goldsborough on 15/04/14.
 //  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
 //
 
-#ifndef __Vibe__Crossfade__
-#define __Vibe__Crossfade__
+#ifndef __Anthem__Crossfade__
+#define __Anthem__Crossfade__
 
 // Base class
 // Others differ only in table generation methods
@@ -54,4 +54,4 @@ struct XFadeSqrt : public XFadeUnit
     XFadeSqrt(bool scale = false, char initVal = 0);
 };
 
-#endif /* defined(__Vibe__Crossfade__) */
+#endif /* defined(__Anthem__Crossfade__) */

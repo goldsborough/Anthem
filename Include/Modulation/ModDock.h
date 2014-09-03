@@ -1,13 +1,13 @@
 //
 //  ModUnit.h
-//  Vibe
+//  Anthem
 //
 //  Created by Peter Goldsborough on 17/04/14.
 //  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
 //
 
-#ifndef __Vibe__ModUnit__
-#define __Vibe__ModUnit__
+#ifndef __Anthem__ModUnit__
+#define __Anthem__ModUnit__
 
 class ModUnit;
 
@@ -58,4 +58,4 @@ private:
     depth_t _masterDpth;
 };
 
-#endif /* defined(__Vibe__ModUnit__) */
+#endif /* defined(__Anthem__ModUnit__) */

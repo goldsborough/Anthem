@@ -1,13 +1,13 @@
 //
 //  Delay.h
-//  Vibe
+//  Anthem
 //
 //  Created by Peter Goldsborough on 26/07/14.
 //  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
 //
 
-#ifndef __Vibe__Delay__
-#define __Vibe__Delay__
+#ifndef __Anthem__Delay__
+#define __Anthem__Delay__
 
 #include "EffectUnit.h"
 
@@ -179,4 +179,4 @@ struct AllPassDelay : public Delay
     /*! @copydoc Delay::process() */
     double process(double sample);
 };
-#endif /* defined(__Vibe__Delay__) */
+#endif /* defined(__Anthem__Delay__) */
