@@ -1,6 +1,6 @@
 //
 //  Wavetable.cpp
-//  Synth
+//  Anthem
 //
 //  Created by Peter Goldsborough on 22/03/14.
 //  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
@@ -292,7 +292,7 @@ void WavetableDB::init(unsigned int wtLen)
     _fundIncr = Global::twoPi / _wtLength;
     
     // The wavetable configuration file
-    TextParsley textParser("/Users/petergoldsborough/Documents/vibe/Resources/Wavetables/wavetables.txt");
+    TextParsley textParser("/Users/petergoldsborough/Documents/Anthem/Resources/Wavetables/wavetables.txt");
     
     AnthemWTParser wtParser;
     
@@ -303,7 +303,7 @@ void WavetableDB::init(unsigned int wtLen)
     // Fetch all wavetable names and read their respective data files
     for (int i = 0; i < names.size(); ++i)
     {
-        fname = "/Users/petergoldsborough/Documents/vibe/Resources/Wavetables/" + names[i] + ".wavetable";
+        fname = "/Users/petergoldsborough/Documents/Anthem/Resources/Wavetables/" + names[i] + ".wavetable";
         
         _tables.push_back(wtParser.readWT(fname));
     }

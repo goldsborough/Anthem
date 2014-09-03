@@ -1,13 +1,13 @@
 //
 //  LFO.h
-//  Synth
+//  Anthem
 //
 //  Created by Peter Goldsborough on 15/04/14.
 //  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
 //
 
-#ifndef __Synth__LFO__
-#define __Synth__LFO__
+#ifndef __Anthem__LFO__
+#define __Anthem__LFO__
 
 #include "GenUnits.h"
 #include "Oscillator.h"
@@ -108,4 +108,4 @@ private:
     XFadeUnit * _xfade;
 };
 
-#endif /* defined(__Synth__LFO__) */
+#endif /* defined(__Anthem__LFO__) */

@@ -1,13 +1,13 @@
 //
 //  Sample.h
-//  Synth
+//  Anthem
 //
 //  Created by Peter Goldsborough on 15/04/14.
 //  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
 //
 
-#ifndef __Synth__Sample__
-#define __Synth__Sample__
+#ifndef __Anthem__Sample__
+#define __Anthem__Sample__
 
 #include <deque>
 
@@ -145,4 +145,4 @@ private:
 };
 
 
-#endif /* defined(__Synth__Sample__) */
+#endif /* defined(__Anthem__Sample__) */

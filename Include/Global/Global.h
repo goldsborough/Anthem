@@ -1,13 +1,13 @@
 //
 //  Global.h
-//  Synth
+//  Anthem
 //
 //  Created by Peter Goldsborough on 22/03/14.
 //  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
 //
 
-#ifndef __Synth__Global__
-#define __Synth__Global__
+#ifndef __Anthem__Global__
+#define __Anthem__Global__
 
 #include <ctime>
 #include <cstdlib>
@@ -30,4 +30,4 @@ namespace Global
     extern void init(const unsigned int smplr, const unsigned int wavetableLen);
 };
 
-#endif /* defined(__Synth__Globals__) */
+#endif /* defined(__Anthem__Globals__) */

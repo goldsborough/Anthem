@@ -1,13 +1,13 @@
 //
 //  Mixer.h
-//  Synth
+//  Anthem
 //
 //  Created by Peter Goldsborough on 28/03/14.
 //  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
 //
 
-#ifndef __Synth__Mixer__
-#define __Synth__Mixer__
+#ifndef __Anthem__Mixer__
+#define __Anthem__Mixer__
 
 class XFadeUnit;
 class DirectOutput;
@@ -53,4 +53,4 @@ private:
     Wavefile     * _waveOut;
 };
 
-#endif /* defined(__Synth__Mixer__) */
+#endif /* defined(__Anthem__Mixer__) */

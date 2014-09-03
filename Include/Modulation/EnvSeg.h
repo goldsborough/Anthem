@@ -1,13 +1,13 @@
 //
 //  EnvSeg.h
-//  Synth
+//  Anthem
 //
 //  Created by Peter Goldsborough on 15/04/14.
 //  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
 //
 
-#ifndef __Synth__EnvSeg__
-#define __Synth__EnvSeg__
+#ifndef __Anthem__EnvSeg__
+#define __Anthem__EnvSeg__
 
 #include "GenUnits.h"
 #include <vector>
@@ -468,4 +468,4 @@ protected:
 };
 
 
-#endif /* defined(__Synth__EnvSeg__) */
+#endif /* defined(__Anthem__EnvSeg__) */

@@ -1,13 +1,13 @@
 //
 //  Envelope.h
-//  Synth
+//  Anthem
 //
 //  Created by Peter Goldsborough on 09/03/14.
 //  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
 //
 
-#ifndef __Synth__Envelope__
-#define __Synth__Envelope__
+#ifndef __Anthem__Envelope__
+#define __Anthem__Envelope__
 
 #include "EnvSeg.h"
 
@@ -75,4 +75,4 @@ private:
     
 };
 
-#endif /* defined(__Synth__Envelope__) */
+#endif /* defined(__Anthem__Envelope__) */

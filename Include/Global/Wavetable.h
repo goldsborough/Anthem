@@ -1,13 +1,13 @@
 //
 //  Wavetable.h
-//  Synth
+//  Anthem
 //
 //  Created by Peter Goldsborough on 22/03/14.
 //  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
 //
 
-#ifndef __Synth__Waveforms__
-#define __Synth__Waveforms__
+#ifndef __Anthem__Waveforms__
+#define __Anthem__Waveforms__
 
 #include <vector>
 #include <stdexcept>
@@ -273,4 +273,4 @@ private:
 // One global instance
 extern WavetableDB wavetableDB;
 
-#endif /* defined(__Synth__Waveforms__) */
+#endif /* defined(__Anthem__Waveforms__) */

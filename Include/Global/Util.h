@@ -1,13 +1,13 @@
 //
 //  Util.h
-//  Synth
+//  Anthem
 //
 //  Created by Peter Goldsborough on 15/04/14.
 //  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
 //
 
-#ifndef __Synth__Util__
-#define __Synth__Util__
+#ifndef __Anthem__Util__
+#define __Anthem__Util__
 
 #include <string>
 
@@ -30,4 +30,4 @@ namespace Util
 }
 
 
-#endif /* defined(__Synth__Util__) */
+#endif /* defined(__Anthem__Util__) */

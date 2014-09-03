@@ -1,13 +1,13 @@
 //
 //  Noise.h
-//  Synth
+//  Anthem
 //
 //  Created by Peter Goldsborough on 15/04/14.
 //  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
 //
 
-#ifndef __Synth__Noise__
-#define __Synth__Noise__
+#ifndef __Anthem__Noise__
+#define __Anthem__Noise__
 
 #include "GenUnits.h"
 
@@ -43,4 +43,4 @@ private:
     
 };
 
-#endif /* defined(__Synth__Noise__) */
+#endif /* defined(__Anthem__Noise__) */

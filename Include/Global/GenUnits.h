@@ -1,13 +1,13 @@
 //
 //  GenUnits.h
-//  Synth
+//  Anthem
 //
 //  Created by Peter Goldsborough on 15/04/14.
 //  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
 //
 
-#ifndef __Synth__GenUnits__
-#define __Synth__GenUnits__
+#ifndef __Anthem__GenUnits__
+#define __Anthem__GenUnits__
 
 #include <vector>
 #include "Wavetable.h"
@@ -67,4 +67,4 @@ protected:
 struct ModUnit : public GenUnit
 { virtual ~ModUnit() { } };
 
-#endif /* defined(__Synth__GenUnits__) */
+#endif /* defined(__Anthem__GenUnits__) */

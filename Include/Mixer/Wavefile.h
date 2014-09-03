@@ -1,13 +1,13 @@
 //
 //  Wavefile.h
-//  Synth
+//  Anthem
 //
 //  Created by Peter Goldsborough on 21/01/14.
 //  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
 //
 
-#ifndef __Synth__Wavefile__
-#define __Synth__Wavefile__
+#ifndef __Anthem__Wavefile__
+#define __Anthem__Wavefile__
 
 #include <stdint.h>
 #include <fstream>

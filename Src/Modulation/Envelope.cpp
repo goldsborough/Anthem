@@ -1,6 +1,6 @@
 //
 //  Envelope.cpp
-//  Synth
+//  Anthem
 //
 //  Created by Peter Goldsborough on 09/03/14.
 //  Copyright (c) 2014 Peter Goldsborough. All rights reserved.

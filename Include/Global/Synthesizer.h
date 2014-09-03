@@ -1,13 +1,13 @@
 //
 //  Synthesizer.h
-//  Synth
+//  Anthem
 //
 //  Created by Peter Goldsborough on 21/01/14.
 //  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
 //
 
-#ifndef __Synth__Synthesizer__
-#define __Synth__Synthesizer__
+#ifndef __Anthem__Synthesizer__
+#define __Anthem__Synthesizer__
 
 class Synthesizer
 {
@@ -28,4 +28,4 @@ public:
     
 };
 
-#endif /* defined(__Synth__Synthesizer__) */
+#endif /* defined(__Anthem__Synthesizer__) */

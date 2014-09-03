@@ -1,13 +1,13 @@
 //
 //  DirectOutput.h
-//  Synth
+//  Anthem
 //
 //  Created by Peter Goldsborough on 08/04/14.
 //  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
 //
 
-#ifndef __Synth__DirectOutput__
-#define __Synth__DirectOutput__
+#ifndef __Anthem__DirectOutput__
+#define __Anthem__DirectOutput__
 
 #include <portaudio.h>
 
@@ -48,4 +48,4 @@ private:
     
 };
 
-#endif /* defined(__Synth__DirectOutput__) */
+#endif /* defined(__Anthem__DirectOutput__) */

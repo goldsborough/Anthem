@@ -1,13 +1,13 @@
 //
 //  Operator.h
-//  Synth
+//  Anthem
 //
 //  Created by Peter Goldsborough on 21/01/14.
 //  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
 //
 
-#ifndef __Synth__Operator__
-#define __Synth__Operator__
+#ifndef __Anthem__Operator__
+#define __Anthem__Operator__
 
 #include "GenUnits.h"
 
@@ -50,4 +50,4 @@ private:
     
 };
 
-#endif /* defined(__Synth__Operator__) */
+#endif /* defined(__Anthem__Operator__) */

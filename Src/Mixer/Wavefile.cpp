@@ -1,6 +1,6 @@
 //
 //  Wavefile.cpp
-//  Synth
+//  Anthem
 //
 //  Created by Peter Goldsborough on 21/01/14.
 //  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
@@ -61,7 +61,7 @@ void Wavefile::check_fname(std::string& fname)
             fname.replace(n, 1, "_");
     }
     
-    fname.insert(0, "/Users/petergoldsborough/Documents/vibe/Wavefiles/");
+    fname.insert(0, "/Users/petergoldsborough/Documents/Anthem/Wavefiles/");
 }
 
 
