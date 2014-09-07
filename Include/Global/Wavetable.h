@@ -14,8 +14,7 @@
 
 struct Partial
 {
-    Partial(unsigned short number, double ampl,
-            double phsOffs = 0)
+    Partial(unsigned short number, double ampl, double phsOffs = 0)
     : num(number), amp(ampl), phaseOffs(phsOffs)
     { }
     
@@ -242,13 +241,7 @@ private:
     Wavetable smoothSaw();
     Wavetable smoothSquare();
     
-    /*!
-     @brief      Generates a noise wave
-     @discussion Generates a noise wave by generating random samples
-     @return     The noise wavetable
-    */
-    
-    Wavetable genNoise();
+    Wavetable whiteNoise();
         
    /************************************************************************************//*!
    * The wtLength was a tricky one to find and reason upon. A compromise must be found

@@ -37,15 +37,9 @@ int main(int argc, const char * argv[])
     
     Mixer mixer(0,1);
     
-    Flanger flanger;
-    
-    flanger.setDryWet(0.7);
-    
     for (int i = 0; i < len; ++i)
     {
         double tick = op.tick();
-        
-        tick = flanger.process(tick);
         
         Sample sample(tick);
         

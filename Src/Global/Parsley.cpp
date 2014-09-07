@@ -74,17 +74,17 @@ Wavetable AnthemWTParser::readWT(const std::string &fname)
     std::ifstream file(fname);
     
     if (! file.is_open())
-        throw FileNotOpenError("Could not find wavetable file: " + fname);
+    { throw FileNotOpenError("Could not find wavetable file: " + fname); }
     
     if (! file.good())
-        throw FileOpenError("Error opening wavetable: " + fname);
+    { throw FileOpenError("Error opening wavetable: " + fname); }
     
-    char id[4];
+    char id[6];
     
-    file.read(id, 4);
+    file.read(id, 6);
     
-    if (strncmp(id, "VIBE", 4) != 0)
-        throw ParseError("Invalid signature for Anthem file!");
+    if (strncmp(id, "ANTHEM", 6))
+    { throw ParseError("Invalid signature for Anthem file!"); }
     
     int len = Global::wtLen + 1;
     int size = len * sizeof(double);
@@ -101,12 +101,12 @@ void AnthemWTParser::writeWT(const std::string &fname, const Wavetable& wt)
     std::ofstream file(fname);
     
     if (! file.is_open())
-        throw FileNotOpenError();
+    { throw FileNotOpenError(); }
     
     if (! file.good())
-        throw FileOpenError();
+    { throw FileOpenError(); }
     
-    file.write("VIBE", 4);
+    file.write("ANTHEM", 6);
     
     int size = (Global::wtLen + 1) * sizeof(double);
     

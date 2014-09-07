@@ -526,7 +526,7 @@ Wavetable WavetableDB::directTriangle()
     return Wavetable(wt,_wtLength);
 }
 
-Wavetable WavetableDB::genNoise()
+Wavetable WavetableDB::whiteNoise()
 {
     double * wt = new double[_wtLength + 1];
     
