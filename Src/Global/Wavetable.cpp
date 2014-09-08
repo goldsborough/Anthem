@@ -312,10 +312,10 @@ void WavetableDB::init(unsigned int wtLen)
 Wavetable& WavetableDB::operator[](const int& mode)
 {
     if (mode == NONE)
-        return _noneTable;
+    { return _noneTable; }
     
     if (mode < 0 || mode >= _tables.size())
-        throw std::invalid_argument("Mode out of range");
+    { throw std::invalid_argument("Mode out of range"); }
     
     return _tables[mode];
 }
@@ -518,32 +518,6 @@ Wavetable WavetableDB::directTriangle()
         
         if ( (phase += phaseIncr) >= Global::pi)
             phase -= Global::twoPi;
-        
-    }
-    
-    wt[_wtLength] = wt[0];
-    
-    return Wavetable(wt,_wtLength);
-}
-
-Wavetable WavetableDB::whiteNoise()
-{
-    double * wt = new double[_wtLength + 1];
-    
-    for (unsigned int n = 0; n < _wtLength; n++)
-    {
-        /*
-         // We subtract half the maximum range from the generated number
-         // to get a range between - RAND_MAX / 2 and + RAND_MAX / 2, then
-         // we divide by that range to get a value between -1 and 1, thus
-         // normalized.
-         */
-        
-        double randHalf = RAND_MAX/2.0;
-        
-        double value =  (rand() - randHalf) / randHalf;
-        
-        wt[n] = value;
     }
     
     wt[_wtLength] = wt[0];

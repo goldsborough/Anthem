@@ -23,8 +23,15 @@ Filter::Filter(const unsigned short& mode,
        const double& q,
        const double& gain)
 : _delayA(0), _delayB(0), _mode(mode),
-  _cutoff(cutoff), _q(q), _gain(gain)
+  _cutoff(cutoff), _q(q)
 {
+    // If gain is zero, initialize _gain to 1
+    // otherwise the decibel to amplitude conversion
+    // will fail due to division by zero
+    if (gain) setGain(gain);
+    
+    else _gain = 1;
+    
     // Initial coefficients
     _calcCoefs();
 }
@@ -40,6 +47,7 @@ double Filter::process(double sample)
                   + (_coefB2 * _delayB);
     
     
+    // Store values into delay line
     _delayB = _delayA;
     _delayA = temp;
     
@@ -174,6 +182,7 @@ void Filter::setMode(const unsigned short& mode)
     { throw std::invalid_argument("Filter mode out of range!"); }
         
     _mode = mode;
+    
     _calcCoefs();
 }
 
@@ -183,6 +192,7 @@ void Filter::setCutoff(const double& cutoff)
     { throw std::invalid_argument("Cutoff out of range, must be between 0 and 0.5!"); }
     
     _cutoff = cutoff;
+    
     _calcCoefs();
 }
 
@@ -192,13 +202,14 @@ void Filter::setQ(const double& q)
     { throw std::invalid_argument("Bandwith out of range, must be between 0 and 1!"); }
     
     _q = q;
+    
     _calcCoefs();
 }
 
 void Filter::setGain(const short& gain)
 {
-    if (gain < -20 || gain > 0)
-    { throw std::invalid_argument("Gain out of range, must be between -20dB and 0dB! "); }
+    if (gain < -20 || gain > 20)
+    { throw std::invalid_argument("Gain out of range, must be between -20dB and 20dB! "); }
         
     _gain = Util::dbToAmp(1,gain);
     

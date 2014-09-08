@@ -18,6 +18,7 @@
 #include "Delay.h"
 #include "Sample.h"
 #include "Effects.h"
+#include "Noise.h"
 
 #include <iostream>
 
@@ -26,20 +27,22 @@ int main(int argc, const char * argv[])
     clock_t t = clock();
     
     Synthesizer synth;
-    
-    double freq = 440;
+
+    //double freq = 440;
     
     uint32_t len = Global::samplerate * 5;
     
-    Operator op;
+    //Operator op;
     
-    op.addNote(freq);
+    //op.addNote(freq);
+    
+    Noise noise(Noise::RED);
     
     Mixer mixer(0,1);
-    
+
     for (int i = 0; i < len; ++i)
     {
-        double tick = op.tick();
+        double tick = noise.tick();//op.tick();
         
         Sample sample(tick);
         

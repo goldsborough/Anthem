@@ -61,7 +61,7 @@ public:
     Filter(const unsigned short& mode,
            const double& cutoff,
            const double& q = 1,
-           const double& gain = 1);
+           const double& gain = 0);
     
     /*************************************************************************//*!
     *

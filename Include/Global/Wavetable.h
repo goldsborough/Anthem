@@ -223,7 +223,7 @@ public:
         DIRECT_SAW,
         
         SMOOTH_SQUARE,
-        SMOOTH_SAW,
+        SMOOTH_SAW
     };
     
     void init(const unsigned int wtLen);
@@ -240,8 +240,6 @@ private:
     
     Wavetable smoothSaw();
     Wavetable smoothSquare();
-    
-    Wavetable whiteNoise();
         
    /************************************************************************************//*!
    * The wtLength was a tricky one to find and reason upon. A compromise must be found

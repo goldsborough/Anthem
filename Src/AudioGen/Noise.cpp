@@ -7,31 +7,60 @@
 //
 
 #include "Noise.h"
-#include "Global.h"
+#include "Filter.h"
+
 #include <cstdlib>
+#include <stdexcept>
+
+Noise::Noise(const unsigned short& type, const double& amp)
+: _filter(new Filter(Filter::LOW_PASS,1,0.1)), _amp(amp)
+{
+    setType(type);
+}
+
+Noise::~Noise()
+{ delete _filter; }
+
+void Noise::setAmp(const double& amp)
+{
+    if (amp < 0 || amp > 1)
+    { throw std::invalid_argument("Amplitude must be between 0 and 1!"); }
+    
+    _amp = amp;
+}
+
+void Noise::setType(const unsigned short& type)
+{
+    // Check if type argument is out of range
+    if (type > RED)
+    { throw std::invalid_argument("Invalid noise type!"); }
+    
+    // Adjust filter parameters according to noise color
+    if (type == PINK && _type != PINK)
+    {
+        _filter->setCutoff(10000);
+        _filter->setGain(6);
+    }
+    
+    else if (type == RED && _type != RED)
+    {
+        _filter->setCutoff(1500);
+        _filter->setGain(14);
+    }
+    
+    _type = type;
+}
 
 double Noise::tick()
 {
-    double sample = 0.0;
+    static double randHalf = RAND_MAX/2.0;
     
-    int indexBase = (int) _ind;         // The truncated integer part
-    double indexFract = _ind - indexBase;    // The remaining fractional part
+    // Get random noise
+    double value = (rand() - randHalf) / randHalf;
     
-    // grab the two items in-between which the actual value lies
-    double value1 = _WT[indexBase];
-    double value2 = _WT[indexBase+1];
+    // All noise colors except white noise are filtered
+    if (_type != WHITE)
+    { value  = _filter->process(value); }
     
-    // interpolate
-    double value = value1 + ((value2 - value1) * indexFract);
-    
-    sample = value * _amp;
-    
-    double randVal = rand() % (int)(20000 * _Color);
-    
-    _ind += Global::tableIncr * randVal;
-    
-    if (_ind  >= Global::wtLen)
-        _ind -= Global::wtLen;
-    
-    return sample;
+    return value * _amp;
 }

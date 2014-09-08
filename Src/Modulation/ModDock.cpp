@@ -20,13 +20,14 @@ double ModDock::tick()
     double dp = 0.0;
     
     // if not in use, no need to tick
-    if (_usedDocks == 0)
+    if (! _usedDocks)
     { return dp; }
     
     // gather all ticks from all modulation sources and
     // add them together
     for (index_t i = 0; i < _dockSize; i++)
     {
+        // If the modUnit pointer isn't NULL
         if (_mods[i].mod)
         {
             dp += _mods[i].mod->tick() * _mods[i].dpth;

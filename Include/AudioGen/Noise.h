@@ -11,6 +11,8 @@
 
 #include "GenUnits.h"
 
+class Filter;
+
 class Noise : public GenUnit
 {
     
@@ -20,27 +22,26 @@ public:
     {
         WHITE,
         PINK,
-        BROWN
+        RED
     };
     
-    Noise(const Type& type) { _type = type; };
+    Noise(const unsigned short& type = 0, const double& amp = 1);
+    
+    ~Noise();
     
     double tick();
     
-    void setType(const Type& type) { _type = type; };
+    void setType(const unsigned short& type);
     
-    void setColor(const double& col) {_Color = col; };
+    void setAmp(const double& amp);
     
 private:
     
-    double _ind = 0.0;
+    Filter* _filter;
     
-    double _Color = 1.0;
+    unsigned short _type;
     
-    Type _type;
-    
-    double * _WT = 0;//wavetable.getNoise();
-    
+    double _amp;
 };
 
 #endif /* defined(__Anthem__Noise__) */
