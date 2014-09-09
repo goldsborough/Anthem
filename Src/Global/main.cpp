@@ -36,7 +36,7 @@ int main(int argc, const char * argv[])
     
     //op.addNote(freq);
     
-    Noise noise(Noise::RED);
+    Noise noise(Noise::BLUE);
     
     Mixer mixer(0,1);
 

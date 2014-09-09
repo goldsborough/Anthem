@@ -32,20 +32,59 @@ void Noise::setAmp(const double& amp)
 void Noise::setType(const unsigned short& type)
 {
     // Check if type argument is out of range
-    if (type > RED)
+    if (type > VIOLET)
     { throw std::invalid_argument("Invalid noise type!"); }
     
-    // Adjust filter parameters according to noise color
-    if (type == PINK && _type != PINK)
+    // Adjust filter settings according to noise color
+    // Values determined empirically
+    switch (type)
     {
-        _filter->setCutoff(10000);
-        _filter->setGain(6);
-    }
-    
-    else if (type == RED && _type != RED)
-    {
-        _filter->setCutoff(1500);
-        _filter->setGain(14);
+        case PINK:
+        {
+            // Pink noise has a decrease of 3dB/Octave
+            
+            _filter->setMode(Filter::LOW_PASS);
+            _filter->setCutoff(10000);
+            _filter->setGain(6);
+            
+            break;
+        }
+            
+        case RED:
+        {
+            // Red noise has a decrease of 6dB/Octave
+            
+            _filter->setMode(Filter::LOW_PASS);
+            _filter->setCutoff(1500);
+            _filter->setGain(14);
+            
+            break;
+        }
+            
+        case BLUE:
+        {
+            // Blue noise has an increase of 3dB/Octave
+            
+            _filter->setMode(Filter::HIGH_PASS);
+            _filter->setCutoff(1000);
+            _filter->setQ(0.2);
+            _filter->setGain(-3);
+            
+            break;
+        }
+            
+        case VIOLET:
+        {
+            // Violet noise has an increase of 6dB/Octave
+            
+            _filter->setMode(Filter::HIGH_PASS);
+            _filter->setCutoff(6000);
+            _filter->setQ(0.2);
+            _filter->setGain(3);
+        }
+            
+        default:
+            break;
     }
     
     _type = type;

@@ -11,6 +11,10 @@
 
 #include "GenUnits.h"
 
+// TODO: Gray noise
+
+// Sources: http://en.wikipedia.org/wiki/Colors_of_noise
+
 class Filter;
 
 class Noise : public GenUnit
@@ -22,7 +26,9 @@ public:
     {
         WHITE,
         PINK,
-        RED
+        RED,
+        BLUE,
+        VIOLET
     };
     
     Noise(const unsigned short& type = 0, const double& amp = 1);

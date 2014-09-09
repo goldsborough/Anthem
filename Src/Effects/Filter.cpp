@@ -25,12 +25,7 @@ Filter::Filter(const unsigned short& mode,
 : _delayA(0), _delayB(0), _mode(mode),
   _cutoff(cutoff), _q(q)
 {
-    // If gain is zero, initialize _gain to 1
-    // otherwise the decibel to amplitude conversion
-    // will fail due to division by zero
-    if (gain) setGain(gain);
-    
-    else _gain = 1;
+    setGain(gain);
     
     // Initial coefficients
     _calcCoefs();
@@ -210,8 +205,15 @@ void Filter::setGain(const short& gain)
 {
     if (gain < -20 || gain > 20)
     { throw std::invalid_argument("Gain out of range, must be between -20dB and 20dB! "); }
-        
-    _gain = Util::dbToAmp(1,gain);
+    
+    // If gain is zero, set _gain to 1
+    // otherwise the decibel to amplitude conversion
+    // will fail due to division by zero}
+    if (!gain)
+    { _gain = 1; }
+    
+    else
+    { _gain = Util::dbToAmp(1,gain); }
     
     _calcCoefs();
 }

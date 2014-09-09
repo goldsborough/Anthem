@@ -11,6 +11,10 @@
 
 #include "EffectUnit.h"
 
+// TODO: possibly FIR filters - Users create frequency responses which are then
+// converted into filter kernels, with which the signal is then convoluted. This
+// would also solve the Gray noise problem in the Noise class. 
+
 /*************************************************************************//*!
 *
 *  @brief       Bi-Quad Filter.
