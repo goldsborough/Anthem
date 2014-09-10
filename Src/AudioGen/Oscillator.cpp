@@ -26,6 +26,11 @@ Oscillator::Oscillator(const unsigned short& wt, const double& frq,
     setFreq(frq);
 };
 
+void Oscillator::setWavetable(const unsigned short &wt)
+{
+    _wt = wavetableDB[wt];
+}
+
 void Oscillator::setSemis(const short& semis, bool permanent)
 {
     // Prevent unnecesessary changes
@@ -103,9 +108,7 @@ void Oscillator::setPhaseOffset(short degrees)
 
 double Oscillator::tick()
 {
-    if (_mode == WavetableDB::NONE) return 0;
-    
-    double value = _WT.interpolate(_ind);
+    double value = _wt.interpolate(_ind);
     
     _ind += _indIncr;
     

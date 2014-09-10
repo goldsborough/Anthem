@@ -53,11 +53,6 @@ Unit::~Unit()
     }
 }
 
-void AudioGenUnit::setWT(const int& wt)
-{
-    _wt = wavetableDB[wt];
-}
-
 void EffectUnit::setDryWet(const double& dw)
 {
     if (dw < 0 || dw > 1)

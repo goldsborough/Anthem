@@ -241,7 +241,7 @@ void EnvSeg::setModWave(int modW)
     else if (_modWave == WavetableDB::SMOOTH_SQUARE)
         _lfo->osc.setPhaseOffset(215);
     
-    _lfo->osc.setWT(_modWave);
+    _lfo->osc.setWavetable(_modWave);
 }
 
 void EnvSeg::setModDepth(double dpth)
@@ -275,7 +275,7 @@ double EnvSeg::tick()
     // (Caller must take care of stopping it)
     
     if (_sample++ >= _len)
-        return _endLevel;
+    { return _endLevel; }
     
     _segCurr *= _segIncr;
     

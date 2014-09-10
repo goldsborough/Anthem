@@ -41,7 +41,7 @@ void Operator::setWavetable(const unsigned short& wt)
          itr != end;
          ++itr)
     {
-        (*itr)->setWT(wt);
+        (*itr)->setWavetable(wt);
     }
 }
 
@@ -79,7 +79,7 @@ void Operator::relNote(const unsigned short& ind)
 
 double Operator::tick()
 {
-    double val = 0.0;
+    double val = 0;
     
     if (_mods[FREQ_SEMI]->inUse())
     {

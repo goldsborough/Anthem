@@ -192,6 +192,8 @@ public:
     
     enum Wavetables
     {
+        NONE = -1,
+        
         SINE,
         SINE_2,
         SINE_4, // The number is the number of bits, not partials
@@ -253,6 +255,8 @@ private:
     unsigned int _wtLength;
 
     double _fundIncr;
+    
+    Wavetable _noneTable;
 
     std::vector<Wavetable> _tables;
 };

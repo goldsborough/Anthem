@@ -312,16 +312,22 @@ void WavetableDB::init(const unsigned int& wtLen)
 
 Wavetable& WavetableDB::operator[](const int& wt)
 {
-    if (wt < 0 || wt >= _tables.size())
-    { throw std::invalid_argument("Mode out of range"); }
+    if (wt == NONE)
+    { return _noneTable; }
+        
+    if (wt < NONE || wt >= _tables.size())
+    { throw std::invalid_argument("Wavetable ID out of range!"); }
     
     return _tables[wt];
 }
 
 const Wavetable& WavetableDB::operator[](const int& wt) const
 {
-    if (wt < 0 || wt >= _tables.size())
-        throw std::invalid_argument("Mode out of range");
+    if (wt == NONE)
+    { return _noneTable; }
+    
+    if (wt < NONE || wt >= _tables.size())
+    { throw std::invalid_argument("Wavetable ID out of range!"); }
     
     return _tables[wt];
 }

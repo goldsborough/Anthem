@@ -78,7 +78,7 @@ public:
     
     void setEnvLoopMax(unsigned char loopNum);
     
-    void setLFOWave(unit_t unitNum, int wave) { _LFOs[unitNum].osc.setWT(wave); }
+    void setLFOWave(unit_t unitNum, int wave) { _LFOs[unitNum].osc.setWavetable(wave); }
     
     void setLFOPhaseOffset(unit_t unitNum, short degrees) { _LFOs[unitNum].osc.setPhaseOffset(degrees); };
     
