@@ -190,10 +190,8 @@ class WavetableDB
     
 public:
     
-    enum Modes
+    enum Wavetables
     {
-        NONE = -1,
-        
         SINE,
         SINE_2,
         SINE_4, // The number is the number of bits, not partials
@@ -226,20 +224,20 @@ public:
         SMOOTH_SAW
     };
     
-    void init(const unsigned int wtLen);
+    void init(const unsigned int& wtLen);
     
-    Wavetable& operator[] (const int& mode);
+    Wavetable& operator[] (const int& wt);
     
-    const Wavetable& operator[] (const int& mode) const;
+    const Wavetable& operator[] (const int& wt) const;
     
 private:
     
-    Wavetable directSaw();
-    Wavetable directSquare();
-    Wavetable directTriangle();
+    Wavetable _directSaw();
+    Wavetable _directSquare();
+    Wavetable _directTriangle();
     
-    Wavetable smoothSaw();
-    Wavetable smoothSquare();
+    Wavetable _smoothSaw();
+    Wavetable _smoothSquare();
         
    /************************************************************************************//*!
    * The wtLength was a tricky one to find and reason upon. A compromise must be found
@@ -254,9 +252,7 @@ private:
         
     unsigned int _wtLength;
 
-    double _fundIncr; // the fundamental index increment
-    
-    Wavetable _noneTable;
+    double _fundIncr;
 
     std::vector<Wavetable> _tables;
 };

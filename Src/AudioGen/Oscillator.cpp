@@ -13,51 +13,61 @@
 
 #include <stdexcept>
 
-Oscillator::Oscillator(const int mode, double frq,
-                       double amp, short phaseOffset)
+Oscillator::Oscillator(const unsigned short& wt, const double& frq,
+                       const double& amp, const short& phaseOffset)
 : _ind(0), _indIncr(0), _phaseOffset(0)
 {
     _amp = amp;
     
-    _mode = mode;
-    
     setPhaseOffset(phaseOffset);
     
-    _WT = wavetableDB[_mode];
+    _wt = wavetableDB[wt];
     
     setFreq(frq);
 };
 
-void Oscillator::setSemis(short semis, bool permanent)
+void Oscillator::setSemis(const short& semis, bool permanent)
 {
-    if (semis == 0) return;
+    // Prevent unnecesessary changes
+    if (! semis) return;
     
+    // Add or subtract the semitones from the current frequency
     double newFreq = Util::semiToFreq(_freq, semis);
     
-    if (newFreq < Global::nyquistLimit)
-    {
-        _indIncr = Global::tableIncr * newFreq;
-        
-        if (permanent) _freq = newFreq;
-    }
+    // Check nyquist limit
+    if (newFreq > Global::nyquistLimit)
+    { newFreq = Global::nyquistLimit; }
+    
+    // calculate new index increment
+    _indIncr = Global::tableIncr * newFreq;
+    
+    // If the change should be permanent, set the new frequency
+    // to the base frequency
+    if (permanent) _freq = newFreq;
     
 }
 
-void Oscillator::setCents(short cents, bool permanent)
+void Oscillator::setCents(const short& cents, bool permanent)
 {
-    if (cents == 0) return;
+    // Prevent unnecesessary changes
+    if (! cents) return;
     
+    // Add or subtract the cents from the current frequency
     double newFreq = Util::centToFreq(_freq, cents);
     
-    if (newFreq < Global::nyquistLimit)
-    {
-        _indIncr = Global::tableIncr * newFreq;
+    // Check nyquist limit
+    if (newFreq > Global::nyquistLimit)
+    { newFreq = Global::nyquistLimit; }
         
-        if (permanent) _freq = newFreq;
-    }
+    // calculate new index increment
+    _indIncr = Global::tableIncr * newFreq;
+    
+    // If the change should be permanent, set the new frequency
+    // to the base frequency
+    if (permanent) _freq = newFreq;
 }
 
-void Oscillator::setFreq(double Hz)
+void Oscillator::setFreq(const double& Hz)
 {
     if (Hz < 0 || Hz > Global::nyquistLimit)
     { throw std::invalid_argument("Frequency must be greater 0 and less than the nyquist limit!"); }
@@ -68,15 +78,14 @@ void Oscillator::setFreq(double Hz)
 
 void Oscillator::setPhaseOffset(short degrees)
 {
-    // convert degrees higher than 360 or
-    // less than 0 to it's 0 - 360 degree
-    // equivalent
+    // convert degrees higher or lower than 360 or
+    // less than 0 to its 0 - 360 degree equivalent
     
-    if (degrees < 0)
-        degrees = -degrees;
+    while (degrees < 0)
+    { degrees += 360; }
     
     while (degrees > 360)
-        degrees -= 360;
+    { degrees -= 360; }
     
     // Return to original index (without offset), so
     // that setting a new offset doesn't add to the
@@ -86,7 +95,6 @@ void Oscillator::setPhaseOffset(short degrees)
     // The wavetable holds 360 degrees, so divide the degrees
     // by 360 to get e.g. 1/4 and multiply by the wavetablelength
     // to get the number of samples to shift by
-    
     _phaseOffset = ((Global::wtLen + 1) * degrees) / 360.0;
     
     // Add new offset

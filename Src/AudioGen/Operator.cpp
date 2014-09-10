@@ -12,11 +12,12 @@
 #include "ModDock.h"
 #include "Util.h"
 
-Operator::Operator(const int md, const double amp)
-{    
+Operator::Operator(const int& wt, const double& amp)
+{
     _amp = amp;
     
-    _mode = md;
+    // Set wavetable for all oscillators
+    setWavetable(wt);
     
     _mods = {new ModDock(4), new ModDock(2), new ModDock(2) };
 }
@@ -31,19 +32,20 @@ Operator::~Operator()
     }
 }
 
-void Operator::setWT (const int mode)
+void Operator::setWavetable(const unsigned short& wt)
 {
-    _mode = mode;
+    // Store id to add new notes with the same wavetable
+    _wavetableId = wt;
     
     for (oscVec::iterator itr = _oscs.begin(), end = _oscs.end();
          itr != end;
          ++itr)
     {
-        (*itr)->setWT(_mode);
+        (*itr)->setWT(wt);
     }
 }
 
-void Operator::setSemis(double semis)
+void Operator::setSemis(const double& semis)
 {
     for (oscVec::iterator itr = _oscs.begin(), end = _oscs.end();
          itr != end;
@@ -53,7 +55,7 @@ void Operator::setSemis(double semis)
     }
 }
 
-void Operator::setCents(double cents)
+void Operator::setCents(const double& cents)
 {
     for (oscVec::iterator itr = _oscs.begin(), end = _oscs.end();
          itr != end;
@@ -63,12 +65,12 @@ void Operator::setCents(double cents)
     }
 }
 
-void Operator::addNote(const double frq)
+void Operator::addNote(const double& frq)
 {
-    _oscs.push_back(new Oscillator(_mode,frq));
+    _oscs.push_back(new Oscillator(_wavetableId,frq));
 }
 
-void Operator::relNote(index_t ind)
+void Operator::relNote(const unsigned short& ind)
 {
     delete _oscs[ind];
     

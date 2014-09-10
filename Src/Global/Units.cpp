@@ -11,18 +11,23 @@
 #include "Wavetable.h"
 #include <stdexcept>
 
-void Unit::setDockMasterDepth(docknum_t dockNum, double lvl)
-{ _mods[dockNum]->setMasterDepth(lvl); }
+void Unit::setDockMasterDepth(docknum_t dockNum, double depth)
+{
+    if (depth > 1 || depth < 0)
+    { throw std::invalid_argument("Depth value must be between 0 and 1!");}
+    
+    _mods[dockNum]->setMasterDepth(depth);
+}
 
 void Unit::setDepth(docknum_t dockNum,
                        index_t modNum,
-                       double dpth)
+                       double depth)
 {
     
-    if (dpth > 1 || dpth < 0)
-    { throw std::invalid_argument("Depth must be between 0 and 1!");}
+    if (depth > 1 || depth < 0)
+    { throw std::invalid_argument("Depth value must be between 0 and 1!");}
     
-    _mods[dockNum]->setDepth(modNum, dpth);
+    _mods[dockNum]->setDepth(modNum, depth);
 }
 
 void Unit::attachMod(docknum_t dockNum,
@@ -38,16 +43,25 @@ void Unit::detachMod(docknum_t dockNum,
     _mods[dockNum]->detach(modNum);
 }
 
-void AudioGenUnit::setWT(const int mode)
+Unit::~Unit()
 {
-    _mode = mode;
-    _WT = wavetableDB[_mode];
+    for (std::vector<ModDock*>::iterator itr = _mods.begin(), end = _mods.end();
+         itr != end;
+         ++itr)
+    {
+        delete *itr;
+    }
+}
+
+void AudioGenUnit::setWT(const int& wt)
+{
+    _wt = wavetableDB[wt];
 }
 
 void EffectUnit::setDryWet(const double& dw)
 {
     if (dw < 0 || dw > 1)
-    { throw std::invalid_argument("Dry/wet control must be between 0 and 1!"); }
+    { throw std::invalid_argument("Dry/wet level must be between 0 and 1!"); }
     
     _dw = dw;
 }

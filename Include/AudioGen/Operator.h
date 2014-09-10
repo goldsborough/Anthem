@@ -13,7 +13,7 @@
 
 class Oscillator;
 
-class Operator : public AudioGenUnit
+class Operator : GenUnit
 {
     
 public:
@@ -25,20 +25,20 @@ public:
         FREQ_CENT
     };
     
-    Operator(const int md = 0, const double amp = 1);
+    Operator(const int& wt = 0, const double& amp = 1);
     
     ~Operator();
     
     double tick();
     
-    void setSemis(double semis);
-    void setCents(double cents);
+    void setSemis(const double& semis);
+    void setCents(const double& cents);
     
-    void setWT (const int mode);
+    void setWavetable(const unsigned short& wt);
     
-    void addNote(const double frq);
+    void addNote(const double& frq);
     
-    void relNote(index_t ind);
+    void relNote(const unsigned short& ind);
     
 private:
     
@@ -46,8 +46,10 @@ private:
     
     oscVec _oscs;
     
-    unsigned short _semis, _cents;
+    unsigned short _semis;
+    unsigned short _cents;
     
+    unsigned int _wavetableId;
 };
 
 #endif /* defined(__Anthem__Operator__) */

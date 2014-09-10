@@ -287,7 +287,7 @@ Wavetable& Wavetable::makeUnique()
     return *this;
 }
 
-void WavetableDB::init(unsigned int wtLen)
+void WavetableDB::init(const unsigned int& wtLen)
 {
     _wtLength = wtLen;
     _fundIncr = Global::twoPi / _wtLength;
@@ -310,29 +310,23 @@ void WavetableDB::init(unsigned int wtLen)
     }
 }
 
-Wavetable& WavetableDB::operator[](const int& mode)
+Wavetable& WavetableDB::operator[](const int& wt)
 {
-    if (mode == NONE)
-    { return _noneTable; }
-    
-    if (mode < 0 || mode >= _tables.size())
+    if (wt < 0 || wt >= _tables.size())
     { throw std::invalid_argument("Mode out of range"); }
     
-    return _tables[mode];
+    return _tables[wt];
 }
 
-const Wavetable& WavetableDB::operator[](const int& mode) const
+const Wavetable& WavetableDB::operator[](const int& wt) const
 {
-    if (mode == NONE)
-        return _noneTable;
-    
-    if (mode < 0 || mode >= _tables.size())
+    if (wt < 0 || wt >= _tables.size())
         throw std::invalid_argument("Mode out of range");
     
-    return _tables[mode];
+    return _tables[wt];
 }
 
-Wavetable WavetableDB::smoothSaw()
+Wavetable WavetableDB::_smoothSaw()
 {
     double* wt = new double[_wtLength + 1];
     
@@ -399,7 +393,7 @@ Wavetable WavetableDB::smoothSaw()
     return Wavetable(wt,_wtLength);
 }
 
-Wavetable WavetableDB::smoothSquare()
+Wavetable WavetableDB::_smoothSquare()
 {
     double* wt = new double[_wtLength + 1];
     
@@ -443,7 +437,7 @@ Wavetable WavetableDB::smoothSquare()
     return Wavetable(wt,_wtLength);
 }
 
-Wavetable WavetableDB::directSquare()
+Wavetable WavetableDB::_directSquare()
 {
     // the sample buffer
     double * wt = new double [_wtLength + 1];
@@ -470,7 +464,7 @@ Wavetable WavetableDB::directSquare()
     return Wavetable(wt,_wtLength);
 }
 
-Wavetable WavetableDB::directSaw()
+Wavetable WavetableDB::_directSaw()
 {
     // the sample buffer
     double * wt = new double [_wtLength];
@@ -495,7 +489,7 @@ Wavetable WavetableDB::directSaw()
     return Wavetable(wt,_wtLength);
 }
 
-Wavetable WavetableDB::directTriangle()
+Wavetable WavetableDB::_directTriangle()
 {
     double* wt = new double[_wtLength + 1];
     

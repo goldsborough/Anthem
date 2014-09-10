@@ -11,23 +11,25 @@
 
 #include "Units.h"
 
-class Oscillator : public AudioGenUnit
+class Oscillator : public GenUnit
 {
     
 public:
     
-    Oscillator(const int mode = -1, double frq = 1,
-               double amp = 1, short phaseOffset = 0);
+    Oscillator(const unsigned short& wt = 0, const double& frq = 1,
+               const double& amp = 1, const short& phaseOffset = 0);
     
     double tick();
     
-    void setFreq(double Hz);
+    void setFreq(const double& Hz);
     
-    void setSemis(short semis, bool permanent = false);
+    void setSemis(const short& semis, bool permanent = false);
     
-    void setCents(short cents, bool permanent = false);
+    void setCents(const short& cents, bool permanent = false);
     
     void setPhaseOffset(short degrees);
+    
+    void setWavetable(const unsigned short& wt);
     
     void reset() { _ind = _phaseOffset; }
     
@@ -39,6 +41,8 @@ private:
     double _indIncr;
     
     double _phaseOffset;
+    
+    Wavetable _wt;
 };
 
 #endif /* defined(__Anthem__Oscillator__) */
