@@ -25,7 +25,7 @@ public:
         FREQ_CENT
     };
     
-    Operator(const int& wt = 0, const double& amp = 1);
+    Operator(const short& wt = 0, const double& amp = 1);
     
     ~Operator();
     
@@ -34,7 +34,7 @@ public:
     void setSemis(const double& semis);
     void setCents(const double& cents);
     
-    void setWavetable(const unsigned short& wt);
+    void setWavetable(const short& wt);
     
     void addNote(const double& frq);
     

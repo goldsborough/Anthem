@@ -12,7 +12,7 @@
 #include "ModDock.h"
 #include "Util.h"
 
-Operator::Operator(const int& wt, const double& amp)
+Operator::Operator(const short& wt, const double& amp)
 {
     _amp = amp;
     
@@ -32,7 +32,7 @@ Operator::~Operator()
     }
 }
 
-void Operator::setWavetable(const unsigned short& wt)
+void Operator::setWavetable(const short& wt)
 {
     // Store id to add new notes with the same wavetable
     _wavetableId = wt;

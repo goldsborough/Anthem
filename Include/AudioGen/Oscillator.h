@@ -16,7 +16,7 @@ class Oscillator : public GenUnit
     
 public:
     
-    Oscillator(const unsigned short& wt = -1, const double& frq = 1,
+    Oscillator(const short& wt = -1, const double& frq = 1,
                const double& amp = 1, const short& phaseOffset = 0);
     
     double tick();
@@ -29,7 +29,7 @@ public:
     
     void setPhaseOffset(short degrees);
     
-    void setWavetable(const unsigned short& wt);
+    void setWavetable(const short& wt);
     
     void reset() { _ind = _phaseOffset; }
     

@@ -36,6 +36,8 @@ int main(int argc, const char * argv[])
     
     op.addNote(freq);
     
+    op.addNote(220);
+    
     Mixer mixer(0,1);
     
     mixer.play();

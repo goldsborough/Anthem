@@ -13,7 +13,7 @@
 
 #include <stdexcept>
 
-Oscillator::Oscillator(const unsigned short& wt, const double& frq,
+Oscillator::Oscillator(const short& wt, const double& frq,
                        const double& amp, const short& phaseOffset)
 : _ind(0), _indIncr(0), _phaseOffset(0)
 {
@@ -26,7 +26,7 @@ Oscillator::Oscillator(const unsigned short& wt, const double& frq,
     setFreq(frq);
 };
 
-void Oscillator::setWavetable(const unsigned short &wt)
+void Oscillator::setWavetable(const short &wt)
 {
     _wt = wavetableDB[wt];
 }

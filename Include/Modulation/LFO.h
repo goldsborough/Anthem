@@ -19,9 +19,8 @@ class XFadeUnit;
 
 struct LFO : public GenUnit
 {
-    LFO(const int& wave = 0,
-        const double& rate = 1)
-    : osc(wave,rate)
+    LFO(const short& wt = 0, const double& rate = 1)
+    : osc(wt,rate)
     { }
     
     double tick() { return osc.tick(); }
@@ -57,7 +56,7 @@ public:
     
     enum Units { A, B };
     
-    enum EnvSegs { SegA, SegB };
+    enum EnvSegs { SegA, SegB }; // The two parts of the envelope pyramid: SegA: / SegB: \ Together: /\
     
     enum EnvAmpPoints { BEG, MID, END};
     

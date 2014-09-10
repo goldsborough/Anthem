@@ -385,10 +385,10 @@ Wavetable WavetableDB::_smoothSaw()
              * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
             
             if (ind < 0.95)
-                wt[n] = 400 * pow(ind - 0.9,2) - 1;
+            { wt[n] = 400 * pow(ind - 0.9,2) - 1; }
             
             else
-                wt[n] = -400 * pow(ind - 1,2) + 1;
+            { wt[n] = -400 * pow(ind - 1,2) + 1; }
             
             ind += indIncr;
         }
@@ -421,21 +421,21 @@ Wavetable WavetableDB::_smoothSquare()
         // any longer!
         
         if (ind < 0.25)
-            val = pow(ind - 1, exp) - 1;
+        { val = pow(ind - 1, exp) - 1; }
         
         else if (ind < 0.5)
-            val = pow(ind + 0.5, exp) - 1;
+        { val = pow(ind + 0.5, exp) - 1; }
         
         else if (ind < 0.75)
-            val = -pow(ind - 1.5, exp) + 1;
+        { val = -pow(ind - 1.5, exp) + 1; }
         
         else
-            val = -pow(ind, exp) + 1;
+        { val = -pow(ind, exp) + 1; }
         
         wt[n] = val;
         
         if ( (ind += incr) >= _wtLength)
-            ind -= _wtLength;
+        { ind -= _wtLength; }
     }
     
     wt[_wtLength] = wt[0];
@@ -462,7 +462,7 @@ Wavetable WavetableDB::_directSquare()
         wt[n] = (ind < mid) ? -1 : 1;
         
         if ( (ind += sampleTime) >= _wtLength)
-            ind -= _wtLength;
+        { ind -= _wtLength; }
     }
     
     wt[_wtLength] = wt[0];
