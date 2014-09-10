@@ -15,6 +15,20 @@
 class ModDock;
 class GenUnit;
 
+/*********************************************************************************************//*!
+*
+*  @brief       Basic unit - any object with parameters.
+*
+*  @details     This is the base class for any unit with parameters, thus including operators,
+*               filters, effects, envelopes and more. All Units have an std::vector of ModDocks
+*               that allow for modulation of any Unit's parameters by a GenUnit class (any class
+*               that ticks samples and does not process samples i.e. LFOs or envelopes and not
+*               filters or effects). 
+*
+*  @return      The new sample.
+*
+*************************************************************************************************/
+
 class Unit
 {
     
@@ -22,8 +36,6 @@ public:
     
     typedef unsigned char docknum_t;
     typedef unsigned short index_t;
-    
-    virtual void setAmp(const double& amp) { _amp = amp; }
     
     virtual void setDockMasterDepth(docknum_t dockNum, double lvl);
     
@@ -43,8 +55,6 @@ public:
 protected:
     
     std::vector<ModDock*> _mods;
-    
-    double _amp = 1.0;
 };
 
 class EffectUnit : public Unit
@@ -57,7 +67,7 @@ public:
     
     virtual ~EffectUnit() { }
     
-    /************************************************************************************************//*!
+    /*********************************************************************************************//*!
     *
     *  @brief       Processes a sample.
     *
@@ -83,9 +93,19 @@ class GenUnit : public Unit
     
 public:
     
+    GenUnit()
+    : _amp(1)
+    { }
+    
+    virtual void setAmp(const double& amp) { _amp = amp; }
+    
     virtual double tick() = 0;
     
     virtual ~GenUnit() { }
+    
+protected:
+    
+    double _amp;
 };
 
 class AudioGenUnit : public GenUnit
