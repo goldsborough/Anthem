@@ -13,7 +13,7 @@
 
 class Midi
 {
-    // Insert lots of really code here
+    // Insert lots of really cool code here
 };
 
 #endif /* defined(__Anthem__Midi__) */

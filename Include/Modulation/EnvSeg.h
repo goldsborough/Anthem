@@ -9,7 +9,7 @@
 #ifndef __Anthem__EnvSeg__
 #define __Anthem__EnvSeg__
 
-#include "GenUnits.h"
+#include "Units.h"
 #include <vector>
 
 class LFO;
@@ -27,7 +27,7 @@ class LFO;
  *
  *********************************************************************************/
 
-class EnvSeg : public ModUnit
+class EnvSeg : public GenUnit
 {
     
 public:
@@ -390,7 +390,7 @@ private:
     unsigned long _len;
 };
 
-class EnvSegSeq : public ModUnit
+class EnvSegSeq : public GenUnit
 {
     
 public:

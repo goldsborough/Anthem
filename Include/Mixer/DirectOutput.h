@@ -32,8 +32,6 @@ public:
     
     void processTick(const Sample& sample);
     
-    void processTick(const double& value);
-    
     void play();
     
     void stop();

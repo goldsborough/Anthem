@@ -9,7 +9,7 @@
 #ifndef __Anthem__Operator__
 #define __Anthem__Operator__
 
-#include "GenUnits.h"
+#include "Units.h"
 
 class Oscillator;
 
@@ -18,7 +18,7 @@ class Operator : public AudioGenUnit
     
 public:
     
-    enum ModDocks
+    enum DOCKS
     {
         AMP,
         FREQ_SEMI,

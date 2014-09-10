@@ -6,15 +6,15 @@
 //  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
 //
 
-#include "GenUnits.h"
+#include "Units.h"
 #include "ModDock.h"
 #include "Wavetable.h"
 #include <stdexcept>
 
-void GenUnit::setDockMasterDepth(docknum_t dockNum, double lvl)
+void Unit::setDockMasterDepth(docknum_t dockNum, double lvl)
 { _mods[dockNum]->setMasterDepth(lvl); }
 
-void GenUnit::setDepth(docknum_t dockNum,
+void Unit::setDepth(docknum_t dockNum,
                        index_t modNum,
                        double dpth)
 {
@@ -25,31 +25,34 @@ void GenUnit::setDepth(docknum_t dockNum,
     _mods[dockNum]->setDepth(modNum, dpth);
 }
 
-void GenUnit::attachMod(docknum_t dockNum,
+void Unit::attachMod(docknum_t dockNum,
                         index_t modNum,
-                        ModUnit* mod)
+                        GenUnit* mod)
 {
     _mods[dockNum]->attach(modNum, mod);
 }
 
-void GenUnit::detachMod(docknum_t dockNum,
+void Unit::detachMod(docknum_t dockNum,
                         index_t modNum)
 {
     _mods[dockNum]->detach(modNum);
-}
-
-GenUnit::~GenUnit()
-{
-    for (std::vector<ModDock*>::iterator itr = _mods.begin(), end = _mods.end();
-         itr != end;
-         ++itr)
-    {
-        delete *itr;
-    }
 }
 
 void AudioGenUnit::setWT(const int mode)
 {
     _mode = mode;
     _WT = wavetableDB[_mode];
+}
+
+void EffectUnit::setDryWet(const double& dw)
+{
+    if (dw < 0 || dw > 1)
+    { throw std::invalid_argument("Dry/wet control must be between 0 and 1!"); }
+    
+    _dw = dw;
+}
+
+double EffectUnit::_dryWet(const double& originalSample, const double& processedSample)
+{
+    return (originalSample * (1 - _dw)) + (processedSample * _dw);
 }

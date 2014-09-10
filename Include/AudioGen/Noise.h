@@ -9,7 +9,7 @@
 #ifndef __Anthem__Noise__
 #define __Anthem__Noise__
 
-#include "GenUnits.h"
+#include "Units.h"
 
 // TODO: Gray noise
 

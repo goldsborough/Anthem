@@ -9,7 +9,7 @@
 #ifndef __Anthem__Filter__
 #define __Anthem__Filter__
 
-#include "EffectUnit.h"
+#include "Units.h"
 
 // TODO: possibly FIR filters - Users create frequency responses which are then
 // converted into filter kernels, with which the signal is then convoluted. This

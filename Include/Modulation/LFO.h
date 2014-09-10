@@ -9,7 +9,7 @@
 #ifndef __Anthem__LFO__
 #define __Anthem__LFO__
 
-#include "GenUnits.h"
+#include "Units.h"
 #include "Oscillator.h"
 #include "EnvSeg.h"
 
@@ -17,7 +17,7 @@ class EnvSegSeq;
 class Oscillator;
 class XFadeUnit;
 
-struct LFO : public ModUnit
+struct LFO : public GenUnit
 {
     LFO(const int& wave = 0,
         const double& rate = 1)
@@ -33,7 +33,7 @@ struct LFO : public ModUnit
     Oscillator osc;
 };
 
-struct LFOSeq : public ModUnit
+struct LFOSeq : public GenUnit
 {
     LFOSeq(unsigned int seqLength = 20);
     
@@ -48,7 +48,7 @@ private:
     const unsigned int _seqLen;
 };
 
-class LFOUnit : public ModUnit
+class LFOUnit : public GenUnit
 {
     
 public:

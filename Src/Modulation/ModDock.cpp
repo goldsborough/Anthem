@@ -7,7 +7,7 @@
 //
 
 #include "ModDock.h"
-#include "GenUnits.h"
+#include "Units.h"
 #include <stdexcept>
 
 ModDock::ModDock(index_t dockSize)
@@ -64,7 +64,7 @@ void ModDock::setDepth(index_t index, depth_t dpth)
     _mods[index].dpth = dpth;
 }
 
-void ModDock::attach(index_t index, ModUnit* mod)
+void ModDock::attach(index_t index, GenUnit* mod)
 {
     if (index < 0 || index >= _dockSize)
         throw std::invalid_argument("Invalid modDock index given!");

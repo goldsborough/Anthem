@@ -28,28 +28,28 @@ int main(int argc, const char * argv[])
     
     Synthesizer synth;
 
-    //double freq = 440;
+    double freq = 440;
     
     uint32_t len = Global::samplerate * 5;
     
-    //Operator op;
+    Operator op;
     
-    //op.addNote(freq);
-    
-    Noise noise(Noise::BLUE);
+    op.addNote(freq);
     
     Mixer mixer(0,1);
+    
+    mixer.play();
 
     for (int i = 0; i < len; ++i)
     {
-        double tick = noise.tick();//op.tick();
+        double tick = op.tick();
         
         Sample sample(tick);
         
         mixer.process(sample);
     }
     
-    mixer.play();
+    //while (clock() != t + (5 * CLOCKS_PER_SEC));
     
     std::cout << "Total program duration: " << Util::getPassedTime(t) << "\n";
     

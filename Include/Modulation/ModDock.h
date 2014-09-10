@@ -9,7 +9,7 @@
 #ifndef __Anthem__ModUnit__
 #define __Anthem__ModUnit__
 
-class ModUnit;
+class GenUnit;
 
 class ModDock
 {
@@ -37,7 +37,7 @@ public:
     
     void setDepth(index_t index, depth_t dpth);
     
-    void attach(index_t index, ModUnit* mod);
+    void attach(index_t index, GenUnit* mod);
     
     void detach(index_t index)
     { attach(index, 0); }
@@ -46,7 +46,7 @@ private:
     
     struct ModItem
     {
-        ModUnit* mod = 0;
+        GenUnit* mod = 0;
         depth_t dpth = 1;
     };
 

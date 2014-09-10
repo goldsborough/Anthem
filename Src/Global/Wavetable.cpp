@@ -261,7 +261,7 @@ Wavetable::~Wavetable()
     // disable base destructor
     _baseDestructorEnabled = false;
     
-    if (--(*_refptr) == 0)
+    if (! --(*_refptr))
     {
         delete [] _data;
         delete _refptr;
@@ -280,7 +280,8 @@ Wavetable& Wavetable::makeUnique()
         
         _data = new double [_size];
         
-        for (size_t i = 0; i < _size; ++i) _data[i] = temp[i];
+        for (size_t i = 0; i < _size; ++i)
+        { _data[i] = temp[i]; }
     }
     
     return *this;

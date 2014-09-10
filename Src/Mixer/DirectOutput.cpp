@@ -16,46 +16,37 @@ DirectOutput::DirectOutput(unsigned char ltncy)
 {
     PaError err = Pa_Initialize();
     
+    if( err != paNoError )
+    { throw std::runtime_error(Pa_GetErrorText( err )); }
+    
     Sample * data;
     
     err = Pa_OpenDefaultStream(
                                 &_stream,
-                                0, /* no input */
+                                NULL, // no input
                                 2,
                                 paFloat32,
                                 Global::samplerate,
-                                256,
+                                paFramesPerBufferUnspecified,
                                 &paCallback,
                                 &data
                                 );
     
     if( err != paNoError )
-        throw std::runtime_error(Pa_GetErrorText( err ));
+    { throw std::runtime_error(Pa_GetErrorText( err )); }
 }
 
 void DirectOutput::processTick(const Sample& sample)
 {
-    //long x = _dataBuffer.size();
-    
     _dataBuffer.push(sample);
 }
-
-void DirectOutput::processTick(const double &value)
-{
-    Sample sample(value);
-    
-    _dataBuffer.push(sample);
-}
-
 
 Sample DirectOutput::_getSampleFromQueue()
 {
-    Sample sample;
-    
     if (! _dataBuffer.empty())
-        sample =  _dataBuffer.getpop();
+    { return _dataBuffer.getpop(); }
     
-    return sample;
+    return Sample();
 }
 
 void DirectOutput::play()
@@ -63,7 +54,7 @@ void DirectOutput::play()
     PaError err = Pa_StartStream( _stream );
     
     if( err != paNoError )
-        throw std::runtime_error(Pa_GetErrorText( err ));
+    { throw std::runtime_error(Pa_GetErrorText( err )); }
 }
 
 void DirectOutput::stop()
@@ -71,7 +62,7 @@ void DirectOutput::stop()
     PaError err = Pa_StopStream( _stream );
     
     if( err != paNoError )
-        throw std::runtime_error(Pa_GetErrorText( err ));
+    { throw std::runtime_error(Pa_GetErrorText( err )); }
 }
 
 int DirectOutput::paCallback( const void *inputBuffer, void *outputBuffer,
@@ -109,16 +100,13 @@ DirectOutput::~DirectOutput()
         err = Pa_AbortStream(_stream);
         
         if( err != paNoError )
-            throw std::runtime_error(Pa_GetErrorText( err ));
+        { throw std::runtime_error(Pa_GetErrorText( err )); }
     }
     
     err = Pa_CloseStream( _stream );
     
     if( err != paNoError )
-        throw std::runtime_error(Pa_GetErrorText( err ));
+    { throw std::runtime_error(Pa_GetErrorText( err )); }
     
     err = Pa_Terminate();
-    
-    if( err != paNoError )
-        throw std::runtime_error(Pa_GetErrorText( err ));
 }
