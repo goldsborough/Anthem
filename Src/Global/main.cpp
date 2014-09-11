@@ -31,12 +31,18 @@ int main(int argc, const char * argv[])
     double freq = 440;
     
     uint32_t len = Global::samplerate * 5;
-    
+    /*
     Operator op;
     
     op.addNote(freq);
     
-    op.addNote(220);
+    op.addNote(220);*/
+    
+    Noise op;
+    
+    LFO lfo;
+    
+    op.attachMod(Noise::AMP, 0, &lfo);
     
     Mixer mixer(0,1);
     

@@ -9,6 +9,9 @@
 #ifndef __Anthem__ModUnit__
 #define __Anthem__ModUnit__
 
+// to do or think about: turn _mods into an std::vector and enable
+// user to add/remove mod dock spots
+
 class GenUnit;
 
 class ModDock
@@ -26,7 +29,7 @@ public:
     double tick();
     
     double checkAndTick(const double val,
-                        const double base,
+                        const double min,
                         const double max);
     
     void setMasterDepth(depth_t dpth)

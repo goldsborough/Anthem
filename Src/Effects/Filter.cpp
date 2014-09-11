@@ -9,14 +9,10 @@
 #include "Filter.h"
 #include "Global.h"
 #include "Util.h"
+#include "ModDock.h"
 
 #include <stdexcept>
 #include <cmath>
-
-// References: http://www.musicdsp.org/files/Audio-EQ-Cookbook.txt
-// http://www.earlevel.com/main/2013/10/13/biquad-calculator-v2/
-// and BasicSynth of course
-
 
 Filter::Filter(const unsigned short& mode,
        const double& cutoff,
@@ -29,10 +25,27 @@ Filter::Filter(const unsigned short& mode,
     
     // Initial coefficients
     _calcCoefs();
+    
+    // Initialize mod docks
+    _initModDocks();
+}
+
+void Filter::_initModDocks()
+{
+    // 2 Mod units each for cutoff, Q, gain and dry/wet
+    _mods = {new ModDock(2), new ModDock(2), new ModDock(2), new ModDock(2)};
 }
 
 double Filter::process(double sample)
 {
+    // Possibly modulate cutoff
+    if (_mods[CUTOFF]->inUse())
+    { setCutoff(_mods[CUTOFF]->checkAndTick(_cutoff, 0, Global::nyquistLimit)); }
+    
+    // And Q factor
+    if (_mods[Q]->inUse())
+    { setQ(_mods[Q]->checkAndTick(_q, 0, 20)); }
+    
     double temp = sample
                 - (_coefA1 * _delayA)
                 - (_coefA2 * _delayB);
@@ -46,7 +59,15 @@ double Filter::process(double sample)
     _delayB = _delayA;
     _delayA = temp;
     
+    // Check the gain
+    if (_mods[GAIN]->inUse())
+    { setGain(_mods[GAIN]->checkAndTick(_gain, -20, 20)); }
+    
     output *= _gain;
+    
+    // Set the dry/wet
+    if (_mods[DRYWET]->inUse())
+    { setDryWet(_mods[DRYWET]->checkAndTick(_dw, 0, 1)); }
     
     return _dryWet(sample, output);
 }
@@ -184,7 +205,7 @@ void Filter::setMode(const unsigned short& mode)
 void Filter::setCutoff(const double& cutoff)
 {
     if (cutoff < 0 || cutoff > Global::nyquistLimit)
-    { throw std::invalid_argument("Cutoff out of range, must be between 0 and 0.5!"); }
+    { throw std::invalid_argument("Cutoff out of range, must be between 0 and nyquist limit (20 Khz)"); }
     
     _cutoff = cutoff;
     
@@ -194,7 +215,7 @@ void Filter::setCutoff(const double& cutoff)
 void Filter::setQ(const double& q)
 {
     if (q < 0 || q > 20)
-    { throw std::invalid_argument("Bandwith out of range, must be between 0 and 1!"); }
+    { throw std::invalid_argument("Bandwith out of range, must be between 0 and 20!"); }
     
     _q = q;
     

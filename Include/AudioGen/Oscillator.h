@@ -23,6 +23,8 @@ public:
     
     void setFreq(const double& Hz);
     
+    double getFreq() const { return _freq; }
+    
     void setSemis(const short& semis, bool permanent = false);
     
     void setCents(const short& cents, bool permanent = false);

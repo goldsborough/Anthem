@@ -39,7 +39,7 @@ double ModDock::tick()
 }
 
 double ModDock::checkAndTick(const double val,
-                             const double base,
+                             const double min,
                              const double max)
 {
     // get the offset value
@@ -48,7 +48,7 @@ double ModDock::checkAndTick(const double val,
     // do boundary checking
     if (t > max) t = max;
     
-    else if (t < base) t = base;
+    else if (t < min) t = min;
     
     return t;
 }

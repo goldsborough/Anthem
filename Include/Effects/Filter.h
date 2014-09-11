@@ -10,12 +10,7 @@
 #define __Anthem__Filter__
 
 #include "Units.h"
-
-// TODO: possibly FIR filters - Users create frequency responses which are then
-// converted into filter kernels, with which the signal is then convoluted. This
-// would also solve the Gray noise problem in the Noise class. 
-
-/*************************************************************************//*!
+/********************************************************************************************//*!
 *
 *  @brief       Bi-Quad Filter.
 *
@@ -23,18 +18,33 @@
 *               filter implemented in Direct Form II. Lots of great
 *               can be found here: http://goo.gl/XiA8jo
 *
-****************************************************************************/
+*               References:
+*
+*               + http://www.musicdsp.org/files/Audio-EQ-Cookbook.txt
+*
+*               + http://www.earlevel.com/main/2013/10/13/biquad-calculator-v2/
+*
+*  @todo        Possibly FIR filters - Users create frequency responses which are then
+*               converted into filter kernels, with which the signal is then convoluted.
+*               This would also solve the Gray noise problem in the Noise class.
+*
+***********************************************************************************************/
 
 class Filter : public EffectUnit
 {
 
 public:
     
-    /*************************************************************************//*!
-    *
-    *  @brief   Filter modes.
-    *
-    ****************************************************************************/
+    /*! Available ModDocks */
+    enum DOCKS
+    {
+        CUTOFF,
+        Q,
+        GAIN,
+        DRYWET
+    };
+    
+    /*! Filter modes */
     
     enum Mode
     {
@@ -142,6 +152,9 @@ private:
     ****************************************************************************/
     
     void _calcCoefs();
+    
+    /*! ModDock initialization */
+    void _initModDocks();
     
     /*! The filter mode */
     unsigned short _mode;

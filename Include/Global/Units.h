@@ -114,6 +114,9 @@ public:
     
 protected:
     
+    /*! Pure virtual method to ensure ModDock initialization. Can be left empty if unapplicable. */
+    virtual void _initModDocks() = 0;
+    
     /*! The std::vector holding the modulation docks. */
     std::vector<ModDock*> _mods;
 };
@@ -133,6 +136,7 @@ protected:
 
 class EffectUnit : public Unit
 {
+    
 public:
     
     /*************************************************************************************************//*!
@@ -206,9 +210,7 @@ public:
     *
     *****************************************************************************************************/
     
-    GenUnit(const double& amp = 1)
-    : _amp(amp)
-    { }
+    GenUnit(const double& amp = 1) { setAmp(amp); }
     
     /*************************************************************************************************//*!
     *
@@ -218,7 +220,7 @@ public:
     *
     *****************************************************************************************************/
     
-    virtual void setAmp(const double& amp) { _amp = amp; }
+    virtual void setAmp(const double& amp);
     
     /*************************************************************************************************//*!
     *

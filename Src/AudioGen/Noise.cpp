@@ -8,36 +8,36 @@
 
 #include "Noise.h"
 #include "Filter.h"
+#include "ModDock.h"
 
 #include <cstdlib>
 #include <stdexcept>
 
-Noise::Noise(const unsigned short& type, const double& amp)
-: _filter(new Filter(Filter::LOW_PASS,1,0.1)), _amp(amp)
+Noise::Noise(const unsigned short& color, const double& amp)
+: GenUnit(amp), _filter(new Filter(Filter::LOW_PASS,1,0.1))
 {
-    setType(type);
+    setColor(color);
+    
+    _initModDocks();
 }
 
 Noise::~Noise()
 { delete _filter; }
 
-void Noise::setAmp(const double& amp)
+void Noise::_initModDocks()
 {
-    if (amp < 0 || amp > 1)
-    { throw std::invalid_argument("Amplitude must be between 0 and 1!"); }
-    
-    _amp = amp;
+    _mods = {new ModDock(2)};
 }
 
-void Noise::setType(const unsigned short& type)
+void Noise::setColor(const unsigned short& color)
 {
-    // Check if type argument is out of range
-    if (type > VIOLET)
-    { throw std::invalid_argument("Invalid noise type!"); }
+    // Check if color argument is out of range
+    if (color > VIOLET)
+    { throw std::invalid_argument("Invalid noise color!"); }
     
     // Adjust filter settings according to noise color
     // Values determined empirically
-    switch (type)
+    switch (color)
     {
         case PINK:
         {
@@ -87,7 +87,7 @@ void Noise::setType(const unsigned short& type)
             break;
     }
     
-    _type = type;
+    _color = color;
 }
 
 double Noise::tick()
@@ -98,8 +98,12 @@ double Noise::tick()
     double value = (rand() - randHalf) / randHalf;
     
     // All noise colors except white noise are filtered
-    if (_type != WHITE)
+    if (_color != WHITE)
     { value  = _filter->process(value); }
+    
+    // Check modulation dock for the amplitude parameter
+    if (_mods[AMP]->inUse())
+    { return value * _mods[AMP]->checkAndTick(_amp,0,1); }
     
     return value * _amp;
 }
