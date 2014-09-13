@@ -27,35 +27,42 @@ int main(int argc, const char * argv[])
     clock_t t = clock();
     
     Synthesizer synth;
-
-    double freq = 440;
     
     uint32_t len = Global::samplerate * 5;
-    /*
-    Operator op;
     
-    op.addNote(freq);
+    //Operator op;
     
-    op.addNote(220);*/
+    //op.addNote(440);
     
-    Noise op;
+    Noise op(Noise::WHITE);
+    
+    Filter filter(Filter::LOW_PASS,1000);
     
     LFO lfo;
     
-    op.attachMod(Noise::AMP, 0, &lfo);
+    filter.attachMod(Filter::Q, 0, &lfo);
+    
+    filter.setDepth(Filter::Q, 0, 0.05);
     
     Mixer mixer(0,1);
-    
-    mixer.play();
 
     for (int i = 0; i < len; ++i)
     {
+        if (i > Global::samplerate * 0.505)
+        {
+                
+        }
+        
         double tick = op.tick();
+        
+        tick = filter.process(tick);
         
         Sample sample(tick);
         
         mixer.process(sample);
     }
+    
+    mixer.play();
     
     //while (clock() != t + (5 * CLOCKS_PER_SEC));
     

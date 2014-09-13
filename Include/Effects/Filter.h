@@ -1,15 +1,20 @@
-//
-//  Filter.h
-//  Anthem
-//
-//  Created by Peter Goldsborough on 13/04/14.
-//  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
-//
+/*********************************************************************************************//*!
+*
+*  @file        Filter.h
+*
+*  @author      Peter Goldsborough
+*
+*  @date        11/10/2014
+*
+*  @brief       Defines the Filter class.
+*
+*************************************************************************************************/
 
 #ifndef __Anthem__Filter__
 #define __Anthem__Filter__
 
 #include "Units.h"
+
 /********************************************************************************************//*!
 *
 *  @brief       Bi-Quad Filter.
@@ -27,6 +32,8 @@
 *  @todo        Possibly FIR filters - Users create frequency responses which are then
 *               converted into filter kernels, with which the signal is then convoluted.
 *               This would also solve the Gray noise problem in the Noise class.
+*
+*  @todo        Fix weird jump in amplitude when modulating cutoff
 *
 ***********************************************************************************************/
 
@@ -72,10 +79,10 @@ public:
     *
     ****************************************************************************/
     
-    Filter(const unsigned short& mode,
-           const double& cutoff,
-           const double& q = 1,
-           const double& gain = 0);
+    Filter(unsigned short mode,
+           double cutoff,
+           double q = 1,
+           double gain = 0);
     
     /*************************************************************************//*!
     *
@@ -84,7 +91,6 @@ public:
     *  @details     Uses Direct Form II for the Bi-Quad filter.
     *
     *  @param       sample The sample to filter.
-    *
     *
     ****************************************************************************/
     
@@ -100,7 +106,7 @@ public:
     *
     ****************************************************************************/
     
-    void setMode(const unsigned short& mode);
+    void setMode(unsigned short mode);
     
     /*************************************************************************//*!
     *
@@ -113,19 +119,19 @@ public:
     *
     ****************************************************************************/
     
-    void setCutoff(const double& cutoff);
+    void setCutoff(double cutoff);
     
     /*************************************************************************//*!
     *
     *  @brief       Sets the Q factor.
     *
     *  @details     The Q factor more or less describes the bandwidth or slope
-    *               of the transition band.
+    *               of the transition band. Between 0.01 and 20.
     *
     *  @param       q The Q, or Quality, factor. http://goo.gl/94Neeg
     *
     ****************************************************************************/
-    void setQ(const double& q);
+    void setQ(double q);
     
     /*************************************************************************//*!
     *
@@ -137,7 +143,7 @@ public:
     *
     ****************************************************************************/
     
-    void setGain(const short& gain);
+    void setGain(double gain);
     
 private:
     
@@ -147,11 +153,11 @@ private:
     *
     *  @details     The function calculates the various filter coefficients
     *               according to the filter's parameters (Q factor, cutoff
-    *               frequency and filter mode).
+    *               frequency, filter mode and gain).
     *
     ****************************************************************************/
     
-    void _calcCoefs();
+    void _calcCoefs(short mode, double cutoff, double q, double gain);
     
     /*! ModDock initialization */
     void _initModDocks();

@@ -27,6 +27,12 @@ class Reverb : public EffectUnit
     
 public:
     
+    enum DOCKS
+    {
+        TIME,
+        RATE,
+        DRYWET };
+    
     /************************************************************************************************//*!
     *
     *  @brief       Constructs a Reverb object.

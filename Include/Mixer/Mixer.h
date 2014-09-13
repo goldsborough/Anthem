@@ -29,7 +29,7 @@ public:
     
     void setPanning(const char pan);
     
-    void process(Sample& sample);
+    void process(Sample sample);
     
     void play();
     

@@ -8,6 +8,7 @@
 
 #include "Delay.h"
 #include "Global.h"
+#include "ModDock.h"
 
 #include <cmath>
 #include <stdexcept>
@@ -31,6 +32,16 @@ Delay::Delay(const double& delayLen,
     
     _readInt = (int) _delayLen;
     _readFract = _delayLen - (double) _readInt;
+}
+
+void Delay::_initModDocks()
+{
+    _mods = {
+             new ModDock(2),
+             new ModDock(2),
+             new ModDock(2),
+             new ModDock(2)
+        };
 }
 
 void Delay::setDecayRate(const double &decayRate)
@@ -107,6 +118,22 @@ double Delay::offset(const unsigned int &offset)
 
 double Delay::process(double sample)
 {
+    // Modulate decay time
+    if (_mods[TIME]->inUse())
+    { setDecayTime(_mods[TIME]->checkAndTick(_decayTime, 0, _delayLen)); }
+    
+    // Modulate decay rate
+    if (_mods[RATE]->inUse())
+    { setDecayRate(_mods[RATE]->checkAndTick(_decayRate, 0, 1)); }
+    
+    // Modulate feedback value
+    if (_mods[FEEDBACK]->inUse())
+    { setDecayRate(_mods[FEEDBACK]->checkAndTick(_feedback, 0, 1)); }
+    
+    // Modulate dry wet value
+    if (_mods[DRYWET]->inUse())
+    { setDryWet(_mods[DRYWET]->checkAndTick(_dw, 0, 1)); }
+    
     iterator read = _write - _readInt;
     
     // Check if we need to wrap around

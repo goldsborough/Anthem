@@ -58,6 +58,7 @@ namespace Util
     
     double dbToAmp(const double& baseAmp, const double& dB)
     {
-        return baseAmp * pow(10, (dB/20));
+        // 0 gain means no change
+        return (dB) ? baseAmp * pow(10, (dB/20)) : baseAmp;
     }
 }

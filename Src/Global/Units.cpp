@@ -53,7 +53,7 @@ Unit::~Unit()
     }
 }
 
-void EffectUnit::setDryWet(const double& dw)
+void EffectUnit::setDryWet(double dw)
 {
     if (dw < 0 || dw > 1)
     { throw std::invalid_argument("Dry/wet level must be between 0 and 1!"); }
@@ -61,9 +61,14 @@ void EffectUnit::setDryWet(const double& dw)
     _dw = dw;
 }
 
-double EffectUnit::_dryWet(const double& originalSample, const double& processedSample)
+double EffectUnit::_dryWet(double originalSample, double processedSample)
 {
     return (originalSample * (1 - _dw)) + (processedSample * _dw);
+}
+
+double EffectUnit::_dryWet(double originalSample, double processedSample, double dryWet)
+{
+    return (originalSample * (1 - dryWet)) + (processedSample * dryWet);
 }
 
 void GenUnit::setAmp(const double& amp)

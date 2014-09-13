@@ -28,14 +28,14 @@ Mixer::Mixer(bool directOut, bool waveOut)
     _waveOut = new Wavefile;
 }
 
-void Mixer::process(Sample& sample)
+void Mixer::process(Sample sample)
 {
     sample.left *= _pan->left();
     sample.right *= _pan->right();
     
     sample *= _masterAmp;
     
-#ifdef VIBE_DEBUG
+#ifdef AMP_DEBUG
     
     if (sample.left > 1 || sample.right < -1
         || sample.right > 1 || sample.right < -1)

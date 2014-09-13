@@ -114,9 +114,6 @@ public:
     
 protected:
     
-    /*! Pure virtual method to ensure ModDock initialization. Can be left empty if unapplicable. */
-    virtual void _initModDocks() = 0;
-    
     /*! The std::vector holding the modulation docks. */
     std::vector<ModDock*> _mods;
 };
@@ -147,7 +144,7 @@ public:
     *
     *****************************************************************************************************/
     
-    EffectUnit(const double& dryWet = 1)
+    EffectUnit(double dryWet = 1)
     : _dw(dryWet)
     { }
     
@@ -173,12 +170,18 @@ public:
     *
     *****************************************************************************************************/
     
-    virtual void setDryWet(const double& dw);
+    virtual void setDryWet(double dw);
     
 protected:
     
     /*! Method that controls the dry/wet content of the signal */
-    double _dryWet(const double& originalSample, const double& processedSample);
+    double _dryWet(double originalSample,
+                   double processedSample);
+    
+    /*! Overloaded version of _dryWet for setting a custom dryWet value */
+    double _dryWet(double originalSample,
+                   double processedSample,
+                   double dryWetValue);
     
     /*! Dry/wet level */
     double _dw;

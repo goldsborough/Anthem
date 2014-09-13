@@ -15,16 +15,14 @@
 
 Oscillator::Oscillator(const short& wt, const double& frq,
                        const double& amp, const short& phaseOffset)
-: _ind(0), _indIncr(0), _phaseOffset(0)
+: GenUnit(amp), _ind(0), _phaseOffset(0)
 {
-    _amp = amp;
+    setWavetable(wt);
     
     setPhaseOffset(phaseOffset);
     
-    _wt = wavetableDB[wt];
-    
     setFreq(frq);
-};
+}
 
 void Oscillator::setWavetable(const short &wt)
 {
@@ -81,7 +79,7 @@ void Oscillator::setFreq(const double& Hz)
     _indIncr = Global::tableIncr * Hz;
 }
 
-void Oscillator::setPhaseOffset(short degrees)
+void Oscillator::setPhaseOffset(short degrees, bool permanent)
 {
     // convert degrees higher or lower than 360 or
     // less than 0 to its 0 - 360 degree equivalent
@@ -104,16 +102,25 @@ void Oscillator::setPhaseOffset(short degrees)
     
     // Add new offset
     _ind += _phaseOffset;
+    
+    // To make the changes permanent, we set the phase offset value to 0
+    // that way the next time the phase offset is changed, the previous
+    // value isn't subtracted (since it's 0)
+    if (permanent)
+    { _phaseOffset = 0; }
 }
 
 double Oscillator::tick()
 {
+    // Grab a value through interpolation from the wavetable
     double value = _wt.interpolate(_ind);
     
+    // Increment wavetable index
     _ind += _indIncr;
     
+    // Check index against wavetable length
     if ( _ind >= Global::wtLen)
-        _ind -= Global::wtLen;
+    { _ind -= Global::wtLen; }
     
     return value * _amp;
 }

@@ -50,6 +50,7 @@ void Reverb::setDryWet(const double& dw)
 double Reverb::process(double sample)
 {
     sample *= _attenuation;
+    
     double output = 0;
     
     for (unsigned short i = 0; i < 4; ++i)

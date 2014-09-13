@@ -12,7 +12,7 @@
 #include "ModDock.h"
 #include "Util.h"
 
-Operator::Operator(const short& wt, const double& amp)
+Operator::Operator(short wt, double amp)
 {
     _amp = amp;
     
@@ -39,7 +39,7 @@ Operator::~Operator()
     }
 }
 
-void Operator::setWavetable(const short& wt)
+void Operator::setWavetable(short wt)
 {
     // Store id to add new notes with the same wavetable
     _wavetableId = wt;
@@ -53,7 +53,7 @@ void Operator::setWavetable(const short& wt)
     }
 }
 
-void Operator::setSemis(const double& semis)
+void Operator::setSemis(double semis)
 {
     for (oscVec::iterator itr = _oscs.begin(), end = _oscs.end();
          itr != end;
@@ -63,7 +63,7 @@ void Operator::setSemis(const double& semis)
     }
 }
 
-void Operator::setCents(const double& cents)
+void Operator::setCents(double cents)
 {
     for (oscVec::iterator itr = _oscs.begin(), end = _oscs.end();
          itr != end;
@@ -73,14 +73,14 @@ void Operator::setCents(const double& cents)
     }
 }
 
-void Operator::addNote(const double& frq)
+void Operator::addNote(double frq)
 {
     // Initialize and push back a new oscillator with the
     // operator's current wavetable id and the new frequency
     _oscs.push_back(new Oscillator(_wavetableId,frq));
 }
 
-void Operator::relNote(const double& frq)
+void Operator::relNote(double frq)
 {
     // Iterate over all notes
     for (oscVec::iterator itr = _oscs.begin(), end = _oscs.end();
@@ -101,7 +101,7 @@ void Operator::relNote(const double& frq)
     }
 }
 
-void Operator::relNote(const unsigned short& ind)
+void Operator::relNote(unsigned short ind)
 {
     // Delete the oscillator
     delete _oscs[ind];

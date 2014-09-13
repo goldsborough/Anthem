@@ -1,10 +1,14 @@
-//
-//  Delay.h
-//  Anthem
-//
-//  Created by Peter Goldsborough on 26/07/14.
-//  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
-//
+/*********************************************************************************************//*!
+*
+*  @file        Delay.h
+*
+*  @author      Peter Goldsborough
+*
+*  @date        11/10/2014
+*
+*  @brief       Delay lines and all-pass delays.
+*
+*************************************************************************************************/
 
 #ifndef __Anthem__Delay__
 #define __Anthem__Delay__
@@ -21,6 +25,15 @@ class Delay : public EffectUnit
 {
     
 public:
+    
+    /*! Modulatable ModDocks */
+    enum DOCKS
+    {
+        TIME,
+        RATE,
+        FEEDBACK,
+        DRYWET
+    };
     
     typedef unsigned long size_t;
     typedef double* iterator;
@@ -114,6 +127,9 @@ public:
     virtual double offset(const unsigned int& offset);
     
 protected:
+    
+    /*! ModDock initialization */
+    void _initModDocks();
     
     /*! Calculates the _decayValue based on _decayRate and _decayTime */
     void _calcDecay();
