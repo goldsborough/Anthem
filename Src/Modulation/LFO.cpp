@@ -66,9 +66,10 @@ double LFO::tick()
     
     // Return ret * modulated value if ModDock in use
     if (_mods[AMP]->inUse())
-    { return _mods[AMP]->checkAndTick(_amp, 0, 1) * ret; }
+    { return ret * _mods[AMP]->checkAndTick(_amp, 0, 1); }
     
-    return _amp * ret;
+    // Else unmodulated value
+    return ret * _amp;
 }
 
 LFOSeq::LFOSeq(unsigned int seqLength)
