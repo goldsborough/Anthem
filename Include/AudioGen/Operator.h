@@ -73,11 +73,13 @@ public:
     *
     *  @param       semis The semitone offset, between -48 and +48.
     *
+    *  @param       permanent Wether or not to set the new value as the Operator's base value.
+    *
     *  @see         setCents()
     *
     *****************************************************************************************************/
     
-    void setSemis(double semis);
+    void setSemis(double semis, bool permanent = true);
     
     /*************************************************************************************************//*!
     *
@@ -85,11 +87,13 @@ public:
     *
     *  @param       cents The cent offset, between 0 and 100.
     *
+    *  @param       permanent Wether or not to set the new value as the Operator's base value.
+    *
     *  @see         setSemis()
     *
     *****************************************************************************************************/
     
-    void setCents(double cents);
+    void setCents(double cents, bool permanent = true);
     
     /*************************************************************************************************//*!
     *

@@ -41,6 +41,8 @@ double Filter::process(double sample)
     // Modulate cutoff
     if (_mods[CUTOFF]->inUse())
     {
+        // Get current cutoff (can't set as filter's cutoff or else the base
+        // value would change, same for all other changes too)
         double newCutoff = _mods[CUTOFF]->checkAndTick(_cutoff, 0, 20000);
         
         _calcCoefs(_mode, newCutoff, _q, _gain);

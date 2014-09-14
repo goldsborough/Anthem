@@ -53,8 +53,11 @@ void Operator::setWavetable(short wt)
     }
 }
 
-void Operator::setSemis(double semis)
+void Operator::setSemis(double semis, bool permanent)
 {
+    if (permanent)
+    { _semis = semis; }
+    
     for (oscVec::iterator itr = _oscs.begin(), end = _oscs.end();
          itr != end;
          ++itr)
@@ -63,8 +66,11 @@ void Operator::setSemis(double semis)
     }
 }
 
-void Operator::setCents(double cents)
+void Operator::setCents(double cents, bool permanent)
 {
+    if (permanent)
+    { _cents = cents; }
+    
     for (oscVec::iterator itr = _oscs.begin(), end = _oscs.end();
          itr != end;
          ++itr)
@@ -120,14 +126,14 @@ double Operator::tick()
     if (_mods[FREQ_SEMI]->inUse())
     {
         short semiOffs = _mods[FREQ_SEMI]->checkAndTick(_semis, -48, 48);
-        setSemis(semiOffs);
+        setSemis(semiOffs, false);
     }
     
     // Same goes for cent offsetting
     if (_mods[FREQ_CENT]->inUse())
     {
         short centOffs = _mods[FREQ_CENT]->checkAndTick(_cents, 0, 100);
-        setCents(centOffs);
+        setCents(centOffs, false);
     }
     
     // Add up all notes

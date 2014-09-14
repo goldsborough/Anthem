@@ -30,36 +30,19 @@ int main(int argc, const char * argv[])
     
     uint32_t len = Global::samplerate * 5;
     
-    //Operator op;
+    Operator op;
     
-    //op.addNote(440);
+    op.addNote(440);
     
-    Noise op(Noise::WHITE);
-    
-    Filter filter(Filter::LOW_PASS,1000);
-    
-    LFO lfo;
-    
-    filter.attachMod(Filter::Q, 0, &lfo);
-    
-    filter.setDepth(Filter::Q, 0, 0.05);
+    LFO lfo(0,10);
     
     Mixer mixer(0,1);
 
     for (int i = 0; i < len; ++i)
     {
-        if (i > Global::samplerate * 0.505)
-        {
-                
-        }
-        
         double tick = op.tick();
         
-        tick = filter.process(tick);
-        
-        Sample sample(tick);
-        
-        mixer.process(sample);
+        mixer.process(tick);
     }
     
     mixer.play();

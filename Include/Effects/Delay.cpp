@@ -13,18 +13,24 @@
 #include <cmath>
 #include <stdexcept>
 
-Delay::Delay(const double& delayLen,
-             const double& decayTime,
-             const double& decayRate,
-             const double& feedbackLevel)
-: _delayCapacity(delayLen * Global::samplerate)
+Delay::Delay(double delayLen,
+             double decayTime,
+             double decayRate,
+             double feedbackLevel,
+             double capacity)
+: _delayCapacity(capacity * Global::samplerate),
+  _delayLen(delayLen * Global::samplerate)
 {
-    _delayLen = _delayCapacity;
-    
-    _buffer = new double[_delayLen];
+    if (_delayLen > _delayCapacity)
+    { throw std::invalid_argument("Delay line length cannot exceed its capacity!"); }
+        
+    _buffer = new double[_delayCapacity];
     
     _write = _buffer;
     _end = _capacity = _buffer + _delayLen;
+    
+    // Set ModDocks
+    _initModDocks();
     
     setFeedback(feedbackLevel);
     setDecayRate(decayRate);
@@ -41,7 +47,7 @@ void Delay::_initModDocks()
              new ModDock(2),
              new ModDock(2),
              new ModDock(2)
-        };
+    };
 }
 
 void Delay::setDecayRate(const double &decayRate)
@@ -72,7 +78,7 @@ void Delay::setDelayLen(double delayLen)
     _readInt = (int) delayLen;
     _readFract = delayLen - (double) _readInt;
     
-    _calcDecay();
+    _calcDecay(_decayRate,_decayTime, _delayLen);
 }
 
 void Delay::setFeedback(const double& feedbackLevel)
@@ -90,14 +96,14 @@ void Delay::setDecayTime(double decayTime)
     
     _decayTime = decayTime * Global::samplerate;
     
-    _calcDecay();
+    _calcDecay(_decayRate,_decayTime,_delayLen);
 }
 
-void Delay::_calcDecay()
+void Delay::_calcDecay(double decayRate, double decayTime, double delayLen)
 {
-    double decayExponent = ((double) _delayLen) / _decayTime;
+    double decayExponent = ((double) delayLen) / decayTime;
     
-    _decayValue = pow(_decayRate, decayExponent);
+    _decayValue = pow(decayRate, decayExponent);
 }
 
 void Delay::_incr()
@@ -108,7 +114,7 @@ void Delay::_incr()
 
 double Delay::offset(const unsigned int &offset)
 {
-    double * ret = _write - offset;
+    double* ret = _write - offset;
     
     if (ret < _buffer)
     { ret += _delayLen; }
@@ -120,19 +126,19 @@ double Delay::process(double sample)
 {
     // Modulate decay time
     if (_mods[TIME]->inUse())
-    { setDecayTime(_mods[TIME]->checkAndTick(_decayTime, 0, _delayLen)); }
+    {
+        double time = _mods[TIME]->checkAndTick(_decayTime, 0, _delayCapacity);
+        
+        _calcDecay(_decayRate, time, _delayLen);
+    }
     
     // Modulate decay rate
     if (_mods[RATE]->inUse())
-    { setDecayRate(_mods[RATE]->checkAndTick(_decayRate, 0, 1)); }
-    
-    // Modulate feedback value
-    if (_mods[FEEDBACK]->inUse())
-    { setDecayRate(_mods[FEEDBACK]->checkAndTick(_feedback, 0, 1)); }
-    
-    // Modulate dry wet value
-    if (_mods[DRYWET]->inUse())
-    { setDryWet(_mods[DRYWET]->checkAndTick(_dw, 0, 1)); }
+    {
+        double rate = _mods[RATE]->checkAndTick(_decayRate, 0, 1);
+        
+        _calcDecay(rate, _decayTime, _delayLen);
+    }
     
     iterator read = _write - _readInt;
     
@@ -142,7 +148,7 @@ double Delay::process(double sample)
     
     // If the read index is equal to the write index
     // we need to first write the new sample
-    if (_readInt == 0)
+    if (! _readInt)
     {
         *_write = sample;
         
@@ -159,17 +165,33 @@ double Delay::process(double sample)
     // And finally add the fractional part of the
     // previous sample
     output += (*read - output) * _readFract;
+    
+    double feedback = _feedback;
+    
+    // Modulate feedback value
+    if (_mods[FEEDBACK]->inUse())
+    {
+        feedback = _mods[FEEDBACK]->checkAndTick(_feedback, 0, 1);
+    }
 
     // If the sample hasn't been written yet, write it now
     if (_readInt > 0)
     {
-        *_write = sample + (output * _feedback);
+        *_write = sample + (output * feedback);
         
         _incr();
     }
     
     // Apply decay
     output *= _decayValue;
+    
+    // Modulate dry wet value
+    if (_mods[DRYWET]->inUse())
+    {
+        double dw = _mods[DRYWET]->checkAndTick(_dw, 0, 1);
+        
+        return _dryWet(sample, output,dw);
+    }
     
     return _dryWet(sample, output);
 }

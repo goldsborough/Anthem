@@ -31,19 +31,20 @@ public:
     {
         TIME,
         RATE,
-        DRYWET };
+        DRYWET
+    };
     
-    /************************************************************************************************//*!
+    /************************************************************************************************************//*!
     *
     *  @brief       Constructs a Reverb object.
     *
-    *  @param       reverbTime The time for the reverb to decay/fade out, after an impulse stops.
+    *  @param       reverbTime The time for the reverb to decay/fade out, after an impulse stops (in seconds).
     *
     *  @param       reverbRate The rate of decay (for the reverb to fade out).
     *
     *  @param       dryWet How much of the reverberated signal should be mixed into the final signal.
     *
-    *************************************************************************************************/
+    ************************************************************************************************************/
     
     Reverb(const double& reverbTime,
            const double& reverbRate = 0.001,
@@ -62,9 +63,11 @@ public:
     *
     *  @param       reverbTime The new reverberation time, in seconds.
     *
+    *  @param       permanent Whether or not to set the new value as the Reverb's base value.
+    *
     *************************************************************************************************/
     
-    void setReverbTime(const double& reverbTime);
+    void setReverbTime(const double& reverbTime, bool permanent = true);
     
     
     /************************************************************************************************//*!
@@ -73,9 +76,11 @@ public:
     *
     *  @param       reverbTime The new reverberation decay rate (between 0 and 1).
     *
+    *  @param       permanent Whether or not to set the new value as the Reverb's base value.
+    *
     *************************************************************************************************/
     
-    void setReverbRate(const double& reverbRate);
+    void setReverbRate(const double& reverbRate, bool permanent = true);
     
     /************************************************************************************************//*!
     *
@@ -94,10 +99,19 @@ public:
     
 private:
     
+    /*! ModDock initialization */
+    void _initModDocks();
+    
     /*! The input signal attenuation factor */
     double _attenuation;
     
-    /*! The array of delay lines*/
+    /*! The *suprise* reverb time */
+    double _reverbTime;
+    
+    /*! Exactly that. */
+    double _reverbRate;
+    
+    /*! The array of delay lines */
     Delay** _delays;
     
     /*! The array of all-pass delays */

@@ -10,6 +10,7 @@
 #include "Delay.h"
 #include "LFO.h"
 #include "Global.h"
+#include "ModDock.h"
 
 #include <stdexcept>
 #include <cmath>
@@ -29,9 +30,17 @@ Reverb::Reverb(const double& reverbTime,
     _allPasses[0] = new AllPassDelay(0.09638,0.0050);
     _allPasses[1] = new AllPassDelay(0.03292,0.0017);
     
+    // Construct modDocks
+    _initModDocks();
+    
     setReverbRate(reverbRate);
     setReverbTime(reverbTime);
     setDryWet(dryWet);
+}
+
+void Reverb::_initModDocks()
+{
+    _mods = {new ModDock(2), new ModDock(2), new ModDock(2)};
 }
 
 void Reverb::setDryWet(const double& dw)
@@ -49,6 +58,22 @@ void Reverb::setDryWet(const double& dw)
 
 double Reverb::process(double sample)
 {
+    // Modulate time
+    if (_mods[TIME]->inUse())
+    {
+        double newTime = _mods[TIME]->checkAndTick(_reverbTime, 0, 100);
+        
+        setReverbTime(newTime, false);
+    }
+    
+    // Modulate rate
+    if (_mods[RATE]->inUse())
+    {
+        double newRate = _mods[RATE]->checkAndTick(_reverbRate, 0, 1);
+        
+        setReverbTime(newRate, false);
+    }
+    
     sample *= _attenuation;
     
     double output = 0;
@@ -60,13 +85,25 @@ double Reverb::process(double sample)
     
     output = _allPasses[1]->process(_allPasses[0]->process(output));
     
+    // Modulate the dry/wet
+    if (_mods[DRYWET]->inUse())
+    {
+        double dw = _mods[DRYWET]->checkAndTick(_dw, 0, 1);
+        
+        // Call _dryWet with custom dry/wet value (instead of _dw)
+        return _dryWet(sample, output, dw);
+    }
+    
     return _dryWet(sample, output);
 }
 
-void Reverb::setReverbRate(const double& reverbRate)
+void Reverb::setReverbRate(const double& reverbRate, bool permanent)
 {
     if (reverbRate <= 0 || reverbRate > 1)
     { throw std::invalid_argument("Reverb rate must be between 0 and 1!"); }
+    
+    if (permanent)
+    { _reverbRate = reverbRate; }
     
     for (unsigned short i = 0; i < 4; ++i)
     {
@@ -74,10 +111,13 @@ void Reverb::setReverbRate(const double& reverbRate)
     }
 }
 
-void Reverb::setReverbTime(const double &reverbTime)
+void Reverb::setReverbTime(const double &reverbTime, bool permanent)
 {
-    if (reverbTime < 0)
-    { throw std::invalid_argument("Reverb time must be greater 0"); }
+    if (reverbTime < 0 || reverbTime > 100)
+    { throw std::invalid_argument("Reverb time must be between 0 and 100!"); }
+    
+    if (permanent)
+    { _reverbTime = reverbTime; }
     
     for (unsigned short i = 0; i < 4; ++i)
     {
@@ -107,6 +147,7 @@ Flanger::Flanger(const double& center,
   _feedback(feedback), _lfo(new LFO(0,rate)),
   _delay(10,1,1,0)
 {
+    
 }
 
 void Flanger::setRate(const double& rate)

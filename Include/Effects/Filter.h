@@ -20,7 +20,7 @@
 *  @brief       Bi-Quad Filter.
 *
 *  @details     This is Anthem's main filter class. It is an IIR, Bi-Quad
-*               filter implemented in Direct Form II. Lots of great
+*               filter implemented in Direct Form II. Lots of great info
 *               can be found here: http://goo.gl/XiA8jo
 *
 *               References:

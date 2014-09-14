@@ -50,12 +50,15 @@ public:
     *
     *  @param       feedbackLevel The amount of output from the delay line to feed back.
     *
+    *  @param       capacity The total capacity of the delay line, in seconds (must exceed length). 
+    *
     **************************************************************************************************/
     
-    Delay(const double& delayLen = 10,
-          const double& decayTime = 1,
-          const double& decayRate = 0.001,
-          const double& feedbackLevel = 1);
+    Delay(double delayLen = 1,
+          double decayTime = 4,
+          double decayRate = 0.01,
+          double feedbackLevel = 1,
+          double capacity = 10);
     
     virtual ~Delay();
     
@@ -118,9 +121,9 @@ public:
     
     /************************************************************************************************//*!
     *
-    *  @brief       Determines the amount of output fed back into the delay line.
+    *  @brief       Sets an offset in the delay line.
     *
-    *  @param       feedbackLevel How much of the output values should be fed back (between 0 and 1).
+    *  @param       offset The new offset.
     *
     *************************************************************************************************/
     
@@ -131,8 +134,8 @@ protected:
     /*! ModDock initialization */
     void _initModDocks();
     
-    /*! Calculates the _decayValue based on _decayRate and _decayTime */
-    void _calcDecay();
+    /*! Calculates the _decayValue based on the decay rate, time and delay length*/
+    void _calcDecay(double decayRate, double decayTime, double delayLen);
     
     /*! Increments and boundary checks the write pointer */
     void _incr();
