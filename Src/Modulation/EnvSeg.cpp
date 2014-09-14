@@ -236,12 +236,12 @@ void EnvSeg::setModWave(int modW)
     // full amplitude is at the beginning and end
     
     if (_modWave == WavetableDB::SINE || _modWave == WavetableDB::TRIANGLE)
-        _lfo->osc.setPhaseOffset(90);
+        _lfo->setPhaseOffset(90);
     
     else if (_modWave == WavetableDB::SMOOTH_SQUARE)
-        _lfo->osc.setPhaseOffset(215);
+        _lfo->setPhaseOffset(215);
     
-    _lfo->osc.setWavetable(_modWave);
+    _lfo->setWavetable(_modWave);
 }
 
 void EnvSeg::setModDepth(double dpth)

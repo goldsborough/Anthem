@@ -144,11 +144,12 @@ struct Echo : public Delay
     *                                                                                                   
     *************************************************************************************************/
     
-    Echo(const double& delayLen = 10,
-         const double& decayTime = 0,
-         const double& decayRate = 0.001,
-         const double& feedbackLevel = 1)
-    : Delay(delayLen,decayTime,decayRate,feedbackLevel)
+    Echo(double delayLen = 1,
+         double decayTime = 4,
+         double decayRate = 0.01,
+         double feedbackLevel = 1,
+         double capacity = 10)
+    : Delay(delayLen,decayTime,decayRate,feedbackLevel,capacity)
     { }
     
     /************************************************************************************************//*!

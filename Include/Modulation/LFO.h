@@ -10,30 +10,52 @@
 #define __Anthem__LFO__
 
 #include "Units.h"
-#include "Oscillator.h"
 #include "EnvSeg.h"
 
 class EnvSegSeq;
 class Oscillator;
 class XFadeUnit;
 
-struct LFO : public GenUnit
+class LFO : public GenUnit
 {
-    LFO(const short& wt = 0, const double& rate = 1)
-    : osc(wt,rate)
-    { }
     
-    double tick() { return osc.tick(); }
+public:
     
-    void setAmp(const double& amp) { osc.setAmp(amp); }
+    enum DOCKS
+    {
+        AMP,
+        RATE,
+        PHASE
+    };
     
-    void setRate(double Hz) { osc.setFreq(Hz); }
+    LFO(short wt = 0, double rate = 1, double phaseOffset = 0);
     
-    Oscillator osc;
+    ~LFO();
+    
+    double tick();
+    
+    void setWavetable(short wt);
+    
+    void setRate(double Hz);
+    
+    void setPhaseOffset(double degrees);
+    
+private:
+    
+    void _initModDocks();
+    
+    double _rate;
+    
+    double _phaseOffset;
+    
+    Oscillator* _osc;
 };
 
-struct LFOSeq : public GenUnit
+class LFOSeq : public GenUnit
 {
+    
+public:
+    
     LFOSeq(unsigned int seqLength = 20);
     
     double tick() { return seq.tick(); };
@@ -77,9 +99,9 @@ public:
     
     void setEnvLoopMax(unsigned char loopNum);
     
-    void setLFOWave(unit_t unitNum, int wave) { _LFOs[unitNum].osc.setWavetable(wave); }
+    void setLFOWave(unit_t unitNum, int wave) { _LFOs[unitNum].setWavetable(wave); }
     
-    void setLFOPhaseOffset(unit_t unitNum, short degrees) { _LFOs[unitNum].osc.setPhaseOffset(degrees); };
+    void setLFOPhaseOffset(unit_t unitNum, short degrees) { _LFOs[unitNum].setPhaseOffset(degrees); };
     
     void setLFOSeqSegWave(unit_t unitNum, subseg_t segNum, int wave);
     

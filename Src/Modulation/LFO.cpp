@@ -10,8 +10,66 @@
 #include "EnvSeg.h"
 #include "Crossfader.h"
 #include "Oscillator.h"
+#include "ModDock.h"
+#include "Global.h"
 
 #include <stdexcept>
+
+LFO::LFO(short wt, double rate, double phaseOffset)
+: _osc(new Oscillator())
+{
+    setWavetable(wt);
+    setRate(rate);
+    setPhaseOffset(phaseOffset);
+    
+    // Initialize ModDocks
+    _initModDocks();
+}
+
+LFO::~LFO()
+{ delete _osc; }
+
+void LFO::_initModDocks()
+{
+    _mods = {new ModDock(2), new ModDock(2), new ModDock(2) };
+}
+
+void LFO::setWavetable(short wt)
+{ _osc->setWavetable(wt); }
+
+void LFO::setPhaseOffset(double degrees)
+{
+    _phaseOffset = degrees;
+    
+    _osc->setPhaseOffset(degrees);
+}
+
+void LFO::setRate(double Hz)
+{
+    _rate = Hz;
+    
+    _osc->setFreq(Hz);
+}
+
+double LFO::tick()
+{
+    // Set all of these modulations to the oscillator directly so that the internal
+    // base values aren't changed (e.g. _rate, in this case, must stay the same, as
+    // it's the base value for modulation)
+    if (_mods[RATE]->inUse())
+    { _osc->setFreq(_mods[RATE]->checkAndTick(_rate, 0, Global::nyquistLimit)); }
+    
+    if (_mods[PHASE]->inUse())
+    { _osc->setPhaseOffset(_mods[PHASE]->checkAndTick(_phaseOffset, 0, 360)); }
+    
+    double ret = _osc->tick();
+    
+    // Return ret * modulated value if ModDock in use
+    if (_mods[AMP]->inUse())
+    { return _mods[AMP]->checkAndTick(_amp, 0, 1) * ret; }
+    
+    return _amp * ret;
+}
 
 LFOSeq::LFOSeq(unsigned int seqLength)
 : seq(seqLength), _seqLen(seqLength)
