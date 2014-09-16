@@ -9,10 +9,7 @@
 #ifndef __Anthem__Waveforms__
 #define __Anthem__Waveforms__
 
-#include "LookupTable.h"
-
 #include <vector>
-#include <stdexcept>
 
 struct Partial
 {
@@ -26,16 +23,18 @@ struct Partial
     double phaseOffs;
 };
 
-class Wavetable : public LookupTable<double>
+class Wavetable
 {
     
 public:
     
     friend class AnthemWTParser;
     
+    typedef unsigned long size_t;
+    
     Wavetable()
     : _refptr(new size_t(1))
-    { _baseDestructorEnabled = false; }
+    { }
     
     template <class PartItr>
     Wavetable(PartItr start, PartItr end,
@@ -44,8 +43,8 @@ public:
               unsigned int bitWidth = 16);
     
     Wavetable(double * ptr, size_t wtLength)
-    : LookupTable<double>(ptr,wtLength), _refptr(new size_t(1))
-    { _baseDestructorEnabled = false; }
+    : _data(ptr), _size(wtLength), _refptr(new size_t(1))
+    { }
     
     Wavetable(const Wavetable& other);
     
@@ -55,13 +54,21 @@ public:
     
     double& operator[] (size_t ind);
     
-    // const version of subscript operator comes from LookupTable
+    const double& operator[] (size_t ind) const
+    { return _data[ind]; }
     
     double interpolate(double ind) const;
+    
+    size_t size() const
+    { return _size; }
     
     Wavetable& makeUnique();
     
 private:
+    
+    double* _data;
+    
+    size_t _size;
     
     size_t * _refptr;
 };

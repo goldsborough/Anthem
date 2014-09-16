@@ -209,9 +209,6 @@ double Wavetable::interpolate(double ind) const
 
 Wavetable::~Wavetable()
 {
-    // disable base destructor
-    _baseDestructorEnabled = false;
-    
     if (! --(*_refptr))
     {
         delete [] _data;
