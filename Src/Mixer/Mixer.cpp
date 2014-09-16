@@ -19,7 +19,7 @@ Mixer::Mixer(bool directOut, bool waveOut)
 
 : _sendToDirectOutput(directOut), _sendToWaveFile(waveOut), _masterAmp(0.5)
 {
-    _pan = new XFadeSine;
+    _pan = new CrossfadeUnit(CrossfadeTypes::SINE);
     
     _sampleDataBuffer = new SampleBuffer;
     
@@ -46,7 +46,7 @@ void Mixer::process(Sample sample)
 #endif
     
     if (_sendToWaveFile)
-    { _sampleDataBuffer->push(sample); }
+    { _sampleDataBuffer->buffer.push_back(sample); }
     
     if (_sendToDirectOutput)
     { _directOut->processTick(sample); }
@@ -78,7 +78,7 @@ void Mixer::stop()
         { _directOut->stop(); }
         
         if (_sendToWaveFile)
-        { _waveOut->write_wav(*_sampleDataBuffer); }
+        { _waveOut->writeWav(*_sampleDataBuffer); }
     }
 }
 

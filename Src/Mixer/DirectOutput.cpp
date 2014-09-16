@@ -38,12 +38,12 @@ DirectOutput::DirectOutput(unsigned char ltncy)
 
 void DirectOutput::processTick(const Sample& sample)
 {
-    _dataBuffer.push(sample);
+    _dataBuffer.buffer.push_back(sample);
 }
 
 Sample DirectOutput::_getSampleFromQueue()
 {
-    if (! _dataBuffer.empty())
+    if (! _dataBuffer.buffer.empty())
     { return _dataBuffer.getpop(); }
     
     return Sample();
@@ -75,7 +75,7 @@ int DirectOutput::paCallback( const void *inputBuffer, void *outputBuffer,
     Sample * outSample = ( Sample * ) userData;
     float * out = (float*)outputBuffer;
     
-    while (_dataBuffer.size() < framesPerBuffer);
+    while (_dataBuffer.buffer.size() < framesPerBuffer);
     
     for( unsigned int n = 0; n < framesPerBuffer; n++ )
     {

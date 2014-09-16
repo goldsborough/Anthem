@@ -17,7 +17,10 @@
 namespace Global
 {
     const double pi = 3.14159265358979;
+    
     const double twoPi = 6.28318530717958;
+    
+    const double sqrt2 = 1.41421356237309;
     
     extern unsigned int samplerate;
     

@@ -9,7 +9,7 @@
 #ifndef __Anthem__Mixer__
 #define __Anthem__Mixer__
 
-class XFadeUnit;
+class CrossfadeUnit;
 class DirectOutput;
 class Wavefile;
 class SampleBuffer;
@@ -39,7 +39,7 @@ private:
     
     double _masterAmp;
 
-    XFadeUnit * _pan;
+    CrossfadeUnit * _pan;
     
     bool _stopped = true;
     

@@ -14,79 +14,6 @@
 #include <fstream>
 #include <cmath>
 
-template <class T>
-LookupTable<T>::LookupTable(T * ptr, size_t size)
-{
-    _data = ptr;
-    _size = size;
-}
-
-template <class T>
-LookupTable<T>::LookupTable(const LookupTable<T>& other)
-{
-    if (&other != this)
-    {
-        _size = other._size; // use other's size
-        
-        // fill data with other's data
-        for (size_t i = 0; i < _size; ++i)
-        { _data[i] = other._data[i]; }
-    }
-}
-
-template <class T>
-T LookupTable<T>::operator[] (const size_t ind) const
-{
-    if (! _data)
-        throw TableUninitializedError();
-    
-    if (ind >= _size)
-        throw TableLengthError();
-    
-    return _data[ind];
-}
-
-template <class T>
-LookupTable<T>& LookupTable<T>::operator= (const LookupTable<T>&  other)
-{
-    if (&other != this)
-    {
-        _size = other._size;
-        
-        // get rid of current data
-        delete [] _data;
-        
-        // copy other's data
-        for (size_t i = 0; i < _size; ++i)
-        { _data[i] = other._wt[i]; }
-    }
-    
-    return *this;
-}
-
-template <class T>
-T LookupTable<T>::interpolate(const double ind) const
-{
-    if (! _data)
-        throw TableUninitializedError();
-    
-    if (ind >= _size)
-        throw TableLengthError();
-    
-    int indexBase = (int) ind;              // The truncated integer part
-    double indexFract = ind - indexBase;    // The remaining fractional part
-    
-    // grab the two items in-between which the actual value lies
-    double value1 = _data[indexBase];
-    double value2 = _data[indexBase+1];
-    
-    // interpolate: integer part + (fractional part * difference between value2 and value1)
-    double final = value1 + ((value2 - value1) * indexFract);
-    
-    return final;
-}
-
-
 void round(double& val, unsigned int bitWidth)
 {
     // mind = blown
@@ -256,6 +183,30 @@ Wavetable& Wavetable::operator=(const Wavetable &other)
     return *this;
 }
 
+double& Wavetable::operator[] (size_t ind)
+{
+    // Make this object's data unique as it might
+    // have to be changed
+    makeUnique();
+    
+    return _data[ind];
+}
+
+double Wavetable::interpolate(double ind) const
+{
+    int indexBase = (int) ind;              // The truncated integer part
+    double indexFract = ind - indexBase;    // The remaining fractional part
+    
+    // grab the two items in-between which the actual value lies
+    double value1 = _data[indexBase];
+    double value2 = _data[indexBase+1];
+    
+    // interpolate: integer part + (fractional part * difference between value2 and value1)
+    double final = value1 + ((value2 - value1) * indexFract);
+    
+    return final;
+}
+
 Wavetable::~Wavetable()
 {
     // disable base destructor
@@ -276,7 +227,7 @@ Wavetable& Wavetable::makeUnique()
         
         _refptr = new size_t(1);
         
-        double * temp = _data;
+        double* temp = _data;
         
         _data = new double [_size];
         

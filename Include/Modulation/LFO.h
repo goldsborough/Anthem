@@ -16,9 +16,8 @@
 #include "Units.h"
 #include "EnvSeg.h"
 
-class EnvSegSeq;
 class Oscillator;
-class XFadeUnit;
+class CrossfadeUnit;
 
 /*************************************************************************************************//*!
 *
@@ -35,7 +34,7 @@ class LFO : public GenUnit
 public:
     
     /*! Various ModDocks available for modulation */
-    enum DOCKS
+    enum Docks
     {
         AMP,
         RATE,
@@ -114,39 +113,85 @@ private:
     Oscillator* _osc;
 };
 
-class LFOSeq : public GenUnit
+
+/****************************************************************************************************//*!
+*
+*  @brief       Wrapper around EnvSegSeq for specific LFO purposes.
+*
+*  @details     The main difference between EnvSegSeq and LFOSeq is that LFOSeq has a rate parameter
+*               that sets the rate or frequency of the entire Envelope sequence. Internally, changing
+*               this "rate" is equivalent to appropriately adjusting the length of each EnvSeg.
+*
+********************************************************************************************************/
+
+class LFOSeq : public EnvSegSeq
 {
     
 public:
     
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Constructs an LFOSeq object.
+    *
+    *  @param       seqLength The amount of individual envelope segments. Defaults to 20.
+    *
+    *****************************************************************************************************/
+    
     LFOSeq(unsigned int seqLength = 20);
     
-    double tick() { return seq.tick(); };
-    
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Sets the rate of the envelope sequence.
+    *
+    *  @details     Setting the rate of the sequence is equivalent to appropriately adjusting the
+    *               length of each individual envelope segment. Given a frequency f, the period or
+    *               in this case the length of the sequence is 1/f. This value is then divided by
+    *               the number of segments to give the length of an individual segment, which is then
+    *               adjusted for each segment.
+    *
+    *  @param       Hz The rate/frequency to set, in Hz.
+    *
+    *****************************************************************************************************/
+   
     void setRate(double Hz);
-    
-    EnvSegSeq seq;
     
 private:
     
+    /*! The amount of segments, stored to divide the whole sequence period by it */
     const unsigned int _seqLen;
 };
+
+/****************************************************************************************************//*!
+*
+*  @brief       The main "LFO" interface for Anthem.
+*
+*  @details     In Anthem, an LFO is relatively large unit, consisting of two normal LFOs (Oscillators)
+*               and two LFOSeqs (EnvSegSeqs). The user can switch between the normal LFO mode and the
+*               Sequencer mode. In both cases, the user can then crossfade between the two respective
+*               units, e.g. between LFO A and LFO B.
+*
+********************************************************************************************************/
 
 class LFOUnit : public GenUnit
 {
     
 public:
     
-    enum Modes { LFO, SEQ };
+    enum Modes { LFO_MODE, SEQ_MODE };
     
     enum Units { A, B };
     
-    enum EnvSegs { SegA, SegB }; // The two parts of the envelope pyramid: SegA: / SegB: \ Together: /\
-    
-    enum EnvAmpPoints { BEG, MID, END};
-    
-    typedef bool unit_t;
-    typedef unsigned int subseg_t;
+    struct Env : public EnvSegSeq
+    {
+        /*! The two parts of the envelope: SegA / SegB \ Together /\ */
+        enum Segments { SEG_A, SEG_B };
+        
+        enum Points { BEG, MID, END };
+        
+        Env();
+        
+        void setEnvLevel(short point, double lvl);
+    };
     
     LFOUnit();
     
@@ -154,42 +199,20 @@ public:
     
     double tick();
     
-    void setMode(unit_t mode) { _mode = mode; }
-    
-    void setEnvSegLen(unit_t envSeg, unsigned short len);
-    
-    void setEnvLevel(unsigned char point, double lv);
-    
-    void setEnvLoopMax(unsigned char loopNum);
-    
-    void setLFOWave(unit_t unitNum, int wave) { _LFOs[unitNum].setWavetable(wave); }
-    
-    void setLFOPhaseOffset(unit_t unitNum, short degrees) { _LFOs[unitNum].setPhaseOffset(degrees); };
-    
-    void setLFOSeqSegWave(unit_t unitNum, subseg_t segNum, int wave);
-    
-    void setLFOSeqSegAmp(unit_t unitNum, subseg_t seg, double amp);
-    
-    void setLFOSeqLoopStart(unit_t unitNum, subseg_t segNum);
-    
-    void setLFOSeqLoopEnd(unit_t unitNum, subseg_t segNum);
-    
+    // Remove all this shit once you have a Crossfader class
     void setXFade(char value);
     
-    void setRate(unit_t unitNum, double Hz);
+    LFOSeq lfoSeqs[2];
+    
+    LFO lfos[2];
+    
+    Env env;
     
 private:
     
+    unsigned short _mode;
     
-    struct LFOSeq _LFOSeqs[2];
-    
-    struct LFO _LFOs[2];
-    
-    unit_t _mode;
-    
-    EnvSegSeq * _env;
-    
-    XFadeUnit * _xfade;
+    CrossfadeUnit * _xfade;
 };
 
 #endif /* defined(__Anthem__LFO__) */

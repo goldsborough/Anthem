@@ -76,7 +76,7 @@ class Noise : public GenUnit
 public:
     
     /*! Available ModDocks*/
-    enum DOCKS { AMP };
+    enum Docks { AMP };
     
     /*! The available noise colors */
     enum COLORS

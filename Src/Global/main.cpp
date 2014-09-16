@@ -19,6 +19,7 @@
 #include "Sample.h"
 #include "Effects.h"
 #include "Noise.h"
+#include "Crossfader.h"
 
 #include <iostream>
 
@@ -35,14 +36,7 @@ int main(int argc, const char * argv[])
     op.addNote(440);
     
     LFO lfo;
-    
-    LFO lfo1;
-    
-    lfo.attachMod(LFO::RATE, 0, &lfo1);
-    
-    lfo.setDepth(LFO::RATE, 0, 0.001);
-    
-    op.attachMod(Operator::AMP, 0, &lfo);
+
     
     Mixer mixer(0,1);
 

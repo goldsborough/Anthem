@@ -27,7 +27,7 @@ class Reverb : public EffectUnit
     
 public:
     
-    enum DOCKS
+    enum Docks
     {
         TIME,
         RATE,

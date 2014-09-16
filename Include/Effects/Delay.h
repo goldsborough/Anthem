@@ -27,7 +27,7 @@ class Delay : public EffectUnit
 public:
     
     /*! Modulatable ModDocks */
-    enum DOCKS
+    enum Docks
     {
         TIME,
         RATE,

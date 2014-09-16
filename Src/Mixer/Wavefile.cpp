@@ -6,37 +6,45 @@
 //  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
 //
 
+#include <stdint.h>
+#include <fstream>
+
 #include "Wavefile.h"
 #include "Global.h"
 #include "Util.h"
 #include "Sample.h"
 
-Wavefile::Wavefile(unsigned char ch)
-{
-    channels = ch;
-    
-    memcpy(wh.riff_id, "RIFF", 4*sizeof(char));
 
-    memcpy(wh.wavetype, "WAVE", 4*sizeof(char));
+Wavefile::WaveHeader* Wavefile::_getHeader(unsigned short channels) const
+{
+    WaveHeader* header = new WaveHeader;
     
-	memcpy(wh.fmt_id, "fmt ", 4*sizeof(char));
+    memcpy(header->riffId, "RIFF", 4*sizeof(char));
     
-	wh.fmt_size = 16;
+    memcpy(header->wavetype, "WAVE", 4*sizeof(char));
     
-	wh.fmt_code = 1;    // 1 = PCM
+	memcpy(header->fmtId, "fmt ", 4*sizeof(char));
     
-	wh.channels = channels;    // 1 = mono, 2 = stereo
+	header->fmtSize = 16;
     
-	wh.samplerate = Global::samplerate;
+	header->fmtCode = 1;    // 1 = PCM
     
-    wh.bits = 16;
-	wh.align = (channels * wh.bits) / 8;
-    wh.byterate = wh.samplerate * wh.align;
+	header->channels = channels;    // 1 = mono, 2 = stereo
     
-	memcpy(wh.wave_id, "data", 4*sizeof(char));
+	header->samplerate = Global::samplerate;
+    
+    header->bits = 16;
+    
+	header->align = (channels * header->bits) / 8;
+    
+    header->byterate = header->samplerate * header->align;
+    
+	memcpy(header->waveId, "data", 4*sizeof(char));
+    
+    return header;
 }
 
-void Wavefile::check_fname(std::string& fname)
+void Wavefile::_checkFilename(std::string& fname) const
 {
     if (fname.empty())
         fname = std::string(Util::getDate());
@@ -65,34 +73,38 @@ void Wavefile::check_fname(std::string& fname)
 }
 
 
-void Wavefile::write_wav(SampleBuffer& smplQ, std::string fname)
+void Wavefile::writeWav(const SampleBuffer& sampleBuffer,
+                        std::string fname,
+                        unsigned short channels) const
 {
     
-    unsigned long total_samples = (unsigned long) smplQ.size();
+    std::unique_ptr<WaveHeader> header(_getHeader(channels));
     
-    unsigned long byte_total = total_samples * wh.align;
+    unsigned int totalSamples = (unsigned) sampleBuffer.buffer.size();
     
-    wh.riff_size = (unsigned int) byte_total + sizeof(wh) - 8;
+    header.get()->waveSize = totalSamples * header.get()->align;
     
-    wh.wave_size = (unsigned int) byte_total;
+    header.get()->riffSize = header.get()->waveSize + sizeof(*header.get()) - 8;
     
-    check_fname(fname);
+    _checkFilename(fname);
     
     // because the current buffer is of type double
-    end_buff = new int16_t [total_samples * 2];
+    int16_t* buffer = new int16_t [totalSamples * 2];
     
-    for (unsigned long n = 0; n < total_samples*2;)
+    for (unsigned long n = 0, end = totalSamples * 2; n < end;)
     {
-        const Sample& SD = smplQ.getpop();
+        Sample sample(sampleBuffer.buffer[n/2]);
         
-        end_buff[n++] = SD.left * 32767;
-        end_buff[n++] = SD.right * 32767;
+        sample *= 32767;
+        
+        buffer[n++] = sample.left;
+        buffer[n++] = sample.right;
     }
     
-    f.open(fname, std::ios::binary | std::ios::trunc);
+    std::ofstream file(fname, std::ios::binary | std::ios::trunc);
 
-    if (! f.write(reinterpret_cast<char*>(&wh), sizeof(wh)) ||
-        ! f.write(reinterpret_cast<char*>(end_buff), byte_total))
+    if (! file.write(reinterpret_cast<char*>(header.get()), sizeof(*header.get())) ||
+        ! file.write(reinterpret_cast<char*>(buffer), header.get()->waveSize))
         
-        throw std::runtime_error("Error writing to file");
+    { throw std::runtime_error("Error writing to file"); }
 }

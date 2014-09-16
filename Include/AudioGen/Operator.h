@@ -35,7 +35,7 @@ public:
     
     /*! The available ModDocks/parameters to
         modulate via other GenUnits */
-    enum DOCKS
+    enum Docks
     {
         AMP,
         FREQ_SEMI,

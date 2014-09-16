@@ -43,7 +43,7 @@ class Filter : public EffectUnit
 public:
     
     /*! Available ModDocks */
-    enum DOCKS
+    enum Docks
     {
         CUTOFF,
         Q,

@@ -9,6 +9,8 @@
 #ifndef __Anthem__Waveforms__
 #define __Anthem__Waveforms__
 
+#include "LookupTable.h"
+
 #include <vector>
 #include <stdexcept>
 
@@ -23,58 +25,6 @@ struct Partial
     
     double phaseOffs;
 };
-
-template <class T>
-class LookupTable
-{
-public:
-    
-    struct TableUninitializedError : public std::runtime_error
-    {
-        TableUninitializedError(const char * msg = "Table has not been initialized!")
-        : std::runtime_error(msg)
-        { }
-    };
-    
-    struct TableLengthError : public std::invalid_argument
-    {
-        TableLengthError(const char * msg = "Table index requested is out of range!")
-        : std::invalid_argument(msg)
-        { }
-    };
-    
-    typedef unsigned long size_t;
-    
-    LookupTable() { }
-    
-    LookupTable(T * ptr, size_t size);
-    
-    LookupTable(const LookupTable& other);
-    
-    virtual ~LookupTable()
-    {
-        if (_baseDestructorEnabled)
-        { delete [] _data; }
-    }
-    
-    LookupTable& operator= (const LookupTable& other);
-    
-    virtual T operator[] (const size_t ind) const;
-    
-    virtual T interpolate(const double ind) const;
-    
-    size_t size() const
-    { return _size; }
-    
-protected:
-    
-    T * _data = 0;
-    
-    size_t _size = 0;
-    
-    bool _baseDestructorEnabled = true;
-};
-
 
 class Wavetable : public LookupTable<double>
 {
@@ -94,17 +44,20 @@ public:
               unsigned int bitWidth = 16);
     
     Wavetable(double * ptr, size_t wtLength)
-    : _refptr(new size_t(1))
-    {
-        _data = ptr;
-        _size = wtLength;
-    }
+    : LookupTable<double>(ptr,wtLength), _refptr(new size_t(1))
+    { _baseDestructorEnabled = false; }
     
     Wavetable(const Wavetable& other);
     
     ~Wavetable();
     
     Wavetable& operator= (const Wavetable& other);
+    
+    double& operator[] (size_t ind);
+    
+    // const version of subscript operator comes from LookupTable
+    
+    double interpolate(double ind) const;
     
     Wavetable& makeUnique();
     
