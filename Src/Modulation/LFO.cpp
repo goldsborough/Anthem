@@ -97,6 +97,26 @@ void LFOSeq::setRate(double Hz)
     { }//EnvSegSeq::setSegLen(i, len); }
 }
 
+LFOUnit::LFOUnit(unsigned short mode)
+{ setMode(mode); }
+
+void LFOUnit::setMode(unsigned short mode)
+{
+    if (mode)
+    {
+        fader.setLeftUnit(&lfoSeqs[0]);
+        
+        fader.setRightUnit(&lfoSeqs[1]);
+    }
+    
+    else
+    {
+        fader.setLeftUnit(&lfos[0]);
+        
+        fader.setRightUnit(&lfos[1]);
+    }
+}
+
 LFOUnit::Env::Env()
 : EnvSegSeq(2)
 {
@@ -129,22 +149,7 @@ void LFOUnit::Env::setEnvLevel(short point, double lvl)
     }
 }
 
-LFOUnit::LFOUnit()
-: _xfade(new CrossfadeUnit(-100))
-{ }
-
-LFOUnit::~LFOUnit() { delete _xfade; }
-
 double LFOUnit::tick()
 {
-    double valA = (_mode) ? lfoSeqs[0].tick() : lfos[0].tick();
-    double valB = (_mode) ? lfoSeqs[1].tick() : lfos[1].tick();
-    
-    valA *= _xfade->left();
-    valB *= _xfade->right();
-    
-    return (valA + valB) * _amp;
+    return fader.tick() * _amp;//* env.tick() * _amp;
 }
-
-void LFOUnit::setXFade(char value)
-{ _xfade->setValue(value); }

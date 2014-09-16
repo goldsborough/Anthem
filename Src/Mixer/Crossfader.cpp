@@ -109,7 +109,7 @@ double Crossfader::tick()
     double right = (_rightUnit) ? _rightUnit->tick() * this->right() : 0;
     
     // Return the combined value 
-    return left + right;
+    return (left + right) * _amp;
 }
 
 void Crossfader::_initModDocks()

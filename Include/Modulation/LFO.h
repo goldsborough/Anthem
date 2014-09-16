@@ -15,9 +15,9 @@
 
 #include "Units.h"
 #include "EnvSeg.h"
+#include "Crossfader.h"
 
 class Oscillator;
-class CrossfadeUnit;
 
 /*************************************************************************************************//*!
 *
@@ -172,15 +172,19 @@ private:
 *
 ********************************************************************************************************/
 
-class LFOUnit : public GenUnit
+struct LFOUnit : public GenUnit
 {
-    
-public:
-    
+
     enum Modes { LFO_MODE, SEQ_MODE };
-    
+
     enum Units { A, B };
     
+    LFOUnit(unsigned short mode = 0);
+    
+    void setMode(unsigned short mode);
+    
+    double tick();
+
     struct Env : public EnvSegSeq
     {
         /*! The two parts of the envelope: SegA / SegB \ Together /\ */
@@ -191,28 +195,14 @@ public:
         Env();
         
         void setEnvLevel(short point, double lvl);
-    };
-    
-    LFOUnit();
-    
-    ~LFOUnit();
-    
-    double tick();
-    
-    // Remove all this shit once you have a Crossfader class
-    void setXFade(char value);
-    
+        
+    } env;
+
+    Crossfader fader;
+
     LFOSeq lfoSeqs[2];
-    
+
     LFO lfos[2];
-    
-    Env env;
-    
-private:
-    
-    unsigned short _mode;
-    
-    CrossfadeUnit * _xfade;
 };
 
 #endif /* defined(__Anthem__LFO__) */

@@ -35,26 +35,15 @@ int main(int argc, const char * argv[])
     
     op.addNote(440);
     
-    LFO a,b(10);
+    LFOUnit lfo;
     
-    Crossfader fader(CrossfadeTypes::LINEAR);
-    
-    fader.setLeftUnit(&a);
-    fader.setRightUnit(&b);
-    
-    op.attachMod(Operator::AMP, 0, &fader);
-    
-    LFO c;
-    
-    fader.attachMod(Crossfader::VALUE, 0, &c);
+    op.attachMod(Operator::AMP, 0, &lfo);
     
     Mixer mixer(0,1);
 
     for (int i = 0; i < len; ++i)
     {
         double tick = op.tick();
-        
-        tick *= fader.tick();
         
         mixer.process(tick);
     }
