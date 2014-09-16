@@ -33,7 +33,7 @@ public:
     typedef unsigned long size_t;
     
     Wavetable()
-    : _refptr(new size_t(1))
+    : _data(0), _size(0), _refptr(new size_t(1))
     { }
     
     template <class PartItr>
@@ -70,7 +70,7 @@ private:
     
     size_t _size;
     
-    size_t * _refptr;
+    size_t* _refptr;
 };
 
 /*****************************************************************************//*!

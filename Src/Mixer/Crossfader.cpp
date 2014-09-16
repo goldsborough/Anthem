@@ -1,11 +1,3 @@
-//
-//  Crossfade.cpp
-//  Anthem
-//
-//  Created by Peter Goldsborough on 15/04/14.
-//  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
-//
-
 #include "Crossfader.h"
 #include "Global.h"
 #include "ModDock.h"
@@ -82,24 +74,39 @@ double CrossfadeUnit::left() const
 double CrossfadeUnit::right() const
 { return _scale(_tables[_type][_index].right); }
 
-Crossfader::Crossfader(unsigned short fadeType, bool scale,
-                       GenUnit* left, GenUnit* right)
-: _xfade(0), _left(left), _right(right), _fadeType(123) // random
+Crossfader::Crossfader(unsigned short type,
+                       bool scalingEnabled,
+                       unsigned short offset,
+                       GenUnit* left,
+                       GenUnit* right)
+: CrossfadeUnit(type,scalingEnabled,offset),
+  _leftUnit(left), _rightUnit(right)
 {
-    setFadeType(fadeType,scale);
-    
     // Initialize ModDocks
     _initModDocks();
 }
 
-Crossfader::~Crossfader()
-{ delete _xfade; }
+void Crossfader::setValue(short value)
+{
+    if (value < -100 || value > 100)
+        throw std::invalid_argument("Crossfade value must be between -100 and 100");
+    
+    _value = value;
+    
+    _index = 100 + value;
+}
 
 double Crossfader::tick()
 {
-    // Get left and right ticks and fade them appropriately
-    double left = _left->tick() * _xfade->left();
-    double right = _right->tick() * _xfade->right();
+    if (_mods[VALUE]->inUse())
+    {
+        // Only set the index, the value is not changed (constant base value)
+        _index = _mods[VALUE]->checkAndTick(_value, -100, 100) + 100;
+    }
+    
+    // Get left and right ticks (if a GenUnit is available) and fade them appropriately
+    double left = (_leftUnit) ? _leftUnit->tick() * this->left() : 0;
+    double right = (_rightUnit) ? _rightUnit->tick() * this->right() : 0;
     
     // Return the combined value 
     return left + right;
@@ -108,42 +115,8 @@ double Crossfader::tick()
 void Crossfader::_initModDocks()
 { _mods = { new ModDock(2) }; }
 
-void Crossfader::setLeftGenUnit(GenUnit* genUnit)
-{ _left = genUnit; }
+void Crossfader::setLeftUnit(GenUnit* unit)
+{ _leftUnit = unit; }
 
-void Crossfader::setRightGenUnit(GenUnit* genUnit)
-{ _right = genUnit; }
-
-void Crossfader::setValue(short value)
-{ _xfade->setValue(value); }
-
-void Crossfader::setFadeType(unsigned short fadeType, bool scale)
-{
-    if (fadeType > SQRT)
-    { throw std::invalid_argument("Invalid fade type!"); }
-    
-    // Make sure we don't unnecessariliy delete and
-    // re-allocate an CrossfadeUnit
-    if (fadeType != _fadeType)
-    {
-        delete _xfade;
-        
-        switch (fadeType)
-        {/*
-            case LINEAR:
-                _xfade = new XFadeLinear;
-                break;
-                
-            case SINE:
-                _xfade = new XFadeSine(scale);
-                break;
-                
-            case SQRT:
-                _xfade = new XFadeSqrt(scale);
-                break;*/
-        }
-        
-        // Store type to check for re-allocation
-        _fadeType = fadeType;
-    }
-}
+void Crossfader::setRightUnit(GenUnit* unit)
+{ _rightUnit = unit; }
