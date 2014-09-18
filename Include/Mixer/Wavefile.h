@@ -1,10 +1,14 @@
-//
-//  Wavefile.h
-//  Anthem
-//
-//  Created by Peter Goldsborough on 21/01/14.
-//  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
-//
+/*********************************************************************************************//*!
+*
+*  @file        Wavefile.h
+*
+*  @author      Peter Goldsborough
+*
+*  @date        18/10/2014
+*
+*  @brief       Defines the Wavefile class.
+*
+*************************************************************************************************/
 
 #ifndef __Anthem__Wavefile__
 #define __Anthem__Wavefile__
@@ -13,20 +17,62 @@
 
 class SampleBuffer;
 
-struct Wavefile
+/*********************************************************************************************//*!
+*
+*  @brief       Class for storing sample data in wavefiles.
+*
+*************************************************************************************************/
+
+class Wavefile
 {
     
 public:
     
-    void writeWav(const SampleBuffer& sampleBuffer,
-                  std::string fname = std::string(),
-                  unsigned short channels = 2) const;
+    /*********************************************************************************************//*!
+    *
+    *  @brief       Constructs a Wavefile object.
+    *
+    *  @param       fname The name of the wavefile.
+    *
+    *  @param       channels The number of channels for the wavefile, defaults to stereo (2).
+    *
+    *************************************************************************************************/
     
-    double* readWav(const std::string& fname);
+    Wavefile(const std::string& fname = std::string(),
+             unsigned short channels = 2);
+    
+    /*********************************************************************************************//*!
+    *
+    *  @brief       Sets the number of channels for the wavefile.
+    *
+    *  @param       channels The number of channels, usually mono (1) or stereo (2).
+    *
+    *************************************************************************************************/
+    void setChannels(unsigned short channels);
+    
+    /*********************************************************************************************//*!
+    *
+    *  @brief       Sets the wavefile's file name.
+    *
+    *  @param       fname The new file name.
+    *
+    *************************************************************************************************/
+    void setFileName(const std::string& fname);
+    
+    
+    /*********************************************************************************************//*!
+    *
+    *  @brief       Writes a sample buffer to a wavefile.
+    *
+    *  @param       sampleBuffer The SampleBuffer to write to a wavefile.
+    *
+    *************************************************************************************************/
+    void write(const SampleBuffer& sampleBuffer);
     
 private:
     
-    struct WaveHeader
+    /*! Wavefile header */
+    struct
     {
         uint8_t riffId[4]; // 'R' 'I' 'F' 'F'
         
@@ -54,12 +100,10 @@ private:
         
         uint32_t waveSize; // byte total
         
-    };
+    } _header;
     
-    WaveHeader* _getHeader(unsigned short channels) const;
-    
-    /*! Checks filename for validity and manipulates string accordingly */
-    void _checkFilename(std::string& fname) const;
+    // The file name 
+    std::string _fname;
 };
 
 #endif

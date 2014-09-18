@@ -27,6 +27,8 @@ namespace Util
     extern float getPassedTime(const unsigned long& start);
     
     extern double dbToAmp(const double& baseAmp, const double& dB);
+    
+    extern std::string checkFileName(std::string fname, const std::string& fileEnding);
 }
 
 

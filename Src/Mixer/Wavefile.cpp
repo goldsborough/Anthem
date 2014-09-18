@@ -14,79 +14,48 @@
 #include "Util.h"
 #include "Sample.h"
 
-
-Wavefile::WaveHeader* Wavefile::_getHeader(unsigned short channels) const
+Wavefile::Wavefile(const std::string& fname, unsigned short channels)
 {
-    WaveHeader* header = new WaveHeader;
+    memcpy(_header.riffId, "RIFF", 4*sizeof(char));
     
-    memcpy(header->riffId, "RIFF", 4*sizeof(char));
+    memcpy(_header.wavetype, "WAVE", 4*sizeof(char));
     
-    memcpy(header->wavetype, "WAVE", 4*sizeof(char));
+	memcpy(_header.fmtId, "fmt ", 4*sizeof(char));
     
-	memcpy(header->fmtId, "fmt ", 4*sizeof(char));
+	_header.fmtSize = 16;
     
-	header->fmtSize = 16;
+	_header.fmtCode = 1;    // 1 = PCM
     
-	header->fmtCode = 1;    // 1 = PCM
+	_header.channels = channels;    // 1 = mono, 2 = stereo
     
-	header->channels = channels;    // 1 = mono, 2 = stereo
+	_header.samplerate = Global::samplerate;
     
-	header->samplerate = Global::samplerate;
+    _header.bits = 16;
     
-    header->bits = 16;
+	_header.align = (channels * _header.bits) / 8;
     
-	header->align = (channels * header->bits) / 8;
+    _header.byterate = _header.samplerate * _header.align;
     
-    header->byterate = header->samplerate * header->align;
+	memcpy(_header.waveId, "data", 4*sizeof(char));
     
-	memcpy(header->waveId, "data", 4*sizeof(char));
-    
-    return header;
+    setFileName(fname);
 }
 
-void Wavefile::_checkFilename(std::string& fname) const
+void Wavefile::setChannels(unsigned short channels)
+{ _header.channels = channels; }
+
+void Wavefile::setFileName(const std::string& fname)
 {
-    if (fname.empty())
-        fname = std::string(Util::getDate());
-    
-    typedef std::string::size_type szt;
-    
-    szt ext_ind = fname.find('.'); // extension index
-    
-    szt end = fname.size();
-    
-    if (ext_ind != std::string::npos && fname.substr(ext_ind,4) == ".wav")
-        end = ext_ind;
-    
-    else fname += ".wav"; // if no extension, add .wav
-    
-    
-    for (szt n = 0; n < end; n++)
-    {
-        char c = fname[n];
-        
-        if (! isalnum(c))
-            fname.replace(n, 1, "_");
-    }
-    
-    fname.insert(0, "/Users/petergoldsborough/Documents/Anthem/Wavefiles/");
+    _fname = Util::checkFileName(fname, ".wav");
 }
 
-
-void Wavefile::writeWav(const SampleBuffer& sampleBuffer,
-                        std::string fname,
-                        unsigned short channels) const
+void Wavefile::write(const SampleBuffer& sampleBuffer)
 {
-    
-    std::unique_ptr<WaveHeader> header(_getHeader(channels));
-    
     unsigned int totalSamples = (unsigned) sampleBuffer.buffer.size();
     
-    header.get()->waveSize = totalSamples * header.get()->align;
+    _header.waveSize = totalSamples * _header.align;
     
-    header.get()->riffSize = header.get()->waveSize + sizeof(*header.get()) - 8;
-    
-    _checkFilename(fname);
+    _header.riffSize = _header.waveSize + sizeof(_header) - 8;
     
     // because the current buffer is of type double
     int16_t* buffer = new int16_t [totalSamples * 2];
@@ -101,10 +70,10 @@ void Wavefile::writeWav(const SampleBuffer& sampleBuffer,
         buffer[n++] = sample.right;
     }
     
-    std::ofstream file(fname, std::ios::binary | std::ios::trunc);
+    std::ofstream file(_fname, std::ios::binary | std::ios::trunc);
 
-    if (! file.write(reinterpret_cast<char*>(header.get()), sizeof(*header.get())) ||
-        ! file.write(reinterpret_cast<char*>(buffer), header.get()->waveSize))
-        
+    // Try writing the _header and the data to file
+    if (! file.write(reinterpret_cast<char*>(&_header), sizeof(_header)) ||
+        ! file.write(reinterpret_cast<char*>(buffer), _header.waveSize))
     { throw std::runtime_error("Error writing to file"); }
 }

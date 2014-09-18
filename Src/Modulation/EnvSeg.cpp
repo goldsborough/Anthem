@@ -17,26 +17,18 @@
 // 60 seconds
 const unsigned long EnvSeg::_maxLen = 2646000;
 
-EnvSeg::EnvSeg(double startAmp, double endAmp, unsigned long len,
-               double segR, int modW, double modDpth,
+EnvSeg::EnvSeg(double startAmp,
+               double endAmp,
+               EnvSeg::len_t len,
+               double segR, int modW,
+               double modDpth,
                unsigned char modR)
+: _sample(0), _startLevel(startAmp), _endLevel(endAmp),
+  _segRate(segR), _len(len), _modDepth(modDpth), _modRate(modR),
+  _lfo(new LFO)
 {
-    _sample = 0;
-    
-    _startLevel = startAmp;
-    _endLevel = endAmp;
-    
-    _segRate = segR;
-    
-    _len = len;
-    
-    _modDepth = modDpth;
-    _modRate = modR;
-    
     _calcLevel();
     _calcRate();
-    
-    _lfo = new LFO;
     
     // initalize operator to waveform wanted
     setModWave(modW);
@@ -167,7 +159,7 @@ void EnvSeg::_calcRate()
     }
 }
 
-void EnvSeg::setLen(unsigned long sampleLen)
+void EnvSeg::setLen(EnvSeg::len_t sampleLen)
 {
     if (sampleLen > _maxLen)
     {
@@ -254,11 +246,8 @@ void EnvSeg::setModDepth(double dpth)
     _modDepth = dpth;
 }
 
-void EnvSeg::setModRate(unsigned char rate)
+void EnvSeg::setModRate(unsigned short rate)
 {
-    // data type used takes care of range
-    // 0 - 255
-    
     _modRate = rate;
     
     _calcModRate();
@@ -303,114 +292,83 @@ double EnvSeg::tick()
     return ret;
 }
 
-EnvSegSeq::EnvSegSeq(unsigned int seqLen)
-: _segs(seqLen), _seqLen(seqLen)
+EnvSegSeq::EnvSegSeq(EnvSegSeq::subseg_t seqLen)
+: _segs(seqLen), _currSample(0), _loopCount(0),
+  _loopMax(0), _loopInf(false), _lastTick(0)
 {
-    _currSample = 0;
+    _loopStart = _loopEnd = _segs.end();
     
-    _currSegLen = 0;
-    
-    _currSegNum = 0;
-    
-    _currSeg = (seqLen > 0) ? &_segs[0] : 0;
-    
-    _loopStart = -1;
-    _loopEnd   = -1;
-    
-    _loopCount = 0;
-    
-    _loopMax = 0;
-    
-    _loopInf = false;
-    
-    _oneShot = false;
-    
-    _lastTick = 0;
-    
+    _currSeg = _segs.begin();
 }
 
 void EnvSegSeq::setSegLen(subseg_t seg, unsigned int ms)
+{ _segs[seg].setLen(ms * 44.1); }
+
+void EnvSegSeq::setLoopStart(EnvSegSeq::subseg_t seg)
+{ _loopStart = _segs.begin() + seg; }
+
+void EnvSegSeq::setLoopEnd(EnvSegSeq::subseg_t seg)
 {
-    double inSamples = ms * 44.1;
-    
-    _segs[seg].setLen(inSamples);
-    
-    if (seg == _currSegNum)
-        _currSegLen = inSamples;
+    // Plus one because the end points to one after
+    // the loop end segmetn
+    _loopEnd = _segs.begin() + seg + 1;
 }
 
-void EnvSegSeq::_changeSeg(subseg_t seg)
+void EnvSegSeq::_changeSeg(EnvSegSeq::segItr seg)
 {
-    _currSeg = &_segs[_currSegNum];
+    _currSeg = seg;
     
     _currSample = 0;
-    
-    _currSegLen = _currSeg->getLen();
 }
 
 void EnvSegSeq::_resetLoop()
 {
     // reset all the loop segments
-    for (subseg_t i = _loopEnd; i > _loopStart; i--)
-        _segs[i].reset();
+    for (segItr itr = _loopStart; itr != _loopEnd; ++itr)
+    { itr->reset(); }
+    
+    _changeSeg(_loopStart);
+    
+    ++_loopCount;
 }
 
 double EnvSegSeq::tick()
 {
     
-    if (_currSample++ >= _currSegLen)
+    if (_currSample++ >= _currSeg->getLen())
     {
+        if (_currSeg != _segs.end()) _currSeg++;
+        
         // Check if we need to reset the loop
-        if (_currSegNum == _loopEnd &&
-                 ( _loopInf || _loopCount++ < _loopMax) &&
-                 ! _oneShot)
-            
-            _resetLoop();
+        if (_currSeg == _loopEnd && (_loopInf || _loopCount < _loopMax))
+        { _resetLoop(); }
         
         // send out the last good value if no more segments left
-        else if (_currSegNum + 1 >= _segs.size())
-            return _lastTick;
+        else if (_currSeg == _segs.end()) return _lastTick;
         
         // else increment segment
         else
         {
-            _changeSeg(++_currSegNum);
+            _changeSeg(_currSeg);
             
-            if (_currSegLen == 0)
-                return _lastTick;
+            // Return last tick if the new segment has no length
+            if (! _currSeg->getLen()) return _lastTick;
         }
         
     }
 
-    _lastTick =  _currSeg->tick();
+    _lastTick = _currSeg->tick();
     
     return _lastTick;
     
 }
 
-void EnvSegSeq::setLoopMax(unsigned char n)
+void EnvSegSeq::setLoopMax(unsigned short n)
 {
-    if (n > 64)
-        _loopInf = true;
+    if (n > 64) _loopInf = true;
     else
     {
         _loopInf = false;
         _loopMax = n;
     }
 };
-
-void EnvSegSeq::setLoopStart(subseg_t seg)
-{
-    _loopStart = seg;
-    
-    if (_loopStart > _loopEnd)
-        _loopEnd = _loopStart;
-}
-
-void EnvSegSeq::setLoopEnd(subseg_t seg)
-{
-    _loopEnd = seg;
-    
-    if (_loopEnd < _loopStart)
-        _loopStart = _loopEnd;
-}

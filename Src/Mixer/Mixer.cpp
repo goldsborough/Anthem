@@ -78,7 +78,7 @@ void Mixer::stop()
         { _directOut->stop(); }
         
         if (_sendToWaveFile)
-        { _waveOut->writeWav(*_sampleDataBuffer); }
+        { _waveOut->write(*_sampleDataBuffer); }
     }
 }
 

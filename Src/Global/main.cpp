@@ -34,16 +34,39 @@ int main(int argc, const char * argv[])
     Operator op;
     
     op.addNote(440);
-    
+    /*
     LFOUnit lfo;
     
-    op.attachMod(Operator::AMP, 0, &lfo);
+    lfo.env.setSegLen(0, 1000);
+    
+    lfo.env.setOneShot(false);
+    
+    lfo.env.setLoopEnd(1);
+    lfo.env.setLoopStart(0);
+    
+    lfo.env.setLoopInf();
+    
+    //op.attachMod(Operator::AMP, 0, &lfo);*/
+    
+    LFOUnit::Env env;
+    
+    env.setSegLen(0, 1000);
+    env.setSegLen(1, 1000);
+    
+    env.setLoopStart(0);
+    env.setLoopEnd(1);
+    //env.setLoopInf();
+
     
     Mixer mixer(0,1);
 
     for (int i = 0; i < len; ++i)
     {
         double tick = op.tick();
+        
+        double envTick = env.tick();
+        
+        tick *= envTick;
         
         mixer.process(tick);
     }

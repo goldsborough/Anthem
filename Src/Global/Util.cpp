@@ -22,7 +22,7 @@ namespace Util
         
         strftime(date, 100, "%d %m %Y", ltm);
         
-        return std::string(date);
+        return date;
     }
 
 
@@ -60,5 +60,33 @@ namespace Util
     {
         // 0 gain means no change
         return (dB) ? baseAmp * pow(10, (dB/20)) : baseAmp;
+    }
+    
+    std::string checkFileName(std::string fname, const std::string& fileEnding)
+    {
+        // Get the date if no file name
+        if (fname.empty()) { fname = Util::getDate(); }
+        
+        std::string::size_type ext_ind = fname.find('.'); // extension index
+        
+        std::string::size_type end = fname.size();
+        
+        // If the file name already ends with .wav, substitute spaces only up the dot
+        if (ext_ind != std::string::npos && fname.substr(ext_ind,4) == fileEnding)
+        { end = ext_ind; }
+        
+        // if no extension, add .wav
+        else fname += fileEnding;
+        
+        for (std::string::size_type n = 0; n < end; n++)
+        {
+            // Replace anything non-alphanumeric
+            if (! isalnum(fname[n]))
+            { fname.replace(n, 1, "_"); }
+        }
+        
+        fname.insert(0, "/Users/petergoldsborough/Documents/Anthem/Wavefiles/");
+        
+        return fname;
     }
 }

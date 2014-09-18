@@ -10,23 +10,11 @@
 #define __Anthem__Envelope__
 
 #include "EnvSeg.h"
-
+/*
 class Envelope : public EnvSegSeq
 {
 public:
-    
-    /*
-     INSERT DESCRIPTION PLZ
-     
-     
-           /\         /\
-          /  \_______/  \
-     ____/               \
-     DLY ATK A    B   C REL
-     
-     
-     */
-    
+
     enum Segment
     {
         ATK,
@@ -73,6 +61,6 @@ private:
     // to avoid harsh transitions
     EnvSeg _hiddenConnect;
     
-};
+};*/
 
 #endif /* defined(__Anthem__Envelope__) */

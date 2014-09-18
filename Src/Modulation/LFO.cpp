@@ -123,8 +123,6 @@ LFOUnit::Env::Env()
     setSegLen(0, 100);
     setSegEndLevel(0, 1);
     setSegStartLevel(1, 1);
-    
-    setOneShot();
 }
 
 void LFOUnit::Env::setEnvLevel(short point, double lvl)
@@ -151,5 +149,5 @@ void LFOUnit::Env::setEnvLevel(short point, double lvl)
 
 double LFOUnit::tick()
 {
-    return fader.tick() * _amp;//* env.tick() * _amp;
+    return fader.tick() * env.tick() * _amp;
 }

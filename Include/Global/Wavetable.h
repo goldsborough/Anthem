@@ -62,6 +62,8 @@ public:
     size_t size() const
     { return _size; }
     
+    double* get() const { return _data; }
+    
     Wavetable& makeUnique();
     
 private:

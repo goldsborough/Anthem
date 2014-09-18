@@ -5,7 +5,7 @@
 //  Created by Peter Goldsborough on 09/03/14.
 //  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
 //
-
+/*
 #include "Envelope.h"
 #include "Global.h"
 
@@ -152,3 +152,4 @@ void Envelope::setSegLevel(int seg, double lv)
     _segs[seg + 1].setStartLevel(lv);
     
 }
+*/

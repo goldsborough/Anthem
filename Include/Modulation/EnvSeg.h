@@ -32,6 +32,8 @@ class EnvSeg : public GenUnit
     
 public:
     
+    typedef unsigned long len_t;
+    
     /**********************************************************************************************//*!
      *
      *  @brief      Initalizes an Envelope segment
@@ -54,8 +56,12 @@ public:
      *
      **************************************************************************************************/
     
-    EnvSeg(double startAmp = 0, double endAmp = 0, unsigned long len = 0, double segR = 1,
-           int modW = -1, double modDpth = 1,
+    EnvSeg(double startAmp = 0,
+           double endAmp = 0,
+           len_t len = 0,
+           double segR = 1,
+           int modW = -1,
+           double modDpth = 1,
            unsigned char modR = 1);
     
     ~EnvSeg();
@@ -84,7 +90,7 @@ public:
      *************************************************************************/
     
     // In samples
-    void setLen(unsigned long sampleLen);
+    void setLen(len_t sampleLen);
     
    /*************************************************************************//*!
     *
@@ -94,7 +100,7 @@ public:
     *
     ****************************************************************************/
     
-    unsigned long getLen() { return _len; };
+    len_t getLen() { return _len; };
     
     /*************************************************************************//*!
     *
@@ -230,7 +236,7 @@ public:
     *
     ****************************************************************************/
     
-    void setModRate(unsigned char rate);
+    void setModRate(unsigned short rate);
     
     /*************************************************************************//*!
     *
@@ -348,7 +354,7 @@ private:
     Type _type;
     
     /*! Sample count */
-    unsigned long _sample;
+    len_t _sample;
     
     /*! Modulation wave */
     int _modWave;
@@ -366,7 +372,7 @@ private:
     double _modDepth;
     
     /*! Rate of modulation (modulation cycles per __segment__) */
-    unsigned char _modRate;
+    unsigned short _modRate;
     
     /*! Current increment value */
     double _segIncr;
@@ -384,19 +390,18 @@ private:
     LFO * _lfo;
     
     /*! Maximum possible segment length, a good value is 60 seconds */
-    static const unsigned long _maxLen;
+    static const len_t _maxLen;
     
     /*! Length of segment in samples */
-    unsigned long _len;
+    len_t _len;
 };
 
 class EnvSegSeq : public GenUnit
 {
     
 public:
-    
-    typedef std::vector<EnvSeg> segVector;
-    typedef unsigned int subseg_t;
+
+    typedef unsigned long subseg_t;
     
     EnvSegSeq(subseg_t seqLen);
 
@@ -422,49 +427,37 @@ public:
     
     virtual void setLoopEnd(subseg_t seg);
     
-    virtual void setLoopMax(unsigned char n);
+    virtual void setLoopMax(unsigned short n);
     
     virtual void setLoopInf(bool state = true) { _loopInf = state; }
     
-    virtual void setOneShot(bool state = true) { _oneShot = state; }
-    
-    virtual subseg_t getSeqLen() { return _seqLen; }
-    
-    virtual ~EnvSegSeq() {}
+    virtual ~EnvSegSeq() { }
     
 protected:
     
-    virtual void _changeSeg(subseg_t seg);
+    typedef std::vector<EnvSeg>::iterator segItr;
+    
+    virtual void _changeSeg(segItr seg);
     
     virtual void _resetLoop();
     
     unsigned long _currSample;
     
-    subseg_t _currSegNum;
+    // The pointer to the
+    // current segment
+    segItr _currSeg;
     
-    subseg_t _loopStart;
-    subseg_t _loopEnd;
+    segItr _loopStart;
+    segItr _loopEnd;
     
     subseg_t _loopCount;
     subseg_t _loopMax;
     
     bool _loopInf;
     
-    bool _oneShot;
-    
     double _lastTick;
     
-    // The pointer to the
-    // current segment
-    EnvSeg * _currSeg;
-    
-    // The current final
-    // sample count
-    unsigned long _currSegLen;
-    
-    segVector _segs;
-    
-    const subseg_t _seqLen;
+    std::vector<EnvSeg> _segs;
 };
 
 
