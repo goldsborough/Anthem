@@ -71,10 +71,20 @@ double EffectUnit::_dryWet(double originalSample, double processedSample, double
     return (originalSample * (1 - dryWet)) + (processedSample * dryWet);
 }
 
-void GenUnit::setAmp(const double& amp)
+GenUnit::GenUnit(double amp)
+{
+    setAmp(amp); 
+}
+
+void GenUnit::setAmp(double amp)
 {
     if (amp < 0 || amp > 1)
     { throw std::invalid_argument("Amplitude must be between 0 and 1!"); }
     
     _amp = amp;
+}
+
+double GenUnit::getAmp() const
+{
+    return _amp;
 }

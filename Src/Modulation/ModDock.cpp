@@ -8,70 +8,71 @@
 
 #include "ModDock.h"
 #include "Units.h"
+
 #include <stdexcept>
 
-ModDock::ModDock(index_t dockSize)
-: _mods(new ModItem [dockSize]), _dockSize(dockSize),
-  _usedDocks(0), _masterDpth(1)
-{ }
-
-double ModDock::tick()
+double doDepth(double original, double modulated, double depth)
 {
-    double dp = 0.0;
+    return (modulated * depth) + ((1 - depth) * original);
+}
+
+ModDock::ModDock(double masterDepth)
+{
+    setMasterDepth(masterDepth);
+}
+
+void ModDock::setMasterDepth(double depth)
+{
+    if (depth < 0 || depth > 1)
+    { throw std::invalid_argument("Depth value must be between 0 and 1!"); }
+}
+
+bool ModDock::inUse() const
+{
+    return (_masterDepth > 0 && ! _mods.empty());
+}
+
+double ModDock::modulate(double sample,
+                         double minBoundary,
+                         double maxBoundary)
+{
+    // If ModDock is not in use, return original sample immediately
+    if (! inUse()) return sample;
     
-    // if not in use, no need to tick
-    if (! _usedDocks)
-    { return dp; }
+    // Copy for modulation
+    double modulated = sample;
     
-    // gather all ticks from all modulation sources and
-    // add them together
-    for (index_t i = 0; i < _dockSize; i++)
+    // Apply all modulation
+    for (std::vector<ModItem>::const_iterator itr = _mods.begin(), end = _mods.end();
+         itr != end;
+         ++itr)
     {
-        // If the modUnit pointer isn't NULL
-        if (_mods[i].mod)
-        {
-            dp += _mods[i].mod->tick() * _mods[i].dpth;
-        }
+        // Get modulated signal
+        modulated = itr->mod->modulate(modulated, minBoundary, maxBoundary);
+        
+        // Modify according to depth
+        modulated = doDepth(sample, modulated, itr->depth);
     }
     
-    // get average modulation value and multiply by master depth
-    return (dp / _usedDocks) * _masterDpth;
+    // Return mixture between original sample and fully modulated sample according
+    // to _masterDepth value
+    return doDepth(sample, modulated, _masterDepth);
 }
 
-double ModDock::checkAndTick(const double val,
-                             const double min,
-                             const double max)
+void ModDock::setDepth(index_t index, double depth)
 {
-    // get the offset value
-    double t = val + (max * tick());
+    if (index >= _mods.size())
+    { throw std::invalid_argument("ModDock index out of bounds!"); }
     
-    // do boundary checking
-    if (t > max) t = max;
-    
-    else if (t < min) t = min;
-    
-    return t;
+    _mods[index].depth = depth;
 }
 
-void ModDock::setDepth(index_t index, depth_t dpth)
+void ModDock::attach(ModUnit* mod)
 {
-    if (index < 0 || index >= _dockSize || ! _mods[index].mod)
-        throw std::invalid_argument("Invalid modDock index given!");
-    
-    else if (dpth < 0 || dpth > 1)
-        throw std::invalid_argument("Invalid depth, not between 0 and 1");
-    
-    _mods[index].dpth = dpth;
+    _mods.push_back(ModItem(mod));
 }
 
-void ModDock::attach(index_t index, GenUnit* mod)
+void ModDock::detach(index_t index)
 {
-    if (index < 0 || index >= _dockSize)
-        throw std::invalid_argument("Invalid modDock index given!");
-    
-    if (! mod) _usedDocks--;
-    
-    else _usedDocks++;
-    
-    _mods[index].mod = mod;
+    _mods.erase(_mods.begin() + index);
 }

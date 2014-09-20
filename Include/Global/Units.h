@@ -4,7 +4,7 @@
 *
 *  @author      Peter Goldsborough
 *
-*  @date        09/10/2014
+*  @date        09/09/2014
 *
 *  @brief       Abstract base classes for units.
 *
@@ -12,8 +12,8 @@
 *
 *************************************************************************************************/
 
-#ifndef __Anthem__GenUnits__
-#define __Anthem__GenUnits__
+#ifndef __Anthem__Units__
+#define __Anthem__Units__
 
 #include <vector>
 #include "Wavetable.h"
@@ -213,7 +213,7 @@ public:
     *
     *****************************************************************************************************/
     
-    GenUnit(const double& amp = 1) { setAmp(amp); }
+    GenUnit(double amp = 1);
     
     /*************************************************************************************************//*!
     *
@@ -223,7 +223,17 @@ public:
     *
     *****************************************************************************************************/
     
-    virtual void setAmp(const double& amp);
+    virtual void setAmp(double amp);
+    
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Returns the GenUnit's amplitude value.
+    *
+    *  @return      The amplitude.
+    *
+    *****************************************************************************************************/
+    
+    virtual double getAmp() const;
     
     /*************************************************************************************************//*!
     *
@@ -243,4 +253,14 @@ protected:
     double _amp;
 };
 
-#endif /* defined(__Anthem__GenUnits__) */
+class ModUnit : public Unit
+{
+    
+public:
+    
+    virtual double modulate(double sample,
+                            double minBoundary,
+                            double maxBoundary) = 0;
+};
+
+#endif /* defined(__Anthem__Units__) */

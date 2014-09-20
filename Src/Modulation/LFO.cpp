@@ -15,33 +15,28 @@
 
 #include <stdexcept>
 
-LFO::LFO(short wt, double rate, double phaseOffset)
-: _osc(new Oscillator())
-{
-    setWavetable(wt);
-    setRate(rate);
-    setPhaseOffset(phaseOffset);
-    
-    // Initialize ModDocks
-    _initModDocks();
-}
+LFO::LFO(short wt, double rate, double amp, double phaseOffset)
+: _osc(new Oscillator(wt,rate,amp,phaseOffset))
+{ }
 
 LFO::~LFO()
 { delete _osc; }
 
-void LFO::_initModDocks()
-{
-    _mods = {new ModDock(2), new ModDock(2), new ModDock(2) };
-}
-
 void LFO::setWavetable(short wt)
-{ _osc->setWavetable(wt); }
+{
+    _osc->setWavetable(wt);
+}
 
 void LFO::setPhaseOffset(double degrees)
 {
     _phaseOffset = degrees;
     
     _osc->setPhaseOffset(degrees);
+}
+
+double LFO::getPhaseOffset() const
+{
+    return _phaseOffset;
 }
 
 void LFO::setRate(double Hz)
@@ -51,34 +46,58 @@ void LFO::setRate(double Hz)
     _osc->setFreq(Hz);
 }
 
-double LFO::tick()
+double LFO::getRate() const
+{
+    return _rate;
+}
+
+void LFO::setAmp(double amp)
+{
+    _osc->setAmp(amp);
+}
+
+double LFO::getAmp() const
+{
+    return _osc->getAmp();
+}
+
+double LFO::modulate(double sample, double minBoundary, double maxBoundary)
 {
     // Set all of these modulations to the oscillator directly so that the internal
     // base values aren't changed (e.g. _rate, in this case, must stay the same, as
     // it's the base value for modulation)
     if (_mods[RATE]->inUse())
-    { _osc->setFreq(_mods[RATE]->checkAndTick(_rate, 0, Global::nyquistLimit)); }
+    { _osc->setFreq(_mods[RATE]->modulate(_rate, 0, Global::nyquistLimit)); }
     
     if (_mods[PHASE]->inUse())
-    { _osc->setPhaseOffset(_mods[PHASE]->checkAndTick(_phaseOffset, 0, 360)); }
+    { _osc->setPhaseOffset(_mods[PHASE]->modulate(_phaseOffset, 0, 360)); }
     
-    double ret = _osc->tick();
+    double tick = _osc->tick();
     
     // Return ret * modulated value if ModDock in use
     if (_mods[AMP]->inUse())
-    { return ret * _mods[AMP]->checkAndTick(_amp, 0, 1); }
+    { tick *= _mods[AMP]->modulate(_osc->getAmp(), 0, 1); }
     
-    // Else unmodulated value
-    return ret * _amp;
+    // Modulate
+    sample += (maxBoundary * tick);
+    
+    // Boundary checking
+    if (sample > maxBoundary) return maxBoundary;
+    
+    else if (sample < minBoundary) return minBoundary;
+    
+    return sample;
 }
 
-LFOSeq::LFOSeq(unsigned int seqLength)
-: EnvSegSeq(seqLength), _seqLen(seqLength)
+LFOSeq::LFOSeq(unsigned short seqLength, double rate)
+: EnvSegSeq(seqLength)
 {
     EnvSegSeq::setLoopStart(0);
-    EnvSegSeq::setLoopEnd(_seqLen - 1);
+    EnvSegSeq::setLoopEnd(seqLen - 1);
     
     EnvSegSeq::setLoopInf();
+    
+    setRate(rate);
 }
 
 void LFOSeq::setRate(double Hz)
@@ -86,15 +105,22 @@ void LFOSeq::setRate(double Hz)
     if (Hz < 0)
     { throw std::invalid_argument("Rate cannot be less than zero!"); }
     
+    _rate = Hz;
+    
     // get the period, divide up into _segNum pieces
-    double len = (1.0 / Hz) / _seqLen;
+    double len = (1.0 / _rate) / _seqLen;
     
     // seconds to milliseconds
     len *= 1000;
     
     // Set all segment's lengths
     for (int i = 0; i < _seqLen; i++)
-    { }//EnvSegSeq::setSegLen(i, len); }
+    { EnvSegSeq::setSegLen(i, len); }               // FIXME?
+}
+
+double LFOSeq::getRate() const
+{
+    return _rate;
 }
 
 LFOUnit::LFOUnit(unsigned short mode)
@@ -120,9 +146,8 @@ void LFOUnit::setMode(unsigned short mode)
 LFOUnit::Env::Env()
 : EnvSegSeq(2)
 {
-    setSegLen(0, 100);
-    setSegEndLevel(0, 1);
-    setSegStartLevel(1, 1);
+    setSegLen(0, 200);
+    setEnvLevel(MID, 1);
 }
 
 void LFOUnit::Env::setEnvLevel(short point, double lvl)
@@ -149,5 +174,7 @@ void LFOUnit::Env::setEnvLevel(short point, double lvl)
 
 double LFOUnit::tick()
 {
+    // Tick the crossfaded value from the lfos and multiply by the envelope
+    // value and the total amplitude value
     return fader.tick() * env.tick() * _amp;
 }

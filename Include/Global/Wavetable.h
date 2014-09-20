@@ -28,8 +28,6 @@ class Wavetable
     
 public:
     
-    friend class AnthemWTParser;
-    
     typedef unsigned long size_t;
     
     Wavetable()
@@ -197,29 +195,15 @@ public:
 private:
     
     Wavetable _directSaw();
+    
     Wavetable _directSquare();
+    
     Wavetable _directTriangle();
     
     Wavetable _smoothSaw();
-    Wavetable _smoothSquare();
-        
-   /************************************************************************************//*!
-   * The wtLength was a tricky one to find and reason upon. A compromise must be found
-   * between a reasonable length or size in KB for it to fit into at least L2 cache but
-   * still be able to give a good resolution for the "compressed" samples.
-   *
-   * A WT size of 2^12, or 4096 (opimizing the range by using a power of two), is
-   * calculated as follows:
-   *
-   * WaveTableLength * 8 bytes of precision (double) / 1024 = 32KB
-   ****************************************************************************************/
-        
-    unsigned int _wtLength;
-
-    double _fundIncr;
     
-    Wavetable _noneTable;
-
+    Wavetable _smoothSquare();
+    
     std::vector<Wavetable> _tables;
 };
 

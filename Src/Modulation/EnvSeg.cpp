@@ -38,15 +38,24 @@ EnvSeg::EnvSeg(double startAmp,
 
 EnvSeg::~EnvSeg() { delete _lfo; }
 
+void EnvSeg::reset()
+{
+    _sample = 0;
+    
+    // reset _segCurr
+    _calcRate();
+}
+
 void EnvSeg::_calcModRate()
 {
     // To go from samples to Hertz, simply
     // divide the samplerate by the length
     // in samples e.g. 44100 / 22050 = 2 Hz
     
-    // Then multiply by the modulation rate,
-    // so the non-base frequency of the
-    // modulation wave
+    // Since the rate is the cycles per segment
+    // and not cycles per second, we get the
+    // "period" of the segment and multiply that
+    // by the rate, giving the mod wave's frequency.
     
     if (_len > 0)
     {
@@ -61,7 +70,7 @@ void EnvSeg::_calcLevel()
     // The range between start and end
     _diff = _endLevel - _startLevel;
     
-    // set ads
+    // set ADS
     
     if (_diff == 0) _ads = SUST;
     
@@ -87,10 +96,12 @@ void EnvSeg::_calcLevel()
 void EnvSeg::_calcRate()
 {
     
-    // set type
+    // Set type
     
     if (_segRate == 1) _type = LIN;
+    
     else if (_segRate < 1) _type = EXP;
+    
     else
     {
         _type = LOG;
@@ -98,14 +109,10 @@ void EnvSeg::_calcRate()
         // rate must still be between 0 and 1, the
         // 1 - 2 range is just for covenience
         
-        // Just as 0 is the most exponential, 2 should
-        // be the most logarithmic, so subtracting one from
-        // _segRate is not enough, since 2 - 1 would be 1, which
-        // is practically linear. So this value must then be subtracted
-        // from by one, to give the inverse. 1.2 - 1 = 0.2 -> 1 - 0.2 = 0.8
-        
-        _segRate = 1 - (_segRate - 1);
+        _segRate = 2 - _segRate;
     }
+    
+    // Calculate rate
     
     if (_ads == SUST)
     {
@@ -122,10 +129,7 @@ void EnvSeg::_calcRate()
         
         _segCurr = _segRate;
         
-        if (_len > 0)
-            exp = 1.0 / _len;
-        
-        else exp = 0;
+        exp = (_len > 0) ? 1.0 / _len : 0;
         
         // Uses iterative exponential
         // calculations instead of
@@ -182,10 +186,15 @@ void EnvSeg::setLen(EnvSeg::len_t sampleLen)
     _calcModRate();
 }
 
+EnvSeg::len_t EnvSeg::getLen() const
+{
+    return _len;
+}
+
 void EnvSeg::setStartLevel(double lv)
 {
     if (lv > 1 || lv < 0)
-        throw std::invalid_argument("Level must be between 0 and 1");
+    { throw std::invalid_argument("Level must be between 0 and 1"); }
     
     _startLevel = lv;
     
@@ -193,15 +202,25 @@ void EnvSeg::setStartLevel(double lv)
     _calcRate();
 }
 
+double EnvSeg::getStartLevel() const
+{
+    return _startLevel;
+}
+
 void EnvSeg::setEndLevel(double lv)
 {
     if (lv > 1 || lv < 0)
-        throw std::invalid_argument("Level must be between 0 and 1");
+    { throw std::invalid_argument("Level must be between 0 and 1"); }
     
     _endLevel = lv;
     
     _calcLevel();
     _calcRate();
+}
+
+double EnvSeg::getEndLevel() const
+{
+    return _endLevel;
 }
 
 void EnvSeg::setBothLevels(double lv)
@@ -213,11 +232,16 @@ void EnvSeg::setBothLevels(double lv)
 void EnvSeg::setRate(double rate)
 {
     if (rate > 2 || rate < 0)
-        throw std::invalid_argument("Rate must be between 0 and 2");
+    { throw std::invalid_argument("Rate must be between 0 and 2"); }
     
     _segRate = rate;
     
     _calcRate();
+}
+
+double EnvSeg::getRate() const
+{
+    return _segRate;
 }
 
 void EnvSeg::setModWave(int modW)
@@ -228,22 +252,22 @@ void EnvSeg::setModWave(int modW)
     // full amplitude is at the beginning and end
     
     if (_modWave == WavetableDB::SINE || _modWave == WavetableDB::TRIANGLE)
-        _lfo->setPhaseOffset(90);
+    { _lfo->setPhaseOffset(90); }
     
     else if (_modWave == WavetableDB::SMOOTH_SQUARE)
-        _lfo->setPhaseOffset(215);
+    { _lfo->setPhaseOffset(215); }
     
     _lfo->setWavetable(_modWave);
 }
 
 void EnvSeg::setModDepth(double dpth)
 {
-    // Go von deepar
-    
-    if (dpth > 1 || dpth < 0)
-        throw std::invalid_argument("Modulation depth must be betwee 0 and 1");
-    
-    _modDepth = dpth;
+    _lfo->setAmp(dpth);
+}
+
+double EnvSeg::getModDepth() const
+{
+    return _lfo->getAmp();
 }
 
 void EnvSeg::setModRate(unsigned short rate)
@@ -251,6 +275,11 @@ void EnvSeg::setModRate(unsigned short rate)
     _modRate = rate;
     
     _calcModRate();
+}
+
+double EnvSeg::getModRate() const
+{
+    return _lfo->getRate();
 }
 
 double EnvSeg::tick()
@@ -266,6 +295,7 @@ double EnvSeg::tick()
     if (_sample++ >= _len)
     { return _endLevel; }
     
+    // Increment the envelope value
     _segCurr *= _segIncr;
     
     double ret = _segCurr;
@@ -279,14 +309,7 @@ double EnvSeg::tick()
     // Apply modulation oscillator
     if (_modWave != WavetableDB::NONE)
     {
-        // modulated value
-        double modValue = ret + _lfo->tick();
-        
-        // difference between modulated and unmodulated
-        double diff = modValue - ret;
-        
-        // control how much change is applied
-        ret += diff * _modDepth;
+        ret = _lfo->modulate(ret, 0, 1);
     }
     
     return ret;
@@ -301,18 +324,141 @@ EnvSegSeq::EnvSegSeq(EnvSegSeq::subseg_t seqLen)
     _currSeg = _segs.begin();
 }
 
-void EnvSegSeq::setSegLen(subseg_t seg, unsigned int ms)
-{ _segs[seg].setLen(ms * 44.1); }
+void EnvSegSeq::setSegRate(subseg_t seg, double rate)
+{
+    _segs[seg].setRate(rate);
+}
+
+double EnvSegSeq::getSegRate(subseg_t seg) const
+{
+    return _segs[seg].getRate();
+}
+
+
+void EnvSegSeq::setSegStartLevel(subseg_t seg, double lv)
+{
+    _segs[seg].setStartLevel(lv);
+}
+
+double EnvSegSeq::getSegStartLevel(subseg_t seg) const
+{
+    return _segs[seg].getStartLevel();
+}
+
+
+void EnvSegSeq::setSegEndLevel(subseg_t seg, double lv)
+{
+    _segs[seg].setEndLevel(lv);
+}
+
+double EnvSegSeq::getSegEndLevel(subseg_t seg) const
+{
+    return _segs[seg].getEndLevel();
+}
+
+
+void EnvSegSeq::setSegLen(subseg_t seg, unsigned long ms)
+{
+    _segs[seg].setLen(ms * 44.1);
+}
+
+unsigned long EnvSegSeq::getSegLen(subseg_t seg) const
+{
+    return _segs[seg].getLen();
+}
+
+
+void EnvSegSeq::setSegBothLevels(subseg_t seg, double lv)
+{
+    setSegStartLevel(seg, lv), setSegEndLevel(seg, lv);
+}
+
+
+void EnvSegSeq::setSegModWave(subseg_t seg, int wavetableId)
+{
+    _segs[seg].setModWave(wavetableId);
+}
+
+
+void EnvSegSeq::setSegModDepth(subseg_t seg, double dpth)
+{
+    _segs[seg].setModDepth(dpth);
+}
+
+
+void EnvSegSeq::setSegModRate(subseg_t seg, unsigned short rate)
+{
+    _segs[seg].setModRate(rate);
+}
+
+double EnvSegSeq::getSegModRate(subseg_t seg) const
+{
+    return _segs[seg].getModRate();
+}
+
 
 void EnvSegSeq::setLoopStart(EnvSegSeq::subseg_t seg)
-{ _loopStart = _segs.begin() + seg; }
+{
+    _loopStart = _segs.begin() + seg;
+}
+
+EnvSegSeq::subseg_t EnvSegSeq::getLoopStart() const
+{
+    return _loopStart - _segs.begin();
+}
+
 
 void EnvSegSeq::setLoopEnd(EnvSegSeq::subseg_t seg)
 {
     // Plus one because the end points to one after
-    // the loop end segmetn
+    // the loop end segment
     _loopEnd = _segs.begin() + seg + 1;
 }
+
+EnvSegSeq::subseg_t EnvSegSeq::getLoopEnd() const
+{
+    return _loopEnd - _segs.begin();
+}
+
+
+void EnvSegSeq::setLoopMax(unsigned short n)
+{
+    if (n > 64) _loopInf = true;
+    else
+    {
+        _loopInf = false;
+        _loopMax = n;
+    }
+}
+
+unsigned short EnvSegSeq::getLoopMax() const
+{
+    return _loopMax;
+}
+
+
+void EnvSegSeq::setLoopInf(bool state)
+{
+    _loopInf = state;
+}
+
+bool EnvSegSeq::loopInf() const
+{
+    return _loopInf;
+}
+
+
+std::vector<EnvSeg>::size_type EnvSegSeq::size() const
+{
+    return _segs.size();
+}
+
+
+void EnvSegSeq::addSegment()
+{
+    _segs.push_back(EnvSeg());
+}
+
 
 void EnvSegSeq::_changeSeg(EnvSegSeq::segItr seg)
 {
@@ -362,13 +508,3 @@ double EnvSegSeq::tick()
     return _lastTick;
     
 }
-
-void EnvSegSeq::setLoopMax(unsigned short n)
-{
-    if (n > 64) _loopInf = true;
-    else
-    {
-        _loopInf = false;
-        _loopMax = n;
-    }
-};

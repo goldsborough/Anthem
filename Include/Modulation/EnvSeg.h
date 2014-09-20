@@ -1,10 +1,14 @@
-//
-//  EnvSeg.h
-//  Anthem
-//
-//  Created by Peter Goldsborough on 15/04/14.
-//  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
-//
+/*********************************************************************************************//*!
+*
+*  @file        EnvSeg.h
+*
+*  @author      Peter Goldsborough
+*
+*  @date        18/10/2014
+*
+*  @brief       EnvSeg and EnvSegSeq classes.
+*
+*************************************************************************************************/
 
 #ifndef __Anthem__EnvSeg__
 #define __Anthem__EnvSeg__
@@ -18,7 +22,7 @@ class LFO;
  *
  *  @brief      An envelope segment
  *
- *  @details    The EnvSeg class is a single segment of an envelope, it can be
+ *  @details    The EnvSeg class is a single segment of a EnvSegSeq. It can be
  *              be either an attack, decay or a sustain segment and increment or
  *              decrement either exponentially, logarithmically or linearly in
  *              case of being a decay or an attack segment. Additionally, it has
@@ -92,15 +96,15 @@ public:
     // In samples
     void setLen(len_t sampleLen);
     
-   /*************************************************************************//*!
+    /*************************************************************************//*!
     *
-    *  @brief      Returns the length of the segment
+    *  @brief      Returns the length of the segment.
     *
-    *  @return     The length of the segment
+    *  @return     The length of the segment, in samples.
     *
     ****************************************************************************/
     
-    len_t getLen() { return _len; };
+    len_t getLen() const;
     
     /*************************************************************************//*!
     *
@@ -128,6 +132,16 @@ public:
     
     /*************************************************************************//*!
     *
+    *  @brief      Returns the current rate.
+    *
+    *  @return     The rate.
+    *
+    ****************************************************************************/
+    
+    double getRate() const;
+    
+    /*************************************************************************//*!
+    *
     *  @brief       Sets the end amplitude of the segment.
     *
     *  @details     Sets _endLevel and calls _calcLevel and _calcRate to
@@ -144,6 +158,16 @@ public:
     ****************************************************************************/
     
     void setEndLevel(double lv);
+    
+    /*************************************************************************//*!
+    *
+    *  @brief      Returns the ending level of the segment.
+    *
+    *  @return     The end level.
+    *
+    ****************************************************************************/
+    
+    double getEndLevel() const;
     
     /*************************************************************************//*!
     *
@@ -166,6 +190,16 @@ public:
     
     /*************************************************************************//*!
     *
+    *  @brief      Returns the ending level of the segment.
+    *
+    *  @return     The end level.
+    *
+    ****************************************************************************/
+
+    double getStartLevel() const;
+    
+    /*************************************************************************//*!
+    *
     *  @brief       Convenience function for setting a sustain amplitude.
     *
     *  @details     Calls setStartLevel and setEndLevel with the parameter.
@@ -179,26 +213,6 @@ public:
     ****************************************************************************/
     
     void setBothLevels(double lv);
-    
-    /*************************************************************************//*!
-    *
-    *  @brief       Returns the the end level of the segment.
-    *
-    *  @return      The end level of the segment.
-    *
-    ****************************************************************************/
-    
-    double getEndLevel() { return _endLevel;};
-    
-    /*************************************************************************//*!
-    *
-    *  @brief       Returns the the starting level of the segment.
-    *
-    *  @return      The starting level of the segment.
-    *
-    ****************************************************************************/
-    
-    double getStartLevel() {return _startLevel; };
     
     /*************************************************************************//*!
     *
@@ -240,6 +254,16 @@ public:
     
     /*************************************************************************//*!
     *
+    *  @brief      Returns the mod wave's rate.
+    *
+    *  @return     The mod wave's rate.
+    *
+    ****************************************************************************/
+    
+    double getModRate() const;
+    
+    /*************************************************************************//*!
+    *
     *  @brief       Sets the depth of the modulation.
     *
     *  @details     This setting, ranging from 0 to 1, determines how much of
@@ -257,6 +281,16 @@ public:
     
     /*************************************************************************//*!
     *
+    *  @brief      Returns the mod wave's depth.
+    *
+    *  @return     The mod wave's depth.
+    *
+    ****************************************************************************/
+    
+    double getModDepth() const;
+    
+    /*************************************************************************//*!
+    *
     *  @brief       Resets the envelope segment.
     *
     *  @details     Resets the sample count to 0 and calls _calcRate() to 
@@ -266,13 +300,7 @@ public:
     *
     ****************************************************************************/
     
-    void reset()
-    {
-        _sample = 0;
-        
-        // reset _segCurr
-        _calcRate();
-    }
+    void reset();
     
 private:
     
@@ -396,6 +424,16 @@ private:
     len_t _len;
 };
 
+/******************************************************************************//*!
+*
+*  @brief       A sequence of EnvSegs.
+*
+*  @details     An EnvSegSeq is a sequence of envelope segments that are activated
+*               one after the other. Control over the individual segments is possible
+*               as well as looping.
+*
+*********************************************************************************/
+
 class EnvSegSeq : public GenUnit
 {
     
@@ -403,60 +441,331 @@ public:
 
     typedef unsigned long subseg_t;
     
+    /******************************************************************************//*!
+    *
+    *  @brief       Constructs an EnvSegSeq.
+    *
+    *  @param       seqLen The number of segments in the sequence.
+    *
+    *********************************************************************************/
+    
     EnvSegSeq(subseg_t seqLen);
+    
+    virtual ~EnvSegSeq() { }
 
+    /******************************************************************************//*!
+    *
+    *  @brief      Ticks an envelope value.
+    *
+    *  @param      The envelope value is the tick of the current segment.
+    *
+    *********************************************************************************/
+    
     virtual double tick();
     
-    virtual void setSegRate(subseg_t seg, double rate) { _segs[seg].setRate(rate); }
+    /******************************************************************************//*!
+    *
+    *  @brief      Adds a segment to the sequence.
+    *
+    *********************************************************************************/
     
-    virtual void setSegStartLevel(subseg_t seg, double lv)  { _segs[seg].setStartLevel(lv); }
+    virtual void addSegment();
     
-    virtual void setSegEndLevel(subseg_t seg, double lv)  { _segs[seg].setEndLevel(lv); }
+    /******************************************************************************//*!
+    *
+    *  @brief      Sets the rate of a segment.
+    *
+    *  @param      seg The segment in the sequence.
+    *
+    *  @param      rate The new rate. 0-1 is exp., 1 is linear and 1-2 is log.
+    *
+    *********************************************************************************/
     
-    virtual void setSegBothLevels(subseg_t seg, double lv) { setSegStartLevel(seg, lv), setSegEndLevel(seg, lv); }
+    virtual void setSegRate(subseg_t seg, double rate);
     
-    virtual void setSegModWave(subseg_t seg, int mod) { _segs[seg].setModWave(mod); }
+    /******************************************************************************//*!
+    *
+    *  @brief      Returns the current rate of a segment.
+    *
+    *  @param     seg The segment, of which to get the rate.
+    *
+    *  @return     The rate of a segment.
+    *
+    *********************************************************************************/
     
-    virtual void setSegModDepth(subseg_t seg, double dpth) { _segs[seg].setModDepth(dpth); }
+    virtual double getSegRate(subseg_t seg) const;
     
-    virtual void setSegModRate(subseg_t seg, unsigned char rate) { _segs[seg].setModRate(rate); }
+    /******************************************************************************//*!
+    *
+    *  @brief       Sets the starting level of a segment.
+    *
+    *  @param       seg The segment in the sequence.
+    *
+    *  @param       lv The new level.
+    *
+    *********************************************************************************/
     
-    virtual void setSegLen(subseg_t seg, unsigned int ms);
+    virtual void setSegStartLevel(subseg_t seg, double lv);
+    
+    /******************************************************************************//*!
+    *
+    *  @brief      Returns the current starting level of a segment.
+    *
+    *  @param     seg The segment, of which to get the starting level.
+    *
+    *  @return     The starting level of a segment.
+    *
+    *********************************************************************************/
+    
+    virtual double getSegStartLevel(subseg_t seg) const;
+    
+    /******************************************************************************//*!
+    *
+    *  @brief       Sets the end level of a segment.
+    *
+    *  @param       seg The segment in the sequence.
+    *
+    *  @param       lv The new level.
+    *
+    *********************************************************************************/
+    
+    virtual void setSegEndLevel(subseg_t seg, double lv);
+    
+    /******************************************************************************//*!
+    *
+    *  @brief      Returns the current ending level of a segment.
+    *
+    *  @param     seg The segment, of which to get the ending level.
+    *
+    *  @return     The ending level of a segment.
+    *
+    *********************************************************************************/
+    
+    virtual double getSegEndLevel(subseg_t seg) const;
+    
+    /******************************************************************************//*!
+    *
+    *  @brief       Sets the both starting and ending levels at the same time.
+    *
+    *  @param       seg The segment in the sequence.
+    *
+    *  @param       lv The new level.
+    *
+    *********************************************************************************/
+    
+    virtual void setSegBothLevels(subseg_t seg, double lv);
+    
+    /******************************************************************************//*!
+    *
+    *  @brief       Sets the modulation wave of a segment.
+    *
+    *  @param       seg The segment in the sequence.
+    *
+    *  @param       mod The wavetable id of the wavetable (WavetableDB::Wavetables).
+    *
+    *********************************************************************************/
+    
+    virtual void setSegModWave(subseg_t seg, int wavetableId);
+    
+    /******************************************************************************//*!
+    *
+    *  @brief       Sets the modulation depth of a segment's mod wave.
+    *
+    *  @param       seg The segment in the sequence.
+    *
+    *  @param       dpth The new depth value, between 0 and 1.
+    *
+    *********************************************************************************/
+    
+    virtual void setSegModDepth(subseg_t seg, double dpth);
+    
+    /******************************************************************************//*!
+    *
+    *  @brief      Returns the current mod depth of a segment.
+    *
+    *  @param     seg The segment, of which to get the mod depth level.
+    *
+    *  @return     The mod depth level of a segment.
+    *
+    *********************************************************************************/
+    
+    virtual double getSegModDepth(subseg_t seg) const;
+    
+    /*****************************************************************************************//*!
+    *
+    *  @brief       Sets the modulation rate of a segment.
+    *
+    *  @param       seg The segment in the sequence.
+    *
+    *  @param       rate The new rate, not that this is cycles per segment and not per second.
+    *
+    ********************************************************************************************/
+    
+    virtual void setSegModRate(subseg_t seg, unsigned short rate);
+    
+    /******************************************************************************//*!
+    *
+    *  @brief      Returns the current mod rate of a segment.
+    *
+    *  @param     seg The segment, of which to get the mod rate.
+    *
+    *  @return     The mod rate of a segment.
+    *
+    *********************************************************************************/
+    
+    virtual double getSegModRate(subseg_t seg) const;
+    
+    /******************************************************************************//*!
+    *
+    *  @brief       Sets the length of a segment.
+    *
+    *  @param       seg The segment in the sequence.
+    *
+    *  @param       ms The new length of the segment, in milliseconds.
+    *
+    *********************************************************************************/
+
+    virtual void setSegLen(subseg_t seg, unsigned long ms);
+    
+    /******************************************************************************//*!
+    *
+    *  @brief      Returns the current length of a segment.
+    *
+    *  @param     seg The segment, of which to get the length.
+    *
+    *  @return     The length of a segment.
+    *
+    *********************************************************************************/
+    
+    virtual unsigned long getSegLen(subseg_t seg) const;
+    
+    /******************************************************************************//*!
+    *
+    *  @brief       Sets the sequence's loop start segment.
+    *
+    *  @param       seg The segment to start the loop from.
+    *
+    *********************************************************************************/
     
     virtual void setLoopStart(subseg_t seg);
     
+    /******************************************************************************//*!
+    *
+    *  @brief      Returns the index of the loop start segment.
+    *
+    *  @return     The index of the loop start segment.
+    *
+    *********************************************************************************/
+    
+    virtual subseg_t getLoopStart() const;
+    
+    /******************************************************************************//*!
+    *
+    *  @brief       Sets the sequence's loop end segment.
+    *
+    *  @param       seg The segment to end the loop at.
+    *
+    *********************************************************************************/
+    
     virtual void setLoopEnd(subseg_t seg);
+    
+    /******************************************************************************//*!
+    *
+    *  @brief      Returns the index of the loop end segment.
+    *
+    *  @return     The index of the loop end segment.
+    *
+    *********************************************************************************/
+    
+    virtual subseg_t getLoopEnd() const;
+    
+    /******************************************************************************//*!
+    *
+    *  @brief       Sets the maximum number of times to loop.
+    *
+    *  @details     Note that a loop count greater 64 sets the loop-to-infinity property to true.
+    *
+    *  @param       n The number of times to loop.
+    *
+    *********************************************************************************/
     
     virtual void setLoopMax(unsigned short n);
     
-    virtual void setLoopInf(bool state = true) { _loopInf = state; }
+    /******************************************************************************//*!
+    *
+    *  @brief      Returns the maximum number of loops to loop through.
+    *
+    *  @return     The maximum number of loops to loop through.
+    *
+    *********************************************************************************/
     
-    virtual ~EnvSegSeq() { }
+    virtual unsigned short getLoopMax() const;
+    
+    /******************************************************************************//*!
+    *
+    *  @brief       Enables/disables the loop-to-infinity property.
+    *
+    *  @param       state Boolean whether or not to loop to infinity.
+    *
+    *********************************************************************************/
+    
+    virtual void setLoopInf(bool state = true);
+    
+    /******************************************************************************//*!
+    *
+    *  @brief      Whether or not the sequence is looping to infinity.
+    *
+    *  @return     Boolean, whether or not the sequence is looping to infinity.
+    *
+    *********************************************************************************/
+    
+    virtual bool loopInf() const;
+    
+    /******************************************************************************//*!
+    *
+    *  @brief      Returns the sequence size/length.
+    *
+    *  @return     The sequence size/length.
+    *
+    *********************************************************************************/
+
+    virtual std::vector<EnvSeg>::size_type size() const;
     
 protected:
     
     typedef std::vector<EnvSeg>::iterator segItr;
     
+    /*! Changes the current segment in the sequence */
     virtual void _changeSeg(segItr seg);
     
+    /*! Executes various steps to reset a loop (go from end back to start) */
     virtual void _resetLoop();
     
+    /*! The number of samples passed since starting the current segment */
     unsigned long _currSample;
     
-    // The pointer to the
-    // current segment
+    /*! Iterator pointing to the current segment */
     segItr _currSeg;
     
+    /*! Iterator pointing to the loop start segment */
     segItr _loopStart;
+    
+    /*! Iterator pointing to the loop end segment */
     segItr _loopEnd;
     
+    /*! Current number of loops executed */
     subseg_t _loopCount;
-    subseg_t _loopMax;
     
+    /*! Maximum number of loops */
+    subseg_t _loopMax;
+ 
+    /*! Boolean whether or not to loop infinitely */
     bool _loopInf;
     
+    /*! The last ticked value */
     double _lastTick;
     
+    /*! The segment sequence */
     std::vector<EnvSeg> _segs;
 };
 

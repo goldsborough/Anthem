@@ -237,13 +237,8 @@ Wavetable& Wavetable::makeUnique()
 
 void WavetableDB::init(const unsigned int& wtLen)
 {
-    _wtLength = wtLen;
-    _fundIncr = Global::twoPi / _wtLength;
-    
     // The wavetable configuration file
     TextParsley textParser("/Users/petergoldsborough/Documents/Anthem/Resources/Wavetables/wavetables.txt");
-    
-    AnthemWTParser wtParser;
     
     std::string fname;
     
@@ -254,14 +249,17 @@ void WavetableDB::init(const unsigned int& wtLen)
     {
         fname = "/Users/petergoldsborough/Documents/Anthem/Resources/Wavetables/" + names[i] + ".wavetable";
         
-        _tables.push_back(wtParser.readWT(fname));
+        _tables.push_back(WavetableParser::readWavetable(fname));
     }
+    
+    // For NONE
+    _tables.push_back(Wavetable());
 }
 
 Wavetable& WavetableDB::operator[](const int& wt)
 {
     if (wt == NONE)
-    { return _noneTable; }
+    { return _tables[_tables.size() - 1]; }
         
     if (wt < NONE || wt >= _tables.size())
     { throw std::invalid_argument("Wavetable ID out of range!"); }
@@ -272,7 +270,7 @@ Wavetable& WavetableDB::operator[](const int& wt)
 const Wavetable& WavetableDB::operator[](const int& wt) const
 {
     if (wt == NONE)
-    { return _noneTable; }
+    { return _tables[_tables.size() - 1]; }
     
     if (wt < NONE || wt >= _tables.size())
     { throw std::invalid_argument("Wavetable ID out of range!"); }
@@ -282,7 +280,7 @@ const Wavetable& WavetableDB::operator[](const int& wt) const
 
 Wavetable WavetableDB::_smoothSaw()
 {
-    double* wt = new double[_wtLength + 1];
+    double* wt = new double[Global::wtLen + 1];
     
     // First decrement from 1 to -1 in 9/10 of the cycle,
     // then go back up smoothly the last 1/10 of the cycle
@@ -299,12 +297,12 @@ Wavetable WavetableDB::_smoothSaw()
     double ind = 0.9;
     
     // Increment value from -1 to 1
-    double ampIncr = 2.0/(_wtLength * 0.9);
+    double ampIncr = 2.0/(Global::wtLen * 0.9);
     
     // Increment value for the time
-    double indIncr = 0.1/(_wtLength * 0.1);
+    double indIncr = 0.1/(Global::wtLen * 0.1);
     
-    for (unsigned int n = 0; n < _wtLength; n++)
+    for (unsigned int n = 0; n < Global::wtLen; n++)
     {
         if (amp > -1)
         {
@@ -342,22 +340,22 @@ Wavetable WavetableDB::_smoothSaw()
         }
     }
     
-    wt[_wtLength] = wt[0];
+    wt[Global::wtLen] = wt[0];
     
-    return Wavetable(wt,_wtLength);
+    return Wavetable(wt,Global::wtLen);
 }
 
 Wavetable WavetableDB::_smoothSquare()
 {
-    double* wt = new double[_wtLength + 1];
+    double* wt = new double[Global::wtLen + 1];
     
     double ind = 0;
     
-    double incr = 1.0 / _wtLength;
+    double incr = 1.0 / Global::wtLen;
     
     float exp = 50;
 
-    for (unsigned int n = 0; n < _wtLength; n++)
+    for (unsigned int n = 0; n < Global::wtLen; n++)
     {
         double val;
         
@@ -382,22 +380,22 @@ Wavetable WavetableDB::_smoothSquare()
         
         wt[n] = val;
         
-        if ( (ind += incr) >= _wtLength)
-        { ind -= _wtLength; }
+        if ( (ind += incr) >= Global::wtLen)
+        { ind -= Global::wtLen; }
     }
     
-    wt[_wtLength] = wt[0];
+    wt[Global::wtLen] = wt[0];
     
-    return Wavetable(wt,_wtLength);
+    return Wavetable(wt,Global::wtLen);
 }
 
 Wavetable WavetableDB::_directSquare()
 {
     // the sample buffer
-    double * wt = new double [_wtLength + 1];
+    double * wt = new double [Global::wtLen + 1];
     
     // time for one sample
-    double sampleTime = 1.0 / _wtLength;
+    double sampleTime = 1.0 / Global::wtLen;
     
     // the midpoint of the period
     double mid = 0.5;
@@ -405,32 +403,32 @@ Wavetable WavetableDB::_directSquare()
     double ind = 0;
     
     // fill the sample buffer
-    for (int n = 0; n < _wtLength; n++)
+    for (int n = 0; n < Global::wtLen; n++)
     {
         wt[n] = (ind < mid) ? -1 : 1;
         
-        if ( (ind += sampleTime) >= _wtLength)
-        { ind -= _wtLength; }
+        if ( (ind += sampleTime) >= Global::wtLen)
+        { ind -= Global::wtLen; }
     }
     
-    wt[_wtLength] = wt[0];
+    wt[Global::wtLen] = wt[0];
     
-    return Wavetable(wt,_wtLength);
+    return Wavetable(wt,Global::wtLen);
 }
 
 Wavetable WavetableDB::_directSaw()
 {
     // the sample buffer
-    double * wt = new double [_wtLength];
+    double * wt = new double [Global::wtLen];
     
     // how much we must decrement the count
     // by at each iteration
     // 2.0 because the range is from 1 to -1
-    double incr = 2.0 / _wtLength;
+    double incr = 2.0 / Global::wtLen;
     
     double ind = 1;
     
-    for (int n = 0; n < _wtLength; n++)
+    for (int n = 0; n < Global::wtLen; n++)
     {
         wt[n] = ind;
         
@@ -438,24 +436,24 @@ Wavetable WavetableDB::_directSaw()
             ind = 1;
     }
     
-    wt[_wtLength] = wt[0];
+    wt[Global::wtLen] = wt[0];
     
-    return Wavetable(wt,_wtLength);
+    return Wavetable(wt,Global::wtLen);
 }
 
 Wavetable WavetableDB::_directTriangle()
 {
-    double* wt = new double[_wtLength + 1];
+    double* wt = new double[Global::wtLen + 1];
     
     double phase = 0;
-    double phaseIncr = Global::twoPi / _wtLength;
+    double phaseIncr = Global::twoPi / Global::wtLen;
     
     // Basierend auf Pseudocode (vgl. Mitchell, 2008)
     
     double triValue;
     double twoDivPi = 2.0/Global::pi;
     
-    for (unsigned int n = 0; n < _wtLength; n++)
+    for (unsigned int n = 0; n < Global::wtLen; n++)
     {
         triValue = (phase * twoDivPi);
         
@@ -469,7 +467,7 @@ Wavetable WavetableDB::_directTriangle()
             phase -= Global::twoPi;
     }
     
-    wt[_wtLength] = wt[0];
+    wt[Global::wtLen] = wt[0];
     
-    return Wavetable(wt,_wtLength);
+    return Wavetable(wt,Global::wtLen);
 }

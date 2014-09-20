@@ -14,6 +14,32 @@
 #include <vector>
 #include <map>
 
+namespace WavetableParser
+{
+    /*************************************************************************//*!
+    *
+    *   @brief Reads a wavetable and returns a Wavetable object.
+    *
+    *   @param fname The name of the file to read from.
+    *
+    ****************************************************************************/
+    
+    Wavetable readWavetable(const std::string& fname);
+    
+    
+    /*************************************************************************//*!
+    *
+    *   @brief Writes Wavetable object to file.
+    *
+    *   @param fname The name of the file to write to.
+    *
+    *   @param wt The wavetable object to write to file. 
+    *
+    ****************************************************************************/
+    
+    void writeWavetable(const std::string& fname, const Wavetable& wt);
+};
+
 typedef std::string::const_iterator Str_cItr;
 typedef std::vector<std::string>::iterator Vec_Itr;
 
@@ -770,13 +796,6 @@ private:
     
     bool isClosed = false;
     bool selfClosed = false;
-};
-
-struct AnthemWTParser
-{
-    Wavetable readWT(const std::string& fname);
-    
-    void writeWT(const std::string& fname, const Wavetable& wt);
 };
 
 /*************************************************************************//*!
