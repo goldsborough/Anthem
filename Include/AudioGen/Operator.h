@@ -150,9 +150,6 @@ private:
     
     typedef std::vector<Oscillator*> oscVec;
     
-    /*! ModDock initialization */
-    void _initModDocks();
-    
     /*! The std::vector of pointers to Oscillators that holds current notes */
     oscVec _oscs;
     

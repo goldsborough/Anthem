@@ -434,7 +434,7 @@ private:
 *
 *********************************************************************************/
 
-class EnvSegSeq : public GenUnit
+class EnvSegSeq
 {
     
 public:
@@ -465,11 +465,39 @@ public:
     
     /******************************************************************************//*!
     *
+    *  @brief      Sets the EnvSegSeq's amplitude.
+    *
+    *  @param      amp The new amplitude value.
+    *
+    *********************************************************************************/
+    
+    virtual void setAmp(double amp);
+    
+    /******************************************************************************//*!
+    *
+    *  @brief      Gets the EnvSegSeq's amplitude.
+    *
+    *  @return     The current amplitude value.
+    *
+    *********************************************************************************/
+    
+    virtual double getAmp() const;
+    
+    /******************************************************************************//*!
+    *
     *  @brief      Adds a segment to the sequence.
     *
     *********************************************************************************/
     
     virtual void addSegment();
+    
+    /******************************************************************************//*!
+    *
+    *  @brief      Removes the last segment in the sequence.
+    *
+    *********************************************************************************/
+    
+    virtual void removeSegment();
     
     /******************************************************************************//*!
     *
@@ -764,6 +792,9 @@ protected:
     
     /*! The last ticked value */
     double _lastTick;
+    
+    /*! The amplitude value */
+    double _amp;
     
     /*! The segment sequence */
     std::vector<EnvSeg> _segs;

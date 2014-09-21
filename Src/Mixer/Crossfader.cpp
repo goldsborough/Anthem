@@ -43,6 +43,11 @@ void CrossfadeUnit::setType(unsigned short type)
     _type = type;
 }
 
+unsigned short CrossfadeUnit::getType() const
+{
+    return _type;
+}
+
 void CrossfadeUnit::setValue(short value)
 {
     if (value < -100 || value > 100)
@@ -52,7 +57,14 @@ void CrossfadeUnit::setValue(short value)
 }
 
 void CrossfadeUnit::setScalingEnabled(bool scalingEnabled)
-{ _scalingEnabled = scalingEnabled; }
+{
+    _scalingEnabled = scalingEnabled;
+}
+
+bool CrossfadeUnit::scalingEnabled() const
+{
+    return _scalingEnabled;
+}
 
 double CrossfadeUnit::_scale(const double& value) const
 {
@@ -77,14 +89,12 @@ double CrossfadeUnit::right() const
 Crossfader::Crossfader(unsigned short type,
                        bool scalingEnabled,
                        unsigned short offset,
-                       GenUnit* left,
-                       GenUnit* right)
+                       ModUnit* left,
+                       ModUnit* right)
 : CrossfadeUnit(type,scalingEnabled,offset),
-  _leftUnit(left), _rightUnit(right)
-{
-    // Initialize ModDocks
-    _initModDocks();
-}
+  _leftUnit(left), _rightUnit(right),
+  ModUnit(1,1)
+{ }
 
 void Crossfader::setValue(short value)
 {
@@ -96,27 +106,40 @@ void Crossfader::setValue(short value)
     _index = 100 + value;
 }
 
-double Crossfader::tick()
+double Crossfader::modulate(double sample, double depth, double minBoundary, double maxBoundary)
 {
     if (_mods[VALUE]->inUse())
     {
         // Only set the index, the value is not changed (constant base value)
-        _index = _mods[VALUE]->checkAndTick(_value, -100, 100) + 100;
+        _index = _mods[VALUE]->modulate(_value, -100, 100) + 100;
     }
     
-    // Get left and right ticks (if a GenUnit is available) and fade them appropriately
-    double left = (_leftUnit) ? _leftUnit->tick() * this->left() : 0;
-    double right = (_rightUnit) ? _rightUnit->tick() * this->right() : 0;
+    // Get left and right ticks (if a ModUnit is available) and fade them appropriately
+    
+    double left = (_leftUnit) ? _leftUnit->modulate(sample, depth, minBoundary, maxBoundary) * this->left() : 0;
+    
+    double right = (_rightUnit) ? _rightUnit->modulate(sample, depth, minBoundary, maxBoundary) * this->right() : 0;
     
     // Return the combined value 
     return (left + right) * _amp;
 }
 
-void Crossfader::_initModDocks()
-{ _mods = { new ModDock(2) }; }
+void Crossfader::setLeftUnit(ModUnit* unit)
+{
+    _leftUnit = unit;
+}
 
-void Crossfader::setLeftUnit(GenUnit* unit)
-{ _leftUnit = unit; }
+void Crossfader::setRightUnit(ModUnit* unit)
+{
+    _rightUnit = unit;
+}
 
-void Crossfader::setRightUnit(GenUnit* unit)
-{ _rightUnit = unit; }
+ModUnit* Crossfader::getLeftUnit() const
+{
+    return _leftUnit;
+}
+
+ModUnit* Crossfader::getRightUnit() const
+{
+    return _rightUnit;
+}

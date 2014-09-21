@@ -16,7 +16,7 @@
 #include <stdexcept>
 
 LFO::LFO(short wt, double rate, double amp, double phaseOffset)
-: _osc(new Oscillator(wt,rate,amp,phaseOffset))
+: _osc(new Oscillator(wt,rate,amp,phaseOffset)), ModUnit(1,3)
 { }
 
 LFO::~LFO()
@@ -61,7 +61,7 @@ double LFO::getAmp() const
     return _osc->getAmp();
 }
 
-double LFO::modulate(double sample, double minBoundary, double maxBoundary)
+double LFO::modulate(double sample, double depth, double minBoundary, double maxBoundary)
 {
     // Set all of these modulations to the oscillator directly so that the internal
     // base values aren't changed (e.g. _rate, in this case, must stay the same, as
@@ -74,12 +74,16 @@ double LFO::modulate(double sample, double minBoundary, double maxBoundary)
     
     double tick = _osc->tick();
     
-    // Return ret * modulated value if ModDock in use
+    if (tick > 0.3)
+    {
+        
+    }
+    
     if (_mods[AMP]->inUse())
     { tick *= _mods[AMP]->modulate(_osc->getAmp(), 0, 1); }
     
     // Modulate
-    sample += (maxBoundary * tick);
+    sample += (maxBoundary * tick * depth);
     
     // Boundary checking
     if (sample > maxBoundary) return maxBoundary;
@@ -93,9 +97,19 @@ LFOSeq::LFOSeq(unsigned short seqLength, double rate)
 : EnvSegSeq(seqLength)
 {
     EnvSegSeq::setLoopStart(0);
-    EnvSegSeq::setLoopEnd(seqLen - 1);
+    EnvSegSeq::setLoopEnd(seqLength - 1);
     
     EnvSegSeq::setLoopInf();
+    
+    EnvSegSeq::setSegEndLevel(0, 1);
+    
+    EnvSegSeq::setSegLen(0, 1000);
+    
+    for (int i = 1; i < seqLength; ++i)
+    {
+        EnvSegSeq::setSegLen(i, 100);
+        EnvSegSeq::setSegBothLevels(i, 1);
+    }
     
     setRate(rate);
 }
@@ -108,14 +122,21 @@ void LFOSeq::setRate(double Hz)
     _rate = Hz;
     
     // get the period, divide up into _segNum pieces
-    double len = (1.0 / _rate) / _seqLen;
+    double len = (1.0 / _rate) / _segs.size();
     
     // seconds to milliseconds
     len *= 1000;
     
     // Set all segment's lengths
-    for (int i = 0; i < _seqLen; i++)
-    { EnvSegSeq::setSegLen(i, len); }               // FIXME?
+    for (int i = 0; i < _segs.size(); i++)
+    {
+        EnvSegSeq::setSegLen(i, len);
+    }
+}
+
+double LFOSeq::modulate(double sample, double depth, double, double)
+{
+    return sample * tick() * depth;
 }
 
 double LFOSeq::getRate() const
@@ -123,12 +144,24 @@ double LFOSeq::getRate() const
     return _rate;
 }
 
-LFOUnit::LFOUnit(unsigned short mode)
-{ setMode(mode); }
-
-void LFOUnit::setMode(unsigned short mode)
+void LFOSeq::addSegment()
 {
-    if (mode)
+    if (_segs.size() == 10)
+    { throw std::runtime_error("Segment count already 10!"); }
+    
+    _segs.push_back(EnvSeg());
+}
+
+LFOUnit::LFOUnit(unsigned short mode)
+{
+    setMode(mode);
+}
+
+void LFOUnit::setMode(bool mode)
+{
+    _mode = mode;
+    
+    if (_mode)
     {
         fader.setLeftUnit(&lfoSeqs[0]);
         
@@ -141,6 +174,11 @@ void LFOUnit::setMode(unsigned short mode)
         
         fader.setRightUnit(&lfos[1]);
     }
+}
+
+bool LFOUnit::getMode() const
+{
+    return _mode;
 }
 
 LFOUnit::Env::Env()
@@ -172,9 +210,9 @@ void LFOUnit::Env::setEnvLevel(short point, double lvl)
     }
 }
 
-double LFOUnit::tick()
+double LFOUnit::modulate(double sample, double depth, double minBoundary, double maxBoundary)
 {
     // Tick the crossfaded value from the lfos and multiply by the envelope
     // value and the total amplitude value
-    return fader.tick() * env.tick() * _amp;
+    return fader.modulate(sample, depth, minBoundary, maxBoundary);// * env.tick() * _amp;
 }

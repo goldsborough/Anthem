@@ -19,7 +19,7 @@
 #include "Wavetable.h"
 
 class ModDock;
-class GenUnit;
+class ModUnit;
 
 /*********************************************************************************************//*!
 *
@@ -38,8 +38,27 @@ class Unit
     
 public:
     
-    typedef unsigned char docknum_t;
     typedef unsigned short index_t;
+    
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Constructs a Unit.
+    *
+    *  @param       numDocks The number of ModDocks for the Unit.
+    *
+    *****************************************************************************************************/
+    
+    Unit(index_t numDocks = 0);
+    
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Returns the number of ModDocks.
+    *
+    *  @return      The number of ModDocks.
+    *
+    *****************************************************************************************************/
+    
+    std::vector<ModUnit*>::size_type numDocks() const;
     
     /*************************************************************************************************//*!
     *
@@ -53,7 +72,7 @@ public:
     *
     *****************************************************************************************************/
     
-    virtual void setDockMasterDepth(docknum_t dockNum, double depth);
+    virtual void setDockMasterDepth(index_t dockNum, double depth);
     
     /*************************************************************************************************//*!
     *
@@ -67,7 +86,7 @@ public:
     *
     *****************************************************************************************************/
     
-    virtual void setDepth(docknum_t dockNum,
+    virtual void setDepth(index_t dockNum,
                           index_t modNum,
                           double depth);
     
@@ -85,9 +104,8 @@ public:
     *
     *****************************************************************************************************/
     
-    virtual void attachMod(docknum_t dockNum,
-                           index_t modNum,
-                           GenUnit* mod);
+    virtual void attachMod(index_t dockNum,
+                           ModUnit* mod);
     
     /*************************************************************************************************//*!
     *
@@ -101,7 +119,7 @@ public:
     *
     *****************************************************************************************************/
     
-    virtual void detachMod(docknum_t dockNum,
+    virtual void detachMod(index_t dockNum,
                            index_t modNum);
     
     /*********************************************************************************************//*!
@@ -144,8 +162,8 @@ public:
     *
     *****************************************************************************************************/
     
-    EffectUnit(double dryWet = 1)
-    : _dw(dryWet)
+    EffectUnit(double dryWet = 1, unsigned short dockNum = 0)
+    : _dw(dryWet), Unit(dockNum)
     { }
     
     virtual ~EffectUnit() { }
@@ -213,7 +231,7 @@ public:
     *
     *****************************************************************************************************/
     
-    GenUnit(double amp = 1);
+    GenUnit(double amp = 1, unsigned short dockNum = 0);
     
     /*************************************************************************************************//*!
     *
@@ -258,9 +276,55 @@ class ModUnit : public Unit
     
 public:
     
+    ModUnit(double amp = 1, unsigned short dockNum = 0);
+    
+    virtual ~ModUnit() { }
+    
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Sets the ModUnit's amplitude value.
+    *
+    *  @param       amp The new amplitude value, between 0 and 1.
+    *
+    *****************************************************************************************************/
+    
+    virtual void setAmp(double amp);
+    
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Returns the ModUnit's amplitude value.
+    *
+    *  @return      The amplitude.
+    *
+    *****************************************************************************************************/
+    
+    virtual double getAmp() const;
+    
+    /*********************************************************************************************//*!
+    *
+    *  @brief       Modulates a sample and returns the result.
+    *
+    *  @param       sample The sample to modulate.
+    *
+    *  @param       depth The modulation depth.
+    *
+    *  @param       minBoundary The minimum boundary to check for.
+    *
+    *  @param       maxBoundary The maximum boundary to check for.
+    *
+    *  @return      The modulated sample.
+    *
+    *************************************************************************************************/
+    
     virtual double modulate(double sample,
+                            double depth,
                             double minBoundary,
                             double maxBoundary) = 0;
+    
+protected:
+    
+    /*! The amplitude value */
+    double _amp;
 };
 
 #endif /* defined(__Anthem__Units__) */

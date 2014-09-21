@@ -124,9 +124,6 @@ public:
     
 private:
     
-    /*! ModDock initialization */
-    void _initModDocks();
-    
     /*! Filter that changes the noise color */
     Filter* _filter;
     

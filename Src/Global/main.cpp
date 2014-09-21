@@ -34,6 +34,12 @@ int main(int argc, const char * argv[])
     Operator op;
     
     op.addNote(440);
+    
+    LFOUnit lfo;
+    
+    lfo.setMode(LFOUnit::SEQ_MODE);
+    
+    op.attachMod(Operator::AMP, &lfo);
 
     Mixer mixer(0,1);
 

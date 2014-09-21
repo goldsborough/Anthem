@@ -11,11 +11,6 @@
 
 #include <stdexcept>
 
-double doDepth(double original, double modulated, double depth)
-{
-    return (modulated * depth) + ((1 - depth) * original);
-}
-
 ModDock::ModDock(double masterDepth)
 {
     setMasterDepth(masterDepth);
@@ -25,6 +20,8 @@ void ModDock::setMasterDepth(double depth)
 {
     if (depth < 0 || depth > 1)
     { throw std::invalid_argument("Depth value must be between 0 and 1!"); }
+    
+    _masterDepth = depth;
 }
 
 bool ModDock::inUse() const
@@ -48,15 +45,10 @@ double ModDock::modulate(double sample,
          ++itr)
     {
         // Get modulated signal
-        modulated = itr->mod->modulate(modulated, minBoundary, maxBoundary);
-        
-        // Modify according to depth
-        modulated = doDepth(sample, modulated, itr->depth);
+        modulated = itr->mod->modulate(modulated, itr->depth, minBoundary, maxBoundary);
     }
     
-    // Return mixture between original sample and fully modulated sample according
-    // to _masterDepth value
-    return doDepth(sample, modulated, _masterDepth);
+    return modulated * _masterDepth;
 }
 
 void ModDock::setDepth(index_t index, double depth)

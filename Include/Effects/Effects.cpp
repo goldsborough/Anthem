@@ -61,7 +61,7 @@ double Reverb::process(double sample)
     // Modulate time
     if (_mods[TIME]->inUse())
     {
-        double newTime = _mods[TIME]->checkAndTick(_reverbTime, 0, 100);
+        double newTime = _mods[TIME]->modulate(_reverbTime, 0, 100);
         
         setReverbTime(newTime, false);
     }
@@ -69,7 +69,7 @@ double Reverb::process(double sample)
     // Modulate rate
     if (_mods[RATE]->inUse())
     {
-        double newRate = _mods[RATE]->checkAndTick(_reverbRate, 0, 1);
+        double newRate = _mods[RATE]->modulate(_reverbRate, 0, 1);
         
         setReverbTime(newRate, false);
     }
@@ -88,7 +88,7 @@ double Reverb::process(double sample)
     // Modulate the dry/wet
     if (_mods[DRYWET]->inUse())
     {
-        double dw = _mods[DRYWET]->checkAndTick(_dw, 0, 1);
+        double dw = _mods[DRYWET]->modulate(_dw, 0, 1);
         
         // Call _dryWet with custom dry/wet value (instead of _dw)
         return _dryWet(sample, output, dw);
@@ -182,9 +182,9 @@ double Flanger::process(double sample)
     if (_feedback)
     { output -= _delay.offset(_center * Global::samplerate) * _feedback; }
     
-    double val = _center + (_depth * _lfo->tick());
+    //double val = _center + (_depth * _lfo->tick());
     
-    _delay.setDelayLen(val);
+    //_delay.setDelayLen(val);
     
     output += _delay.process(output);
     

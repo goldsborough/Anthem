@@ -64,6 +64,8 @@ public:
     *
     *  @param       sample The sample to modulate.
     *
+    *  @param       depth The modulation depth.
+    *
     *  @param       minBoundary The minimum boundary to check for.
     *
     *  @param       maxBoundary The maximum boundary to check for.
@@ -72,7 +74,7 @@ public:
     *
     *************************************************************************************************/
     
-    double modulate(double sample, double minBoundary, double maxBoundary);
+    double modulate(double sample, double depth, double minBoundary, double maxBoundary);
     
     /*************************************************************************************************//*!
     *
@@ -126,7 +128,7 @@ public:
     
     /*************************************************************************************************//*!
     *
-    *  @brief       Sets the LFO's amplitude value.
+    *  @brief       Sets the LFO's oscillator's amplitude value.
     *
     *  @param       amp The new amplitude value, between 0 and 1.
     *
@@ -136,9 +138,9 @@ public:
     
     /*************************************************************************************************//*!
     *
-    *  @brief       Sets the LFO's amplitude value.
+    *  @brief       Gets the LFO's oscillator's amplitude value.
     *
-    *  @param       amp The new amplitude value, between 0 and 1.
+    *  @return      The amplitude value.
     *
     *****************************************************************************************************/
     
@@ -157,6 +159,11 @@ private:
 };
 
 
+
+// Inherit from Envelope instead of EnvSegSeq?
+
+
+
 /****************************************************************************************************//*!
 *
 *  @brief       Wrapper around EnvSegSeq for specific LFO purposes.
@@ -167,7 +174,7 @@ private:
 *
 ********************************************************************************************************/
 
-class LFOSeq : public EnvSegSeq
+class LFOSeq : public EnvSegSeq, public ModUnit
 {
     
 public:
@@ -208,6 +215,32 @@ public:
     
     double getRate() const;
     
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Adds a segment to the sequence.
+    *
+    *  @details     Maximum number of segments is 10.
+    *
+    *  @throws      std::runtime_error if segment number is already 10.
+    *
+    *****************************************************************************************************/
+    
+    void addSegment();
+    
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Modulates a sample and returns the result.
+    *
+    *  @param       sample The sample to modulate.
+    *
+    *  @param       depth The modulation depth.
+    *
+    *  @return      A new, modulated sample.
+    *
+    *****************************************************************************************************/
+    
+    double modulate(double sample, double depth, double, double);
+    
 private:
     
     /*! The current rate */
@@ -221,12 +254,14 @@ private:
 *  @details     In Anthem, an LFO is relatively large unit, consisting of two normal LFOs (Oscillators)
 *               and two LFOSeqs (EnvSegSeqs). The user can switch between the normal LFO mode and the
 *               Sequencer mode. In both cases, the user can then crossfade between the two respective
-*               units, e.g. between LFO A and LFO B.
+*               units, e.g. between LFO A and LFO B. There is also a dedicated Envelope.
 *
 ********************************************************************************************************/
 
-struct LFOUnit : public GenUnit
+class LFOUnit : public ModUnit
 {
+    
+public:
     
     /*! LFO modes - lfo mode and sequencer mode */
     enum Modes { LFO_MODE, SEQ_MODE };
@@ -241,7 +276,8 @@ struct LFOUnit : public GenUnit
     *  @param       mode The initial mode, defaults to LFO_MODE
     *
     ********************************************************************************************************/
-    LFOUnit(unsigned short mode = 0);
+    
+    LFOUnit(unsigned short mode = LFO_MODE);
     
     /****************************************************************************************************//*!
     *
@@ -250,25 +286,43 @@ struct LFOUnit : public GenUnit
     *  @param       mode The new mode, usually a member of LFOUnit::Modes.
     *
     ********************************************************************************************************/
-    void setMode(unsigned short mode);
+    
+    void setMode(bool mode);
     
     /****************************************************************************************************//*!
     *
-    *  @brief       Generates a sample.
+    *  @brief       Returns the LFOUnit's current mode.
     *
-    *  @details     An LFOUnit sample is generated by multiplying the crossfaded tick from the two units with
-    *               the internal amplitude and the envelope tick.
-    *
-    *  @return      The generated sample.
+    *  @return      Boolean mode, either LFO_Mode or SEQ_Mode;
     *
     ********************************************************************************************************/
-    double tick();
+    
+    bool getMode() const;
+    
+    /*********************************************************************************************//*!
+    *
+    *  @brief       Modulates a sample and returns the result.
+    *
+    *  @param       sample The sample to modulate.
+    *
+    *  @param       depth The modulation depth.
+    *
+    *  @param       minBoundary The minimum boundary to check for.
+    *
+    *  @param       maxBoundary The maximum boundary to check for.
+    *
+    *  @return      The modulated sample.
+    *
+    *************************************************************************************************/
+    
+    double modulate(double sample, double depth, double minBoundary, double maxBoundary);
 
     /****************************************************************************************************//*!
     *
     *  @brief       An LFOUnit specific envelope.
     *
     ********************************************************************************************************/
+    
     struct Env : public EnvSegSeq
     {
         /*! The two parts of the envelope: SegA / SegB \ Together /\ */
@@ -288,6 +342,7 @@ struct LFOUnit : public GenUnit
         *  @param       lvl The new level, between 0 and 1.
         *
         ********************************************************************************************************/
+        
         void setEnvLevel(short point, double lvl);
         
     } env;
@@ -300,6 +355,10 @@ struct LFOUnit : public GenUnit
 
     /*! The normal lfos, activated with setMode() and Modes::LFO_MODE */
     LFO lfos[2];
+    
+private:
+    
+    bool _mode;
 };
 
 #endif /* defined(__Anthem__LFO__) */

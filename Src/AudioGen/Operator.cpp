@@ -13,20 +13,12 @@
 #include "Util.h"
 
 Operator::Operator(short wt, double amp)
+: GenUnit(1,3)
 {
     _amp = amp;
     
     // Set wavetable for all oscillators
     setWavetable(wt);
-    
-    // Initialize mod docks
-    _initModDocks();
-}
-
-void Operator::_initModDocks()
-{
-    // two for the amplitude, two each for semitone and cent offsetting
-    _mods = {new ModDock(4), new ModDock(2), new ModDock(2)};
 }
 
 Operator::~Operator()
@@ -125,14 +117,14 @@ double Operator::tick()
     // for all oscillators
     if (_mods[FREQ_SEMI]->inUse())
     {
-        short semiOffs = _mods[FREQ_SEMI]->checkAndTick(_semis, -48, 48);
+        short semiOffs = _mods[FREQ_SEMI]->modulate(_semis, -48, 48);
         setSemis(semiOffs, false);
     }
     
     // Same goes for cent offsetting
     if (_mods[FREQ_CENT]->inUse())
     {
-        short centOffs = _mods[FREQ_CENT]->checkAndTick(_cents, 0, 100);
+        short centOffs = _mods[FREQ_CENT]->modulate(_cents, 0, 100);
         setCents(centOffs, false);
     }
     
@@ -146,7 +138,7 @@ double Operator::tick()
     
     // Check modulation dock for the amplitude parameter
     if (_mods[AMP]->inUse())
-    { return val * _mods[AMP]->checkAndTick(_amp,0,1); }
+    { return val * _mods[AMP]->modulate(_amp,0,1); }
     
     return val * _amp;
 }

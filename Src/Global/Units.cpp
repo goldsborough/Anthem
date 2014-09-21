@@ -11,7 +11,21 @@
 #include "Wavetable.h"
 #include <stdexcept>
 
-void Unit::setDockMasterDepth(docknum_t dockNum, double depth)
+Unit::Unit(index_t numDocks)
+: _mods(numDocks)
+{
+    for (index_t i = 0; i < numDocks; ++i)
+    {
+        _mods[i] = new ModDock;
+    }
+}
+
+std::vector<ModUnit*>::size_type Unit::numDocks() const
+{
+    return _mods.size();
+}
+
+void Unit::setDockMasterDepth(index_t dockNum, double depth)
 {
     if (depth > 1 || depth < 0)
     { throw std::invalid_argument("Depth value must be between 0 and 1!");}
@@ -19,9 +33,9 @@ void Unit::setDockMasterDepth(docknum_t dockNum, double depth)
     _mods[dockNum]->setMasterDepth(depth);
 }
 
-void Unit::setDepth(docknum_t dockNum,
-                       index_t modNum,
-                       double depth)
+void Unit::setDepth(index_t dockNum,
+                    index_t modNum,
+                    double depth)
 {
     
     if (depth > 1 || depth < 0)
@@ -30,15 +44,14 @@ void Unit::setDepth(docknum_t dockNum,
     _mods[dockNum]->setDepth(modNum, depth);
 }
 
-void Unit::attachMod(docknum_t dockNum,
-                        index_t modNum,
-                        GenUnit* mod)
+void Unit::attachMod(index_t dockNum,
+                     ModUnit* mod)
 {
-    _mods[dockNum]->attach(modNum, mod);
+    _mods[dockNum]->attach(mod);
 }
 
-void Unit::detachMod(docknum_t dockNum,
-                        index_t modNum)
+void Unit::detachMod(index_t dockNum,
+                     index_t modNum)
 {
     _mods[dockNum]->detach(modNum);
 }
@@ -71,7 +84,8 @@ double EffectUnit::_dryWet(double originalSample, double processedSample, double
     return (originalSample * (1 - dryWet)) + (processedSample * dryWet);
 }
 
-GenUnit::GenUnit(double amp)
+GenUnit::GenUnit(double amp, unsigned short dockNum)
+: Unit(dockNum)
 {
     setAmp(amp); 
 }
@@ -85,6 +99,25 @@ void GenUnit::setAmp(double amp)
 }
 
 double GenUnit::getAmp() const
+{
+    return _amp;
+}
+
+ModUnit::ModUnit(double amp, unsigned short dockNum)
+: Unit(dockNum)
+{
+    setAmp(amp);
+}
+
+void ModUnit::setAmp(double amp)
+{
+    if (amp < 0 || amp > 1)
+    { throw std::invalid_argument("Amplitude must be between 0 and 1!"); }
+    
+    _amp = amp;
+}
+
+double ModUnit::getAmp() const
 {
     return _amp;
 }

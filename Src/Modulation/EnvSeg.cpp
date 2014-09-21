@@ -309,7 +309,7 @@ double EnvSeg::tick()
     // Apply modulation oscillator
     if (_modWave != WavetableDB::NONE)
     {
-        ret = _lfo->modulate(ret, 0, 1);
+        ret = _lfo->modulate(ret, 1, 0, 1);
     }
     
     return ret;
@@ -323,6 +323,17 @@ EnvSegSeq::EnvSegSeq(EnvSegSeq::subseg_t seqLen)
     
     _currSeg = _segs.begin();
 }
+
+void EnvSegSeq::setAmp(double amp)
+{
+    _amp = amp;
+}
+
+double EnvSegSeq::getAmp() const
+{
+    return _amp;
+}
+
 
 void EnvSegSeq::setSegRate(subseg_t seg, double rate)
 {
@@ -385,6 +396,10 @@ void EnvSegSeq::setSegModDepth(subseg_t seg, double dpth)
     _segs[seg].setModDepth(dpth);
 }
 
+double EnvSegSeq::getSegModDepth(subseg_t seg) const
+{
+    return _segs[seg].getModDepth();
+}
 
 void EnvSegSeq::setSegModRate(subseg_t seg, unsigned short rate)
 {
@@ -459,6 +474,10 @@ void EnvSegSeq::addSegment()
     _segs.push_back(EnvSeg());
 }
 
+void EnvSegSeq::removeSegment()
+{
+    _segs.erase(_segs.end() - 1);
+}
 
 void EnvSegSeq::_changeSeg(EnvSegSeq::segItr seg)
 {
@@ -480,7 +499,6 @@ void EnvSegSeq::_resetLoop()
 
 double EnvSegSeq::tick()
 {
-    
     if (_currSample++ >= _currSeg->getLen())
     {
         if (_currSeg != _segs.end()) _currSeg++;

@@ -43,7 +43,7 @@ double Filter::process(double sample)
     {
         // Get current cutoff (can't set as filter's cutoff or else the base
         // value would change, same for all other changes too)
-        double newCutoff = _mods[CUTOFF]->checkAndTick(_cutoff, 0, 20000);
+        double newCutoff = _mods[CUTOFF]->modulate(_cutoff, 0, 20000);
         
         _calcCoefs(_mode, newCutoff, _q, _gain);
     }
@@ -51,7 +51,7 @@ double Filter::process(double sample)
     // And Q factor
     if (_mods[Q]->inUse())
     {
-        double newQ = _mods[Q]->checkAndTick(_q, 0.01, 20);
+        double newQ = _mods[Q]->modulate(_q, 0.01, 20);
         
         _calcCoefs(_mode, _cutoff, newQ, _gain);
     }
@@ -72,7 +72,7 @@ double Filter::process(double sample)
     // Check the gain
     if (_mods[GAIN]->inUse())
     {
-        double newGain = _mods[GAIN]->checkAndTick(_gain, -20, 20);
+        double newGain = _mods[GAIN]->modulate(_gain, -20, 20);
         
         _calcCoefs(_mode, _cutoff, _q, newGain);
     }
@@ -82,7 +82,7 @@ double Filter::process(double sample)
     // Set the dry/wet
     if (_mods[DRYWET]->inUse())
     {
-        double dw = _mods[DRYWET]->checkAndTick(_dw, 0, 1);
+        double dw = _mods[DRYWET]->modulate(_dw, 0, 1);
         
         // Call _dryWet with custom dry/wet value (instead of _dw)
         return _dryWet(sample, output, dw);

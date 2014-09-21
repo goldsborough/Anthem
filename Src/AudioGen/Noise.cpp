@@ -14,20 +14,13 @@
 #include <stdexcept>
 
 Noise::Noise(const unsigned short& color, const double& amp)
-: GenUnit(amp), _filter(new Filter(Filter::LOW_PASS,1,0.1))
+: GenUnit(amp,1), _filter(new Filter(Filter::LOW_PASS,1,0.1))
 {
     setColor(color);
-    
-    _initModDocks();
 }
 
 Noise::~Noise()
 { delete _filter; }
-
-void Noise::_initModDocks()
-{
-    _mods = {new ModDock(2)};
-}
 
 void Noise::setColor(const unsigned short& color)
 {
@@ -103,7 +96,7 @@ double Noise::tick()
     
     // Check modulation dock for the amplitude parameter
     if (_mods[AMP]->inUse())
-    { return value * _mods[AMP]->checkAndTick(_amp,0,1); }
+    { return value * _mods[AMP]->modulate(_amp,0,1); }
     
     return value * _amp;
 }

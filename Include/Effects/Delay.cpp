@@ -127,7 +127,7 @@ double Delay::process(double sample)
     // Modulate decay time
     if (_mods[TIME]->inUse())
     {
-        double time = _mods[TIME]->checkAndTick(_decayTime, 0, _delayCapacity);
+        double time = _mods[TIME]->modulate(_decayTime, 0, _delayCapacity);
         
         _calcDecay(_decayRate, time, _delayLen);
     }
@@ -135,7 +135,7 @@ double Delay::process(double sample)
     // Modulate decay rate
     if (_mods[RATE]->inUse())
     {
-        double rate = _mods[RATE]->checkAndTick(_decayRate, 0, 1);
+        double rate = _mods[RATE]->modulate(_decayRate, 0, 1);
         
         _calcDecay(rate, _decayTime, _delayLen);
     }
@@ -171,7 +171,7 @@ double Delay::process(double sample)
     // Modulate feedback value
     if (_mods[FEEDBACK]->inUse())
     {
-        feedback = _mods[FEEDBACK]->checkAndTick(_feedback, 0, 1);
+        feedback = _mods[FEEDBACK]->modulate(_feedback, 0, 1);
     }
 
     // If the sample hasn't been written yet, write it now
@@ -188,7 +188,7 @@ double Delay::process(double sample)
     // Modulate dry wet value
     if (_mods[DRYWET]->inUse())
     {
-        double dw = _mods[DRYWET]->checkAndTick(_dw, 0, 1);
+        double dw = _mods[DRYWET]->modulate(_dw, 0, 1);
         
         return _dryWet(sample, output,dw);
     }
