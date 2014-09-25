@@ -31,15 +31,13 @@ int main(int argc, const char * argv[])
     
     uint32_t len = Global::samplerate * 5;
     
-    Operator op;
+    Operator op(WavetableDB::SINE);
     
     op.addNote(440);
     
-    LFOUnit lfo;
+    Envelope env;
     
-    lfo.setMode(LFOUnit::SEQ_MODE);
-    
-    op.attachMod(Operator::AMP, &lfo);
+    op.attachMod(Operator::AMP, &env);
 
     Mixer mixer(0,1);
 

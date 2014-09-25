@@ -10,57 +10,66 @@
 #define __Anthem__Envelope__
 
 #include "EnvSeg.h"
-/*
-class Envelope : public EnvSegSeq
+
+class Envelope : public EnvSegSeq, public ModUnit
 {
 public:
 
+    typedef unsigned short seg_t;
+    
+    enum Docks
+    {
+        DELAY,
+        
+    };
+
     enum Segment
     {
-        ATK,
-        A,
-        B,
-        C,
-        REL
+        DEL = 1,
+        ATK = 2,
+        SEG_A = 3,
+        SEG_B = 4,
+        SEG_C = 5,
+        REL = 6
     };
     
-    Envelope(unsigned int delay_MS = 0);
+    Envelope(unsigned int delayMillis = 0,
+             bool sustainInf = true);
     
-    double tick();
+    double modulate(double sample,
+                    double depth,
+                    double,
+                    double);
     
-    // in ms
-    void setDelay(unsigned int millis)
-    {
-        if (_currSegNum == DEL)
-            _currSegLen = 44.1 * millis;
-    }
+    void setDelay(unsigned int millis);
     
-    void setSegLevel(int seg, double lv);
+    void setSegLevel(seg_t seg, double lv);
     
-    void setLoopStart(int seg);
-    void setLoopEnd(int seg);
+    void setLoopStart(seg_t seg);
+    void setLoopEnd(seg_t seg);
     
-    void noteOff() { _changeSeg(REL); };
+    void noteOff();
+    
+    void setSustainInf(bool sustainInf);
+    
+    bool sustainInf() const;
     
 private:
     
-    enum HiddenSegment
-    {
-        NONE = -3,
-        CONNECTOR = -2,
-        DEL = -1,
-    };
+    /*! Connects the end and starting poseg_ts of the loop
+        to avoid harsh transitions */
+    enum { CONNECTOR };
     
-    void _changeSeg(int seg);
+    /*! Changes the current segment in the sequence */
+    void _changeSeg(segItr itr);
+    
+    double _tick();
     
     void _resetLoop();
     
-    unsigned int _hiddenConnecterLen;
+    bool _sustainInf;
     
-    // Connects the end and starting points of the loop
-    // to avoid harsh transitions
-    EnvSeg _hiddenConnect;
-    
-};*/
+    seg_t _currSegNum;
+};
 
 #endif /* defined(__Anthem__Envelope__) */

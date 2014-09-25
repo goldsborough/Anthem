@@ -35,20 +35,17 @@ double ModDock::modulate(double sample,
 {
     // If ModDock is not in use, return original sample immediately
     if (! inUse()) return sample;
-    
-    // Copy for modulation
-    double modulated = sample;
-    
+
     // Apply all modulation
     for (std::vector<ModItem>::const_iterator itr = _mods.begin(), end = _mods.end();
          itr != end;
          ++itr)
     {
         // Get modulated signal
-        modulated = itr->mod->modulate(modulated, itr->depth, minBoundary, maxBoundary);
+        sample = itr->mod->modulate(sample, itr->depth, minBoundary, maxBoundary);
     }
     
-    return modulated * _masterDepth;
+    return sample * _masterDepth;
 }
 
 void ModDock::setDepth(index_t index, double depth)

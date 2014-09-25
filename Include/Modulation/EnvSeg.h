@@ -48,25 +48,23 @@ public:
      *
      *  @param      len the length of the segment in samples
      *
-     *  @param      segR The rate of the segment. 1 = Lin, 0 <= rate < 1 = Exp, 1 < rate <= 2 = Log
+     *  @param      segRate The rate of the segment. 1 = Lin, 0 <= rate < 1 = Exp, 1 < rate <= 2 = Log
      *
-     *  @param      modW The modulating wave, should be a directly calculated type for best results
+     *  @param      modWave The modulating wave, should be a directly calculated type for best results
      *
-     *  @param      modDpth The depth of the modulation, 1 = full, 0 = none and everything inbetween
+     *  @param      modDepth The depth of the modulation, 1 = full, 0 = none and everything inbetween
      *
-     *  @param      modR The modulation rate/frequency, must be between 0 and 10
-     *
-     *  @param      maxLen The maximum length of the segment in samples, this should not really be changed
+     *  @param      modRate The modulation rate/frequency, must be between 0 and 10
      *
      **************************************************************************************************/
     
     EnvSeg(double startAmp = 0,
            double endAmp = 0,
            len_t len = 0,
-           double segR = 1,
-           int modW = -1,
-           double modDpth = 1,
-           unsigned char modR = 1);
+           double segRate = 1,
+           int modWave = -1,
+           double modDepth = 1,
+           unsigned char modRate = 1);
     
     ~EnvSeg();
     
@@ -513,11 +511,11 @@ public:
     
     /******************************************************************************//*!
     *
-    *  @brief      Returns the current rate of a segment.
+    *  @brief       Returns the current rate of a segment.
     *
-    *  @param     seg The segment, of which to get the rate.
+    *  @param       seg The segment, of which to get the rate.
     *
-    *  @return     The rate of a segment.
+    *  @return      The rate of a segment.
     *
     *********************************************************************************/
     

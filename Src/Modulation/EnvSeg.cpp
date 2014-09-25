@@ -20,18 +20,18 @@ const unsigned long EnvSeg::_maxLen = 2646000;
 EnvSeg::EnvSeg(double startAmp,
                double endAmp,
                EnvSeg::len_t len,
-               double segR, int modW,
-               double modDpth,
-               unsigned char modR)
+               double segRate,
+               int modWave,
+               double modDepth,
+               unsigned char modRate)
 : _sample(0), _startLevel(startAmp), _endLevel(endAmp),
-  _segRate(segR), _len(len), _modDepth(modDpth), _modRate(modR),
+  _segRate(segRate), _len(len), _modDepth(modDepth), _modRate(modRate),
   _lfo(new LFO)
 {
     _calcLevel();
     _calcRate();
     
-    // initalize operator to waveform wanted
-    setModWave(modW);
+    setModWave(modWave);
     
     _calcModRate();
 }
@@ -309,6 +309,8 @@ double EnvSeg::tick()
     // Apply modulation oscillator
     if (_modWave != WavetableDB::NONE)
     {
+        // Just set depth to one, actual depth is handled
+        // by lfo's amplitude value
         ret = _lfo->modulate(ret, 1, 0, 1);
     }
     

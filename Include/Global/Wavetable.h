@@ -1,77 +1,21 @@
-//
-//  Wavetable.h
-//  Anthem
-//
-//  Created by Peter Goldsborough on 22/03/14.
-//  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
-//
+/*********************************************************************************************//*!
+*
+*  @file        Wavetable.h
+*
+*  @author      Peter Goldsborough
+*
+*  @date        25/09/2014
+*
+*  @brief       Wavetable management classes.
+*
+*  @details     This file defines the Wavetable class and the WavetableDB class.
+*
+*************************************************************************************************/
 
-#ifndef __Anthem__Waveforms__
-#define __Anthem__Waveforms__
+#ifndef __Anthem__Wavetable__
+#define __Anthem__Wavetable__
 
 #include <vector>
-
-struct Partial
-{
-    Partial(unsigned short number, double ampl, double phsOffs = 0)
-    : num(number), amp(ampl), phaseOffs(phsOffs)
-    { }
-    
-    const unsigned short num;
-    double amp;
-    
-    double phaseOffs;
-};
-
-class Wavetable
-{
-    
-public:
-    
-    typedef unsigned long size_t;
-    
-    Wavetable()
-    : _data(0), _size(0), _refptr(new size_t(1))
-    { }
-    
-    template <class PartItr>
-    Wavetable(PartItr start, PartItr end,
-              size_t wtLen, double masterAmp = 1,
-              bool sigmaAprox = false,
-              unsigned int bitWidth = 16);
-    
-    Wavetable(double * ptr, size_t wtLength)
-    : _data(ptr), _size(wtLength), _refptr(new size_t(1))
-    { }
-    
-    Wavetable(const Wavetable& other);
-    
-    ~Wavetable();
-    
-    Wavetable& operator= (const Wavetable& other);
-    
-    double& operator[] (size_t ind);
-    
-    const double& operator[] (size_t ind) const
-    { return _data[ind]; }
-    
-    double interpolate(double ind) const;
-    
-    size_t size() const
-    { return _size; }
-    
-    double* get() const { return _data; }
-    
-    Wavetable& makeUnique();
-    
-private:
-    
-    double* _data;
-    
-    size_t _size;
-    
-    size_t* _refptr;
-};
 
 /*****************************************************************************//*!
 *
@@ -145,11 +89,203 @@ private:
 *
 *****************************************************************************/
 
+/*********************************************************************************************//*!
+*
+*  @brief       A partial/harmonic/overtone.
+*
+*  @details     The Partial struct represents a single Partial for generating waveforms through
+*               Fourier/Additive synthesis. A partial can be expressed through its number, an
+*               integer multiple of the fundamental frequency, its amplitude and an optional
+*               phase offset.
+*
+*************************************************************************************************/
+
+struct Partial
+{
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Constructs a Partial object.
+    *
+    *  @param       number The Partial's number e.g. 2 means it has twice the frequency of the fundamental.
+    *
+    *  @param       ampl The initial amplitude value.
+    *
+    *  @param       phsOffs An optional initial phase offset in degrees, defaults to 0 (no offset).
+    *
+    *****************************************************************************************************/
+    
+    Partial(unsigned short number, double ampl, double phsOffs = 0)
+    : num(number), amp(ampl), phaseOffs(phsOffs)
+    { }
+    
+    /*! The Partial's number, stays const. */
+    const unsigned short num;
+    
+    /*! The amplitude value. */
+    double amp;
+    
+    /*! A phase offset */
+    double phaseOffs;
+};
+
+/*********************************************************************************************//*!
+*
+*  @brief       Class for storing waveform lookup tables.
+*
+*  @details     This is the main class in Anthem for storing and looking up values from waveforms
+*               (e.g. sine, saw, square wave). A wavetable can be constructed either by passing
+*               it a pointer to waveform values directly or through Additive Synthesis, in
+*               combination with the Partial struct. The Wavetable class implements reference
+*               counting.
+*
+*************************************************************************************************/
+
+class Wavetable
+{
+    
+public:
+    
+    typedef unsigned long size_t;
+    
+    Wavetable()
+    : _data(0), _size(0), _refptr(new size_t(1))
+    { }
+    
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Constructs a Wavetable additively.
+    *
+    *  @details     An additive wavetable is constructed by adding a sequence of Partial objects
+    *               together. Optionally they can smoothed out with sigma/lanczos approximation which
+    *               also reduces the Gibbs effect.
+    *
+    *  @param       start An iterator to the start of a sequence of Partial objects (e.g. std::vector<Partial>).
+    *
+    *  @param       end An iterator to the end of a sequence of Partial objects.
+    *
+    *  @param       wtLen The length of the wavetable to construct, 4095 is used throughout Anthem.
+    *
+    *  @param       masterAmp Attenuation value for all values in the table.
+    *
+    *  @param       sigmaAprox Boolean whether or not to use sigma approximation to smooth out the values.
+    *
+    *  @param       bitWidth Number of bits to scale to, defaults to 16 (bits).
+    *
+    *****************************************************************************************************/
+    
+    template <class PartItr>
+    Wavetable(PartItr start, PartItr end,
+              size_t wtLength,
+              double masterAmp = 1,
+              bool sigmaAprox = false,
+              unsigned int bitWidth = 16);
+    
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Constructs a Wavetable object from a pointer.
+    *
+    *  @param       ptr The pointer to waveform values to store and manage.
+    *
+    *  @param       wtLength The length of the wavetable (and the array of values pointed to by ptr).
+    *
+    *****************************************************************************************************/
+    
+    Wavetable(double * ptr, size_t wtLength)
+    : _data(ptr), _size(wtLength), _refptr(new size_t(1))
+    { }
+    
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Constructs a Wavetable object from another Wavetable.
+    *
+    *  @details     Because this class uses reference counting, the new Wavetable object will point to
+    *               other's data. Call makeUnique() to create a copy of the data pointed to (after).
+    *
+    *  @param       other The other Wavetable object.
+    *
+    *****************************************************************************************************/
+    
+    Wavetable(const Wavetable& other);
+    
+    ~Wavetable();
+    
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Makes the internal pointer point to other's data.
+    *
+    *  @details     Copying a Wavetable makes it point to other's data and destructs its data if it
+    *               is the last class pointing to it. Use makeUnique() (after) to create a copy of the
+    *               data pointed to.
+    *
+    *  @param       other The other Wavetable object.
+    *
+    *****************************************************************************************************/
+    
+    Wavetable& operator= (const Wavetable& other);
+    
+    double& operator[] (size_t ind);
+    
+    const double& operator[] (size_t ind) const;
+    
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Interpolates values from a fractional index.
+    *
+    *  @details     This function returns a proportionate value from a fractional index. For example,
+    *               passing it an index of 1.5 will return [1] + (([2] - [1]) * 0.5).
+    *
+    *  @param       ind The fractional index.
+    *
+    *****************************************************************************************************/
+    
+    double interpolate(double ind) const;
+    
+    /*! Returns the wavetable's size. */
+    size_t size() const;
+    
+    /*! Returns the wavetable's data. */
+    double* get() const;
+    
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Makes a unique copy of the pointed-to data.
+    *
+    *  @details     The Wavetable class implements reference counting so constructing a new Wavetable
+    *               object from an existing object will make both objects point to the same data. It
+    *               may be required to make the data unique to an object at one point, for which this
+    *               method exists. Note that calling the non-const operator[] also calls makeUnique().
+    *
+    *****************************************************************************************************/
+    
+    Wavetable& makeUnique();
+    
+private:
+    
+    /*! The pointed-to data */
+    double* _data;
+    
+    /*! Current size of the wavetable. */
+    size_t _size;
+    
+    /*! Pointer to the number of objects pointing to _data. */
+    size_t* _refptr;
+};
+
+/*********************************************************************************************//*!
+*
+*  @brief       Stores Anthem's wavetables.
+*
+*  @details     The WavetableDB class manages all of Anthem's wavetables and is responsible for
+*               providing Oscillators with Wavetables.
+*
+*************************************************************************************************/
+
 class WavetableDB
 {
     
 public:
     
+    /*! Standard wavetables */
     enum Wavetables
     {
         NONE = -1,
@@ -186,7 +322,16 @@ public:
         SMOOTH_SAW
     };
     
-    void init(const unsigned int& wtLen);
+    /*********************************************************************************************//*!
+    *
+    *  @brief       Initialzes the WavetableDB.
+    *
+    *  @details     The WavetableDB is initialized by reading all available wavetables from the
+    *               wavetable folder.
+    *
+    *************************************************************************************************/
+    
+    void init();
     
     Wavetable& operator[] (const int& wt);
     
@@ -194,14 +339,19 @@ public:
     
 private:
     
+    /*! Generates a sawtooth wave directly/mathematically */
     Wavetable _directSaw();
     
+    /*! Generates a square wave directly/mathematically */
     Wavetable _directSquare();
     
+    /*! Generates a triangle wave directly/mathematically */
     Wavetable _directTriangle();
     
+    /*! Generates a smoothed sawtooth wave directly/mathematically */
     Wavetable _smoothSaw();
     
+    /*! Generates a smoothed square wave directly/mathematically */
     Wavetable _smoothSquare();
     
     std::vector<Wavetable> _tables;
@@ -210,4 +360,4 @@ private:
 // One global instance
 extern WavetableDB wavetableDB;
 
-#endif /* defined(__Anthem__Waveforms__) */
+#endif /* defined(__Anthem__Wavetable__) */

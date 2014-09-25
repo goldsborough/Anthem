@@ -40,7 +40,7 @@ void round(double& val, unsigned int bitWidth)
 
 
 template <class PartItr>
-Wavetable::Wavetable(PartItr start, PartItr end, size_t wtLen, double masterAmp,
+Wavetable::Wavetable(PartItr start, PartItr end, size_t wtLength, double masterAmp,
                      bool sigmaAprox, unsigned int bitWidth)
 
 : _refptr(new size_t(1))
@@ -48,7 +48,7 @@ Wavetable::Wavetable(PartItr start, PartItr end, size_t wtLen, double masterAmp,
     // calculate number of partials
     size_t partNum = end - start;
     
-    _data = new double [wtLen + 1];
+    _data = new double [wtLength + 1];
     
     double * amp = new double [partNum];        // the amplitudes
     double * phase = new double [partNum];      // the current phase
@@ -87,7 +87,7 @@ Wavetable::Wavetable(PartItr start, PartItr end, size_t wtLen, double masterAmp,
     
     // the fundamental increment of one period
     // in radians
-    static double fundIncr = Global::twoPi / wtLen;
+    static double fundIncr = Global::twoPi / wtLength;
     
     // fill the arrays with the respective partial values
     for (size_t p = 0; start != end; ++p, ++start)
@@ -112,7 +112,7 @@ Wavetable::Wavetable(PartItr start, PartItr end, size_t wtLen, double masterAmp,
     }
     
     // fill the wavetable
-    for (unsigned int n = 0; n < wtLen; n++)
+    for (unsigned int n = 0; n < wtLength; n++)
     {
         double value = 0;
         
@@ -135,7 +135,7 @@ Wavetable::Wavetable(PartItr start, PartItr end, size_t wtLen, double masterAmp,
     }
     
     // Append the last item for interpolation
-    _data[wtLen] = _data[0];
+    _data[wtLength] = _data[0];
     
     delete [] phase;
     delete [] phaseIncr;
@@ -207,6 +207,21 @@ double Wavetable::interpolate(double ind) const
     return final;
 }
 
+const double& Wavetable::operator[] (size_t ind) const
+{
+    return _data[ind];
+}
+
+size_t Wavetable::size() const
+{
+    return _size;
+}
+
+double* Wavetable::get() const
+{
+    return _data;
+}
+
 Wavetable::~Wavetable()
 {
     if (! --(*_refptr))
@@ -235,7 +250,7 @@ Wavetable& Wavetable::makeUnique()
     return *this;
 }
 
-void WavetableDB::init(const unsigned int& wtLen)
+void WavetableDB::init()
 {
     // The wavetable configuration file
     TextParsley textParser("/Users/petergoldsborough/Documents/Anthem/Resources/Wavetables/wavetables.txt");

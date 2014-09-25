@@ -187,7 +187,7 @@ public:
     *
     *****************************************************************************************************/
     
-    LFOSeq(unsigned short seqLength = 20, double rate = 1);
+    LFOSeq(unsigned short seqLength = 10, double rate = 1);
     
     /*************************************************************************************************//*!
     *
@@ -315,7 +315,7 @@ public:
     *
     *************************************************************************************************/
     
-    double modulate(double sample, double depth, double minBoundary, double maxBoundary);
+    double modulate(double sample, double depth, double, double);
 
     /****************************************************************************************************//*!
     *

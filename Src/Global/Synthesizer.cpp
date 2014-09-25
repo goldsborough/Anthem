@@ -16,7 +16,7 @@ Synthesizer::Synthesizer(unsigned int smplr, unsigned short wtLen)
 
 {
     Global::init(smplr,wtLen);
-    wavetableDB.init(wtLen);
+    wavetableDB.init();
 }
 
 

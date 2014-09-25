@@ -74,11 +74,6 @@ double LFO::modulate(double sample, double depth, double minBoundary, double max
     
     double tick = _osc->tick();
     
-    if (tick > 0.3)
-    {
-        
-    }
-    
     if (_mods[AMP]->inUse())
     { tick *= _mods[AMP]->modulate(_osc->getAmp(), 0, 1); }
     
@@ -101,15 +96,14 @@ LFOSeq::LFOSeq(unsigned short seqLength, double rate)
     
     EnvSegSeq::setLoopInf();
     
-    EnvSegSeq::setSegEndLevel(0, 1);
-    
-    EnvSegSeq::setSegLen(0, 1000);
-    
-    for (int i = 1; i < seqLength; ++i)
+    for (int i = 0; i < seqLength; ++i)
     {
         EnvSegSeq::setSegLen(i, 100);
         EnvSegSeq::setSegBothLevels(i, 1);
     }
+    
+    EnvSegSeq::setSegStartLevel(0, 0);
+    EnvSegSeq::setSegEndLevel(seqLength - 1, 0);
     
     setRate(rate);
 }
@@ -136,7 +130,7 @@ void LFOSeq::setRate(double Hz)
 
 double LFOSeq::modulate(double sample, double depth, double, double)
 {
-    return sample * tick() * depth;
+    return sample * EnvSegSeq::tick() * depth;
 }
 
 double LFOSeq::getRate() const
@@ -184,7 +178,7 @@ bool LFOUnit::getMode() const
 LFOUnit::Env::Env()
 : EnvSegSeq(2)
 {
-    setSegLen(0, 200);
+    setSegLen(0, 500);
     setEnvLevel(MID, 1);
 }
 
@@ -214,5 +208,5 @@ double LFOUnit::modulate(double sample, double depth, double minBoundary, double
 {
     // Tick the crossfaded value from the lfos and multiply by the envelope
     // value and the total amplitude value
-    return fader.modulate(sample, depth, minBoundary, maxBoundary);// * env.tick() * _amp;
+    return fader.modulate(sample, depth, minBoundary, maxBoundary) * env.tick() * _amp;
 }
