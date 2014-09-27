@@ -13,8 +13,8 @@
 
 #include <stdexcept>
 
-Oscillator::Oscillator(const short& wt, const double& frq,
-                       const double& amp, const short& phaseOffset)
+Oscillator::Oscillator(short wt, double frq,
+                       double amp, short phaseOffset)
 : GenUnit(amp), _ind(0), _phaseOffset(0)
 {
     setWavetable(wt);
@@ -24,12 +24,12 @@ Oscillator::Oscillator(const short& wt, const double& frq,
     setFreq(frq);
 }
 
-void Oscillator::setWavetable(const short &wt)
+void Oscillator::setWavetable(short wt)
 {
     _wt = wavetableDB[wt];
 }
 
-void Oscillator::setSemis(const short& semis, bool permanent)
+void Oscillator::setSemis(short semis, bool permanent)
 {
     // Prevent unnecesessary changes
     if (! semis) return;
@@ -50,7 +50,7 @@ void Oscillator::setSemis(const short& semis, bool permanent)
     
 }
 
-void Oscillator::setCents(const short& cents, bool permanent)
+void Oscillator::setCents(short cents, bool permanent)
 {
     // Prevent unnecesessary changes
     if (! cents) return;
@@ -70,7 +70,7 @@ void Oscillator::setCents(const short& cents, bool permanent)
     if (permanent) _freq = newFreq;
 }
 
-void Oscillator::setFreq(const double& Hz)
+void Oscillator::setFreq(double Hz)
 {
     if (Hz < 0 || Hz > Global::nyquistLimit)
     { throw std::invalid_argument("Frequency must be greater 0 and less than the nyquist limit!"); }

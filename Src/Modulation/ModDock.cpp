@@ -24,6 +24,11 @@ void ModDock::setMasterDepth(double depth)
     _masterDepth = depth;
 }
 
+double ModDock::getMasterDepth() const
+{
+    return _masterDepth;
+}
+
 bool ModDock::inUse() const
 {
     return (_masterDepth > 0 && ! _mods.empty());
@@ -53,7 +58,18 @@ void ModDock::setDepth(index_t index, double depth)
     if (index >= _mods.size())
     { throw std::invalid_argument("ModDock index out of bounds!"); }
     
+    if (depth < 0 || depth > 1)
+    { throw std::invalid_argument("Invalid depth value, must be between 0 and 1!"); }
+    
     _mods[index].depth = depth;
+}
+
+double ModDock::getDepth(index_t index) const
+{
+    if (index >= _mods.size())
+    { throw std::invalid_argument("ModDock index out of bounds!"); }
+    
+    return _mods[index].depth;
 }
 
 void ModDock::attach(ModUnit* mod)
@@ -64,4 +80,9 @@ void ModDock::attach(ModUnit* mod)
 void ModDock::detach(index_t index)
 {
     _mods.erase(_mods.begin() + index);
+}
+
+unsigned long ModDock::size() const
+{
+    return _mods.size();
 }

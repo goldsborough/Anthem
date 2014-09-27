@@ -58,11 +58,11 @@ public:
     *
     *****************************************************************************************************/
     
-    std::vector<ModUnit*>::size_type numDocks() const;
+    virtual std::vector<ModDock*>::size_type numDocks() const;
     
     /*************************************************************************************************//*!
     *
-    *  @brief       Sets the macro depth for all modulation units.
+    *  @brief       Sets the macro depth for all modulation units of a ModDock.
     *
     *  @details     This function reduces the overall depth of all modulation units currently in use.
     *
@@ -76,6 +76,18 @@ public:
     
     /*************************************************************************************************//*!
     *
+    *  @brief       Returns the master depth of a dock.
+    *
+    *  @param       dockNum The dock number of the ModDock to get the master depth from.
+    *
+    *  @return      The master depth value.
+    *
+    *****************************************************************************************************/
+    
+    virtual double getDockMasterDepth(index_t dockNum) const;
+    
+    /*************************************************************************************************//*!
+    *
     *  @brief       Sets the depth for a single modulation unit of a single dock.
     *
     *  @param       dockNum The dock number of the modulation unit (e.g. Operator::AMP).
@@ -86,9 +98,24 @@ public:
     *
     *****************************************************************************************************/
     
-    virtual void setDepth(index_t dockNum,
-                          index_t modNum,
-                          double depth);
+    virtual void setModUnitDepth(index_t dockNum,
+                                 index_t modNum,
+                                 double depth);
+    
+    
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Returns the depth for a single modulation unit of a single dock.
+    *
+    *  @param       dockNum The dock number of the modulation unit (e.g. Operator::AMP).
+    *
+    *  @param       modNum  The modulation unit number within the dock.
+    *
+    *  @return      The depth of that modulation unit.
+    *
+    *****************************************************************************************************/
+    
+    virtual double getModUnitDepth(index_t dockNum, index_t modNum) const;
     
     /*************************************************************************************************//*!
     *

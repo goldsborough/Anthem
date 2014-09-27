@@ -89,13 +89,35 @@ public:
     
     /*********************************************************************************************//*!
     *
-    *  @brief       Constructs a ModDock.
+    *  @brief       Returns the master depth.
     *
-    *  @param       masterDepth The inital master depth, defaults to 1.
+    *  @return      The master depth.
+    *
+    *************************************************************************************************/
+    
+    double getMasterDepth() const;
+    
+    /*********************************************************************************************//*!
+    *
+    *  @brief       Sets a ModUnit's depth.
+    *
+    *  @param       depth The new depth value, between 0 and 1.
     *
     *************************************************************************************************/
     
     void setDepth(index_t index, double depth);
+    
+    /*********************************************************************************************//*!
+    *
+    *  @brief       Returns the depth of one of the ModDock's ModUnits.
+    *
+    *  @param       index The index of the ModUnit to get the depth value for.
+    *
+    *  @return      The depth value of a ModUnit within the ModDock.
+    *
+    *************************************************************************************************/
+    
+    double getDepth(index_t index) const;
     
     /*********************************************************************************************//*!
     *
@@ -117,8 +139,19 @@ public:
     
     void detach(index_t index);
     
+    /*********************************************************************************************//*!
+    *
+    *  @brief       Returns the size of the ModDock.
+    *
+    *  @return      The number of ModUnit docks in the ModDock.
+    *
+    *************************************************************************************************/
+    
+    unsigned long size() const;
+    
 private:
     
+    /*! A ModItem contains a ModUnit* and a depth value */
     struct ModItem
     {
         explicit ModItem(ModUnit* modUnit, double dpth = 1)
@@ -130,8 +163,10 @@ private:
         double depth;
     };
     
+    /*! Vector of ModItems */
     std::vector<ModItem> _mods;
     
+    /*! The master depth value */
     double _masterDepth;
 };
 

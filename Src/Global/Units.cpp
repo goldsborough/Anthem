@@ -9,6 +9,7 @@
 #include "Units.h"
 #include "ModDock.h"
 #include "Wavetable.h"
+
 #include <stdexcept>
 
 Unit::Unit(index_t numDocks)
@@ -20,7 +21,17 @@ Unit::Unit(index_t numDocks)
     }
 }
 
-std::vector<ModUnit*>::size_type Unit::numDocks() const
+Unit::~Unit()
+{
+    for (std::vector<ModDock*>::iterator itr = _mods.begin(), end = _mods.end();
+         itr != end;
+         ++itr)
+    {
+        delete *itr;
+    }
+}
+
+std::vector<ModDock*>::size_type Unit::numDocks() const
 {
     return _mods.size();
 }
@@ -28,20 +39,29 @@ std::vector<ModUnit*>::size_type Unit::numDocks() const
 void Unit::setDockMasterDepth(index_t dockNum, double depth)
 {
     if (depth > 1 || depth < 0)
-    { throw std::invalid_argument("Depth value must be between 0 and 1!");}
+    { throw std::invalid_argument("Master depth value must be between 0 and 1!"); }
     
     _mods[dockNum]->setMasterDepth(depth);
 }
 
-void Unit::setDepth(index_t dockNum,
-                    index_t modNum,
-                    double depth)
+double Unit::getDockMasterDepth(index_t dockNum) const
 {
-    
+    return _mods[dockNum]->getMasterDepth();
+}
+
+void Unit::setModUnitDepth(index_t dockNum,
+                           index_t modNum,
+                           double depth)
+{
     if (depth > 1 || depth < 0)
     { throw std::invalid_argument("Depth value must be between 0 and 1!");}
     
     _mods[dockNum]->setDepth(modNum, depth);
+}
+
+double Unit::getModUnitDepth(index_t dockNum, index_t modNum) const
+{
+    return _mods[dockNum]->getDepth(modNum);
 }
 
 void Unit::attachMod(index_t dockNum,
@@ -54,16 +74,6 @@ void Unit::detachMod(index_t dockNum,
                      index_t modNum)
 {
     _mods[dockNum]->detach(modNum);
-}
-
-Unit::~Unit()
-{
-    for (std::vector<ModDock*>::iterator itr = _mods.begin(), end = _mods.end();
-         itr != end;
-         ++itr)
-    {
-        delete *itr;
-    }
 }
 
 void EffectUnit::setDryWet(double dw)
@@ -103,7 +113,7 @@ double GenUnit::getAmp() const
     return _amp;
 }
 
-ModUnit::ModUnit(double amp, unsigned short dockNum)
+ModUnit::ModUnit(double amp , unsigned short dockNum)
 : Unit(dockNum)
 {
     setAmp(amp);

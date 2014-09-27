@@ -90,8 +90,7 @@ public:
      *  @exception  Throws std::invalid_argument if len > _maxLen (60 seconds)
      *
      *************************************************************************/
-    
-    // In samples
+
     void setLen(len_t sampleLen);
     
     /*************************************************************************//*!
@@ -217,10 +216,7 @@ public:
     *  @brief       Sets the modulation wave acting on the envelope segment.
     *
     *  @details     The _modWave member is updated and the internal oscillator's
-    *               wave is set. Since the segment should begin and end as would
-    *               the unmodulated segment, the phase of certain waves has to be
-    *               offset accordingly. Sine and Triangle waves are offset 90° and
-    *               square waves are offset 215°.
+    *               wave is set.
     *
     *  @param       modW A Wavetable::Modes member.
     *
@@ -232,15 +228,14 @@ public:
     *
     *  @brief       Sets the rate of the modulation of the segment.
     *
-    *  @details     It is important to note that this rate, ranging from 0 to
-    *               to 255, is not the frequency in the sense of cycles per
-    *               per second, but rather oscillations per __segment__, so
-    *               a rate of 10 means there will be 10 cycles, or oscillations
-    *               going through the segment. This means that the rate can
-    *               actually be modified either through this function or just
-    *               by changing the length.
+    *  @details     It is important to note that this rate is not the frequency
+    *               in the sense of cycles per per second, but rather oscillations
+    *               per __segment__, so a rate of 10 means there will be 10
+    *               cycles, or oscillations going through the segment. This means
+    *               that the rate can actually be modified either through this function
+    *                or just by changing the length. Maximum is 100.
     *
-    *  @param       rate The modulation rate, ranging from 0 to 255.
+    *  @param       rate The modulation rate, between 0 and 100.
     *
     *  @see         _calcModFreq()
     *
@@ -353,9 +348,13 @@ private:
     *             positive, meaning there is a decay, or 0, which indicates a
     *             sustain segment.
     *
+    *  @param       startLevel The starting amplitude, between 0 and 1.
+    *
+    *  @param       startLevel The starting amplitude, between 0 and 1.
+    *
     ****************************************************************************/
     
-    void _calcLevel();
+    void _calcLevel(double startLevel, double endLevel);
     
     /*************************************************************************//*!
     *
@@ -411,15 +410,18 @@ private:
     
     /*! Offset for exponential increment */
     double _offset;
+
+    /*! Last ticked value */
+    double _lastTick;
+    
+    /*! Length of segment in samples */
+    len_t _len;
     
     /*! The modulation oscillator */
     LFO * _lfo;
     
     /*! Maximum possible segment length, a good value is 60 seconds */
     static const len_t _maxLen;
-    
-    /*! Length of segment in samples */
-    len_t _len;
 };
 
 /******************************************************************************//*!
@@ -437,7 +439,7 @@ class EnvSegSeq
     
 public:
 
-    typedef unsigned long subseg_t;
+    typedef unsigned long seg_t;
     
     /******************************************************************************//*!
     *
@@ -447,7 +449,7 @@ public:
     *
     *********************************************************************************/
     
-    EnvSegSeq(subseg_t seqLen);
+    EnvSegSeq(seg_t seqLen);
     
     virtual ~EnvSegSeq() { }
 
@@ -460,26 +462,6 @@ public:
     *********************************************************************************/
     
     virtual double tick();
-    
-    /******************************************************************************//*!
-    *
-    *  @brief      Sets the EnvSegSeq's amplitude.
-    *
-    *  @param      amp The new amplitude value.
-    *
-    *********************************************************************************/
-    
-    virtual void setAmp(double amp);
-    
-    /******************************************************************************//*!
-    *
-    *  @brief      Gets the EnvSegSeq's amplitude.
-    *
-    *  @return     The current amplitude value.
-    *
-    *********************************************************************************/
-    
-    virtual double getAmp() const;
     
     /******************************************************************************//*!
     *
@@ -507,7 +489,7 @@ public:
     *
     *********************************************************************************/
     
-    virtual void setSegRate(subseg_t seg, double rate);
+    virtual void setSegRate(seg_t seg, double rate);
     
     /******************************************************************************//*!
     *
@@ -519,7 +501,7 @@ public:
     *
     *********************************************************************************/
     
-    virtual double getSegRate(subseg_t seg) const;
+    virtual double getSegRate(seg_t seg) const;
     
     /******************************************************************************//*!
     *
@@ -531,7 +513,7 @@ public:
     *
     *********************************************************************************/
     
-    virtual void setSegStartLevel(subseg_t seg, double lv);
+    virtual void setSegStartLevel(seg_t seg, double lv);
     
     /******************************************************************************//*!
     *
@@ -543,7 +525,7 @@ public:
     *
     *********************************************************************************/
     
-    virtual double getSegStartLevel(subseg_t seg) const;
+    virtual double getSegStartLevel(seg_t seg) const;
     
     /******************************************************************************//*!
     *
@@ -555,7 +537,7 @@ public:
     *
     *********************************************************************************/
     
-    virtual void setSegEndLevel(subseg_t seg, double lv);
+    virtual void setSegEndLevel(seg_t seg, double lv);
     
     /******************************************************************************//*!
     *
@@ -567,7 +549,7 @@ public:
     *
     *********************************************************************************/
     
-    virtual double getSegEndLevel(subseg_t seg) const;
+    virtual double getSegEndLevel(seg_t seg) const;
     
     /******************************************************************************//*!
     *
@@ -579,7 +561,7 @@ public:
     *
     *********************************************************************************/
     
-    virtual void setSegBothLevels(subseg_t seg, double lv);
+    virtual void setSegBothLevels(seg_t seg, double lv);
     
     /******************************************************************************//*!
     *
@@ -591,7 +573,7 @@ public:
     *
     *********************************************************************************/
     
-    virtual void setSegModWave(subseg_t seg, int wavetableId);
+    virtual void setSegModWave(seg_t seg, int wavetableId);
     
     /******************************************************************************//*!
     *
@@ -603,7 +585,7 @@ public:
     *
     *********************************************************************************/
     
-    virtual void setSegModDepth(subseg_t seg, double dpth);
+    virtual void setSegModDepth(seg_t seg, double dpth);
     
     /******************************************************************************//*!
     *
@@ -615,7 +597,7 @@ public:
     *
     *********************************************************************************/
     
-    virtual double getSegModDepth(subseg_t seg) const;
+    virtual double getSegModDepth(seg_t seg) const;
     
     /*****************************************************************************************//*!
     *
@@ -627,7 +609,7 @@ public:
     *
     ********************************************************************************************/
     
-    virtual void setSegModRate(subseg_t seg, unsigned short rate);
+    virtual void setSegModRate(seg_t seg, unsigned short rate);
     
     /******************************************************************************//*!
     *
@@ -639,7 +621,7 @@ public:
     *
     *********************************************************************************/
     
-    virtual double getSegModRate(subseg_t seg) const;
+    virtual double getSegModRate(seg_t seg) const;
     
     /******************************************************************************//*!
     *
@@ -651,7 +633,7 @@ public:
     *
     *********************************************************************************/
 
-    virtual void setSegLen(subseg_t seg, unsigned long ms);
+    virtual void setSegLen(seg_t seg, unsigned long ms);
     
     /******************************************************************************//*!
     *
@@ -663,7 +645,7 @@ public:
     *
     *********************************************************************************/
     
-    virtual unsigned long getSegLen(subseg_t seg) const;
+    virtual unsigned long getSegLen(seg_t seg) const;
     
     /******************************************************************************//*!
     *
@@ -673,7 +655,7 @@ public:
     *
     *********************************************************************************/
     
-    virtual void setLoopStart(subseg_t seg);
+    virtual void setLoopStart(seg_t seg);
     
     /******************************************************************************//*!
     *
@@ -683,7 +665,7 @@ public:
     *
     *********************************************************************************/
     
-    virtual subseg_t getLoopStart() const;
+    virtual seg_t getLoopStart() const;
     
     /******************************************************************************//*!
     *
@@ -693,7 +675,7 @@ public:
     *
     *********************************************************************************/
     
-    virtual void setLoopEnd(subseg_t seg);
+    virtual void setLoopEnd(seg_t seg);
     
     /******************************************************************************//*!
     *
@@ -703,7 +685,7 @@ public:
     *
     *********************************************************************************/
     
-    virtual subseg_t getLoopEnd() const;
+    virtual seg_t getLoopEnd() const;
     
     /******************************************************************************//*!
     *
@@ -780,19 +762,16 @@ protected:
     segItr _loopEnd;
     
     /*! Current number of loops executed */
-    subseg_t _loopCount;
+    seg_t _loopCount;
     
     /*! Maximum number of loops */
-    subseg_t _loopMax;
+    seg_t _loopMax;
  
     /*! Boolean whether or not to loop infinitely */
     bool _loopInf;
     
     /*! The last ticked value */
     double _lastTick;
-    
-    /*! The amplitude value */
-    double _amp;
     
     /*! The segment sequence */
     std::vector<EnvSeg> _segs;
