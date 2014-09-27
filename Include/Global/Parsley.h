@@ -1,9 +1,14 @@
-//
-//  Parsley.h
-//
-//  Created by Peter Goldsborough on 19/04/14.
-//  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
-//
+/*********************************************************************************************//*!
+*
+*  @file        Parsley.h
+*
+*  @author      Peter Goldsborough
+*
+*  @date        27/09/2014
+*
+*  @brief       Parsley, the XML Parser.
+*
+*************************************************************************************************/
 
 #ifndef __Parsley__
 #define __Parsley__

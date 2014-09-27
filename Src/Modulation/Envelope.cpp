@@ -10,10 +10,11 @@
 #include "Global.h"
 #include "ModDock.h"
 
-Envelope::Envelope(unsigned int delayMillis,
-                   bool sustainInf)
-: EnvSegSeq(7), ModUnit(1,16), _sustainInf(sustainInf),
+Envelope::Envelope(unsigned int delayMillis, bool sustainEnabled)
+
+: EnvSegSeq(7), ModUnit(1,16), _sustainEnabled(sustainEnabled),
   _currSegRate(1), _currSegModRate(0), _currSegModDepth(1)
+
 {
     _currSeg = _segs.begin() + DEL;
     
@@ -33,6 +34,11 @@ Envelope::Envelope(unsigned int delayMillis,
     setSegRate(Envelope::REL, 0.1);
     setSegLen(Envelope::REL, 500);
     
+    // Set the hidden connector length to a 40th of the
+    // samplerate, at 44.1 Khz that's 1102 samples. Not
+    // too long to be noticed too much but just enough
+    // to prevent transitions between loops from being
+    // too abrupt
     _segs[CONNECTOR].setLen(Global::samplerate / 40);
 }
 
@@ -46,9 +52,12 @@ void Envelope::_changeSeg(segItr seg)
 
     // If we just changed to the release segment
     // set the start level of the segment to the
-    // last ticked value
-    if ((seg - _segs.begin()) == REL)
-    { _currSeg->setStartLevel(_lastTick); }
+    // last ticked value, (for note-off, could be
+    // abrupt)
+    if (_currSegNum == REL)
+    {
+        _currSeg->setStartLevel(_lastTick);
+    }
     
 }
 
@@ -87,7 +96,7 @@ void Envelope::setDelay(unsigned int millis)
 void Envelope::_resetLoop()
 {
     // Reset all segments
-    for(segItr itr = _segs.begin(), end = _segs.end();
+    for(segItr itr = _loopStart, end = _loopEnd + 1;
         itr != end;
         ++itr)
     {
@@ -104,7 +113,7 @@ void Envelope::_resetLoop()
     else
     {
         // Set _currSeg to connector segment
-        EnvSegSeq::_changeSeg(_segs.begin());
+        _changeSeg(_segs.begin());
         
         _currSeg->reset();
     }
@@ -116,11 +125,17 @@ double Envelope::_tick()
     if (_currSample++ >= _currSeg->getLen())
     {
         // If we're crossing over the release segment, just return 0
-        if (_currSegNum == REL) return 0;
+        if (_currSegNum == REL)
+        {
+            return 0;
+        }
         
-        // If this is the end of the connectin segment, change back to the
+        // If this is the end of the connecting segment, change back to the
         // loop start
-        else if (_currSegNum == CONNECTOR) _changeSeg(_loopStart);
+        else if (_currSegNum == CONNECTOR)
+        {
+            _changeSeg(_loopStart);
+        }
         
         // If we reached the loop end segment and there are more loops to go
         // through, reset the loop
@@ -131,13 +146,16 @@ double Envelope::_tick()
         
         // if we reached the end of segment c and the sustain is set to infinity
         // return the last tick
-        else if (_currSegNum == SEG_C && _sustainInf) return _lastTick;
+        else if (_currSegNum == SEG_C && _sustainEnabled)
+        {
+           return _lastTick;
+        }
         
         else
         {
             _changeSeg(++_currSeg);
             
-            if (_currSeg->getLen() == 0) return _lastTick;
+            if ( ! _currSeg->getLen() ) return _lastTick;
         }
 
     }
@@ -151,11 +169,6 @@ double Envelope::_tick()
 
 double Envelope::modulate(double sample, double depth, double, double)
 {
-    if (_currSegNum == SEG_A)
-    {
-        
-    }
-    
     if (_currSegNum > DEL)
     {
         seg_t seg = (_currSegNum - 2) * 3;
@@ -202,8 +215,8 @@ void Envelope::setLoopStart(seg_t seg)
 
 void Envelope::setLoopEnd(seg_t seg)
 {
-    if (seg >= REL || seg <= ATK)
-    { throw std::invalid_argument("Invalid loop segment, can only loop from Segments A to D!"); }
+    if (seg >= REL || seg < ATK)
+    { throw std::invalid_argument("Invalid loop segment, can only loop from Segments ATK to SEG_C!"); }
     
     _loopEnd = _segs.begin() + seg;
     
@@ -215,8 +228,8 @@ void Envelope::setLoopEnd(seg_t seg)
 
 void Envelope::setSegLevel(seg_t seg, double lv)
 {
-    if (seg >= REL || seg <= DEL)
-        throw std::invalid_argument("Invalid segment for setting the level!");
+    if (seg >= REL || seg < ATK)
+    { throw std::invalid_argument("Invalid segment for setting the level!"); }
     
     _segs[seg].setEndLevel(lv);
     _segs[seg + 1].setStartLevel(lv);
@@ -250,16 +263,19 @@ void Envelope::setSegModRate(seg_t seg, unsigned short rate)
 
 void Envelope::noteOff()
 {
-    // Switch to release segment
-    _changeSeg(_segs.begin() + REL);
+    if (_currSegNum != REL)
+    {
+        // Switch to release segment
+        _changeSeg(_segs.begin() + REL);
+    }
 }
 
-void Envelope::setSustainInf(bool sustainInf)
+void Envelope::setSustainEnabled(bool sustainEnabled)
 {
-    _sustainInf = sustainInf;
+    _sustainEnabled = sustainEnabled;
 }
 
-bool Envelope::sustainInf() const
+bool Envelope::sustainEnabled() const
 {
-    return _sustainInf;
+    return _sustainEnabled;
 }

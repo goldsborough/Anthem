@@ -34,14 +34,8 @@ int main(int argc, const char * argv[])
     Operator op(WavetableDB::SINE);
     
     op.addNote(440);
-    
-    LFO lfo;
-    
+
     Envelope env;
-    
-    env.setSegLen(Envelope::ATK, 2000);
-    
-    env.attachMod(Envelope::ATK, Envelope::AMP, &lfo);
     
     op.attachMod(Operator::AMP, &env);
 

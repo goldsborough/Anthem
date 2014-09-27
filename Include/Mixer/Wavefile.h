@@ -48,6 +48,7 @@ public:
     *  @param       channels The number of channels, usually mono (1) or stereo (2).
     *
     *************************************************************************************************/
+    
     void setChannels(unsigned short channels);
     
     /*********************************************************************************************//*!
@@ -57,6 +58,7 @@ public:
     *  @param       fname The new file name.
     *
     *************************************************************************************************/
+    
     void setFileName(const std::string& fname);
     
     
@@ -67,6 +69,7 @@ public:
     *  @param       sampleBuffer The SampleBuffer to write to a wavefile.
     *
     *************************************************************************************************/
+    
     void write(const SampleBuffer& sampleBuffer);
     
 private:

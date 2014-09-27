@@ -1,10 +1,14 @@
-//
-//  Mixer.h
-//  Anthem
-//
-//  Created by Peter Goldsborough on 28/03/14.
-//  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
-//
+/*********************************************************************************************//*!
+*
+*  @file        Mixer.h
+*
+*  @author      Peter Goldsborough
+*
+*  @date        27/09/2014
+*
+*  @brief       Mixer class declaration.
+*
+*************************************************************************************************/
 
 #ifndef __Anthem__Mixer__
 #define __Anthem__Mixer__
@@ -39,18 +43,18 @@ private:
     
     double _masterAmp;
 
-    CrossfadeUnit * _pan;
+    CrossfadeUnit* _pan;
     
     bool _stopped = true;
     
     bool _sendToWaveFile;
     bool _sendToDirectOutput;
     
-    SampleBuffer  *  _sampleDataBuffer;
+    SampleBuffer*  _sampleDataBuffer;
     
-    DirectOutput * _directOut;
+    DirectOutput* _directOut;
     
-    Wavefile     * _waveOut;
+    Wavefile* _waveOut;
 };
 
 #endif /* defined(__Anthem__Mixer__) */

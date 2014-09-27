@@ -1,10 +1,16 @@
-//
-//  Sample.h
-//  Anthem
-//
-//  Created by Peter Goldsborough on 15/04/14.
-//  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
-//
+/*********************************************************************************************//*!
+*
+*  @file        Sample.h
+*
+*  @author      Peter Goldsborough
+*
+*  @date        27/09/2014
+*
+*  @brief       Sample structures.
+*
+*  @details     This file defines structs for holding two-channel samples and a sample buffer.
+*
+*************************************************************************************************/
 
 #ifndef __Anthem__Sample__
 #define __Anthem__Sample__

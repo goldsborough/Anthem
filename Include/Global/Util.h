@@ -1,10 +1,14 @@
-//
-//  Util.h
-//  Anthem
-//
-//  Created by Peter Goldsborough on 15/04/14.
-//  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
-//
+/*********************************************************************************************//*!
+*
+*  @file        Util.h
+*
+*  @author      Peter Goldsborough
+*
+*  @date        27/09/2014
+*
+*  @brief       Various utility functions for Anthem.
+*
+*************************************************************************************************/
 
 #ifndef __Anthem__Util__
 #define __Anthem__Util__
@@ -13,9 +17,9 @@
 
 namespace Util
 {
-    
+    /*! Returns an std::string with the current date in the format DD_MM_YYYY */
     extern std::string getDate();
-
+    
     extern double noteToFreq(const unsigned short& n);
 
     extern unsigned short freqToNote(const double& freq);

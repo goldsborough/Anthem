@@ -1,10 +1,14 @@
-//
-//  Errors.h
-//  Parsley
-//
-//  Created by Peter Goldsborough on 20/04/14.
-//  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
-//
+/*********************************************************************************************//*!
+*
+*  @file        ParsleyErrors.h
+*
+*  @author      Peter Goldsborough
+*
+*  @date        27/09/2014
+*
+*  @brief       Custom errors for Parsley.
+*
+*************************************************************************************************/
 
 #ifndef __Parsley_Errors__
 #define __Parsley_Errors__

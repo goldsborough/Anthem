@@ -1,10 +1,14 @@
-//
-//  Effects.h
-//  Anthem
-//
-//  Created by Peter Goldsborough on 31/07/14.
-//  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
-//
+/*********************************************************************************************//*!
+*
+*  @file        Effects.h
+*
+*  @author      Peter Goldsborough
+*
+*  @date        27/09/2014
+*
+*  @brief       Defines various effects.
+*
+*************************************************************************************************/
 
 #ifndef __Anthem__Effects__
 #define __Anthem__Effects__

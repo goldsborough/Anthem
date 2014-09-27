@@ -1,10 +1,16 @@
-//
-//  Synthesizer.h
-//  Anthem
-//
-//  Created by Peter Goldsborough on 21/01/14.
-//  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
-//
+/*********************************************************************************************//*!
+*
+*  @file        Synthesizer.h
+*
+*  @author      Peter Goldsborough
+*
+*  @date        27/09/2014
+*
+*  @brief       Main initialization class.
+*
+*  @details     Will be changed at some point ... 
+*
+*************************************************************************************************/
 
 #ifndef __Anthem__Synthesizer__
 #define __Anthem__Synthesizer__

@@ -1,10 +1,14 @@
-//
-//  DirectOutput.h
-//  Anthem
-//
-//  Created by Peter Goldsborough on 08/04/14.
-//  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
-//
+/*********************************************************************************************//*!
+*
+*  @file        DirectOutput.h
+*
+*  @author      Peter Goldsborough
+*
+*  @date        27/09/2014
+*
+*  @brief       Holds the DirectOutput class for real-time audio output.
+*
+*************************************************************************************************/
 
 #ifndef __Anthem__DirectOutput__
 #define __Anthem__DirectOutput__

@@ -1,10 +1,14 @@
-//
-//  FM.h
-//  Anthem
-//
-//  Created by Peter Goldsborough on 08/09/14.
-//  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
-//
+/*********************************************************************************************//*!
+*
+*  @file        FM.h
+*
+*  @author      Peter Goldsborough
+*
+*  @date        27/09/2014
+*
+*  @brief       Frequency modulation classes.
+*
+*************************************************************************************************/
 
 #ifndef __Anthem__FM__
 #define __Anthem__FM__

@@ -1,10 +1,14 @@
-//
-//  Midi.h
-//  Anthem
-//
-//  Created by Peter Goldsborough on 20/07/14.
-//  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
-//
+/*********************************************************************************************//*!
+*
+*  @file        Midi.h
+*
+*  @author      Peter Goldsborough
+*
+*  @date        27/09/2014
+*
+*  @brief       Midi interfacing.
+*
+*************************************************************************************************/
 
 #ifndef __Anthem__Midi__
 #define __Anthem__Midi__
