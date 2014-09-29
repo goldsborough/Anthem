@@ -12,10 +12,27 @@
 #include "ModDock.h"
 #include "Util.h"
 
+/* enum Docks
+ {
+ AMP,
+ SEMI_OFFSET,
+ CENT_OFFSET
+ };*/
+
 Operator::Operator(short wt, double amp)
-: GenUnit(1,3)
+: GenUnit(amp,3)
 {
-    _amp = amp;
+    _mods[AMP]->setHigherBoundary(1);
+    _mods[AMP]->setLowerBoundary(0);
+    _mods[AMP]->setBaseValue(amp);
+    
+    _mods[SEMI_OFFSET]->setHigherBoundary(48);
+    _mods[SEMI_OFFSET]->setLowerBoundary(-48);
+    _mods[SEMI_OFFSET]->setBaseValue(0);
+    
+    _mods[CENT_OFFSET]->setHigherBoundary(100);
+    _mods[CENT_OFFSET]->setLowerBoundary(0);
+    _mods[CENT_OFFSET]->setBaseValue(0);
     
     // Set wavetable for all oscillators
     setWavetable(wt);
@@ -23,7 +40,7 @@ Operator::Operator(short wt, double amp)
 
 Operator::~Operator()
 {
-    for (oscVec::iterator itr = _oscs.begin(), end = _oscs.end();
+    for (noteVec::iterator itr = _notes.begin(), end = _notes.end();
          itr != end;
          ++itr)
     {
@@ -34,10 +51,10 @@ Operator::~Operator()
 void Operator::setWavetable(short wt)
 {
     // Store id to add new notes with the same wavetable
-    _wavetableId = wt;
+    _wavetableID = wt;
     
     // Reset wavetable for all notes
-    for (oscVec::iterator itr = _oscs.begin(), end = _oscs.end();
+    for (noteVec::iterator itr = _notes.begin(), end = _notes.end();
          itr != end;
          ++itr)
     {
@@ -45,43 +62,60 @@ void Operator::setWavetable(short wt)
     }
 }
 
-void Operator::setSemis(double semis, bool permanent)
+short Operator::getWavetableID() const
 {
-    if (permanent)
-    { _semis = semis; }
-    
-    for (oscVec::iterator itr = _oscs.begin(), end = _oscs.end();
-         itr != end;
-         ++itr)
-    {
-        (*itr)->setSemis(semis);
-    }
+    return _wavetableID;
 }
 
-void Operator::setCents(double cents, bool permanent)
+void Operator::setSemitoneOffset(short semitoneOffset)
 {
-    if (permanent)
-    { _cents = cents; }
+    _mods[SEMI_OFFSET]->setBaseValue(semitoneOffset);
     
-    for (oscVec::iterator itr = _oscs.begin(), end = _oscs.end();
+    for (noteVec::iterator itr = _notes.begin(), end = _notes.end();
          itr != end;
          ++itr)
     {
-        (*itr)->setCents(cents);
+        (*itr)->setSemitoneOffset(semitoneOffset);
     }
+    
+    _semitoneOffset = semitoneOffset;
+}
+
+short Operator::getSemitoneOffset() const
+{
+    return _semitoneOffset;
+}
+
+void Operator::setCentOffset(short centOffset)
+{
+    _mods[CENT_OFFSET]->setBaseValue(centOffset);
+    
+    for (noteVec::iterator itr = _notes.begin(), end = _notes.end();
+         itr != end;
+         ++itr)
+    {
+        (*itr)->setCentOffset(centOffset);
+    }
+    
+    _centOffset = centOffset;
+}
+
+short Operator::getCentOffset() const
+{
+    return _centOffset;
 }
 
 void Operator::addNote(double frq)
 {
     // Initialize and push back a new oscillator with the
     // operator's current wavetable id and the new frequency
-    _oscs.push_back(new Oscillator(_wavetableId,frq));
+    _notes.push_back(new Oscillator(_wavetableID,frq));
 }
 
 void Operator::relNote(double frq)
 {
     // Iterate over all notes
-    for (oscVec::iterator itr = _oscs.begin(), end = _oscs.end();
+    for (noteVec::iterator itr = _notes.begin(), end = _notes.end();
          itr != end;
          ++itr)
     {
@@ -92,7 +126,7 @@ void Operator::relNote(double frq)
             delete *itr;
             
             // And erase the pointer from the vector
-            _oscs.erase(itr);
+            _notes.erase(itr);
             
             break;
         }
@@ -102,34 +136,42 @@ void Operator::relNote(double frq)
 void Operator::relNote(unsigned short ind)
 {
     // Delete the oscillator
-    delete _oscs[ind];
+    delete _notes[ind];
     
     // Remove the pointer from the vector
-    _oscs.erase(_oscs.begin() + ind);
+    _notes.erase(_notes.begin() + ind);
+}
+
+double Operator::getNoteFreq(unsigned short ind)
+{
+    return _notes[ind]->getFreq();
+}
+
+void Operator::setAmp(double amp)
+{
+    _mods[AMP]->setBaseValue(amp);
+    
+    _amp = amp;
 }
 
 double Operator::tick()
 {
     double val = 0;
     
-    // If the ModDock for semitone offsetting has any modulation units (is in use),
-    // grab the current value from all the modulation units and set the semitones
-    // for all oscillators
-    if (_mods[FREQ_SEMI]->inUse())
+    // Modulate semitones for all oscillators/notes
+    if (_mods[SEMI_OFFSET]->inUse())
     {
-        short semiOffs = _mods[FREQ_SEMI]->modulate(_semis, -48, 48);
-        setSemis(semiOffs, false);
+        setSemitoneOffset(_mods[SEMI_OFFSET]->tick());
     }
     
-    // Same goes for cent offsetting
-    if (_mods[FREQ_CENT]->inUse())
+    // Modulate semitones for all oscillators/notes
+    if (_mods[CENT_OFFSET]->inUse())
     {
-        short centOffs = _mods[FREQ_CENT]->modulate(_cents, 0, 100);
-        setCents(centOffs, false);
+        setCentOffset(_mods[CENT_OFFSET]->tick());
     }
     
     // Add up all notes
-    for (oscVec::iterator itr = _oscs.begin(), end = _oscs.end();
+    for (noteVec::iterator itr = _notes.begin(), end = _notes.end();
          itr != end;
          ++itr)
     {
@@ -138,7 +180,7 @@ double Operator::tick()
     
     // Check modulation dock for the amplitude parameter
     if (_mods[AMP]->inUse())
-    { return val * _mods[AMP]->modulate(_amp,0,1); }
+    { return val * _mods[AMP]->tick(); }
     
     return val * _amp;
 }

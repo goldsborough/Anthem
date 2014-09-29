@@ -11,9 +11,48 @@
 
 #include <stdexcept>
 
-ModDock::ModDock(double masterDepth)
+ModDock::ModDock()
+: _masterDepth(1)
+{ }
+
+ModDock::ModDock(double lowerBoundary,
+                 double higherBoundary,
+                 double baseValue,
+                 double masterDepth)
+: _lowerBoundary(lowerBoundary), _higherBoundary(higherBoundary),
+  _baseValue(baseValue)
 {
     setMasterDepth(masterDepth);
+}
+
+void ModDock::setBaseValue(double baseValue)
+{
+    _baseValue = baseValue;
+}
+
+double ModDock::getBaseValue() const
+{
+    return _baseValue;
+}
+
+void ModDock::setLowerBoundary(double lowerBoundary)
+{
+    _lowerBoundary = lowerBoundary;
+}
+
+double ModDock::getLowerBoundary() const
+{
+    return _lowerBoundary;
+}
+
+void ModDock::setHigherBoundary(double higherBoundary)
+{
+    _higherBoundary = higherBoundary;
+}
+
+double ModDock::getHigherBoundary() const
+{
+    return _higherBoundary;
 }
 
 void ModDock::setMasterDepth(double depth)
@@ -34,23 +73,35 @@ bool ModDock::inUse() const
     return (_masterDepth > 0 && ! _mods.empty());
 }
 
-double ModDock::modulate(double sample,
-                         double minBoundary,
-                         double maxBoundary)
+double ModDock::tick()
+{
+    return modulate(_baseValue);
+}
+
+double ModDock::modulate(double sample)
 {
     // If ModDock is not in use, return original sample immediately
     if (! inUse()) return sample;
 
+    double temp = sample;
+    
     // Apply all modulation
     for (std::vector<ModItem>::const_iterator itr = _mods.begin(), end = _mods.end();
          itr != end;
          ++itr)
     {
         // Get modulated signal
-        sample = itr->mod->modulate(sample, itr->depth, minBoundary, maxBoundary);
+        temp = itr->mod->modulate(temp, itr->depth, _higherBoundary);
     }
     
-    return sample * _masterDepth;
+    // Apply master depth like dry/wet
+    sample = (sample * (1 - _masterDepth)) + (temp * _masterDepth);
+    
+    if (sample > _higherBoundary) { sample = _higherBoundary; }
+    
+    else if (sample < _lowerBoundary) { sample = _lowerBoundary; }
+    
+    return sample;
 }
 
 void ModDock::setDepth(index_t index, double depth)

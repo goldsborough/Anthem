@@ -50,23 +50,12 @@ public:
      *
      *  @param      segRate The rate of the segment. 1 = Lin, 0 <= rate < 1 = Exp, 1 < rate <= 2 = Log
      *
-     *  @param      modWave The modulating wave, should be a directly calculated type for best results
-     *
-     *  @param      modDepth The depth of the modulation, 1 = full, 0 = none and everything inbetween
-     *
-     *  @param      modRate The modulation rate/frequency, must be between 0 and 10
-     *
      **************************************************************************************************/
     
     EnvSeg(double startAmp = 0,
            double endAmp = 0,
            len_t len = 0,
-           double segRate = 1,
-           int modWave = -1,
-           double modDepth = 1,
-           unsigned char modRate = 1);
-    
-    ~EnvSeg();
+           double segRate = 1);
     
     /******************************************************************//*!
      *
@@ -210,78 +199,7 @@ public:
     ****************************************************************************/
     
     void setBothLevels(double lv);
-    
-    /*************************************************************************//*!
-    *
-    *  @brief       Sets the modulation wave acting on the envelope segment.
-    *
-    *  @details     The _modWave member is updated and the internal oscillator's
-    *               wave is set.
-    *
-    *  @param       modW A Wavetable::Modes member.
-    *
-    ****************************************************************************/
-    
-    void setModWave(int modW);
-    
-    /*************************************************************************//*!
-    *
-    *  @brief       Sets the rate of the modulation of the segment.
-    *
-    *  @details     It is important to note that this rate is not the frequency
-    *               in the sense of cycles per per second, but rather oscillations
-    *               per __segment__, so a rate of 10 means there will be 10
-    *               cycles, or oscillations going through the segment. This means
-    *               that the rate can actually be modified either through this function
-    *                or just by changing the length. Maximum is 100.
-    *
-    *  @param       rate The modulation rate, between 0 and 100.
-    *
-    *  @see         _calcModFreq()
-    *
-    *  @see         setLen()
-    *
-    ****************************************************************************/
-    
-    void setModRate(unsigned short rate);
-    
-    /*************************************************************************//*!
-    *
-    *  @brief      Returns the mod wave's rate.
-    *
-    *  @return     The mod wave's rate.
-    *
-    ****************************************************************************/
-    
-    double getModRate() const;
-    
-    /*************************************************************************//*!
-    *
-    *  @brief       Sets the depth of the modulation.
-    *
-    *  @details     This setting, ranging from 0 to 1, determines how much of
-    *               of the modulation goes through. The function itself just
-    *               sets the private _modDepth member, it is at each tick in
-    *               the
-    *
-    *  @param       dpth The depth between 0 and 1
-    *
-    *  @exception   Throws std::invalid_argument if dpth less than 0 or greater 1
-    *
-    ****************************************************************************/
-    
-    void setModDepth(double dpth);
-    
-    /*************************************************************************//*!
-    *
-    *  @brief      Returns the mod wave's depth.
-    *
-    *  @return     The mod wave's depth.
-    *
-    ****************************************************************************/
-    
-    double getModDepth() const;
-    
+
     /*************************************************************************//*!
     *
     *  @brief       Resets the envelope segment.
@@ -356,22 +274,6 @@ private:
     
     void _calcLevel(double startLevel, double endLevel);
     
-    /*************************************************************************//*!
-    *
-    *  @brief       Calculates the frequency / rate of the modulation lfo.
-    *
-    *  @details     Calculates the frequency that the modulation oscillator must have for
-    *               a _modRate of 1 to be ONE cycle throughout the segment and multiplies
-    *               that by _modRate. The _modRate is not an absolute value of cycles per
-    *               second, rather it is the number of cycles per SEGMENT. Must be called
-    *               either when the _modRate changes or when _len changes.
-    *
-    *  @see         setModRate()
-    *
-    ****************************************************************************/
-    
-    void _calcModRate();
-    
     /*! Attack, Decay or Sustain identifier */
     ADS _ads;
     
@@ -381,9 +283,6 @@ private:
     /*! Sample count */
     len_t _sample;
     
-    /*! Modulation wave */
-    int _modWave;
-    
     /*! The rate determining the type (lin,log,exp) */
     double _segRate;
     
@@ -392,12 +291,6 @@ private:
     
     /*! End amplitude */
     double _endLevel;
-    
-    /*! Depth of the modulation, between 0 and 1 */
-    double _modDepth;
-    
-    /*! Rate of modulation (modulation cycles per __segment__) */
-    unsigned short _modRate;
     
     /*! Current increment value */
     double _segIncr;
@@ -416,9 +309,6 @@ private:
     
     /*! Length of segment in samples */
     len_t _len;
-    
-    /*! The modulation oscillator */
-    LFO * _lfo;
     
     /*! Maximum possible segment length, a good value is 60 seconds */
     static const len_t _maxLen;
@@ -471,13 +361,25 @@ public:
     
     virtual void addSegment();
     
-    /******************************************************************************//*!
+    /*************************************************************************************************//*!
     *
-    *  @brief      Removes the last segment in the sequence.
+    *  @brief       Removes the last segment from the sequence.
     *
-    *********************************************************************************/
+    *  @throws      std::runtime_error if segment number is 0.
+    *
+    *****************************************************************************************************/
     
     virtual void removeSegment();
+    
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Removes the last segment from the sequence.
+    *
+    *  @throws      std::invalid_argument if segment number invalid.
+    *
+    *****************************************************************************************************/
+    
+    virtual void removeSegment(seg_t seg);
     
     /******************************************************************************//*!
     *
@@ -562,67 +464,7 @@ public:
     *********************************************************************************/
     
     virtual void setSegBothLevels(seg_t seg, double lv);
-    
-    /******************************************************************************//*!
-    *
-    *  @brief       Sets the modulation wave of a segment.
-    *
-    *  @param       seg The segment in the sequence.
-    *
-    *  @param       mod The wavetable id of the wavetable (WavetableDB::Wavetables).
-    *
-    *********************************************************************************/
-    
-    virtual void setSegModWave(seg_t seg, int wavetableId);
-    
-    /******************************************************************************//*!
-    *
-    *  @brief       Sets the modulation depth of a segment's mod wave.
-    *
-    *  @param       seg The segment in the sequence.
-    *
-    *  @param       dpth The new depth value, between 0 and 1.
-    *
-    *********************************************************************************/
-    
-    virtual void setSegModDepth(seg_t seg, double dpth);
-    
-    /******************************************************************************//*!
-    *
-    *  @brief      Returns the current mod depth of a segment.
-    *
-    *  @param     seg The segment, of which to get the mod depth level.
-    *
-    *  @return     The mod depth level of a segment.
-    *
-    *********************************************************************************/
-    
-    virtual double getSegModDepth(seg_t seg) const;
-    
-    /*****************************************************************************************//*!
-    *
-    *  @brief       Sets the modulation rate of a segment.
-    *
-    *  @param       seg The segment in the sequence.
-    *
-    *  @param       rate The new rate, not that this is cycles per segment and not per second.
-    *
-    ********************************************************************************************/
-    
-    virtual void setSegModRate(seg_t seg, unsigned short rate);
-    
-    /******************************************************************************//*!
-    *
-    *  @brief      Returns the current mod rate of a segment.
-    *
-    *  @param     seg The segment, of which to get the mod rate.
-    *
-    *  @return     The mod rate of a segment.
-    *
-    *********************************************************************************/
-    
-    virtual double getSegModRate(seg_t seg) const;
-    
+        
     /******************************************************************************//*!
     *
     *  @brief       Sets the length of a segment.

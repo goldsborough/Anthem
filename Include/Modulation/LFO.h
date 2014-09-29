@@ -58,23 +58,8 @@ public:
     
     ~LFO();
     
-    /*********************************************************************************************//*!
-    *
-    *  @brief       Modulates a sample and returns the result.
-    *
-    *  @param       sample The sample to modulate.
-    *
-    *  @param       depth The modulation depth.
-    *
-    *  @param       minBoundary The minimum boundary to check for.
-    *
-    *  @param       maxBoundary The maximum boundary to check for.
-    *
-    *  @return      The modulated sample.
-    *
-    *************************************************************************************************/
-    
-    double modulate(double sample, double depth, double minBoundary, double maxBoundary);
+    /*! @copydoc ModUnit::modulate() */
+    double modulate(double sample, double depth, double maximum);
     
     /*************************************************************************************************//*!
     *
@@ -158,12 +143,6 @@ private:
     Oscillator* _osc;
 };
 
-
-
-// Inherit from Envelope instead of EnvSegSeq?
-
-
-
 /****************************************************************************************************//*!
 *
 *  @brief       Wrapper around EnvSegSeq for specific LFO purposes.
@@ -179,11 +158,19 @@ class LFOSeq : public EnvSegSeq, public ModUnit
     
 public:
     
+    enum Docks
+    {
+        SEG_RATE,
+        MOD_DEPTH,
+        MOD_RATE,
+        RATE
+    };
+    
     /*************************************************************************************************//*!
     *
     *  @brief       Constructs an LFOSeq object.
     *
-    *  @param       seqLength The amount of individual envelope segments. Defaults to 20.
+    *  @param       seqLength The amount of individual envelope segments. Defaults to 10.
     *
     *****************************************************************************************************/
     
@@ -207,13 +194,111 @@ public:
     
     /*************************************************************************************************//*!
     *
-    *  @brief       Returns the current rate.
+    *  @brief       Returns the current envelope rate.
     *
     *  @return      The rate, in Hertz.
     *
     *****************************************************************************************************/
     
     double getRate() const;
+    
+    /******************************************************************************//*!
+    *
+    *  @brief      Sets the rate of a segment.
+    *
+    *  @param      seg The segment in the sequence.
+    *
+    *  @param      rate The new rate. 0-1 is exp., 1 is linear and 1-2 is log.
+    *
+     *  @throws      std::invalid_argument if seg out of range.
+     *
+    *********************************************************************************/
+    
+    void setSegRate(seg_t seg, double rate);
+    
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Sets the depth of a segment's modulator.
+    *
+    *  @param       seg The segment to set the depth for.
+    *
+    *  @param       depth The new depth value.
+    *
+    *  @throws      std::invalid_argument if seg out of range.
+    *
+    *****************************************************************************************************/
+    
+    void setModDepth(seg_t seg, double depth);
+    
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Returns the depth of a segment's modulator.
+    *
+    *  @param       seg The segment to return the depth from.
+    *
+    *  @return      The depth of a segment's modulator.
+    *
+    *  @throws      std::invalid_argument if seg out of range.
+    *
+    *****************************************************************************************************/
+    
+    double getModDepth(seg_t seg) const;
+    
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Sets the rate of a segment's modulator.
+    *
+    *  @param       seg The segment to set the rate for.
+    *
+    *  @param       rate The new rate value.
+    *
+    *  @throws      std::invalid_argument if seg out of range.
+    *
+    *****************************************************************************************************/
+    
+    void setModRate(seg_t seg, double rate);
+    
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Returns the rate of a segment's modulator.
+    *
+    *  @param       seg The segment to return the rate from.
+    *
+    *  @return      The rate of a segment's modulator.
+    *
+    *  @throws      std::invalid_argument if seg out of range.
+    *
+    *****************************************************************************************************/
+    
+    double getModRate(seg_t seg) const;
+    
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Sets the phase offset of a segment's modulator.
+    *
+    *  @param       seg The segment to set the phase offset for.
+    *
+    *  @param       degrees The new phase offset value, in degrees.
+    *
+    *  @throws      std::invalid_argument if seg out of range.
+    *
+    *****************************************************************************************************/
+    
+    void setModPhaseOffset(seg_t seg, double degrees);
+    
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Returns the phase offset of a segment's modulator.
+    *
+    *  @param       seg The segment to return the phase offset from.
+    *
+    *  @return      The phase offset of a segment's modulator.
+    *
+    *  @throws      std::invalid_argument if seg out of range.
+    *
+    *****************************************************************************************************/
+    
+    double getModPhaseOffset(seg_t seg);
     
     /*************************************************************************************************//*!
     *
@@ -229,22 +314,43 @@ public:
     
     /*************************************************************************************************//*!
     *
-    *  @brief       Modulates a sample and returns the result.
+    *  @brief       Removes the last segment from the sequence.
     *
-    *  @param       sample The sample to modulate.
-    *
-    *  @param       depth The modulation depth.
-    *
-    *  @return      A new, modulated sample.
+    *  @throws      std::runtime_error if segment number is 0.
     *
     *****************************************************************************************************/
     
-    double modulate(double sample, double depth, double, double);
+    void removeSegment();
+    
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Removes the last segment from the sequence.
+    *
+    *  @throws      std::invalid_argument if segment number invalid.
+    *
+    *****************************************************************************************************/
+    
+    void removeSegment(seg_t seg);
+    
+    /*! @copydoc ModUnit::modulate() */
+    double modulate(double sample, double depth, double maximum);
     
 private:
     
-    /*! The current rate */
+    void _setScaledModRate(seg_t seg, double rate);
+    
+    /*! The current rate of the sequence */
     double _rate;
+    
+    double _currSegRate;
+    
+    double _currSegModDepth;
+    
+    double _currSegModRate;
+    
+    double _currSegPhaseOffset;
+    
+    std::vector<LFO> _lfos;
 };
 
 /****************************************************************************************************//*!
@@ -307,15 +413,11 @@ public:
     *
     *  @param       depth The modulation depth.
     *
-    *  @param       minBoundary The minimum boundary to check for.
-    *
-    *  @param       maxBoundary The maximum boundary to check for.
-    *
     *  @return      The modulated sample.
     *
     *************************************************************************************************/
     
-    double modulate(double sample, double depth, double, double);
+    double modulate(double sample, double depth);
 
     /****************************************************************************************************//*!
     *

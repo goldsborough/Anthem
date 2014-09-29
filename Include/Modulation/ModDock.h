@@ -37,13 +37,42 @@ public:
     
     /*********************************************************************************************//*!
     *
+    *  @brief       Constructs a ModDock without any initial settings.
+    *
+    *  @details     Values must be initialized through appropriate methods thereafter.
+    *
+    *************************************************************************************************/
+    
+    ModDock();
+    
+    /*********************************************************************************************//*!
+    *
     *  @brief       Constructs a ModDock.
+    *
+    *  @param       lowerBoundary The initial lower boundary value to scale to.
+    *
+    *  @param       higherBoundary The initial higher boundary value to scale to.
+    *
+    *  @param       baseValue The initial base value to modulate.
     *
     *  @param       masterDepth The inital master depth, defaults to 1.
     *
     *************************************************************************************************/
     
-    ModDock(double masterDepth = 1);
+    ModDock(double lowerBoundary,
+            double higherBoundary,
+            double baseValue,
+            double masterDepth = 1);
+    
+    /*********************************************************************************************//*!
+    *
+    *  @brief       Ticks the value obtained from calling modulated() with the base value member.
+    *
+    *  @see         modulate()
+    *
+    *************************************************************************************************/
+    
+    double tick();
     
     /*********************************************************************************************//*!
     *
@@ -55,17 +84,33 @@ public:
     *
     *  @param       sample The sample to modulate.
     *
-    *  @param       minBoundary The minimum boundary to check for.
-    *
-    *  @param       maxBoundary The maximum boundary to check for.
-    *
     *  @return      The modulated sample.
+    *
+    *  @see         tick()
     *
     *************************************************************************************************/
     
-    double modulate(double sample,
-                    double minBoundary,
-                    double maxBoundary);
+    double modulate(double sample);
+    
+    /*********************************************************************************************//*!
+    *
+    *  @brief       Sets the ModDock's base value for modulation.
+    *
+    *  @param       baseValue The new base value.
+    *
+    *************************************************************************************************/
+    
+    void setBaseValue(double baseValue);
+    
+    /*********************************************************************************************//*!
+    *
+    *  @brief       Returns the ModDock's current base value.
+    *
+    *  @return      The ModDock's current base value.
+    *
+    *************************************************************************************************/
+    
+    double getBaseValue() const;
     
     /*********************************************************************************************//*!
     *
@@ -96,6 +141,46 @@ public:
     *************************************************************************************************/
     
     double getMasterDepth() const;
+    
+    /*********************************************************************************************//*!
+    *
+    *  @brief       Sets the lower boundary.
+    *
+    *  @param       lowerBoundary The new lower boundary value.
+    *
+    *************************************************************************************************/
+    
+    void setLowerBoundary(double lowerBoundary);
+    
+    /*********************************************************************************************//*!
+    *
+    *  @brief       Returns the lower boundary value.
+    *
+    *  @return      The lower boundary.
+    *
+    *************************************************************************************************/
+    
+    double getLowerBoundary() const;
+    
+    /*********************************************************************************************//*!
+    *
+    *  @brief       Sets the higher boundary.
+    *
+    *  @param       higherBoundary The new higher boundary value.
+    *
+    *************************************************************************************************/
+    
+    void setHigherBoundary(double higherBoundary);
+    
+    /*********************************************************************************************//*!
+    *
+    *  @brief       Returns the higher boundary value.
+    *
+    *  @return      The higher boundary.
+    *
+    *************************************************************************************************/
+    
+    double getHigherBoundary() const;
     
     /*********************************************************************************************//*!
     *
@@ -154,9 +239,9 @@ private:
     /*! A ModItem contains a ModUnit* and a depth value */
     struct ModItem
     {
-        explicit ModItem(ModUnit* modUnit, double dpth = 1)
-                 : mod(modUnit), depth(dpth)
-                 { }
+        ModItem(ModUnit* modUnit, double dpth = 1)
+        : mod(modUnit), depth(dpth)
+        { }
     
         ModUnit* mod;
         
@@ -166,8 +251,17 @@ private:
     /*! Vector of ModItems */
     std::vector<ModItem> _mods;
     
+    /*! This is the base value that the modulation happens around */
+    double _baseValue;
+    
     /*! The master depth value */
     double _masterDepth;
+    
+    /*! Lower boundary value to scale to when modulation trespasses it */
+    double _lowerBoundary;
+    
+    /*! Higher boundary value to scale to when modulation trespasses it */
+    double _higherBoundary;
 };
 
 #endif /* defined(__Anthem__ModDock__) */

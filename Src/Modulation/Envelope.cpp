@@ -14,7 +14,6 @@ Envelope::Envelope(unsigned int delayMillis, bool sustainEnabled)
 
 : EnvSegSeq(7), ModUnit(1,16), _sustainEnabled(sustainEnabled),
   _currSegRate(1), _currSegModRate(0), _currSegModDepth(1)
-
 {
     _currSeg = _segs.begin() + DEL;
     
@@ -44,11 +43,9 @@ Envelope::Envelope(unsigned int delayMillis, bool sustainEnabled)
 
 void Envelope::_changeSeg(segItr seg)
 {
-    _currSeg = seg;
+    EnvSegSeq::_changeSeg(seg);
     
     _currSegNum = seg - _segs.begin();
-    
-    _currSample = 0;
 
     // If we just changed to the release segment
     // set the start level of the segment to the
@@ -177,16 +174,6 @@ double Envelope::modulate(double sample, double depth, double, double)
         {
             _currSeg->setRate(_mods[seg+SEG_RATE]->modulate(_currSegRate, 0, 2));
         }
-        
-        if (_mods[seg+MOD_RATE]->inUse())
-        {
-            _currSeg->setModRate(_mods[seg+MOD_RATE]->modulate(_currSegModRate, 0, 100));
-        }
-        
-        if (_mods[seg+MOD_DEPTH]->inUse())
-        {
-            _currSeg->setModDepth(_mods[seg+MOD_DEPTH]->modulate(_currSegModDepth, 0, 1));
-        }
     }
     
     double ret = sample * _tick() * depth;
@@ -243,22 +230,6 @@ void Envelope::setSegRate(seg_t seg, double rate)
     { _currSegRate = rate; }
     
     EnvSegSeq::setSegRate(seg, rate);
-}
-
-void Envelope::setSegModDepth(seg_t seg, double dpth)
-{
-    if (seg == _currSegNum)
-    { _currSegModDepth = dpth; }
-    
-    EnvSegSeq::setSegModDepth(seg, dpth);
-}
-
-void Envelope::setSegModRate(seg_t seg, unsigned short rate)
-{
-    if (seg == _currSegNum)
-    { _currSegModRate = rate; }
-    
-    EnvSegSeq::setSegModRate(seg, rate);
 }
 
 void Envelope::noteOff()

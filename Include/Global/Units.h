@@ -217,6 +217,16 @@ public:
     
     virtual void setDryWet(double dw);
     
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Sets the dry/wet parameter for the EffectUnit.
+    *
+    *  @param       dw The new dry/wet value, between 0 and 1.
+    *
+    *****************************************************************************************************/
+    
+    virtual double getDryWet() const;
+    
 protected:
     
     /*! Method that controls the dry/wet content of the signal */
@@ -262,7 +272,7 @@ public:
     
     /*************************************************************************************************//*!
     *
-    *  @brief       Sets the GenUnit's amplitude value.
+    *  @brief       Sets the current amplitude value.
     *
     *  @param       amp The new amplitude value, between 0 and 1.
     *
@@ -272,7 +282,7 @@ public:
     
     /*************************************************************************************************//*!
     *
-    *  @brief       Returns the GenUnit's amplitude value.
+    *  @brief       Returns the current amplitude value.
     *
     *  @return      The amplitude.
     *
@@ -294,7 +304,7 @@ public:
     
 protected:
     
-    /*! The amplitude value */
+    /*! The current amplitude value */
     double _amp;
 };
 
@@ -335,18 +345,13 @@ public:
     *
     *  @param       depth The modulation depth.
     *
-    *  @param       minBoundary The minimum boundary to check for.
-    *
-    *  @param       maxBoundary The maximum boundary to check for.
+    *  @param       maximum The maximum value that the sample may reach during modulation.
     *
     *  @return      The modulated sample.
     *
     *************************************************************************************************/
     
-    virtual double modulate(double sample,
-                            double depth,
-                            double minBoundary,
-                            double maxBoundary) = 0;
+    virtual double modulate(double sample, double depth, double maximum) = 0;
     
 protected:
     

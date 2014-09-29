@@ -78,7 +78,7 @@ public:
     *
     *****************************************************************************************************/
     
-    double getFreq() const { return _freq; }
+    double getFreq() const;
     
     /*************************************************************************************************//*!
     *
@@ -86,23 +86,39 @@ public:
     *
     *  @param       semis The number of semitones to offset by (±48).
     *
-    *  @param       permanent Whether or not to set the offset value as the new base value.
-    *
     *****************************************************************************************************/
     
-    void setSemis(short semis, bool permanent = false);
+    void setSemitoneOffset(short semitoneOffset);
     
     /*************************************************************************************************//*!
     *
-    *  @brief       Gives the oscillator's frequency an offset, in cents.
+    *  @brief       Returns the Oscillator's current semitone offset, if any.
     *
-    *  @param       cents The number of cents to offset by, between 0 and 100.
-    *
-    *  @param       permanent Whether or not to set the offset value as the new base value.
+    *  @return      The semitone offset.
     *
     *****************************************************************************************************/
     
-    void setCents(short cents, bool permanent = false);
+    short getSemitoneOffset() const;
+    
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Gives the Oscillator's frequency an offset, in cents.
+    *
+    *  @param       cents The number of cents to offset by, between 0 and 100.
+    *
+    *****************************************************************************************************/
+    
+    void setCentOffset(short centOffset);
+    
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Returns the Oscillator's current cent offset, if any.
+    *
+    *  @return      The cent offset.
+    *
+    *****************************************************************************************************/
+    
+    short getCentOffset() const;
     
     /*************************************************************************************************//*!
     *
@@ -110,11 +126,19 @@ public:
     *
     *  @param       degrees The degrees by which to offset the phase by.
     *
-    *  @param       permanent Whether or not to set the offset value as the new base value.
+    *****************************************************************************************************/
+    
+    void setPhaseOffset(short degrees);
+    
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Returns the Oscillator's phase offset.
+    *
+    *  @return      The current phase offset, in degrees.
     *
     *****************************************************************************************************/
     
-    void setPhaseOffset(short degrees, bool permanent = false);
+    short getPhaseOffset() const;
     
     /*************************************************************************************************//*!
     *
@@ -132,7 +156,7 @@ public:
     *
     *****************************************************************************************************/
     
-    void reset() { _ind = _phaseOffset; }
+    void reset();
     
 private:
     
@@ -145,8 +169,14 @@ private:
     /*! The wavetable index increment per sample */
     double _indIncr;
     
-    /*! The curretn phase offset value */
+    /*! The current phase offset value */
     double _phaseOffset;
+    
+    /*! The current semitone offset of the frequency */
+    double _semitoneOffset;
+    
+    /*! The current cent offset of the frequency */
+    double _centOffset;
     
     /*! The wavetable member currently in use */
     Wavetable _wt;

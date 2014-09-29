@@ -86,39 +86,53 @@ double CrossfadeUnit::left() const
 double CrossfadeUnit::right() const
 { return _scale(_tables[_type][_index].right); }
 
+
+
 Crossfader::Crossfader(unsigned short type,
                        bool scalingEnabled,
                        unsigned short offset,
                        ModUnit* left,
                        ModUnit* right)
+
 : CrossfadeUnit(type,scalingEnabled,offset),
   _leftUnit(left), _rightUnit(right),
   ModUnit(1,1)
-{ }
+{
+    _mods[VALUE]->setHigherBoundary(100);
+    _mods[VALUE]->setLowerBoundary(-100);
+    _mods[VALUE]->setBaseValue(offset);
+}
 
 void Crossfader::setValue(short value)
 {
     if (value < -100 || value > 100)
-        throw std::invalid_argument("Crossfade value must be between -100 and 100");
+    {  throw std::invalid_argument("Crossfade value must be between -100 and 100"); }
     
     _value = value;
+    
+    _mods[VALUE]->setBaseValue(value);
     
     _index = 100 + value;
 }
 
-double Crossfader::modulate(double sample, double depth, double minBoundary, double maxBoundary)
+short Crossfader::getValue() const
 {
+    return _value;
+}
+
+double Crossfader::modulate(double sample, double depth, double maximum)
+{
+    // Modulate value
     if (_mods[VALUE]->inUse())
     {
-        // Only set the index, the value is not changed (constant base value)
-        _index = _mods[VALUE]->modulate(_value, -100, 100) + 100;
+        _index = _mods[VALUE]->tick() + 100;
     }
     
-    // Get left and right ticks (if a ModUnit is available) and fade them appropriately
+    // Get left and right ticks (if a ModUnit is available) and fade them appropriately to current
+    // crossfading values (left() and right())
+    double left = (_leftUnit) ? _leftUnit->modulate(sample, depth, maximum) * this->left() : 0;
     
-    double left = (_leftUnit) ? _leftUnit->modulate(sample, depth, minBoundary, maxBoundary) * this->left() : 0;
-    
-    double right = (_rightUnit) ? _rightUnit->modulate(sample, depth, minBoundary, maxBoundary) * this->right() : 0;
+    double right = (_rightUnit) ? _rightUnit->modulate(sample, depth, maximum) * this->right() : 0;
     
     // Return the combined value 
     return (left + right) * _amp;

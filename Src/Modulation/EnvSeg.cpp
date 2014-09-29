@@ -18,23 +18,19 @@ const unsigned long EnvSeg::_maxLen = 2646000;
 EnvSeg::EnvSeg(double startAmp,
                double endAmp,
                len_t len,
-               double segRate,
-               int modWave,
-               double modDepth,
-               unsigned char modRate)
-: _sample(0), _startLevel(startAmp), _endLevel(endAmp),
-  _segRate(segRate), _len(len), _modDepth(modDepth), _modRate(modRate),
-  _lfo(new LFO), _lastTick(startAmp)
+               double segRate)
+
+: _sample(0),
+  _startLevel(startAmp),
+  _endLevel(endAmp),
+  _segRate(segRate),
+  _len(len),
+  _lastTick(startAmp)
+
 {
     _calcLevel(_startLevel,_endLevel);
     _calcRate();
-    
-    setModWave(modWave);
-    
-    _calcModRate();
 }
-
-EnvSeg::~EnvSeg() { delete _lfo; }
 
 void EnvSeg::reset()
 {
@@ -43,25 +39,6 @@ void EnvSeg::reset()
     // reset _segCurr
     _calcRate();
     _calcLevel(_startLevel,_endLevel);
-}
-
-void EnvSeg::_calcModRate()
-{
-    // To go from samples to Hertz, simply
-    // divide the samplerate by the length
-    // in samples e.g. 44100 / 22050 = 2 Hz
-    
-    // Since the rate is the cycles per segment
-    // and not cycles per second, we get the
-    // "period" of the segment and multiply that
-    // by the rate, giving the mod wave's frequency.
-    
-    if (_len > 0)
-    {
-        double freq = (Global::samplerate / (double) _len) * _modRate;
-        
-        _lfo->setRate(freq);
-    }
 }
 
 void EnvSeg::_calcLevel(double startLevel, double endLevel)
@@ -162,7 +139,6 @@ void EnvSeg::setLen(EnvSeg::len_t sampleLen)
     _len = sampleLen;
     
     _calcRate();
-    _calcModRate();
 }
 
 EnvSeg::len_t EnvSeg::getLen() const
@@ -229,38 +205,6 @@ double EnvSeg::getRate() const
     return _segRate;
 }
 
-void EnvSeg::setModWave(int modW)
-{
-    _modWave = modW;
-    
-    _lfo->setWavetable(_modWave);
-}
-
-void EnvSeg::setModDepth(double dpth)
-{
-    _lfo->setAmp(dpth);
-}
-
-double EnvSeg::getModDepth() const
-{
-    return _lfo->getAmp();
-}
-
-void EnvSeg::setModRate(unsigned short rate)
-{
-    if (rate > 100)
-    { throw std::invalid_argument("Mod rate cannot be larger than 100!"); }
-    
-    _modRate = rate;
-    
-    _calcModRate();
-}
-
-double EnvSeg::getModRate() const
-{
-    return _lfo->getRate();
-}
-
 double EnvSeg::tick()
 {
     // If the segment is still supposed to
@@ -283,14 +227,6 @@ double EnvSeg::tick()
     if (_type == LOG) _lastTick = 1 - _lastTick;
     
     _lastTick = (_lastTick * _diff) + _offset;
-    
-    // Apply modulation oscillator
-    if (_modWave != WavetableDB::NONE)
-    {
-        // Just set depth to one, actual depth is handled
-        // by lfo's amplitude value
-        _lastTick = _lfo->modulate(_lastTick, 1, 0, 1);
-    }
     
     return _lastTick;
 }
@@ -351,33 +287,6 @@ unsigned long EnvSegSeq::getSegLen(seg_t seg) const
 void EnvSegSeq::setSegBothLevels(seg_t seg, double lv)
 {
     setSegStartLevel(seg, lv), setSegEndLevel(seg, lv);
-}
-
-
-void EnvSegSeq::setSegModWave(seg_t seg, int wavetableId)
-{
-    _segs[seg].setModWave(wavetableId);
-}
-
-
-void EnvSegSeq::setSegModDepth(seg_t seg, double dpth)
-{
-    _segs[seg].setModDepth(dpth);
-}
-
-double EnvSegSeq::getSegModDepth(seg_t seg) const
-{
-    return _segs[seg].getModDepth();
-}
-
-void EnvSegSeq::setSegModRate(seg_t seg, unsigned short rate)
-{
-    _segs[seg].setModRate(rate);
-}
-
-double EnvSegSeq::getSegModRate(seg_t seg) const
-{
-    return _segs[seg].getModRate();
 }
 
 
@@ -445,7 +354,18 @@ void EnvSegSeq::addSegment()
 
 void EnvSegSeq::removeSegment()
 {
+    if (_segs.empty())
+    { throw std::runtime_error("Cannot remove segment from LFOSeq if already empty!"); }
+    
     _segs.erase(_segs.end() - 1);
+}
+
+void EnvSegSeq::removeSegment(seg_t seg)
+{
+    if (seg >= _segs.size())
+    { throw std::invalid_argument("Invalid segment index!"); }
+    
+    _segs.erase(_segs.begin() + seg);
 }
 
 void EnvSegSeq::_changeSeg(EnvSegSeq::segItr seg)

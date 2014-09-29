@@ -75,11 +75,11 @@ class Noise : public GenUnit
     
 public:
     
-    /*! Available ModDocks*/
+    /*! Available ModDock s*/
     enum Docks { AMP };
     
     /*! The available noise colors */
-    enum COLORS
+    enum Colors
     {
         WHITE,
         PINK,
@@ -92,13 +92,13 @@ public:
     *
     *  @brief       Constructs a Noise object.
     *
-    *  @param       color The initial noise color, usually a member of the Noise::COLORS enum. Defaults to 0 (white noise).
+    *  @param       color The initial noise color, usually a member of the Noise::Colors enum. Defaults to 0 (white noise).
     *
     *  @param       amp The initial amplitude value between 0 and 1. Defaults to 1.
     *
     **************************************************************************************************************************/
     
-    Noise(const unsigned short& color = 0, const double& amp = 1);
+    Noise(unsigned short color = 0, double amp = 1);
     
     ~Noise();
     
@@ -116,11 +116,24 @@ public:
     *
     *  @brief       Sets the noise color.
     *
-    *  @param       color The new noise color, usually a member of the Noise::COLORS enum.
+    *  @param       color The new noise color, usually a member of the Noise::Colors enum.
     *
     *****************************************************************************************************/
     
-    void setColor(const unsigned short& color);
+    void setColor(unsigned short color);
+    
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Returns the current color value from the Colors enum.
+    *
+    *  @return      The Noise oscillator's current noise color value.
+    *
+    *****************************************************************************************************/
+    
+    unsigned short getColor() const;
+    
+    /*! @copydoc GenUnit::setAmp() */
+    void setAmp(double amp);
     
 private:
     

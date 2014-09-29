@@ -95,18 +95,18 @@ public:
                     double,
                     double);
     
-    /*! @copydoc Unit::setModUnitDepth */
+    /*! @copydoc Unit::setModUnitDepth() */
     void setModUnitDepth(seg_t segNum,
                          index_t dockNum,
                          index_t modNum,
                          double depth);
 
-    /*! @copydoc Unit::attachMod */
+    /*! @copydoc Unit::attachMod() */
     void attachMod(seg_t segNum,
                    index_t dockNum,
                    ModUnit* mod);
     
-    /*! @copydoc Unit::detachMod */
+    /*! @copydoc Unit::detachMod() */
     void detachMod(seg_t segNum,
                    index_t dockNum,
                    index_t modNum);
@@ -122,30 +122,6 @@ public:
     *********************************************************************************/
     
     void setSegRate(seg_t seg, double rate);
-    
-    /******************************************************************************//*!
-    *
-    *  @brief       Sets the modulation depth of a segment's mod wave.
-    *
-    *  @param       seg The segment in the sequence.
-    *
-    *  @param       dpth The new depth value, between 0 and 1.
-    *
-    *********************************************************************************/
-    
-    void setSegModDepth(seg_t seg, double dpth);
-    
-    /*****************************************************************************************//*!
-    *
-    *  @brief       Sets the modulation rate of a segment.
-    *
-    *  @param       seg The segment in the sequence.
-    *
-    *  @param       rate The new rate, not that this is cycles per segment and not per second.
-    *
-    ********************************************************************************************/
-    
-    void setSegModRate(seg_t seg, unsigned short rate);
     
     /*****************************************************************************************//*!
     *

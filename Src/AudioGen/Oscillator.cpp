@@ -29,13 +29,13 @@ void Oscillator::setWavetable(short wt)
     _wt = wavetableDB[wt];
 }
 
-void Oscillator::setSemis(short semis, bool permanent)
+void Oscillator::setSemitoneOffset(short semitoneOffset)
 {
     // Prevent unnecesessary changes
-    if (! semis) return;
+    if (! semitoneOffset) return;
     
     // Add or subtract the semitones from the current frequency
-    double newFreq = Util::semiToFreq(_freq, semis);
+    double newFreq = Util::semiToFreq(_freq, semitoneOffset);
     
     // Check nyquist limit
     if (newFreq > Global::nyquistLimit)
@@ -44,19 +44,21 @@ void Oscillator::setSemis(short semis, bool permanent)
     // calculate new index increment
     _indIncr = Global::tableIncr * newFreq;
     
-    // If the change should be permanent, set the new frequency
-    // to the base frequency
-    if (permanent) _freq = newFreq;
-    
+    _semitoneOffset = semitoneOffset;
 }
 
-void Oscillator::setCents(short cents, bool permanent)
+short Oscillator::getSemitoneOffset() const
+{
+    return _semitoneOffset;
+}
+
+void Oscillator::setCentOffset(short centOffset)
 {
     // Prevent unnecesessary changes
-    if (! cents) return;
+    if (! centOffset) return;
     
-    // Add or subtract the cents from the current frequency
-    double newFreq = Util::centToFreq(_freq, cents);
+    // Add or subtract the centOffset from the current frequency
+    double newFreq = Util::centToFreq(_freq, centOffset);
     
     // Check nyquist limit
     if (newFreq > Global::nyquistLimit)
@@ -65,9 +67,12 @@ void Oscillator::setCents(short cents, bool permanent)
     // calculate new index increment
     _indIncr = Global::tableIncr * newFreq;
     
-    // If the change should be permanent, set the new frequency
-    // to the base frequency
-    if (permanent) _freq = newFreq;
+    _centOffset = centOffset;
+}
+
+short Oscillator::getCentOffset() const
+{
+    return _centOffset;
 }
 
 void Oscillator::setFreq(double Hz)
@@ -79,7 +84,12 @@ void Oscillator::setFreq(double Hz)
     _indIncr = Global::tableIncr * Hz;
 }
 
-void Oscillator::setPhaseOffset(short degrees, bool permanent)
+double Oscillator::getFreq() const
+{
+    return _freq;
+}
+
+void Oscillator::setPhaseOffset(short degrees)
 {
     // convert degrees higher or lower than 360 or
     // less than 0 to its 0 - 360 degree equivalent
@@ -102,12 +112,11 @@ void Oscillator::setPhaseOffset(short degrees, bool permanent)
     
     // Add new offset
     _ind += _phaseOffset;
-    
-    // To make the changes permanent, we set the phase offset value to 0
-    // that way the next time the phase offset is changed, the previous
-    // value isn't subtracted (since it's 0)
-    if (permanent)
-    { _phaseOffset = 0; }
+}
+
+void Oscillator::reset()
+{
+    _ind = _phaseOffset;
 }
 
 double Oscillator::tick()

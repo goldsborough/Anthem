@@ -13,16 +13,27 @@
 #include <cstdlib>
 #include <stdexcept>
 
-Noise::Noise(const unsigned short& color, const double& amp)
+Noise::Noise(unsigned short color, double amp)
 : GenUnit(amp,1), _filter(new Filter(Filter::LOW_PASS,1,0.1))
 {
     setColor(color);
+    
+    _mods[AMP]->setHigherBoundary(1);
+    _mods[AMP]->setLowerBoundary(0);
+    _mods[AMP]->setBaseValue(amp);
 }
 
 Noise::~Noise()
 { delete _filter; }
 
-void Noise::setColor(const unsigned short& color)
+void Noise::setAmp(double amp)
+{
+    _mods[AMP]->setBaseValue(amp);
+    
+    _amp = amp;
+}
+
+void Noise::setColor(unsigned short color)
 {
     // Check if color argument is out of range
     if (color > VIOLET)
@@ -83,6 +94,11 @@ void Noise::setColor(const unsigned short& color)
     _color = color;
 }
 
+unsigned short Noise::getColor() const
+{
+    return _color;
+}
+
 double Noise::tick()
 {
     static double randHalf = RAND_MAX/2.0;
@@ -96,7 +112,7 @@ double Noise::tick()
     
     // Check modulation dock for the amplitude parameter
     if (_mods[AMP]->inUse())
-    { return value * _mods[AMP]->modulate(_amp,0,1); }
+    { return value * _mods[AMP]->tick(); }
     
     return value * _amp;
 }

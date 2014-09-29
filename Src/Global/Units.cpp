@@ -84,6 +84,11 @@ void EffectUnit::setDryWet(double dw)
     _dw = dw;
 }
 
+double EffectUnit::getDryWet() const
+{
+    return _dw;
+}
+
 double EffectUnit::_dryWet(double originalSample, double processedSample)
 {
     return (originalSample * (1 - _dw)) + (processedSample * _dw);

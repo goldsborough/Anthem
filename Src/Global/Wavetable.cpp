@@ -271,7 +271,7 @@ void WavetableDB::init()
     _tables.push_back(Wavetable());
 }
 
-Wavetable& WavetableDB::operator[](const int& wt)
+Wavetable& WavetableDB::operator[](short wt)
 {
     if (wt == NONE)
     { return _tables[_tables.size() - 1]; }
@@ -282,7 +282,7 @@ Wavetable& WavetableDB::operator[](const int& wt)
     return _tables[wt];
 }
 
-const Wavetable& WavetableDB::operator[](const int& wt) const
+const Wavetable& WavetableDB::operator[](short wt) const
 {
     if (wt == NONE)
     { return _tables[_tables.size() - 1]; }

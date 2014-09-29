@@ -333,9 +333,11 @@ public:
     
     void init();
     
-    Wavetable& operator[] (const int& wt);
+    Wavetable& operator[] (short wt);
     
-    const Wavetable& operator[] (const int& wt) const;
+    const Wavetable& operator[] (short wt) const;
+    
+    short getWavetableId(const Wavetable& wt) const;
     
 private:
     

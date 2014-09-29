@@ -200,26 +200,8 @@ public:
     
     short getValue() const;
     
-    /*********************************************************************************************//*!
-    *
-    *  @brief       Modulates a sample and returns the result.
-    *
-    *  @param       sample The sample to modulate.
-    *
-    *  @param       depth The modulation depth.
-    *
-    *  @param       minBoundary The minimum boundary to check for.
-    *
-    *  @param       maxBoundary The maximum boundary to check for.
-    *
-    *  @return      The modulated sample.
-    *
-    *************************************************************************************************/
-    
-    double modulate(double sample,
-                    double depth,
-                    double minBoundary,
-                    double maxBoundary);
+    /*! @copydoc ModUnit::modulate() */
+    double modulate(double sample, double depth, double maximum);
     
     /*********************************************************************************************//*!
     *

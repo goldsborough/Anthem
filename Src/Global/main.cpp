@@ -22,6 +22,7 @@
 #include "Crossfader.h"
 
 #include <iostream>
+#include <vector>
 
 int main(int argc, const char * argv[])
 {
@@ -36,6 +37,8 @@ int main(int argc, const char * argv[])
     op.addNote(440);
 
     Envelope env;
+    
+    LFOSeq seq;
     
     op.attachMod(Operator::AMP, &env);
 

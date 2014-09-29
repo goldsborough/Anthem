@@ -38,8 +38,8 @@ public:
     enum Docks
     {
         AMP,
-        FREQ_SEMI,
-        FREQ_CENT
+        SEMI_OFFSET,
+        CENT_OFFSET
     };
     
     /*************************************************************************************************//*!
@@ -71,15 +71,23 @@ public:
     *
     *  @brief       Sets a semitone offset to all currently available oscillators.
     *
-    *  @param       semis The semitone offset, between -48 and +48.
-    *
-    *  @param       permanent Wether or not to set the new value as the Operator's base value.
+    *  @param       semitones The semitone offset, between -48 and +48.
     *
     *  @see         setCents()
     *
     *****************************************************************************************************/
     
-    void setSemis(double semis, bool permanent = true);
+    void setSemitoneOffset(short semitoneOffset);
+    
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Returns the Operator's current semitone offset, if any.
+    *
+    *  @return      The semitone offset.
+    *
+    *****************************************************************************************************/
+    
+    short getSemitoneOffset() const;
     
     /*************************************************************************************************//*!
     *
@@ -87,13 +95,21 @@ public:
     *
     *  @param       cents The cent offset, between 0 and 100.
     *
-    *  @param       permanent Wether or not to set the new value as the Operator's base value.
-    *
     *  @see         setSemis()
     *
     *****************************************************************************************************/
     
-    void setCents(double cents, bool permanent = true);
+    void setCentOffset(short centOffset);
+    
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Returns the Operator's current cent offset, if any.
+    *
+    *  @return      The cent offset.
+    *
+    *****************************************************************************************************/
+    
+    short getCentOffset() const;
     
     /*************************************************************************************************//*!
     *
@@ -106,6 +122,16 @@ public:
     *****************************************************************************************************/
     
     void setWavetable(short wt);
+    
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Returns the operator's wavetable's ID.
+    *
+    *  @return      The wavetable's ID.
+    *
+    *****************************************************************************************************/
+    
+    short getWavetableID() const;
     
     /*************************************************************************************************//*!
     *
@@ -146,21 +172,36 @@ public:
     
     void relNote(unsigned short ind);
     
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Returns the frequency of a note.
+    *
+    *  @param       ind The index of the note.
+    *
+    *  @return      The note's frequency value in Hertz.
+    *
+    *****************************************************************************************************/
+    
+    double getNoteFreq(unsigned short ind);
+    
+    /*! @copydoc GenUnit::setAmp() */
+    void setAmp(double amp);
+    
 private:
     
-    typedef std::vector<Oscillator*> oscVec;
+    typedef std::vector<Oscillator*> noteVec;
     
     /*! The std::vector of pointers to Oscillators that holds current notes */
-    oscVec _oscs;
+    noteVec _notes;
     
     /*! The current semitone offset value */
-    unsigned short _semis;
+    unsigned short _semitoneOffset;
     
     /*! The current cent offset value */
-    unsigned short _cents;
+    unsigned short _centOffset;
     
     /*! The id of the current wavetable */
-    unsigned int _wavetableId;
+    short _wavetableID;
 };
 
 #endif /* defined(__Anthem__Operator__) */
