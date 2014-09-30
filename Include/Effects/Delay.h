@@ -26,11 +26,11 @@ class Delay : public EffectUnit
     
 public:
     
-    /*! Modulatable ModDocks */
+    /*! Parameters for modulation (have ModDocks) */
     enum Docks
     {
-        TIME,
-        RATE,
+        DECAY_TIME,
+        DECAY_RATE,
         FEEDBACK,
         DRYWET
     };
@@ -78,15 +78,28 @@ public:
     
     virtual double process(double sample);
     
+    /*! @copydoc EffectUnit::setDryWet() */
+    void setDryWet(double dw);
+    
     /*************************************************************************//*!
     *
     *  @brief       Sets the length of the delay line.
     *
-    *  @param       delayLen The new length of the delay line.
+    *  @param       delayLen The new length of the delay line, in seconds.
     *
     ****************************************************************************/
     
     virtual void setDelayLen(double delayLen);
+    
+    /*************************************************************************//*!
+    *
+    *  @brief       Returns the current length of the delay line.
+    *
+    *  @return      The current delay line length, in seconds.
+    *
+    ****************************************************************************/
+    
+    virtual double getDelayLen() const;
     
     /*************************************************************************//*!
     *
@@ -100,6 +113,16 @@ public:
     
     /*************************************************************************//*!
     *
+    *  @brief       Returns the current decay time.
+    *
+    *  @return      The decay time, in seconds.
+    *
+    ****************************************************************************/
+    
+    virtual double getDecayTime() const;
+    
+    /*************************************************************************//*!
+    *
     *  @brief       Sets the fade-out rate of the delay.
     *
     *  @param       decayRate The new rate of delay (between 0 and 1).
@@ -107,7 +130,17 @@ public:
     *
     ****************************************************************************/
     
-    virtual void setDecayRate(const double& decayRate);
+    virtual void setDecayRate(double decayRate);
+    
+    /*************************************************************************//*!
+    *
+    *  @brief       Returns the current decay rate.
+    *
+    *  @return      The decay rate.
+    *
+    ****************************************************************************/
+    
+    virtual double getDecayRate() const;
     
     /************************************************************************************************//*!
     *
@@ -117,22 +150,29 @@ public:
     *
     *************************************************************************************************/
     
-    virtual void setFeedback(const double& feedbackLevel);
+    virtual void setFeedback(double feedbackLevel);
+    
+    /*************************************************************************//*!
+    *
+    *  @brief       Returns the current feedback value.
+    *
+    *  @return      The current feedback value.
+    *
+    ****************************************************************************/
+    
+    virtual double getFeedback() const;
     
     /************************************************************************************************//*!
     *
     *  @brief       Sets an offset in the delay line.
     *
-    *  @param       offset The new offset.
+    *  @param       offset The new offset, in samples.
     *
     *************************************************************************************************/
     
-    virtual double offset(const unsigned int& offset);
+    virtual double offset(unsigned int offset);
     
 protected:
-    
-    /*! ModDock initialization */
-    void _initModDocks();
     
     /*! Calculates the _decayValue based on the decay rate, time and delay length*/
     void _calcDecay(double decayRate, double decayTime, double delayLen);
@@ -174,7 +214,7 @@ protected:
     double _feedback;
     
     /*! The delay line */
-    double * _buffer;
+    double* _buffer;
 };
 
 /************************************************************************************************//*!

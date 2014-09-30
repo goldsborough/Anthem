@@ -12,13 +12,6 @@
 #include "ModDock.h"
 #include "Util.h"
 
-/* enum Docks
- {
- AMP,
- SEMI_OFFSET,
- CENT_OFFSET
- };*/
-
 Operator::Operator(short wt, double amp)
 : GenUnit(amp,3)
 {
@@ -180,7 +173,9 @@ double Operator::tick()
     
     // Check modulation dock for the amplitude parameter
     if (_mods[AMP]->inUse())
-    { return val * _mods[AMP]->tick(); }
+    {
+        return val * _mods[AMP]->tick();
+    }
     
     return val * _amp;
 }

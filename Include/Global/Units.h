@@ -209,7 +209,7 @@ public:
     
     /*************************************************************************************************//*!
     *
-    *  @brief       Sets the dry/wet parameter for the EffectUnit.
+    *  @brief       Sets the dry/wet parameter.
     *
     *  @param       dw The new dry/wet value, between 0 and 1.
     *
@@ -270,6 +270,8 @@ public:
     
     GenUnit(double amp = 1, unsigned short dockNum = 0);
     
+    virtual ~GenUnit() { }
+    
     /*************************************************************************************************//*!
     *
     *  @brief       Sets the current amplitude value.
@@ -299,8 +301,6 @@ public:
     *****************************************************************************************************/
     
     virtual double tick() = 0;
-    
-    virtual ~GenUnit() { }
     
 protected:
     

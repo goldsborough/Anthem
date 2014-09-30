@@ -18,22 +18,37 @@ Filter::Filter(unsigned short mode,
                double cutoff,
                double q,
                double gain)
-: _delayA(0), _delayB(0), _mode(mode),
-  _cutoff(cutoff), _q(q)
+: EffectUnit(1,4),_delayA(0), _delayB(0),
+  _cutoff(cutoff), _q(q), _mode(mode)
 {
     setGain(gain);
     
     // Initial coefficients
     _calcCoefs(mode,cutoff,q, gain);
     
-    // Initialize mod docks
-    _initModDocks();
+    _mods[CUTOFF]->setHigherBoundary(Global::nyquistLimit);
+    _mods[CUTOFF]->setLowerBoundary(0);
+    _mods[CUTOFF]->setBaseValue(cutoff);
+    
+    _mods[Q]->setHigherBoundary(20);
+    _mods[Q]->setLowerBoundary(0.01);
+    _mods[Q]->setBaseValue(q);
+    
+    _mods[GAIN]->setHigherBoundary(20);
+    _mods[GAIN]->setLowerBoundary(-20);
+    _mods[GAIN]->setBaseValue(gain);
+    
+    _mods[DRYWET]->setHigherBoundary(1);
+    _mods[DRYWET]->setLowerBoundary(0);
+    _mods[DRYWET]->setBaseValue(1);
 }
 
-void Filter::_initModDocks()
+void Filter::setDryWet(double dw)
 {
-    // 2 Mod units each for cutoff, Q, gain and dry/wet
-    _mods = {new ModDock(2), new ModDock(2), new ModDock(2), new ModDock(2)};
+    _mods[DRYWET]->setBaseValue(dw);
+    
+    // For error checking
+    EffectUnit::setDryWet(dw);
 }
 
 double Filter::process(double sample)
@@ -41,9 +56,7 @@ double Filter::process(double sample)
     // Modulate cutoff
     if (_mods[CUTOFF]->inUse())
     {
-        // Get current cutoff (can't set as filter's cutoff or else the base
-        // value would change, same for all other changes too)
-        double newCutoff = _mods[CUTOFF]->modulate(_cutoff, 0, 20000);
+        double newCutoff = _mods[CUTOFF]->tick();
         
         _calcCoefs(_mode, newCutoff, _q, _gain);
     }
@@ -51,7 +64,7 @@ double Filter::process(double sample)
     // And Q factor
     if (_mods[Q]->inUse())
     {
-        double newQ = _mods[Q]->modulate(_q, 0.01, 20);
+        double newQ = _mods[Q]->tick();
         
         _calcCoefs(_mode, _cutoff, newQ, _gain);
     }
@@ -69,23 +82,24 @@ double Filter::process(double sample)
     _delayB = _delayA;
     _delayA = temp;
     
-    // Check the gain
+    // Check the gain modulation
     if (_mods[GAIN]->inUse())
     {
-        double newGain = _mods[GAIN]->modulate(_gain, -20, 20);
+        // Convert db to amplitude
+        double newGain = Util::dbToAmp(1,_mods[GAIN]->tick());
         
         _calcCoefs(_mode, _cutoff, _q, newGain);
     }
     
-    output *= _gain;
+    output *= _amp;
     
     // Set the dry/wet
     if (_mods[DRYWET]->inUse())
     {
-        double dw = _mods[DRYWET]->modulate(_dw, 0, 1);
+        double newDryWet = _mods[DRYWET]->tick();
         
         // Call _dryWet with custom dry/wet value (instead of _dw)
-        return _dryWet(sample, output, dw);
+        return _dryWet(sample, output, newDryWet);
     }
     
     return _dryWet(sample, output);
@@ -221,14 +235,26 @@ void Filter::setMode(unsigned short mode)
     _calcCoefs(_mode,_cutoff,_q, _gain);
 }
 
+unsigned short Filter::getMode() const
+{
+    return _mode;
+}
+
 void Filter::setCutoff(double cutoff)
 {
     if (cutoff < 0 || cutoff > Global::nyquistLimit)
     { throw std::invalid_argument("Cutoff out of range, must be between 0 and nyquist limit (20 Khz)"); }
     
+    _mods[CUTOFF]->setBaseValue(cutoff);
+    
     _cutoff = cutoff;
     
     _calcCoefs(_mode,_cutoff,_q, _gain);
+}
+
+double Filter::getCutoff() const
+{
+    return _cutoff;
 }
 
 void Filter::setQ(double q)
@@ -237,17 +263,34 @@ void Filter::setQ(double q)
     if (q < 0.01 || q > 20)
     { throw std::invalid_argument("Bandwith out of range, must be between 0 and 20!"); }
     
+    _mods[Q]->setBaseValue(q);
+    
     _q = q;
     
     _calcCoefs(_mode,_cutoff,_q, _gain);
 }
 
+double Filter::getQ() const
+{
+    return _q;
+}
+
 void Filter::setGain(double gain)
 {
     if (gain < -20 || gain > 20)
-    { throw std::invalid_argument("Gain out of range, must be between -20dB and 20dB! "); }
+    { throw std::invalid_argument("Gain out of range, must be between -20dB and +20dB! "); }
     
-    _gain = Util::dbToAmp(1,gain);
+    _mods[GAIN]->setBaseValue(gain);
+    
+    _gain = gain;
+    
+    // Convert decibels to amplitude
+    _amp = Util::dbToAmp(1,gain);
     
     _calcCoefs(_mode,_cutoff,_q, _gain);
+}
+
+double Filter::getGain() const
+{
+    return _gain;
 }

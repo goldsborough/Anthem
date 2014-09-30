@@ -15,9 +15,10 @@
 #include <stdexcept>
 #include <cmath>
 
-Reverb::Reverb(const double& reverbTime,
-               const double& reverbRate,
-               const double& dryWet)
+Reverb::Reverb(double reverbTime, double reverbRate, double dryWet)
+
+: EffectUnit(1,3)
+
 {
     _delays = new Delay*[4];
     _allPasses = new AllPassDelay*[2];
@@ -30,23 +31,30 @@ Reverb::Reverb(const double& reverbTime,
     _allPasses[0] = new AllPassDelay(0.09638,0.0050);
     _allPasses[1] = new AllPassDelay(0.03292,0.0017);
     
-    // Construct modDocks
-    _initModDocks();
-    
     setReverbRate(reverbRate);
     setReverbTime(reverbTime);
     setDryWet(dryWet);
+    
+    // Initialize ModDocks
+    _mods[REVERB_RATE]->setHigherBoundary(1);
+    _mods[REVERB_RATE]->setLowerBoundary(0);
+    _mods[REVERB_RATE]->setBaseValue(reverbRate);
+    
+    _mods[REVERB_TIME]->setHigherBoundary(100);
+    _mods[REVERB_TIME]->setLowerBoundary(0);
+    _mods[REVERB_TIME]->setBaseValue(reverbTime);
+    
+    _mods[DRYWET]->setHigherBoundary(1);
+    _mods[DRYWET]->setLowerBoundary(0);
+    _mods[DRYWET]->setBaseValue(dryWet);
 }
 
-void Reverb::_initModDocks()
-{
-    _mods = {new ModDock(2), new ModDock(2), new ModDock(2)};
-}
-
-void Reverb::setDryWet(const double& dw)
+void Reverb::setDryWet(double dw)
 {
     if (dw < 0 || dw > 1)
     { throw std::invalid_argument("Dry/wet control must be between 0 and 1!"); }
+    
+    _mods[DRYWET]->setBaseValue(dw);
     
     _dw = dw;
     
@@ -59,19 +67,25 @@ void Reverb::setDryWet(const double& dw)
 double Reverb::process(double sample)
 {
     // Modulate time
-    if (_mods[TIME]->inUse())
+    if (_mods[REVERB_TIME]->inUse())
     {
-        double newTime = _mods[TIME]->modulate(_reverbTime, 0, 100);
+        double newReverbTime = _mods[REVERB_TIME]->tick();
         
-        setReverbTime(newTime, false);
+        for (unsigned short i = 0; i < 4; ++i)
+        {
+            _delays[i]->setDecayTime(newReverbTime);
+        }
     }
     
     // Modulate rate
-    if (_mods[RATE]->inUse())
+    if (_mods[REVERB_RATE]->inUse())
     {
-        double newRate = _mods[RATE]->modulate(_reverbRate, 0, 1);
+        double newReverbRate = _mods[REVERB_RATE]->tick();
         
-        setReverbTime(newRate, false);
+        for (unsigned short i = 0; i < 4; ++i)
+        {
+            _delays[i]->setDecayRate(newReverbRate);
+        }
     }
     
     sample *= _attenuation;
@@ -88,7 +102,7 @@ double Reverb::process(double sample)
     // Modulate the dry/wet
     if (_mods[DRYWET]->inUse())
     {
-        double dw = _mods[DRYWET]->modulate(_dw, 0, 1);
+        double dw = _mods[DRYWET]->tick();
         
         // Call _dryWet with custom dry/wet value (instead of _dw)
         return _dryWet(sample, output, dw);
@@ -97,13 +111,14 @@ double Reverb::process(double sample)
     return _dryWet(sample, output);
 }
 
-void Reverb::setReverbRate(const double& reverbRate, bool permanent)
+void Reverb::setReverbRate(double reverbRate)
 {
-    if (reverbRate <= 0 || reverbRate > 1)
+    if (reverbRate < 0 || reverbRate > 1)
     { throw std::invalid_argument("Reverb rate must be between 0 and 1!"); }
     
-    if (permanent)
-    { _reverbRate = reverbRate; }
+    _mods[REVERB_RATE]->setBaseValue(reverbRate);
+    
+    _reverbRate = reverbRate;
     
     for (unsigned short i = 0; i < 4; ++i)
     {
@@ -111,13 +126,14 @@ void Reverb::setReverbRate(const double& reverbRate, bool permanent)
     }
 }
 
-void Reverb::setReverbTime(const double &reverbTime, bool permanent)
+void Reverb::setReverbTime(double reverbTime)
 {
     if (reverbTime < 0 || reverbTime > 100)
     { throw std::invalid_argument("Reverb time must be between 0 and 100!"); }
     
-    if (permanent)
-    { _reverbTime = reverbTime; }
+    _mods[REVERB_TIME]->setBaseValue(reverbTime);
+    
+    _reverbTime = reverbTime;
     
     for (unsigned short i = 0; i < 4; ++i)
     {
@@ -170,7 +186,7 @@ void Flanger::setDepth(const double& depth)
 void Flanger::setFeedback(const double& feedback)
 {
     if (feedback < 0 || feedback > 1)
-    { throw std::invalid_argument("Feedback must be between 0 and 1!"); }
+    { throw std::invalid_argument("Feedback must be > 0 and and <= 1!"); }
     
     _feedback = feedback;
 }

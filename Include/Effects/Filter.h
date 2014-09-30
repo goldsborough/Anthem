@@ -52,7 +52,6 @@ public:
     };
     
     /*! Filter modes */
-    
     enum Mode
     {
         LOW_PASS,
@@ -75,7 +74,7 @@ public:
     *
     *  @param       q The Q, or Quality, factor. http://goo.gl/94Neeg
     *
-    *  @param       gain The overall filter gain, comparable to amplitude.
+    *  @param       gain The overall filter gain in dB.
     *
     ****************************************************************************/
     
@@ -96,6 +95,9 @@ public:
     
     double process(double sample);
     
+    /*! @copydoc EffectUnit::setDryWet() */
+    void setDryWet(double dw);
+    
     /*************************************************************************//*!
     *
     *  @brief       Sets the filter mode.
@@ -107,6 +109,16 @@ public:
     ****************************************************************************/
     
     void setMode(unsigned short mode);
+    
+    /*************************************************************************//*!
+    *
+    *  @brief       Returns the filter's current mode.
+    *
+    *  @return      The current mode, compare with Filter::Mode enum.
+    *
+    ****************************************************************************/
+    
+    unsigned short getMode() const;
     
     /*************************************************************************//*!
     *
@@ -123,6 +135,16 @@ public:
     
     /*************************************************************************//*!
     *
+    *  @brief       Returns the filter's current cutoff frequency.
+    *
+    *  @return      The current cutoff frequency.
+    *
+    ****************************************************************************/
+    
+    double getCutoff() const;
+    
+    /*************************************************************************//*!
+    *
     *  @brief       Sets the Q factor.
     *
     *  @details     The Q factor more or less describes the bandwidth or slope
@@ -131,19 +153,38 @@ public:
     *  @param       q The Q, or Quality, factor. http://goo.gl/94Neeg
     *
     ****************************************************************************/
+    
     void setQ(double q);
     
     /*************************************************************************//*!
     *
-    *  @brief       Sets the filter's overall gain.
+    *  @brief       Returns the filter's Q value.
     *
-    *  @details     The gain is the filter's overall amplitude.
+    *  @return      The current Q value.
     *
-    *  @param       gain The new gain.
+    ****************************************************************************/
+    
+    double getQ() const;
+    
+    /*************************************************************************//*!
+    *
+    *  @brief       Sets the filter's overall gain in decibels.
+    *
+    *  @param       gain The new gain, in decibels.
     *
     ****************************************************************************/
     
     void setGain(double gain);
+    
+    /*************************************************************************//*!
+    *
+    *  @brief       Returns the filter's current gain.
+    *
+    *  @return      The gain, in decibels.
+    *
+    ****************************************************************************/
+    
+    double getGain() const;
     
 private:
     
@@ -159,9 +200,6 @@ private:
     
     void _calcCoefs(short mode, double cutoff, double q, double gain);
     
-    /*! ModDock initialization */
-    void _initModDocks();
-    
     /*! The filter mode */
     unsigned short _mode;
     
@@ -171,8 +209,11 @@ private:
     /*! The Q factor */
     double _q;
     
-    /*! The overall gain/amplitude */
+    /*! The overall gain, in decibels */
     double _gain;
+    
+    /*! The amplitude value obtained from the gain value */
+    double _amp;
     
     /*! The first delay buffer */
     double _delayA;

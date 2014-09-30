@@ -33,8 +33,8 @@ public:
     
     enum Docks
     {
-        TIME,
-        RATE,
+        REVERB_TIME,
+        REVERB_RATE,
         DRYWET
     };
     
@@ -50,16 +50,12 @@ public:
     *
     ************************************************************************************************************/
     
-    Reverb(const double& reverbTime,
-           const double& reverbRate = 0.001,
-           const double& dryWet = 0.1);
+    Reverb(double reverbTime, double reverbRate = 0.001, double dryWet = 0.1);
     
     ~Reverb();
     
     /*! @copydoc EffectUnit::process() */
-    
     double process(double sample);
-    
     
     /************************************************************************************************//*!
     *
@@ -67,12 +63,19 @@ public:
     *
     *  @param       reverbTime The new reverberation time, in seconds.
     *
-    *  @param       permanent Whether or not to set the new value as the Reverb's base value.
+    *************************************************************************************************/
+    
+    void setReverbTime(double reverbTime);
+    
+    /************************************************************************************************//*!
+    *
+    *  @brief       Returns the reverberation length/time.
+    *
+    *  @return      The reverberation time, in seconds.
     *
     *************************************************************************************************/
     
-    void setReverbTime(const double& reverbTime, bool permanent = true);
-    
+    double getReverbTime() const;
     
     /************************************************************************************************//*!
     *
@@ -80,11 +83,19 @@ public:
     *
     *  @param       reverbTime The new reverberation decay rate (between 0 and 1).
     *
-    *  @param       permanent Whether or not to set the new value as the Reverb's base value.
+    *************************************************************************************************/
+    
+    void setReverbRate(double reverbRate);
+    
+    /************************************************************************************************//*!
+    *
+    *  @brief       Returns the reverberation rate.
+    *
+    *  @return      The reverberation rate.
     *
     *************************************************************************************************/
     
-    void setReverbRate(const double& reverbRate, bool permanent = true);
+    double getReverbRate() const;
     
     /************************************************************************************************//*!
     *
@@ -99,12 +110,9 @@ public:
     *
     *************************************************************************************************/
     
-    void setDryWet(const double& dw);
+    void setDryWet(double dw);
     
 private:
-    
-    /*! ModDock initialization */
-    void _initModDocks();
     
     /*! The input signal attenuation factor */
     double _attenuation;
