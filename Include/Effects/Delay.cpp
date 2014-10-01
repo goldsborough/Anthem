@@ -167,17 +167,17 @@ double Delay::process(double sample)
     // Modulate decay time
     if (_mods[DECAY_TIME]->inUse())
     {
-        double time = _mods[DECAY_TIME]->tick();
+        double newDecayTime = _mods[DECAY_TIME]->tick();
         
-        _calcDecay(_decayRate, time, _delayLen);
+        _calcDecay(_decayRate, newDecayTime, _delayLen);
     }
     
     // Modulate decay rate
     if (_mods[DECAY_RATE]->inUse())
     {
-        double rate = _mods[DECAY_RATE]->tick();
+        double newDecayRate = _mods[DECAY_RATE]->tick();
         
-        _calcDecay(rate, _decayTime, _delayLen);
+        _calcDecay(newDecayRate, _decayTime, _delayLen);
     }
     
     iterator read = _write - _readInt;
@@ -228,9 +228,9 @@ double Delay::process(double sample)
     // Modulate dry wet value
     if (_mods[DRYWET]->inUse())
     {
-        double dw = _mods[DRYWET]->tick();
+        double newDryWet = _mods[DRYWET]->tick();
         
-        return _dryWet(sample, output, dw);
+        return _dryWet(sample, output, newDryWet);
     }
     
     return _dryWet(sample, output);

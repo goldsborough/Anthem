@@ -63,6 +63,9 @@ void DirectOutput::stop()
     
     if( err != paNoError )
     { throw std::runtime_error(Pa_GetErrorText( err )); }
+    
+    // Clear data buffer
+    _dataBuffer.buffer.clear();
 }
 
 int DirectOutput::paCallback( const void *inputBuffer, void *outputBuffer,

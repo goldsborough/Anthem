@@ -56,6 +56,12 @@ void CrossfadeUnit::setValue(short value)
     _index = 100 + value;
 }
 
+short CrossfadeUnit::getValue() const
+{
+    // From index to value
+    return _index - 100;
+}
+
 void CrossfadeUnit::setScalingEnabled(bool scalingEnabled)
 {
     _scalingEnabled = scalingEnabled;
@@ -98,6 +104,7 @@ Crossfader::Crossfader(unsigned short type,
   _leftUnit(left), _rightUnit(right),
   ModUnit(1,1)
 {
+    // Initialize ModDocks
     _mods[VALUE]->setHigherBoundary(100);
     _mods[VALUE]->setLowerBoundary(-100);
     _mods[VALUE]->setBaseValue(offset);
@@ -108,16 +115,9 @@ void Crossfader::setValue(short value)
     if (value < -100 || value > 100)
     {  throw std::invalid_argument("Crossfade value must be between -100 and 100"); }
     
-    _value = value;
-    
     _mods[VALUE]->setBaseValue(value);
     
     _index = 100 + value;
-}
-
-short Crossfader::getValue() const
-{
-    return _value;
 }
 
 double Crossfader::modulate(double sample, double depth, double maximum)

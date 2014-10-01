@@ -18,7 +18,8 @@
 
 namespace CrossfadeTypes
 {
-    enum Types { LINEAR, SINE, SQRT };
+    /*! Different types of crossfading*/
+    enum { LINEAR, SINE, SQRT };
 }
 
 /*********************************************************************************************//*!
@@ -107,6 +108,16 @@ public:
     
     /*********************************************************************************************//*!
     *
+    *  @brief       Returns the current value.
+    *
+    *  @return      The current value.
+    *
+    *************************************************************************************************/
+    
+    virtual short getValue() const;
+    
+    /*********************************************************************************************//*!
+    *
     *  @brief       Returns left value.
     *
     *************************************************************************************************/
@@ -190,16 +201,6 @@ public:
     
     void setValue(short value);
     
-    /*********************************************************************************************//*!
-    *
-    *  @brief       Returns the current value.
-    *
-    *  @return      The current value.
-    *
-    *************************************************************************************************/
-    
-    short getValue() const;
-    
     /*! @copydoc ModUnit::modulate() */
     double modulate(double sample, double depth, double maximum);
     
@@ -244,10 +245,7 @@ public:
     ModUnit* getRightUnit() const;
     
 private:
-    
-    /*! The current crossfading value */
-    short _value;
-    
+
     /*! The pointer to the left GenUnit */
     ModUnit* _leftUnit;
     

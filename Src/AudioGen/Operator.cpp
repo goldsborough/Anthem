@@ -154,13 +154,27 @@ double Operator::tick()
     // Modulate semitones for all oscillators/notes
     if (_mods[SEMI_OFFSET]->inUse())
     {
-        setSemitoneOffset(_mods[SEMI_OFFSET]->tick());
+        double newSemitoneOffset = _mods[SEMI_OFFSET]->tick();
+        
+        for (noteVec::iterator itr = _notes.begin(), end = _notes.end();
+             itr != end;
+             ++itr)
+        {
+            (*itr)->setSemitoneOffset(newSemitoneOffset);
+        }
     }
     
     // Modulate semitones for all oscillators/notes
     if (_mods[CENT_OFFSET]->inUse())
     {
-        setCentOffset(_mods[CENT_OFFSET]->tick());
+        double newCentOffset = _mods[CENT_OFFSET]->tick();
+        
+        for (noteVec::iterator itr = _notes.begin(), end = _notes.end();
+             itr != end;
+             ++itr)
+        {
+            (*itr)->setCentOffset(newCentOffset);
+        }
     }
     
     // Add up all notes

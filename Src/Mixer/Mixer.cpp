@@ -12,12 +12,13 @@
 #include "DirectOutput.h"
 #include "Wavefile.h"
 #include "Sample.h"
+#include "ModDock.h"
 
-#include <iostream>
+Mixer::Mixer(bool directOut, bool waveOut, double amp)
 
-Mixer::Mixer(bool directOut, bool waveOut)
+: _directOutputEnabled(directOut), _wavefileEnabled(waveOut),
+  _masterAmp(amp), _stopped(true)
 
-: _sendToDirectOutput(directOut), _sendToWaveFile(waveOut), _masterAmp(0.5)
 {
     _pan = new CrossfadeUnit(CrossfadeTypes::SINE);
     
@@ -26,42 +27,112 @@ Mixer::Mixer(bool directOut, bool waveOut)
     _directOut = new DirectOutput;
     
     _waveOut = new Wavefile;
+    
+    // Initialize ModDocks
+    _mods[AMP]->setHigherBoundary(1);
+    _mods[AMP]->setLowerBoundary(0);
+    _mods[AMP]->setBaseValue(amp);
+    
+    _mods[PAN]->setHigherBoundary(100);
+    _mods[PAN]->setLowerBoundary(-100);
+    _mods[PAN]->setBaseValue(0);
 }
 
 void Mixer::process(Sample sample)
 {
+    // Modulate panning value
+    if (_mods[PAN]->inUse())
+    {
+        _pan->setValue(_mods[PAN]->tick());
+    }
+    
+    // Attenuate samples with panning
     sample.left *= _pan->left();
     sample.right *= _pan->right();
     
-    sample *= _masterAmp;
+    // Modulate amplitude
+    double amp = _masterAmp;
     
-#ifdef AMP_DEBUG
-    
-    if (sample.left > 1 || sample.right < -1
-        || sample.right > 1 || sample.right < -1)
+    if (_mods[AMP]->inUse())
     {
-        std::cerr << "WARNING: Amplitude overflow!" << std::endl;
+        amp = _mods[AMP]->tick();
     }
     
-#endif
+    sample *= amp;
     
-    if (_sendToWaveFile)
+    // Store in wavefile storage buffer
+    if (_wavefileEnabled)
     { _sampleDataBuffer->buffer.push_back(sample); }
     
-    if (_sendToDirectOutput)
+    // Send to direct audio output
+    if (_directOutputEnabled)
     { _directOut->processTick(sample); }
 }
 
-void Mixer::setPanning(const char pan)
+void Mixer::setMasterAmp(double amp)
 {
+    if (amp > 1 || amp < 0)
+    { throw std::invalid_argument("Amplitude must be between 0 and 1!"); }
+    
+    _mods[AMP]->setBaseValue(amp);
+    
+    _masterAmp = amp;
+}
+
+double Mixer::getMasterAmp() const
+{
+    return _masterAmp;
+}
+
+void Mixer::setPanValue(short pan)
+{
+    // Set value to pan object and
+    // do boundary checking there
     _pan->setValue(pan);
+    
+    _mods[PAN]->setBaseValue(pan);
+}
+
+short Mixer::getPanValue() const
+{
+    return _pan->getValue();
+}
+
+void Mixer::setPanType(unsigned short type)
+{
+    _pan->setType(type);
+}
+
+unsigned short Mixer::getPanType() const
+{
+    return _pan->getType();
+}
+
+void Mixer::setWavefileEnabled(bool state)
+{
+    _wavefileEnabled = state;
+}
+
+bool Mixer::wavefileEnabled() const
+{
+    return _wavefileEnabled;
+}
+
+void Mixer::setDirectOutputEnabled(bool state)
+{
+    _directOutputEnabled = state;
+}
+
+bool Mixer::directOutputEnabled() const
+{
+    return _directOutputEnabled;
 }
 
 void Mixer::play()
 {
     if (_stopped)
     {
-        if (_sendToDirectOutput)
+        if (_directOutputEnabled)
         { _directOut->play(); }
         
         _stopped = false;
@@ -74,10 +145,10 @@ void Mixer::stop()
     {
         _stopped = true;
         
-        if (_sendToDirectOutput)
+        if (_directOutputEnabled)
         { _directOut->stop(); }
         
-        if (_sendToWaveFile)
+        if (_wavefileEnabled)
         { _waveOut->write(*_sampleDataBuffer); }
     }
 }
