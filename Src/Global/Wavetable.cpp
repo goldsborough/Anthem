@@ -23,7 +23,7 @@ void round(double& val, unsigned int bitWidth)
 
     double n = val / factor;
     
-    int nFloor = (int) n;
+    int nFloor = static_cast<int>(n);
     
     // if the division is greater 0.5, round to the next whole factor
     // else take the floor value
@@ -194,7 +194,7 @@ double& Wavetable::operator[] (size_t ind)
 
 double Wavetable::interpolate(double ind) const
 {
-    int indexBase = (int) ind;              // The truncated integer part
+    int indexBase = static_cast<int>(ind);  // The truncated integer part
     double indexFract = ind - indexBase;    // The remaining fractional part
     
     // grab the two items in-between which the actual value lies

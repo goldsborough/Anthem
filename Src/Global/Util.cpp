@@ -53,7 +53,7 @@ namespace Util
 
     float getPassedTime(const clock_t& start)
     {
-        return (clock() - start) / (double) CLOCKS_PER_SEC;
+        return (clock() - start) / static_cast<double>(CLOCKS_PER_SEC);
     }
     
     double dbToAmp(const double& baseAmp, const double& dB)

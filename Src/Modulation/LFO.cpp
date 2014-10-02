@@ -138,7 +138,7 @@ void LFOSeq::_setScaledModRate(seg_t seg, double rate)
     
     if (_segs[seg].getLen() > 0)
     {
-        double freq = (Global::samplerate / (double) _segs[seg].getLen()) * rate;
+        double freq = (Global::samplerate / static_cast<double>(_segs[seg].getLen())) * rate;
         
         _lfos[seg].setRate(freq);
     }

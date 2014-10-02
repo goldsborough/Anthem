@@ -33,8 +33,8 @@ Delay::Delay(double delayLen,
     setDecayRate(decayRate);
     setDecayTime(decayTime);
     
-    _readInt = (int) _delayLen;
-    _readFract = _delayLen - (double) _readInt;
+    _readInt = static_cast<int>(_delayLen);
+    _readFract = _delayLen - static_cast<double>(_readInt);
     
     // Initialize mod docks
     _mods[DECAY_TIME]->setHigherBoundary(_delayCapacity);
@@ -94,8 +94,8 @@ void Delay::setDelayLen(double delayLen)
     if (_capacity - _end <= 0)
     { throw std::invalid_argument("Delay end position cannot be higher than maximum delay line length!"); }
     
-    _readInt = (int) delayLen;
-    _readFract = delayLen - (double) _readInt;
+    _readInt = static_cast<int>(delayLen);
+    _readFract = delayLen - static_cast<double>(_readInt);
     
     _calcDecay(_decayRate,_decayTime, _delayLen);
 }
@@ -103,7 +103,7 @@ void Delay::setDelayLen(double delayLen)
 double Delay::getDelayLen() const
 {
     // seconds not samples
-    return _delayLen / ((double) Global::samplerate);
+    return _delayLen / (static_cast<double>(Global::samplerate));
 }
 
 void Delay::setFeedback(double feedbackLevel)
@@ -141,7 +141,7 @@ double Delay::getDecayTime() const
 
 void Delay::_calcDecay(double decayRate, double decayTime, double delayLen)
 {
-    double decayExponent = ((double) delayLen) / decayTime;
+    double decayExponent = static_cast<double>(delayLen) / decayTime;
     
     _decayValue = pow(decayRate, decayExponent);
 }

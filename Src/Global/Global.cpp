@@ -35,7 +35,7 @@ namespace Global
         
         wtLen = wavetableLen;
         
-        tableIncr = ((double) wtLen) / smplr;
+        tableIncr = static_cast<double>(wtLen) / smplr;
         
         srand((unsigned)time(0));
     }
