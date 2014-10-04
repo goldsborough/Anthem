@@ -16,7 +16,7 @@
 #include <stdexcept>
 
 LFO::LFO(short wt, double rate, double amp, double phaseOffset)
-: _osc(new Oscillator(wt,rate,amp,phaseOffset)), ModUnit(1,3)
+: _osc(new Oscillator(wt,rate,amp,phaseOffset)), ModUnit(3,amp)
 {
     _mods[RATE]->setHigherBoundary(Global::nyquistLimit);
     _mods[RATE]->setHigherBoundary(0);
@@ -69,9 +69,9 @@ double LFO::getRate() const
 
 void LFO::setAmp(double amp)
 {
-    _mods[AMP]->setBaseValue(amp);
-    
     _osc->setAmp(amp);
+    
+    _mods[AMP]->setBaseValue(amp);
 }
 
 double LFO::getAmp() const
@@ -264,7 +264,7 @@ void LFOSeq::removeSegment(seg_t seg)
     _lfos.erase(_lfos.begin() + seg);
 }
 
-double LFOSeq::modulate(double sample, double depth)
+double LFOSeq::modulate(double sample, double depth, double)
 {
     
     return sample * EnvSegSeq::tick() * depth * _amp;
@@ -328,9 +328,9 @@ void LFOUnit::Env::setEnvLevel(short point, double lvl)
     }
 }
 
-double LFOUnit::modulate(double sample, double depth, double minBoundary, double maxBoundary)
+double LFOUnit::modulate(double sample, double depth, double maximum)
 {
     // Tick the crossfaded value from the lfos and multiply by the envelope
     // value and the total amplitude value
-    return fader.modulate(sample, depth, minBoundary, maxBoundary) * env.tick() * _amp;
+    return fader.modulate(sample, depth, maximum) * env.tick() * _amp;
 }

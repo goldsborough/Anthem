@@ -24,7 +24,7 @@ class Oscillator;
 *  @brief       A Low Frequency Oscillator (LFO) class.
 *
 *  @details     The LFO class is essentially an interface to an Oscillator which additionally
-*               implements a set of ModDocks for modulation of LFOs (by other modulation  units)
+*               implements a set of ModDocks for modulation of LFOs (by other modulation units)
 *               and modulates() samples instead of tick()ing them.
 *
 *****************************************************************************************************/
@@ -145,7 +145,7 @@ private:
 
 /****************************************************************************************************//*!
 *
-*  @brief       Wrapper around EnvSegSeq for specific LFO purposes.
+*  @brief       Derived class from EnvSegSeq for specific LFO purposes.
 *
 *  @details     The main difference between EnvSegSeq and LFOSeq is that LFOSeq has a rate parameter
 *               that sets the rate or frequency of the entire Envelope sequence. Internally, changing
@@ -405,19 +405,8 @@ public:
     
     bool getMode() const;
     
-    /*********************************************************************************************//*!
-    *
-    *  @brief       Modulates a sample and returns the result.
-    *
-    *  @param       sample The sample to modulate.
-    *
-    *  @param       depth The modulation depth.
-    *
-    *  @return      The modulated sample.
-    *
-    *************************************************************************************************/
-    
-    double modulate(double sample, double depth);
+    /*! @copydoc ModUnit::modulate() */
+    double modulate(double sample, double depth, double maximum);
 
     /****************************************************************************************************//*!
     *

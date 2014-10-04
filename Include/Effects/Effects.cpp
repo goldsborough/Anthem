@@ -17,7 +17,7 @@
 
 Reverb::Reverb(double reverbTime, double reverbRate, double dryWet)
 
-: EffectUnit(1,3)
+: EffectUnit(3,1)
 
 {
     _delays = new Delay*[4];

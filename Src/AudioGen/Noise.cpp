@@ -14,7 +14,7 @@
 #include <stdexcept>
 
 Noise::Noise(unsigned short color, double amp)
-: GenUnit(amp,1), _filter(new Filter(Filter::LOW_PASS,1,0.1))
+: GenUnit(1,amp), _filter(new Filter(Filter::LOW_PASS,1,0.1))
 {
     setColor(color);
     
@@ -28,9 +28,12 @@ Noise::~Noise()
 
 void Noise::setAmp(double amp)
 {
-    _mods[AMP]->setBaseValue(amp);
+    // Takes care of boundary checking and
+    // member setting
+    GenUnit::setAmp(amp);
     
-    _amp = amp;
+    // Sets new base value for modulation
+    _mods[AMP]->setBaseValue(amp);
 }
 
 void Noise::setColor(unsigned short color)

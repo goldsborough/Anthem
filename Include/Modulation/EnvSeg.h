@@ -25,9 +25,7 @@ class LFO;
  *  @details    The EnvSeg class is a single segment of a EnvSegSeq. It can be
  *              be either an attack, decay or a sustain segment and increment or
  *              decrement either exponentially, logarithmically or linearly in
- *              case of being a decay or an attack segment. Additionally, it has
- *              an internal modulation oscillator / LFO that can modulate the
- *              envelope values according to the waveform.
+ *              case of being a decay or an attack segment.
  *
  *********************************************************************************/
 
@@ -268,7 +266,7 @@ private:
     *
     *  @param       startLevel The starting amplitude, between 0 and 1.
     *
-    *  @param       startLevel The starting amplitude, between 0 and 1.
+    *  @param       endLevel The end amplitude, between 0 and 1.
     *
     ****************************************************************************/
     
@@ -445,7 +443,7 @@ public:
     *
     *  @brief      Returns the current ending level of a segment.
     *
-    *  @param     seg The segment, of which to get the ending level.
+    *  @param      seg The segment, of which to get the ending level.
     *
     *  @return     The ending level of a segment.
     *
@@ -619,5 +617,43 @@ protected:
     std::vector<EnvSeg> _segs;
 };
 
+
+class ModEnvSegSeq : public EnvSegSeq, public ModUnit
+{
+public:
+    
+    ModEnvSegSeq(seg_t numSegs,
+                 seg_t docksPerSeg = 0,
+                 bool modulationStartsAtSeg = false,
+                 double amp = 1);
+    
+    virtual ~ModEnvSegSeq() { }
+    
+    /*! @copydoc Unit::setModUnitDepth() */
+    virtual void setModUnitDepth(seg_t segNum,
+                                 index_t dockNum,
+                                 index_t modNum,
+                                 double depth);
+    
+    /*! @copydoc Unit::attachMod() */
+    virtual void attachMod(seg_t segNum,
+                           index_t dockNum,
+                           ModUnit* mod);
+    
+    /*! @copydoc Unit::detachMod() */
+    virtual void detachMod(seg_t segNum,
+                           index_t dockNum,
+                           index_t modNum);
+    
+protected:
+    
+    virtual void addDockforSegs_(seg_t numSegs);
+    
+    virtual seg_t getModIndex_(seg_t seg, seg_t dock) const;
+    
+    bool modulationStartsAtSeg_;
+    
+    std::vector<seg_t> segsPerDock_;
+};
 
 #endif /* defined(__Anthem__EnvSeg__) */

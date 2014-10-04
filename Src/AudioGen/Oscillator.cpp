@@ -15,7 +15,7 @@
 
 Oscillator::Oscillator(short wt, double frq,
                        double amp, short phaseOffset)
-: GenUnit(amp), _ind(0), _phaseOffset(0)
+: GenUnit(0,amp), _ind(0), _phaseOffset(0)
 {
     setWavetable(wt);
     

@@ -38,9 +38,7 @@ int main(int argc, const char * argv[])
 
     Envelope env;
     
-    LFOSeq seq;
-    
-    op.attachMod(Operator::AMP, &env);
+    //op.attachMod(Operator::AMP, &env);
 
     Mixer mixer(0,1);
 

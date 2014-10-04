@@ -13,7 +13,7 @@
 #include "Util.h"
 
 Operator::Operator(short wt, double amp)
-: GenUnit(amp,3)
+: GenUnit(3,amp)
 {
     _mods[AMP]->setHigherBoundary(1);
     _mods[AMP]->setLowerBoundary(0);
@@ -142,9 +142,12 @@ double Operator::getNoteFreq(unsigned short ind)
 
 void Operator::setAmp(double amp)
 {
-    _mods[AMP]->setBaseValue(amp);
+    // Takes care of boundary checking and
+    // member setting
+    GenUnit:setAmp(amp);
     
-    _amp = amp;
+    // Sets new base value for modulation
+    _mods[AMP]->setBaseValue(amp);
 }
 
 double Operator::tick()

@@ -76,6 +76,10 @@ void Unit::detachMod(index_t dockNum,
     _mods[dockNum]->detach(modNum);
 }
 
+EffectUnit::EffectUnit(unsigned short dockNum, double dryWet)
+: _dw(dryWet), Unit(dockNum)
+{ }
+
 void EffectUnit::setDryWet(double dw)
 {
     if (dw < 0 || dw > 1)
@@ -99,7 +103,7 @@ double EffectUnit::_dryWet(double originalSample, double processedSample, double
     return (originalSample * (1 - dryWet)) + (processedSample * dryWet);
 }
 
-GenUnit::GenUnit(double amp, unsigned short dockNum)
+GenUnit::GenUnit(unsigned short dockNum, double amp)
 : Unit(dockNum)
 {
     setAmp(amp); 
@@ -118,7 +122,7 @@ double GenUnit::getAmp() const
     return _amp;
 }
 
-ModUnit::ModUnit(double amp , unsigned short dockNum)
+ModUnit::ModUnit(unsigned short dockNum, double amp)
 : Unit(dockNum)
 {
     setAmp(amp);

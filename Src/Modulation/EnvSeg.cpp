@@ -10,6 +10,8 @@
 #include "LFO.h"
 #include "Global.h"
 #include "Wavetable.h"
+#include "ModDock.h"
+
 #include <cmath>
 
 // 60 seconds
@@ -407,11 +409,75 @@ double EnvSegSeq::tick()
             // Return last tick if the new segment has no length
             if (! _currSeg->getLen()) return _lastTick;
         }
-        
     }
 
     _lastTick = _currSeg->tick();
     
     return _lastTick;
     
+}
+
+ModEnvSegSeq::ModEnvSegSeq(seg_t numSegs,
+                           seg_t docksPerSeg,
+                           bool modulationStartsAtSeg,
+                           double amp)
+: EnvSegSeq(numSegs),
+  ModUnit(numSegs * docksPerSeg,amp),
+  segsPerDock_(docksPerSeg),
+  modulationStartsAtSeg_(modulationStartsAtSeg)
+{ }
+
+void ModEnvSegSeq::setModUnitDepth(seg_t segNum,
+                                   index_t dockNum,
+                                   index_t modNum,
+                                   double depth)
+{
+    Unit::setModUnitDepth(getModIndex_(segNum, dockNum), modNum, depth);
+}
+
+void ModEnvSegSeq::attachMod(seg_t segNum,
+                             index_t dockNum,
+                             ModUnit *mod)
+{
+    Unit::attachMod(getModIndex_(segNum, dockNum), mod);
+}
+
+void ModEnvSegSeq::detachMod(seg_t segNum,
+                             index_t dockNum,
+                             index_t modNum)
+{
+    Unit::detachMod(getModIndex_(segNum, dockNum), modNum);
+}
+
+void ModEnvSegSeq::addDockforSegs_(seg_t numSegs)
+{
+    // Add numSegs new docks
+    for (seg_t i = 0; i < numSegs; ++i)
+    {
+        _mods.push_back(new ModDock);
+    }
+    
+    segsPerDock_.push_back(numSegs);
+}
+
+ModEnvSegSeq::seg_t ModEnvSegSeq::getModIndex_(seg_t seg, seg_t dock) const
+{
+    // Offset lookup position
+    // Since the ModDocks are stored sequentially, we first add
+    // the segment amount of each dock before the one we want
+    // and then add the segment number requested
+    // E.g. there are 3 segments and [0][1] are SEG_RATE (2 segments),
+    // then [2][3][4] are SEG_LEVEL (3 segments). Say getModIndex_(1,1)
+    // is called, then we first add the SEG_RATE segment number, in this
+    // case 2, to the offset and then add the 'seg' parameter for
+    // the requested dock, yielding index [2 + 1] = [3]
+    
+    seg_t offset = 0;
+    
+    for (seg_t i = 0; i < dock; ++i)
+    {
+        offset += segsPerDock_[i];
+    }
+    
+    return offset + seg;
 }

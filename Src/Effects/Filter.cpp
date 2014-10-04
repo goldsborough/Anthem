@@ -18,7 +18,7 @@ Filter::Filter(unsigned short mode,
                double cutoff,
                double q,
                double gain)
-: EffectUnit(1,4),_delayA(0), _delayB(0),
+: EffectUnit(4,1),_delayA(0), _delayB(0),
   _cutoff(cutoff), _q(q), _mode(mode)
 {
     setGain(gain);

@@ -36,7 +36,7 @@
 *
 *************************************************************************************************/
 
-class Envelope : public EnvSegSeq, public ModUnit
+class Envelope : public ModEnvSegSeq
 {
 public:
 
@@ -46,12 +46,11 @@ public:
     enum Docks
     {
         SEG_RATE,
-        MOD_RATE,
-        MOD_DEPTH,
+        SEG_LEVEL,
         
-        // Each segment has the above three docks so
-        // AMP is offset
-        AMP = 15
+        // There are 5 SEG_RATE and 4 SEG_LEVEL so AMP
+        // is dock number 9 (starting from 0)
+        AMP = 9
     };
     
     /*! The Envelope's segments */
@@ -92,24 +91,7 @@ public:
     
     double modulate(double sample,
                     double depth,
-                    double,
                     double);
-    
-    /*! @copydoc Unit::setModUnitDepth() */
-    void setModUnitDepth(seg_t segNum,
-                         index_t dockNum,
-                         index_t modNum,
-                         double depth);
-
-    /*! @copydoc Unit::attachMod() */
-    void attachMod(seg_t segNum,
-                   index_t dockNum,
-                   ModUnit* mod);
-    
-    /*! @copydoc Unit::detachMod() */
-    void detachMod(seg_t segNum,
-                   index_t dockNum,
-                   index_t modNum);
     
     /******************************************************************************//*!
     *
@@ -135,6 +117,16 @@ public:
     
     /*****************************************************************************************//*!
     *
+    *  @brief       Returns the length of the delay segment.
+    *
+    *  @return      The length of the delay segment, in milliseconds.
+    *
+    ********************************************************************************************/
+    
+    unsigned int getDelay() const;
+    
+    /*****************************************************************************************//*!
+    *
     *  @brief       Sets The level of a segment.
     *
     *  @details     Setting the level of a segment sets its end level and the start level of
@@ -147,7 +139,6 @@ public:
     ********************************************************************************************/
     
     void setSegLevel(seg_t seg, double lv);
-    
     
     /*****************************************************************************************//*!
     *
@@ -219,11 +210,19 @@ public:
     
     bool sustainEnabled() const;
     
+    /*! @copydoc GenUnit::setAmp() */
+    void setAmp(double amp);
+    
 private:
     
     /*! Connects the end and starting poseg_ts of the loop
         to avoid harsh transitions */
-    enum { CONNECTOR, DEL = 1 };
+    enum { CONNECTOR, DEL };
+    
+    /*! Overwritten version of getModIndex_ from ModEnvSegSeq to take enum offset into account */
+    seg_t getModIndex_(seg_t seg, seg_t dock);
+    
+    void setLevel_(seg_t seg, double lv);
     
     /*! Changes the current segment in the sequence */
     void _changeSeg(segItr itr);
@@ -239,15 +238,6 @@ private:
     
     /*! Current segment number in the sequence */
     seg_t _currSegNum;
-    
-    /*! Current segment's rate */
-    double _currSegRate;
-    
-    /*! Current segment's mod's rate */
-    double _currSegModRate;
-    
-     /*! Current segment's mod's depth */
-    double _currSegModDepth;
 };
 
 #endif /* defined(__Anthem__Envelope__) */

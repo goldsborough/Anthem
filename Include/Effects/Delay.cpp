@@ -18,7 +18,7 @@ Delay::Delay(double delayLen,
              double decayRate,
              double feedbackLevel,
              double capacity)
-: EffectUnit(1,4), _delayCapacity(capacity * Global::samplerate),
+: EffectUnit(4,1), _delayCapacity(capacity * Global::samplerate),
   _delayLen(delayLen * Global::samplerate)
 {
     if (_delayLen > _delayCapacity)

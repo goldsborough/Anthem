@@ -185,13 +185,13 @@ public:
     *
     *  @brief       Constructor for the EffectUnit class.
     *
+    *  @param       dockNum The number of ModDocks for the EffectUnit.
+    *
     *  @param       dryWet Initial dry/wet value (between 0 and 1), defaults to 1.
     *
     *****************************************************************************************************/
     
-    EffectUnit(double dryWet = 1, unsigned short dockNum = 0)
-    : _dw(dryWet), Unit(dockNum)
-    { }
+    EffectUnit(unsigned short dockNum = 0, double dryWet = 1);
     
     virtual ~EffectUnit() { }
     
@@ -268,7 +268,7 @@ public:
     *
     *****************************************************************************************************/
     
-    GenUnit(double amp = 1, unsigned short dockNum = 0);
+    GenUnit(unsigned short dockNum = 0, double amp = 1);
     
     virtual ~GenUnit() { }
     
@@ -313,7 +313,7 @@ class ModUnit : public Unit
     
 public:
     
-    ModUnit(double amp = 1, unsigned short dockNum = 0);
+    ModUnit(unsigned short dockNum = 0, double amp = 1);
     
     virtual ~ModUnit() { }
     

@@ -87,10 +87,14 @@ double CrossfadeUnit::_scale(const double& value) const
 }
 
 double CrossfadeUnit::left() const
-{ return _scale(_tables[_type][_index].left); }
+{
+    return _scale(_tables[_type][_index].left);
+}
 
 double CrossfadeUnit::right() const
-{ return _scale(_tables[_type][_index].right); }
+{
+    return _scale(_tables[_type][_index].right);
+}
 
 
 

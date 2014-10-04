@@ -16,7 +16,7 @@
 
 Mixer::Mixer(bool directOut, bool waveOut, double amp)
 
-: _directOutputEnabled(directOut), _wavefileEnabled(waveOut),
+: Unit(2), _directOutputEnabled(directOut), _wavefileEnabled(waveOut),
   _masterAmp(amp), _stopped(true)
 
 {
@@ -137,7 +137,7 @@ void Mixer::play()
         
         _stopped = false;
     }
-};
+}
 
 void Mixer::stop()
 {
