@@ -6,7 +6,7 @@
 *
 *  @date        18/10/2014
 *
-*  @brief       EnvSeg and EnvSegSeq classes.
+*  @brief       EnvSeg, EnvSegSeq and ModEnvSegSeq classes.
 *
 *************************************************************************************************/
 
@@ -34,17 +34,24 @@ class EnvSeg : public GenUnit
     
 public:
     
+    enum Docks
+    {
+        SEG_RATE,
+        SEG_START_LEVEL,
+        SEG_END_LEVEL
+    };
+    
     typedef unsigned long len_t;
     
     /**********************************************************************************************//*!
      *
      *  @brief      Initalizes an Envelope segment
      *
-     *  @param      startAmp the start amplitude of the segment
+     *  @param      startLevel The starting level of the segment.
      *
-     *  @param      endAmp the end amplitude of the segment
+     *  @param      endAmp The ending level of the segment.
      *
-     *  @param      len the length of the segment in samples
+     *  @param      len The length of the segment in samples.
      *
      *  @param      segRate The rate of the segment. 1 = Lin, 0 <= rate < 1 = Exp, 1 < rate <= 2 = Log
      *
@@ -239,30 +246,37 @@ private:
         EXP
     };
     
+    /*! Convenience function, calls _calcRate() and _calcLevel() */
+    void calcParams_(double startLevel, double endLevel, double rate);
+    
     /*************************************************************************//*!
     *
-    *  @brief   Calculates the rate of the segment
+    *  @brief       Calculates the rate of the segment
     *
-    *  @details Calculates, according to _segRate and_len the increment /
-    *           decrement of the segment, determines whether the segment
-    *           has a linear, exponential or logarithmic type and sets
-    *           the internal member _type accordingly.
+    *  @details     Calculates, according to rate_ and _len the increment /
+    *               decrement of the segment, determines whether the segment
+    *               has a linear, exponential or logarithmic type and sets
+    *               the internal member _type accordingly.
     *
-    *  @see     _calcLevel()
+    *  @param       rate The rate to calculate for.
+    *
+    *  @param       endLevel The end level to calculate for.
+    *
+    *  @see         _calcLevel()
     *
     ****************************************************************************/
     
-    void _calcRate();
+    void _calcRate(double rate, double endLevel);
     
     /*************************************************************************//*!
     *
-    *  @brief     Updates and recalculates anything in dependance of the length.
+    *  @brief       Updates and recalculates anything in dependance of the level.
     *
-    *  @details   It basically checks whether the difference between the start
-    *             and end amplitude is negative, meaning there is an increase,
-    *             making the segment and the _ads member an attack segment, or
-    *             positive, meaning there is a decay, or 0, which indicates a
-    *             sustain segment.
+    *  @details     It basically checks whether the difference between the start
+    *               and end amplitude is negative, meaning there is an increase,
+    *               making the segment and the _ads member an attack segment, or
+    *               positive, meaning there is a decay, or 0, which indicates a
+    *               sustain segment.
     *
     *  @param       startLevel The starting amplitude, between 0 and 1.
     *
@@ -282,7 +296,7 @@ private:
     len_t _sample;
     
     /*! The rate determining the type (lin,log,exp) */
-    double _segRate;
+    double rate_;
     
     /*! Starting amplitude */
     double _startLevel;
@@ -345,7 +359,7 @@ public:
     *
     *  @brief      Ticks an envelope value.
     *
-    *  @param      The envelope value is the tick of the current segment.
+    *  @details      The envelope value is the tick of the current segment.
     *
     *********************************************************************************/
     
@@ -402,6 +416,22 @@ public:
     *********************************************************************************/
     
     virtual double getSegRate(seg_t seg) const;
+    
+    /*****************************************************************************************************//*!
+    *
+    *  @brief       Sets the ending level of a segment and the starting level of the next.
+    *
+    *  @details     This method 'links' the levels of two adjacent segments by making any
+    *               segment's ending level equal to the starting level of the next. This
+    *               applies to all segments except the last one, since it has no next seg.
+    *
+    *  @param       seg The segment in the sequence for which to set the ending amp (and starting of seg+1).
+    *
+    *  @param       lv The new level.
+    *
+    ********************************************************************************************************/
+    
+    virtual void setLinkedLevel(seg_t seg, double lv);
     
     /******************************************************************************//*!
     *
@@ -618,13 +648,31 @@ protected:
 };
 
 
+/******************************************************************************//*!
+*
+*  @brief      An EnvSegSeq with ModDocks.
+*
+*  @details
+*
+*
+*
+*
+*********************************************************************************/
+
 class ModEnvSegSeq : public EnvSegSeq, public ModUnit
 {
+    
 public:
     
+    /*! Available ModDocks. */
+    enum Docks
+    {
+        SEG_RATE,
+        SEG_LEVEL
+    };
+    
     ModEnvSegSeq(seg_t numSegs,
-                 seg_t docksPerSeg = 0,
-                 bool modulationStartsAtSeg = false,
+                 seg_t dockNum = 0,
                  double amp = 1);
     
     virtual ~ModEnvSegSeq() { }
@@ -644,16 +692,6 @@ public:
     virtual void detachMod(seg_t segNum,
                            index_t dockNum,
                            index_t modNum);
-    
-protected:
-    
-    virtual void addDockforSegs_(seg_t numSegs);
-    
-    virtual seg_t getModIndex_(seg_t seg, seg_t dock) const;
-    
-    bool modulationStartsAtSeg_;
-    
-    std::vector<seg_t> segsPerDock_;
 };
 
 #endif /* defined(__Anthem__EnvSeg__) */

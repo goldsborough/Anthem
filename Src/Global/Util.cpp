@@ -25,8 +25,7 @@ namespace Util
         return date;
     }
 
-
-    double noteToFreq(const unsigned short& n)
+    double noteToFreq(unsigned short n)
     {
         // Source: http://en.wikipedia.org/wiki/Piano_key_frequencies
         
@@ -35,28 +34,27 @@ namespace Util
         return pow(2, exp) * 440;
     }
 
-
-    unsigned short freqToNote(const double& freq)
+    unsigned short freqToNote(double freq)
     {
         return 12 * log2( (freq / 440) ) + 49;
     }
 
-    double centToFreq(const double& baseFreq, const int& centOffset)
+    double centToFreq(double baseFreq, int centOffset)
     {
         return pow(2, centOffset / 1200) * baseFreq;
     }
 
-    double semiToFreq(const double& baseFreq, const int& semiToneOffset)
+    double semiToFreq(double baseFreq, int semiToneOffset)
     {
         return pow(2, semiToneOffset / 12.0) * baseFreq;
     }
 
-    float getPassedTime(const clock_t& start)
+    float getPassedTime(clock_t start)
     {
         return (clock() - start) / static_cast<double>(CLOCKS_PER_SEC);
     }
     
-    double dbToAmp(const double& baseAmp, const double& dB)
+    double dbToAmp(double baseAmp, double dB)
     {
         // 0 gain means no change
         return (dB) ? baseAmp * pow(10, (dB/20)) : baseAmp;

@@ -35,10 +35,18 @@ int main(int argc, const char * argv[])
     Operator op(WavetableDB::SINE);
     
     op.addNote(440);
+    
+    LFO lfo;
+    
+    lfo.setRate(4);
 
     Envelope env;
     
-    //op.attachMod(Operator::AMP, &env);
+    env.attachMod(Envelope::ATK, ModEnvSegSeq::SEG_LEVEL, &lfo);
+    
+    env.setModUnitDepth(Envelope::ATK, ModEnvSegSeq::SEG_LEVEL, 0, 0.4);
+    
+    op.attachMod(Operator::AMP, &env);
 
     Mixer mixer(0,1);
 

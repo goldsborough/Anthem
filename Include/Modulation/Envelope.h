@@ -36,7 +36,7 @@
 *
 *************************************************************************************************/
 
-class Envelope : public ModEnvSegSeq
+class Envelope : public ModEnvSegSeq::ModEnvSegSeq
 {
 public:
 
@@ -45,12 +45,7 @@ public:
     /*! Available ModDocks. */
     enum Docks
     {
-        SEG_RATE,
-        SEG_LEVEL,
-        
-        // There are 5 SEG_RATE and 4 SEG_LEVEL so AMP
-        // is dock number 9 (starting from 0)
-        AMP = 9
+        AMP = 2
     };
     
     /*! The Envelope's segments */
@@ -63,7 +58,7 @@ public:
         REL = 6
     };
     
-    /*********************************************************************************************//*!
+    /*********************************************************************************************************************//*!
     *
     *  @brief       Constructs an Envelope object.
     *
@@ -74,10 +69,9 @@ public:
     *
     *  @param       sustainEnabled Whether or not tick the last SEG_C value until noteOff.
     *
-    *************************************************************************************************/
+    *************************************************************************************************************************/
     
-    Envelope(unsigned int delayMillis = 0,
-             bool sustainEnabled = true);
+    Envelope(unsigned int delayMillis = 0, bool sustainEnabled = true);
     
     /*********************************************************************************************//*!
     *
@@ -92,18 +86,6 @@ public:
     double modulate(double sample,
                     double depth,
                     double);
-    
-    /******************************************************************************//*!
-    *
-    *  @brief      Sets the rate of a segment.
-    *
-    *  @param      seg The segment in the sequence.
-    *
-    *  @param      rate The new rate. 0-1 is exp., 1 is linear and 1-2 is log.
-    *
-    *********************************************************************************/
-    
-    void setSegRate(seg_t seg, double rate);
     
     /*****************************************************************************************//*!
     *
@@ -218,11 +200,6 @@ private:
     /*! Connects the end and starting poseg_ts of the loop
         to avoid harsh transitions */
     enum { CONNECTOR, DEL };
-    
-    /*! Overwritten version of getModIndex_ from ModEnvSegSeq to take enum offset into account */
-    seg_t getModIndex_(seg_t seg, seg_t dock);
-    
-    void setLevel_(seg_t seg, double lv);
     
     /*! Changes the current segment in the sequence */
     void _changeSeg(segItr itr);

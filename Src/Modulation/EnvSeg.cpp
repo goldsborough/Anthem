@@ -25,13 +25,25 @@ EnvSeg::EnvSeg(double startAmp,
 : _sample(0),
   _startLevel(startAmp),
   _endLevel(endAmp),
-  _segRate(segRate),
+  rate_(segRate),
   _len(len),
-  _lastTick(startAmp)
+  _lastTick(startAmp),
+  GenUnit(3) // two ModDocks
 
 {
-    _calcLevel(_startLevel,_endLevel);
-    _calcRate();
+    _mods[SEG_RATE]->setHigherBoundary(2);
+    _mods[SEG_RATE]->setLowerBoundary(0);
+    _mods[SEG_RATE]->setBaseValue(1);
+    
+    _mods[SEG_START_LEVEL]->setHigherBoundary(1);
+    _mods[SEG_START_LEVEL]->setLowerBoundary(0);
+    _mods[SEG_START_LEVEL]->setBaseValue(startAmp);
+    
+    _mods[SEG_END_LEVEL]->setHigherBoundary(1);
+    _mods[SEG_END_LEVEL]->setLowerBoundary(0);
+    _mods[SEG_END_LEVEL]->setBaseValue(endAmp);
+    
+    calcParams_(_startLevel,_endLevel,rate_);
 }
 
 void EnvSeg::reset()
@@ -39,8 +51,7 @@ void EnvSeg::reset()
     _sample = 0;
     
     // reset _segCurr
-    _calcRate();
-    _calcLevel(_startLevel,_endLevel);
+    calcParams_(_startLevel,_endLevel,rate_);
 }
 
 void EnvSeg::_calcLevel(double startLevel, double endLevel)
@@ -67,7 +78,7 @@ void EnvSeg::_calcLevel(double startLevel, double endLevel)
     }
 }
 
-void EnvSeg::_calcRate()
+void EnvSeg::_calcRate(double rate, double endLevel)
 {
     // Uses iterative exponential
     // calculations instead of
@@ -76,9 +87,9 @@ void EnvSeg::_calcRate()
     // All courtesy for this algorithm
     // goes to Daniel R. Mitchell
     
-    if (_segRate == 1) _type = LIN;
+    if (rate == 1) _type = LIN;
     
-    else if (_segRate < 1) _type = EXP;
+    else if (rate < 1) _type = EXP;
     
     else
     {
@@ -86,7 +97,7 @@ void EnvSeg::_calcRate()
         
         // Rate must still be between 0 and 1, the
         // 1 - 2 range is just for covenience
-        _segRate = 2 - _segRate;
+        rate = 2 - rate;
     }
     
     // Calculate rate
@@ -96,12 +107,12 @@ void EnvSeg::_calcRate()
         // Multiplication factor stays 1
         _segIncr = 1;
         
-        _offset = _endLevel;
+        _offset = endLevel;
     }
     
     else
     {
-        _segCurr = _segRate;
+        _segCurr = rate;
         
         // Deduct sample count from length so that real-time
         // changes consider the passed samples.
@@ -115,7 +126,7 @@ void EnvSeg::_calcRate()
         if ((_ads == ATK && _type != LOG) ||
             (_ads == DEC && _type == LOG))
         {
-            base = (1 + _segRate) / _segRate;
+            base = (1 + rate) / rate;
         }
         
         // Decay or Attack for Logarithmic curves
@@ -123,12 +134,18 @@ void EnvSeg::_calcRate()
         {
             _segCurr++;
             
-            base = _segRate /( 1 + _segRate);
+            base = rate /( 1 + rate);
         }
         
         _segIncr = pow(base,exp);
         
     }
+}
+
+void EnvSeg::calcParams_(double startLevel, double endLevel, double rate)
+{
+    _calcLevel(startLevel, endLevel);
+    _calcRate(rate,endLevel);
 }
 
 void EnvSeg::setLen(EnvSeg::len_t sampleLen)
@@ -140,7 +157,7 @@ void EnvSeg::setLen(EnvSeg::len_t sampleLen)
     
     _len = sampleLen;
     
-    _calcRate();
+    _calcRate(rate_, _endLevel);
 }
 
 EnvSeg::len_t EnvSeg::getLen() const
@@ -155,11 +172,12 @@ void EnvSeg::setStartLevel(double lv)
     
     _startLevel = lv;
     
-    // Necessary for setSegRate
+    // Necessary for setSegRate at the very beginning
     if (!_sample) _lastTick = _startLevel;
     
-    _calcLevel(_startLevel,_endLevel);
-    _calcRate();
+    _mods[SEG_START_LEVEL]->setBaseValue(_startLevel);
+    
+    calcParams_(_startLevel,_endLevel,rate_);
 }
 
 double EnvSeg::getStartLevel() const
@@ -174,8 +192,9 @@ void EnvSeg::setEndLevel(double lv)
     
     _endLevel = lv;
     
-    _calcLevel(_startLevel,_endLevel);
-    _calcRate();
+    _mods[SEG_END_LEVEL]->setBaseValue(_endLevel);
+    
+    calcParams_(_startLevel,_endLevel,rate_);
 }
 
 double EnvSeg::getEndLevel() const
@@ -187,8 +206,6 @@ void EnvSeg::setBothLevels(double lv)
 {
     setStartLevel(lv);
     setEndLevel(lv);
-    
-    _calcLevel(_startLevel,_endLevel);
 }
 
 void EnvSeg::setRate(double rate)
@@ -196,15 +213,18 @@ void EnvSeg::setRate(double rate)
     if (rate > 2 || rate < 0)
     { throw std::invalid_argument("Rate must be between 0 and 2"); }
     
-    _segRate = rate;
+    rate_ = rate;
     
-    _calcLevel(_lastTick, _endLevel);
-    _calcRate();
+    _mods[SEG_RATE]->setBaseValue(rate_);
+    
+    // Calculate level from last tick rather than from start amplitude
+    // so that the rate is adjusted properly
+    calcParams_(_startLevel,_lastTick,rate_);
 }
 
 double EnvSeg::getRate() const
 {
-    return _segRate;
+    return rate_;
 }
 
 double EnvSeg::tick()
@@ -213,18 +233,43 @@ double EnvSeg::tick()
     // tick after reaching the end amplitude
     // (which shouldn't happen because the
     // envelope should move on), just return
-    // the end amplitude. When the _inf (infinite)
-    // variable is true, also return the end amplitude
-    // (Caller must take care of stopping it)
+    // the end amplitude.
     
-    if (_sample++ >= _len){ return _lastTick; }
+    if (_sample++ >= _len) return _lastTick;
+    
+    // Modulate members
+    if (_mods[SEG_RATE]->inUse()        ||
+        _mods[SEG_START_LEVEL]->inUse() ||
+        _mods[SEG_END_LEVEL]->inUse())
+    {
+        double rate = rate_,
+               start = _lastTick,
+               end = _endLevel;
+        
+        if (_mods[SEG_RATE]->inUse())
+        {
+            rate = _mods[SEG_RATE]->inUse();
+        }
+        
+        if (_mods[SEG_START_LEVEL]->inUse())
+        {
+            start = _mods[SEG_START_LEVEL]->tick();
+        }
+        
+        if (_mods[SEG_END_LEVEL]->inUse())
+        {
+            end = _mods[SEG_END_LEVEL]->tick();
+        }
+        
+        calcParams_(start,end,rate);
+    }
     
     // Increment the envelope value
     _segCurr *= _segIncr;
     
     _lastTick = _segCurr;
     
-    if (_ads != SUST) _lastTick -= _segRate;
+    if (_ads != SUST) _lastTick -= rate_;
     
     if (_type == LOG) _lastTick = 1 - _lastTick;
     
@@ -289,6 +334,19 @@ unsigned long EnvSegSeq::getSegLen(seg_t seg) const
 void EnvSegSeq::setSegBothLevels(seg_t seg, double lv)
 {
     setSegStartLevel(seg, lv), setSegEndLevel(seg, lv);
+}
+
+
+void EnvSegSeq::setLinkedLevel(seg_t seg, double lv)
+{
+    _segs[seg].setEndLevel(lv);
+    
+    // Set starting level of adjacent segment (unless
+    // this is the last segment)
+    if (seg < _segs.size() - 1)
+    {
+        _segs[seg + 1].setStartLevel(lv);
+    }
 }
 
 
@@ -418,13 +476,10 @@ double EnvSegSeq::tick()
 }
 
 ModEnvSegSeq::ModEnvSegSeq(seg_t numSegs,
-                           seg_t docksPerSeg,
-                           bool modulationStartsAtSeg,
+                           seg_t dockNum,
                            double amp)
 : EnvSegSeq(numSegs),
-  ModUnit(numSegs * docksPerSeg,amp),
-  segsPerDock_(docksPerSeg),
-  modulationStartsAtSeg_(modulationStartsAtSeg)
+  ModUnit(dockNum + 2,amp)
 { }
 
 void ModEnvSegSeq::setModUnitDepth(seg_t segNum,
@@ -432,52 +487,61 @@ void ModEnvSegSeq::setModUnitDepth(seg_t segNum,
                                    index_t modNum,
                                    double depth)
 {
-    Unit::setModUnitDepth(getModIndex_(segNum, dockNum), modNum, depth);
+    if (dockNum == SEG_LEVEL)
+    {
+        _segs[segNum].setModUnitDepth(EnvSeg::SEG_END_LEVEL, modNum, depth);
+        
+        if (segNum < _segs.size() - 1)
+        {
+            _segs[segNum + 1].setModUnitDepth(EnvSeg::SEG_START_LEVEL, modNum, depth);
+        }
+    }
+    
+    else
+    {
+        _segs[segNum].setModUnitDepth(dockNum,modNum, depth);
+    }
 }
 
 void ModEnvSegSeq::attachMod(seg_t segNum,
                              index_t dockNum,
                              ModUnit *mod)
 {
-    Unit::attachMod(getModIndex_(segNum, dockNum), mod);
+    // Set linked modulator if SEG_LEVEL
+    if (dockNum == SEG_LEVEL)
+    {
+        _segs[segNum].attachMod(EnvSeg::SEG_END_LEVEL, mod);
+        
+        // If last segment chosen, no next segment to set start level for
+        if (segNum < _segs.size() - 1)
+        {
+            _segs[segNum + 1].attachMod(EnvSeg::SEG_START_LEVEL, mod);
+        }
+    }
+    
+    else
+    {
+        _segs[segNum].attachMod(dockNum, mod);
+    }
 }
 
 void ModEnvSegSeq::detachMod(seg_t segNum,
                              index_t dockNum,
                              index_t modNum)
 {
-    Unit::detachMod(getModIndex_(segNum, dockNum), modNum);
-}
-
-void ModEnvSegSeq::addDockforSegs_(seg_t numSegs)
-{
-    // Add numSegs new docks
-    for (seg_t i = 0; i < numSegs; ++i)
+    if (dockNum == SEG_LEVEL)
     {
-        _mods.push_back(new ModDock);
+        _segs[segNum].detachMod(dockNum, modNum);
+        
+        // If last segment chosen, no next segment to set start level for
+        if (segNum < _segs.size() - 1)
+        {
+            _segs[segNum + 1].detachMod(dockNum, modNum);
+        }
     }
     
-    segsPerDock_.push_back(numSegs);
-}
-
-ModEnvSegSeq::seg_t ModEnvSegSeq::getModIndex_(seg_t seg, seg_t dock) const
-{
-    // Offset lookup position
-    // Since the ModDocks are stored sequentially, we first add
-    // the segment amount of each dock before the one we want
-    // and then add the segment number requested
-    // E.g. there are 3 segments and [0][1] are SEG_RATE (2 segments),
-    // then [2][3][4] are SEG_LEVEL (3 segments). Say getModIndex_(1,1)
-    // is called, then we first add the SEG_RATE segment number, in this
-    // case 2, to the offset and then add the 'seg' parameter for
-    // the requested dock, yielding index [2 + 1] = [3]
-    
-    seg_t offset = 0;
-    
-    for (seg_t i = 0; i < dock; ++i)
+    else
     {
-        offset += segsPerDock_[i];
+        _segs[segNum].detachMod(dockNum, modNum);
     }
-    
-    return offset + seg;
 }

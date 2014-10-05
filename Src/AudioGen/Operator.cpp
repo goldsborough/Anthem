@@ -188,11 +188,13 @@ double Operator::tick()
         val += (*itr)->tick();
     }
     
+    double amp = _amp;
+    
     // Check modulation dock for the amplitude parameter
     if (_mods[AMP]->inUse())
     {
-        return val * _mods[AMP]->tick();
+        amp = _mods[AMP]->tick();
     }
     
-    return val * _amp;
+    return val * amp;
 }

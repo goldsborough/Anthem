@@ -12,7 +12,7 @@
 
 Envelope::Envelope(unsigned int delayMillis, bool sustainEnabled)
 
-: ModEnvSegSeq(7), _sustainEnabled(sustainEnabled)
+: ModEnvSegSeq(7,1), _sustainEnabled(sustainEnabled)
 
 {
     _currSeg = _segs.begin() + DEL;
@@ -29,35 +29,6 @@ Envelope::Envelope(unsigned int delayMillis, bool sustainEnabled)
     // too abrupt
     _segs[CONNECTOR].setLen(Global::samplerate / 40);
     
-    // Add 5 docks for the SEG_RATE of ATK to REL
-    ModEnvSegSeq::addDockforSegs_(5);
-    
-    // Add 4 docks for the SEG_LEVEL of ATK to SEG_C
-    ModEnvSegSeq::addDockforSegs_(4);
-    
-    // Initialize SEG_RATE ModDocks
-    for (seg_t seg = ATK; seg <= REL; ++seg)
-    {
-        _mods[getModIndex_(seg, SEG_RATE)]->setHigherBoundary(2);
-        _mods[getModIndex_(seg, SEG_RATE)]->setLowerBoundary(0);
-        _mods[getModIndex_(seg, SEG_RATE)]->setBaseValue(1);
-    }
-    
-    // Initialize SEG_LEVEL ModDocks
-    for (seg_t seg = ATK; seg < REL; ++seg)
-    {
-        _mods[getModIndex_(seg, SEG_LEVEL)]->setHigherBoundary(1);
-        _mods[getModIndex_(seg, SEG_LEVEL)]->setLowerBoundary(0);
-        _mods[getModIndex_(seg, SEG_LEVEL)]->setBaseValue(_segs[seg].getEndLevel());
-    }
-    
-    // Add one dock for AMP
-    _mods.push_back(new ModDock);
-    
-    _mods[AMP]->setHigherBoundary(1);
-    _mods[AMP]->setLowerBoundary(0);
-    _mods[AMP]->setBaseValue(1);
-    
     // Initial settings
     setSegLevel(Envelope::ATK, 0.8);
     setSegLen(Envelope::ATK, 500);
@@ -68,6 +39,10 @@ Envelope::Envelope(unsigned int delayMillis, bool sustainEnabled)
     
     setSegRate(Envelope::REL, 0.1);
     setSegLen(Envelope::REL, 500);
+
+    _mods[AMP]->setHigherBoundary(1);
+    _mods[AMP]->setLowerBoundary(0);
+    _mods[AMP]->setBaseValue(1);
 }
 
 void Envelope::setAmp(double amp)
@@ -78,12 +53,6 @@ void Envelope::setAmp(double amp)
     
     // Sets new base value for modulation
     _mods[AMP]->setBaseValue(amp);
-}
-
-Envelope::seg_t Envelope::getModIndex_(seg_t seg, seg_t dock)
-{
-    // Minus two because of the dock number offset (ATK = 2)
-    return ModEnvSegSeq::getModIndex_(seg - 2, dock);
 }
 
 void Envelope::_changeSeg(segItr seg)
@@ -190,46 +159,6 @@ double Envelope::_tick()
 
 double Envelope::modulate(double sample, double depth, double)
 {
-    if (_currSegNum > DEL)
-    {
-        // Modulate SEG_RATE
-        
-        // Modulate only current segment?
-        if (modulationStartsAtSeg_)
-        {
-            _currSeg->setRate(_mods[getModIndex_(_currSegNum, SEG_RATE)]->tick());
-        }
-        
-        // Modulate all segments (that have docks)
-        else
-        {
-            for (seg_t seg = ATK; seg <= REL; ++seg)
-            {
-                _segs[seg].setRate(_mods[getModIndex_(seg, SEG_RATE)]->tick());
-            }
-        }
-        
-        // Modulate SEG_LEVEL (REL has none, officially)
-        
-        if (_currSegNum != REL)
-        {
-            // Modulate current segment
-            if (modulationStartsAtSeg_)
-            {
-                setLevel_(_currSegNum, _mods[getModIndex_(_currSegNum, SEG_LEVEL)]->tick());
-            }
-            
-            // Modulate all segments (that have docks, here excluding REL)
-            else
-            {
-                for (seg_t seg = ATK; seg < REL; ++seg)
-                {
-                    setLevel_(seg, _mods[getModIndex_(seg, SEG_LEVEL)]->tick());
-                }
-            }
-        }
-    }
-    
     double ret = sample * _tick() * depth;
     
     double amp = _amp;
@@ -274,25 +203,8 @@ void Envelope::setSegLevel(seg_t seg, double lv)
     if (seg >= REL || seg < ATK)
     { throw std::invalid_argument("Invalid segment for setting the level!"); }
     
-    // Set base value
-    _mods[getModIndex_(seg, SEG_LEVEL)]->setBaseValue(lv);
-    
     // Set new levels
-    setLevel_(seg, lv);
-}
-
-void Envelope::setLevel_(seg_t seg, double lv)
-{
-    _segs[seg].setEndLevel(lv);
-    _segs[seg + 1].setStartLevel(lv);
-}
-
-void Envelope::setSegRate(seg_t seg, double rate)
-{
-    EnvSegSeq::setSegRate(seg, rate);
-    
-    // Set new base value for modulation
-    _mods[getModIndex_(seg, SEG_RATE)]->setBaseValue(rate);
+    EnvSegSeq::setLinkedLevel(seg, lv);
 }
 
 void Envelope::noteOff()
