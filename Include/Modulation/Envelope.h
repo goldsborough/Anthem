@@ -202,19 +202,19 @@ private:
     enum { CONNECTOR, DEL };
     
     /*! Changes the current segment in the sequence */
-    void _changeSeg(segItr itr);
+    void changeSeg_(segItr itr);
     
     /*! Does the actual work for modulate() */
-    double _tick();
+    double tick_();
     
     /*! Resets the loop segments and changes to hidden connector segment */
-    void _resetLoop();
+    void resetLoop_();
     
     /*! Whether or not to return the last tick forever after SEG_C finished */
-    bool _sustainEnabled;
+    bool sustainEnabled_;
     
     /*! Current segment number in the sequence */
-    seg_t _currSegNum;
+    seg_t currSegNum_;
 };
 
 #endif /* defined(__Anthem__Envelope__) */

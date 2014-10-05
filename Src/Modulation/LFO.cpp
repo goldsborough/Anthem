@@ -136,9 +136,9 @@ void LFOSeq::_setScaledModRate(seg_t seg, double rate)
     // "period" of the segment and multiply that
     // by the rate, giving the mod wave's frequency.
     
-    if (_segs[seg].getLen() > 0)
+    if (segs_[seg].getLen() > 0)
     {
-        double freq = (Global::samplerate / static_cast<double>(_segs[seg].getLen())) * rate;
+        double freq = (Global::samplerate / static_cast<double>(segs_[seg].getLen())) * rate;
         
         _lfos[seg].setRate(freq);
     }
@@ -152,13 +152,13 @@ void LFOSeq::setRate(double Hz)
     _rate = Hz;
     
     // get the period, divide up into _segNum pieces
-    double len = (1.0 / _rate) / _segs.size();
+    double len = (1.0 / _rate) / segs_.size();
     
     // seconds to milliseconds
     len *= 1000;
     
     // Set all segment's lengths
-    for (int i = 0; i < _segs.size(); i++)
+    for (int i = 0; i < segs_.size(); i++)
     {
         EnvSegSeq::setSegLen(i, len);
     }
@@ -171,21 +171,21 @@ double LFOSeq::getRate() const
 
 void LFOSeq::setSegRate(seg_t seg, double rate)
 {
-    if (seg >= _segs.size())
+    if (seg >= segs_.size())
     { throw std::invalid_argument("Segment out of range for LFOSeq!"); }
     
-    if (_segs.begin() + seg == _currSeg)
+    if (segs_.begin() + seg == currSeg_)
     { _currSegRate = rate; }
     
-    _segs[seg].setRate(rate);
+    segs_[seg].setRate(rate);
 }
 
 void LFOSeq::setModDepth(seg_t seg, double depth)
 {
-    if (seg >= _segs.size())
+    if (seg >= segs_.size())
     { throw std::invalid_argument("Segment out of range for LFOSeq!"); }
     
-    if (_segs.begin() + seg == _currSeg)
+    if (segs_.begin() + seg == currSeg_)
     { _currSegModDepth = depth; }
     
     _lfos[seg].setAmp(depth);
@@ -193,7 +193,7 @@ void LFOSeq::setModDepth(seg_t seg, double depth)
 
 double LFOSeq::getModDepth(seg_t seg) const
 {
-    if (seg >= _segs.size())
+    if (seg >= segs_.size())
     { throw std::invalid_argument("Segment out of range for LFOSeq!"); }
     
     return _lfos[seg].getAmp();
@@ -201,10 +201,10 @@ double LFOSeq::getModDepth(seg_t seg) const
 
 void LFOSeq::setModRate(seg_t seg, double rate)
 {
-    if (seg >= _segs.size())
+    if (seg >= segs_.size())
     { throw std::invalid_argument("Segment out of range for LFOSeq!"); }
     
-    if (_segs.begin() + seg == _currSeg)
+    if (segs_.begin() + seg == currSeg_)
     { _currSegModRate = rate; }
     
     _lfos[seg].setRate(rate);
@@ -212,7 +212,7 @@ void LFOSeq::setModRate(seg_t seg, double rate)
 
 double LFOSeq::getModRate(seg_t seg) const
 {
-    if (seg >= _segs.size())
+    if (seg >= segs_.size())
     { throw std::invalid_argument("Segment out of range for LFOSeq!"); }
     
     return _lfos[seg].getRate();
@@ -220,10 +220,10 @@ double LFOSeq::getModRate(seg_t seg) const
 
 void LFOSeq::setModPhaseOffset(seg_t seg, double degrees)
 {
-    if (seg >= _segs.size())
+    if (seg >= segs_.size())
     { throw std::invalid_argument("Segment out of range for LFOSeq!"); }
     
-    if (_segs.begin() + seg == _currSeg)
+    if (segs_.begin() + seg == currSeg_)
     { _currSegPhaseOffset = degrees; }
     
     _lfos[seg].setPhaseOffset(degrees);
@@ -231,7 +231,7 @@ void LFOSeq::setModPhaseOffset(seg_t seg, double degrees)
 
 double LFOSeq::getModPhaseOffset(seg_t seg)
 {
-    if (seg >= _segs.size())
+    if (seg >= segs_.size())
     { throw std::invalid_argument("Segment out of range for LFOSeq!"); }
     
     return _lfos[seg].getPhaseOffset();
@@ -239,34 +239,33 @@ double LFOSeq::getModPhaseOffset(seg_t seg)
 
 void LFOSeq::addSegment()
 {
-    if (_segs.size() == 10)
+    if (segs_.size() == 10)
     { throw std::runtime_error("Segment count already 10!"); }
     
-    _segs.push_back(EnvSeg());
+    segs_.push_back(EnvSeg());
     _lfos.push_back(LFO(-1));
 }
 
 void LFOSeq::removeSegment()
 {
-    if (_segs.empty())
+    if (segs_.empty())
     { throw std::runtime_error("Cannot remove segment from LFOSeq if already empty!"); }
     
-    _segs.erase(_segs.end() - 1);
+    segs_.erase(segs_.end() - 1);
     _lfos.erase(_lfos.end() - 1);
 }
 
 void LFOSeq::removeSegment(seg_t seg)
 {
-    if (seg >= _segs.size())
+    if (seg >= segs_.size())
     { throw std::invalid_argument("Invalid segment index!"); }
     
-    _segs.erase(_segs.begin() + seg);
+    segs_.erase(segs_.begin() + seg);
     _lfos.erase(_lfos.begin() + seg);
 }
 
 double LFOSeq::modulate(double sample, double depth, double)
 {
-    
     return sample * EnvSegSeq::tick() * depth * _amp;
 }
 

@@ -104,10 +104,8 @@ double EffectUnit::_dryWet(double originalSample, double processedSample, double
 }
 
 GenUnit::GenUnit(unsigned short dockNum, double amp)
-: Unit(dockNum)
-{
-    setAmp(amp); 
-}
+: Unit(dockNum), _amp(amp)
+{ }
 
 void GenUnit::setAmp(double amp)
 {
@@ -123,10 +121,8 @@ double GenUnit::getAmp() const
 }
 
 ModUnit::ModUnit(unsigned short dockNum, double amp)
-: Unit(dockNum)
-{
-    setAmp(amp);
-}
+: Unit(dockNum), _amp(amp)
+{ }
 
 void ModUnit::setAmp(double amp)
 {

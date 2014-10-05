@@ -16,8 +16,6 @@
 #include "Units.h"
 #include <vector>
 
-class LFO;
-
 /******************************************************************************//*!
  *
  *  @brief      An envelope segment
@@ -247,7 +245,7 @@ private:
     };
     
     /*! Convenience function, calls _calcRate() and _calcLevel() */
-    void calcParams_(double startLevel, double endLevel, double rate);
+    void calcParams_(double startLevel, double endLevel, double rate, double len);
     
     /*************************************************************************//*!
     *
@@ -260,13 +258,13 @@ private:
     *
     *  @param       rate The rate to calculate for.
     *
-    *  @param       endLevel The end level to calculate for.
+    *  @param       len The length, in samples, to calculate rate for.
     *
     *  @see         _calcLevel()
     *
     ****************************************************************************/
     
-    void _calcRate(double rate, double endLevel);
+    void _calcRate(double rate, len_t len);
     
     /*************************************************************************//*!
     *
@@ -284,46 +282,48 @@ private:
     *
     ****************************************************************************/
     
-    void _calcLevel(double startLevel, double endLevel);
+    void calcLevel_(double startLevel, double endLevel);
+    
+    double advance_(len_t numSamples = 1);
     
     /*! Attack, Decay or Sustain identifier */
-    ADS _ads;
+    ADS ads_;
     
     /*! Linear, Logarithmic or Exponential identifier */
-    Type _type;
+    Type type_;
     
     /*! Sample count */
-    len_t _sample;
+    len_t sample_;
     
     /*! The rate determining the type (lin,log,exp) */
     double rate_;
     
     /*! Starting amplitude */
-    double _startLevel;
+    double startLevel_;
     
     /*! End amplitude */
-    double _endLevel;
+    double endLevel_;
     
     /*! Current increment value */
-    double _segIncr;
+    double segIncr_;
     
     /*! Current envelope value */
-    double _segCurr;
+    double segCurr_;
     
     /*! Difference between end and start amplitude */
-    double _diff;
+    double diff_;
     
     /*! Offset for exponential increment */
-    double _offset;
+    double offset_;
 
     /*! Last ticked value */
-    double _lastTick;
+    double lastTick_;
     
     /*! Length of segment in samples */
-    len_t _len;
+    len_t len_;
     
     /*! Maximum possible segment length, a good value is 60 seconds */
-    static const len_t _maxLen;
+    static const len_t maxLen_;
 };
 
 /******************************************************************************//*!
@@ -614,37 +614,37 @@ protected:
     typedef std::vector<EnvSeg>::iterator segItr;
     
     /*! Changes the current segment in the sequence */
-    virtual void _changeSeg(segItr seg);
+    virtual void changeSeg_(segItr seg);
     
     /*! Executes various steps to reset a loop (go from end back to start) */
-    virtual void _resetLoop();
+    virtual void resetLoop_();
     
     /*! The number of samples passed since starting the current segment */
-    unsigned long _currSample;
+    unsigned long currSample_;
     
     /*! Iterator pointing to the current segment */
-    segItr _currSeg;
+    segItr currSeg_;
     
     /*! Iterator pointing to the loop start segment */
-    segItr _loopStart;
+    segItr loopStart_;
     
     /*! Iterator pointing to the loop end segment */
-    segItr _loopEnd;
+    segItr loopEnd_;
     
     /*! Current number of loops executed */
-    seg_t _loopCount;
+    seg_t loopCount_;
     
     /*! Maximum number of loops */
-    seg_t _loopMax;
+    seg_t loopMax_;
  
     /*! Boolean whether or not to loop infinitely */
-    bool _loopInf;
+    bool loopInf_;
     
     /*! The last ticked value */
-    double _lastTick;
+    double lastTick_;
     
     /*! The segment sequence */
-    std::vector<EnvSeg> _segs;
+    std::vector<EnvSeg> segs_;
 };
 
 

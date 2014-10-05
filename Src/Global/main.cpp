@@ -30,7 +30,7 @@ int main(int argc, const char * argv[])
     
     Synthesizer synth;
     
-    uint32_t len = Global::samplerate * 5;
+    unsigned long len = Global::samplerate * 5;
     
     Operator op(WavetableDB::SINE);
     
@@ -42,9 +42,9 @@ int main(int argc, const char * argv[])
 
     Envelope env;
     
-    env.attachMod(Envelope::ATK, ModEnvSegSeq::SEG_LEVEL, &lfo);
+    //env.attachMod(Envelope::ATK, ModEnvSegSeq::SEG_LEVEL, &lfo);
     
-    env.setModUnitDepth(Envelope::ATK, ModEnvSegSeq::SEG_LEVEL, 0, 0.4);
+    //env.setModUnitDepth(Envelope::ATK, ModEnvSegSeq::SEG_LEVEL, 0, 0.4);
     
     op.attachMod(Operator::AMP, &env);
 

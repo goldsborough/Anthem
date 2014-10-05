@@ -144,7 +144,7 @@ void Operator::setAmp(double amp)
 {
     // Takes care of boundary checking and
     // member setting
-    GenUnit:setAmp(amp);
+    GenUnit::setAmp(amp);
     
     // Sets new base value for modulation
     _mods[AMP]->setBaseValue(amp);
