@@ -34,9 +34,9 @@ public:
     
     enum Docks
     {
-        SEG_RATE,
-        SEG_START_LEVEL,
-        SEG_END_LEVEL
+        RATE,
+        START_LEVEL,
+        END_LEVEL
     };
     
     typedef unsigned long len_t;
@@ -51,14 +51,14 @@ public:
      *
      *  @param      len The length of the segment in samples.
      *
-     *  @param      segRate The rate of the segment. 1 = Lin, 0 <= rate < 1 = Exp, 1 < rate <= 2 = Log
+     *  @param      rate The rate of the segment. 1 = Lin, 0 <= rate < 1 = Exp, 1 < rate <= 2 = Log
      *
      **************************************************************************************************/
     
     EnvSeg(double startAmp = 0,
            double endAmp = 0,
            len_t len = 0,
-           double segRate = 1);
+           double rate = 1);
     
     /******************************************************************//*!
      *
@@ -218,106 +218,32 @@ public:
     
 private:
     
-    /***********************************************************************************//*!
-    *
-    *  @brief   Rate of segment. Attack, decay or sustain. Just for internal reference.
-    *
-    ***********************************************************************************/
+    /*! Calculates the amplitude range and assigns it to range_ */
+    void calcRange_();
     
-    enum ADS
-    {
-        ATK,
-        DEC,
-        SUST
-    };
+    /*! Calculates the increment for curr_ and assigns it to incr_ */
+    void calcIncr_();
     
-    /***********************************************************************************//*!
-    *
-    *  @brief   Type of segment. Attack, decay or sustain. Just for internal reference.
-    *
-    ***********************************************************************************/
-    
-    enum Type
-    {
-        LIN,
-        LOG,
-        EXP
-    };
-    
-    /*! Convenience function, calls _calcRate() and _calcLevel() */
-    void calcParams_(double startLevel, double endLevel, double rate, double len);
-    
-    /*************************************************************************//*!
-    *
-    *  @brief       Calculates the rate of the segment
-    *
-    *  @details     Calculates, according to rate_ and _len the increment /
-    *               decrement of the segment, determines whether the segment
-    *               has a linear, exponential or logarithmic type and sets
-    *               the internal member _type accordingly.
-    *
-    *  @param       rate The rate to calculate for.
-    *
-    *  @param       len The length, in samples, to calculate rate for.
-    *
-    *  @see         _calcLevel()
-    *
-    ****************************************************************************/
-    
-    void _calcRate(double rate, len_t len);
-    
-    /*************************************************************************//*!
-    *
-    *  @brief       Updates and recalculates anything in dependance of the level.
-    *
-    *  @details     It basically checks whether the difference between the start
-    *               and end amplitude is negative, meaning there is an increase,
-    *               making the segment and the _ads member an attack segment, or
-    *               positive, meaning there is a decay, or 0, which indicates a
-    *               sustain segment.
-    *
-    *  @param       startLevel The starting amplitude, between 0 and 1.
-    *
-    *  @param       endLevel The end amplitude, between 0 and 1.
-    *
-    ****************************************************************************/
-    
-    void calcLevel_(double startLevel, double endLevel);
-    
-    double advance_(len_t numSamples = 1);
-    
-    /*! Attack, Decay or Sustain identifier */
-    ADS ads_;
-    
-    /*! Linear, Logarithmic or Exponential identifier */
-    Type type_;
-    
-    /*! Sample count */
-    len_t sample_;
+    /*! Ticks a value (calculates it from data members) */
+    double calc_();
     
     /*! The rate determining the type (lin,log,exp) */
     double rate_;
     
     /*! Starting amplitude */
-    double startLevel_;
+    double startAmp_;
     
     /*! End amplitude */
-    double endLevel_;
-    
-    /*! Current increment value */
-    double segIncr_;
-    
-    /*! Current envelope value */
-    double segCurr_;
+    double endAmp_;
     
     /*! Difference between end and start amplitude */
-    double diff_;
-    
-    /*! Offset for exponential increment */
-    double offset_;
+    double range_;
 
-    /*! Last ticked value */
-    double lastTick_;
+    /*! Current segment value */
+    double curr_;
+    
+    /*! Increment value for curr_ */
+    double incr_;
     
     /*! Length of segment in samples */
     len_t len_;

@@ -1,15 +1,8 @@
-//
-//  main.cpp
-//  Anthem
-//
-//  Created by Peter Goldsborough on 21/01/14.
-//  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
-//
-
 #include "Synthesizer.h"
 #include "Mixer.h"
 #include "Global.h"
 #include "Operator.h"
+#include "Oscillator.h"
 #include "Util.h"
 #include "Envelope.h"
 #include "LFO.h"
@@ -22,7 +15,6 @@
 #include "Crossfader.h"
 
 #include <iostream>
-#include <vector>
 
 int main(int argc, const char * argv[])
 {
@@ -42,12 +34,8 @@ int main(int argc, const char * argv[])
 
     Envelope env;
     
-    //env.attachMod(Envelope::ATK, ModEnvSegSeq::SEG_LEVEL, &lfo);
-    
-    //env.setModUnitDepth(Envelope::ATK, ModEnvSegSeq::SEG_LEVEL, 0, 0.4);
-    
     op.attachMod(Operator::AMP, &env);
-
+    
     Mixer mixer(0,1);
 
     for (int i = 0; i < len; ++i)
@@ -61,6 +49,6 @@ int main(int argc, const char * argv[])
     
     //while (clock() != t + (5 * CLOCKS_PER_SEC));
     
-    std::cout << "Total program duration: " << Util::getPassedTime(t) << "\n";
+    std::cout << "Execution time: " << Util::getPassedTime(t) << "\n";
     
 }
