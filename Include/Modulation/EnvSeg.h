@@ -604,20 +604,20 @@ public:
     virtual ~ModEnvSegSeq() { }
     
     /*! @copydoc Unit::setModUnitDepth() */
-    virtual void setModUnitDepth(seg_t segNum,
-                                 index_t dockNum,
-                                 index_t modNum,
-                                 double depth);
+    virtual void setSegModUnitDepth(seg_t segNum,
+                                   index_t dockNum,
+                                   index_t modNum,
+                                   double depth);
     
     /*! @copydoc Unit::attachMod() */
-    virtual void attachMod(seg_t segNum,
-                           index_t dockNum,
-                           ModUnit* mod);
+    virtual void attachSegMod(seg_t segNum,
+                              index_t dockNum,
+                              ModUnit* mod);
     
     /*! @copydoc Unit::detachMod() */
-    virtual void detachMod(seg_t segNum,
-                           index_t dockNum,
-                           index_t modNum);
+    virtual void detachSegMod(seg_t segNum,
+                              index_t dockNum,
+                              index_t modNum);
 };
 
 #endif /* defined(__Anthem__EnvSeg__) */

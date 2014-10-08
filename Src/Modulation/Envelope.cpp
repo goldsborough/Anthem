@@ -1,26 +1,14 @@
-//
-//  Envelope.cpp
-//  Anthem
-//
-//  Created by Peter Goldsborough on 09/03/14.
-//  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
-//
-
 #include "Envelope.h"
 #include "Global.h"
 #include "ModDock.h"
 
-Envelope::Envelope(unsigned int delayMillis, bool sustainEnabled)
+Envelope::Envelope(bool sustainEnabled)
 
-: ModEnvSegSeq(7,1), sustainEnabled_(sustainEnabled)
+: ModEnvSegSeq(7,1), sustainEnabled_(sustainEnabled),
+  currSegNum_(DEL)
 
 {
     currSeg_ = segs_.begin() + DEL;
-    
-    // Set delay length
-    currSeg_->setLen(delayMillis * 44.1);
-    
-    currSegNum_ = DEL;
     
     // Set the hidden connector length to a 40th of the
     // samplerate, at 44.1 Khz that's 1102 samples. Not
@@ -30,15 +18,16 @@ Envelope::Envelope(unsigned int delayMillis, bool sustainEnabled)
     segs_[CONNECTOR].setLen(Global::samplerate / 40);
     
     // Initial settings
-    setSegLevel(Envelope::ATK, 0.8);
-    setSegLen(Envelope::ATK, 500);
+    setSegLevel(ATK, 0.8);
+    setSegLen(ATK, 500);
+    setSegRate(ATK, 0.8);
     
-    setSegLevel(Envelope::SEG_A, 0.5);
-    setSegLen(Envelope::SEG_A, 500);
-    setSegRate(Envelope::SEG_A, 0.1);
+    setSegLevel(SEG_A, 0.5);
+    setSegLen(SEG_A, 500);
+    setSegRate(SEG_A, 0.8);
     
-    setSegRate(Envelope::REL, 0.1);
-    setSegLen(Envelope::REL, 500);
+    setSegRate(REL, 0.6);
+    setSegLen(REL, 500);
 
     _mods[AMP]->setHigherBoundary(1);
     _mods[AMP]->setLowerBoundary(0);
@@ -55,6 +44,16 @@ void Envelope::setAmp(double amp)
     _mods[AMP]->setBaseValue(amp);
 }
 
+double Envelope::getAmp() const
+{
+    if (_mods[AMP]->inUse())
+    {
+        return _mods[AMP]->getBaseValue();
+    }
+    
+    else return _amp;
+}
+
 void Envelope::changeSeg_(segItr seg)
 {
     EnvSegSeq::changeSeg_(seg);
@@ -63,24 +62,13 @@ void Envelope::changeSeg_(segItr seg)
 
     // If we just changed to the release segment
     // set the start level of the segment to the
-    // last ticked value, (for note-off, could be
+    // last ticked value, (because note-off could be
     // abrupt)
     if (currSegNum_ == REL)
     {
         currSeg_->setStartLevel(lastTick_);
     }
     
-}
-
-void Envelope::setDelay(unsigned int millis)
-{
-    // Convert samples to milliseconds
-    segs_[DEL].setLen(44.1 * millis);
-}
-
-unsigned int Envelope::getDelay() const
-{
-    return segs_[DEL].getLen() / 44.1;
 }
 
 void Envelope::resetLoop_()
@@ -103,7 +91,7 @@ void Envelope::resetLoop_()
     else
     {
         // Set currSeg_ to connector segment
-        changeSeg_(segs_.begin());
+        changeSeg_(segs_.end() - 1);
         
         currSeg_->reset();
     }
@@ -111,7 +99,6 @@ void Envelope::resetLoop_()
 
 double Envelope::tick_()
 {
-
     if (currSample_++ >= currSeg_->getLen())
     {
         // If we're crossing over the release segment, just return 0
@@ -147,10 +134,7 @@ double Envelope::tick_()
             
             if ( ! currSeg_->getLen() ) return lastTick_;
         }
-
     }
-    
-    if (currSegNum_ == DEL) return 0;
     
     lastTick_ = currSeg_->tick();
     
@@ -161,21 +145,19 @@ double Envelope::modulate(double sample, double depth, double)
 {
     double ret = sample * tick_() * depth;
     
-    double amp = _amp;
-    
+    // Modulate
     if (_mods[AMP]->inUse())
     {
-        amp = _mods[AMP]->tick();
+        _amp = _mods[AMP]->tick();
     }
     
-    return ret * amp;
+    return ret * _amp;
 }
 
 void Envelope::setLoopStart(seg_t seg)
 {
-    
-    if (seg >= REL || seg <= ATK)
-    { throw std::invalid_argument("Invalid loop segment, can only loop from Segments A to D!"); }
+    if (seg >= REL)
+    { throw std::invalid_argument("Cannot loop release segment!"); }
     
     loopStart_ = segs_.begin() + seg;
     
@@ -187,7 +169,7 @@ void Envelope::setLoopStart(seg_t seg)
 
 void Envelope::setLoopEnd(seg_t seg)
 {
-    if (seg >= REL || seg < ATK)
+    if (seg >= REL)
     { throw std::invalid_argument("Invalid loop segment, can only loop from Segments ATK to SEG_C!"); }
     
     loopEnd_ = segs_.begin() + seg;
@@ -200,15 +182,22 @@ void Envelope::setLoopEnd(seg_t seg)
 
 void Envelope::setSegLevel(seg_t seg, double lv)
 {
-    if (seg >= REL || seg < ATK)
+    if (seg >= REL)
     { throw std::invalid_argument("Invalid segment for setting the level!"); }
     
-    // Set new levels
+    // Delay is always sustain so also set start level
+    if (seg == DEL)
+    {
+        segs_[DEL].setStartLevel(lv);
+    }
+    
+    // Set new linked levels
     EnvSegSeq::setLinkedLevel(seg, lv);
 }
 
 void Envelope::noteOff()
 {
+    // If we aren't already in the release segment
     if (currSegNum_ != REL)
     {
         // Switch to release segment

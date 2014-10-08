@@ -36,6 +36,8 @@ int main(int argc, const char * argv[])
     
     op.attachMod(Operator::AMP, &env);
     
+    env.setSustainEnabled(false);
+    
     Mixer mixer(0,1);
 
     for (int i = 0; i < len; ++i)

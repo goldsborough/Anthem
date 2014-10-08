@@ -36,26 +36,24 @@
 *
 *************************************************************************************************/
 
-class Envelope : public ModEnvSegSeq::ModEnvSegSeq
+class Envelope : public ModEnvSegSeq
 {
 public:
 
     typedef unsigned short seg_t;
     
     /*! Available ModDocks. */
-    enum Docks
-    {
-        AMP = 2
-    };
+    enum Docks { AMP };
     
     /*! The Envelope's segments */
     enum Segment
     {
-        ATK = 2,
-        SEG_A = 3,
-        SEG_B = 4,
-        SEG_C = 5,
-        REL = 6
+        DEL,
+        ATK,
+        SEG_A,
+        SEG_B,
+        SEG_C,
+        REL
     };
     
     /*********************************************************************************************************************//*!
@@ -65,13 +63,11 @@ public:
     *  @details     The initial configurations for the Envelope is a 500ms long ATK segment
     *               from 0 to 0.8 amplitude and a 250ms long SEG_A from 0.8 down to 0.5.
     *
-    *  @param       delayMillis An initial length value for the delay segment, in Milliseconds.
-    *
     *  @param       sustainEnabled Whether or not tick the last SEG_C value until noteOff.
     *
     *************************************************************************************************************************/
     
-    Envelope(unsigned int delayMillis = 0, bool sustainEnabled = true);
+    Envelope(bool sustainEnabled = true);
     
     /*********************************************************************************************//*!
     *
@@ -86,26 +82,6 @@ public:
     double modulate(double sample,
                     double depth,
                     double);
-    
-    /*****************************************************************************************//*!
-    *
-    *  @brief       Sets the length of the delay segment.
-    *
-    *  @param       millis The new length of the delay segment, in milliseconds.
-    *
-    ********************************************************************************************/
-    
-    void setDelay(unsigned int millis);
-    
-    /*****************************************************************************************//*!
-    *
-    *  @brief       Returns the length of the delay segment.
-    *
-    *  @return      The length of the delay segment, in milliseconds.
-    *
-    ********************************************************************************************/
-    
-    unsigned int getDelay() const;
     
     /*****************************************************************************************//*!
     *
@@ -195,11 +171,14 @@ public:
     /*! @copydoc GenUnit::setAmp() */
     void setAmp(double amp);
     
+    /*! @copydoc GenUnit::getAmp() */
+    double getAmp() const;
+    
 private:
     
-    /*! Connects the end and starting poseg_ts of the loop
+    /*! Connects the end and starting levels of the loop
         to avoid harsh transitions */
-    enum { CONNECTOR, DEL };
+    enum { CONNECTOR = 6 };
     
     /*! Changes the current segment in the sequence */
     void changeSeg_(segItr itr);

@@ -1,13 +1,4 @@
-//
-//  EnvSeg.cpp
-//  Anthem
-//
-//  Created by Peter Goldsborough on 15/04/14.
-//  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
-//
-
 #include "EnvSeg.h"
-#include "LFO.h"
 #include "Global.h"
 #include "Wavetable.h"
 #include "ModDock.h"
@@ -394,10 +385,10 @@ ModEnvSegSeq::ModEnvSegSeq(seg_t numSegs,
   ModUnit(dockNum + 2,amp)
 { }
 
-void ModEnvSegSeq::setModUnitDepth(seg_t segNum,
-                                   index_t dockNum,
-                                   index_t modNum,
-                                   double depth)
+void ModEnvSegSeq::setSegModUnitDepth(seg_t segNum,
+                                     index_t dockNum,
+                                     index_t modNum,
+                                     double depth)
 {
     if (dockNum == SEG_LEVEL)
     {
@@ -415,9 +406,9 @@ void ModEnvSegSeq::setModUnitDepth(seg_t segNum,
     }
 }
 
-void ModEnvSegSeq::attachMod(seg_t segNum,
-                             index_t dockNum,
-                             ModUnit *mod)
+void ModEnvSegSeq::attachSegMod(seg_t segNum,
+                                index_t dockNum,
+                                ModUnit *mod)
 {
     // Set linked modulator if SEG_LEVEL
     if (dockNum == SEG_LEVEL)
@@ -437,9 +428,9 @@ void ModEnvSegSeq::attachMod(seg_t segNum,
     }
 }
 
-void ModEnvSegSeq::detachMod(seg_t segNum,
-                             index_t dockNum,
-                             index_t modNum)
+void ModEnvSegSeq::detachSegMod(seg_t segNum,
+                               index_t dockNum,
+                               index_t modNum)
 {
     if (dockNum == SEG_LEVEL)
     {
