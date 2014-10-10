@@ -12,47 +12,53 @@
 #include <stdexcept>
 
 ModDock::ModDock()
-: _masterDepth(1)
+: masterDepth_(1)
 { }
 
 ModDock::ModDock(double lowerBoundary,
                  double higherBoundary,
                  double baseValue,
                  double masterDepth)
-: _lowerBoundary(lowerBoundary), _higherBoundary(higherBoundary),
-  _baseValue(baseValue)
+: lowerBoundary_(lowerBoundary), higherBoundary_(higherBoundary),
+  baseValue_(baseValue)
 {
+    // Reserve space so that iterators aren't invalidated
+    // when pushing back
+    nonMasterItems_.reserve(256);
+    masterItems_.reserve(256);
+    modItems_.reserve(256);
+    
     setMasterDepth(masterDepth);
 }
 
 void ModDock::setBaseValue(double baseValue)
 {
-    _baseValue = baseValue;
+    baseValue_ = baseValue;
 }
 
 double ModDock::getBaseValue() const
 {
-    return _baseValue;
+    return baseValue_;
 }
 
 void ModDock::setLowerBoundary(double lowerBoundary)
 {
-    _lowerBoundary = lowerBoundary;
+    lowerBoundary_ = lowerBoundary;
 }
 
 double ModDock::getLowerBoundary() const
 {
-    return _lowerBoundary;
+    return lowerBoundary_;
 }
 
 void ModDock::setHigherBoundary(double higherBoundary)
 {
-    _higherBoundary = higherBoundary;
+    higherBoundary_ = higherBoundary;
 }
 
 double ModDock::getHigherBoundary() const
 {
-    return _higherBoundary;
+    return higherBoundary_;
 }
 
 void ModDock::setMasterDepth(double depth)
@@ -60,80 +66,215 @@ void ModDock::setMasterDepth(double depth)
     if (depth < 0 || depth > 1)
     { throw std::invalid_argument("Depth value must be between 0 and 1!"); }
     
-    _masterDepth = depth;
+    masterDepth_ = depth;;
 }
 
 double ModDock::getMasterDepth() const
 {
-    return _masterDepth;
+    return masterDepth_;
 }
 
 bool ModDock::inUse() const
 {
-    return (_masterDepth > 0 && ! _mods.empty());
+    return (masterDepth_ > 0 && ! modItems_.empty());
+}
+
+void ModDock::setSidechain(index_t master, index_t slave)
+{
+    if (master >= modItems_.size())
+    { throw std::invalid_argument("Invalid index for sidechain master!"); }
+    
+    if (slave >= modItems_.size())
+    { throw std::invalid_argument("Invalid index for sidechain slave!"); }
+    
+    // Nothing to do here
+    if (isSidechain(master, slave)) return;
+    
+    // Add master to slave's master vector
+    modItems_[slave].masters.push_back(master);
+    
+    if (std::find(masterItems_.begin(), masterItems_.end(), master) == masterItems_.end())
+    {
+        // Add master to masterItems_ if not already present (in case of multiple slavery (haha))
+        masterItems_.push_back(master);
+        
+        // Erase masterItr from nonMasterItems (because it's a master now)
+        nonMasterItems_.erase(std::find(nonMasterItems_.begin(), nonMasterItems_.end(), master));
+    }
+}
+
+void ModDock::unSidechain(index_t master, index_t slave)
+{
+    if (master >= modItems_.size())
+    { throw std::invalid_argument("Invalid index for sidechain master!"); }
+    
+    if (slave >= modItems_.size())
+    { throw std::invalid_argument("Invalid index for sidechain slave!"); }
+    
+    if (! isSidechain(master, slave))
+    { throw std::logic_error("Passed dock is not master of passed slave!"); }
+    
+    indexVec& slaves = modItems_[master].slaves;
+    
+    // Remove slave from master's slave vector
+    slaves.erase(std::find(slaves.begin(), slaves.end(), slave));
+    
+    // Move master fron masterItems_ to nonMasterItems_ if master
+    // has no more slaves
+    if (slaves.empty())
+    {
+        masterItems_.erase(std::find(masterItems_.begin(), masterItems_.end(), master));
+        
+        nonMasterItems_.push_back(master);
+    }
+    
+    indexVec& masters = modItems_[slave].masters;
+    
+    // Remove master from slave's master vec
+    masters.erase(std::find(masters.begin(), masters.end(), master));
+}
+
+bool ModDock::isSidechain(index_t master, index_t slave) const
+{
+    const indexVec& slaves = modItems_[master].slaves;
+    
+    return std::find(slaves.begin(), slaves.end(), slave) != slaves.end();
+}
+
+bool ModDock::isMaster(index_t index) const
+{
+    return ! modItems_[index].slaves.empty();
+}
+
+bool ModDock::isSlave(index_t index) const
+{
+    return ! modItems_[index].masters.empty();
 }
 
 double ModDock::tick()
 {
-    return modulate(_baseValue);
+    return modulate(baseValue_);
 }
 
 double ModDock::modulate(double sample)
 {
     // If ModDock is not in use, return original sample immediately
     if (! inUse()) return sample;
-
-    double temp = sample;
     
-    // Apply all modulation
-    for (std::vector<ModItem>::const_iterator itr = _mods.begin(), end = _mods.end();
-         itr != end;
-         ++itr)
+    // Sidechaining
+    
+    // For every non-master
+    for (indexVecItr nonMasterItr = nonMasterItems_.begin(), nonMasterEnd = nonMasterItems_.end();
+         nonMasterItr != nonMasterEnd;
+         ++nonMasterItr)
     {
-        // Get modulated signal
-        temp = itr->mod->modulate(temp, itr->depth, _higherBoundary);
+        // If it isn't a slave, nothing to do
+        if (! isSlave(*nonMasterItr)) continue;
+        
+        ModItem& nonMaster = modItems_[*nonMasterItr];
+        
+        // Set to zero initially
+        nonMaster.depth = 0;
+        
+        // Then sum up the depth from all masters
+        for (indexVecItr_const masterItr = nonMaster.masters.begin(), masterEnd = nonMaster.masters.end();
+             masterItr != masterEnd;
+             ++masterItr)
+        {
+            ModItem& master = modItems_[*masterItr];
+            
+            // Using the baseDepth as the base value and the master's depth as
+            // the depth for modulation and 1 as the maximum boundary
+            nonMaster.depth += master.mod->modulate(nonMaster.baseDepth, master.depth, 1);
+        }
+        
+        // Set depth to average of itself
+        nonMaster.depth /= nonMaster.masters.size();
     }
     
+    // Modulation
+    
+    double result = 0;
+    
+    // Get modulation from all non-master items
+    for(indexVecItr_const itr = nonMasterItems_.begin(), end = nonMasterItems_.end();
+        itr != end;
+        ++itr)
+    {
+        // Add to result so we can average later
+        // Use the sample as base, the modItem's depth as depth and the
+        // higherBoundary as maximum
+        result += modItems_[*itr].mod->modulate(sample,
+                                                modItems_[*itr].depth,
+                                                higherBoundary_);
+    }
+    
+    // Average
+    result /= nonMasterItems_.size();
+    
     // Apply master depth like dry/wet
-    sample = (sample * (1 - _masterDepth)) + (temp * _masterDepth);
+    sample = (sample * (1 - masterDepth_)) + (result * masterDepth_);
     
-    if (sample > _higherBoundary) { sample = _higherBoundary; }
+    // Boundary checking
+    if (sample > higherBoundary_) { sample = higherBoundary_; }
     
-    else if (sample < _lowerBoundary) { sample = _lowerBoundary; }
+    else if (sample < lowerBoundary_) { sample = lowerBoundary_; }
     
     return sample;
 }
 
 void ModDock::setDepth(index_t index, double depth)
 {
-    if (index >= _mods.size())
+    if (index >= modItems_.size())
     { throw std::invalid_argument("ModDock index out of bounds!"); }
     
     if (depth < 0 || depth > 1)
     { throw std::invalid_argument("Invalid depth value, must be between 0 and 1!"); }
     
-    _mods[index].depth = depth;
+    modItems_[index].depth = modItems_[index].baseDepth = depth;
 }
 
-double ModDock::getDepth(index_t index) const
+double ModDock::getDepth(index_t index)
 {
-    if (index >= _mods.size())
+    if (index >= modItems_.size())
     { throw std::invalid_argument("ModDock index out of bounds!"); }
     
-    return _mods[index].depth;
+    return modItems_[index].baseDepth;
 }
 
 void ModDock::attach(ModUnit* mod)
 {
-    _mods.push_back(ModItem(mod));
+    // Put ModItem into modItems_
+    modItems_.push_back(ModItem(mod));
+    
+    nonMasterItems_.push_back(modItems_.size() - 1);
 }
 
 void ModDock::detach(index_t index)
 {
-    _mods.erase(_mods.begin() + index);
+    if (index >= modItems_.size())
+    { throw std::invalid_argument("ModDock index out of bounds!"); }
+    
+    if (isMaster(index))
+    {
+        // Remove sidechain between master and all its slaves
+        for(indexVecItr itr = modItems_[index].slaves.begin(), end = modItems_[index].slaves.end();
+            itr != end;
+            ++itr)
+        {
+            unSidechain(index,*itr);
+        }
+        
+        masterItems_.erase(std::find(masterItems_.begin(),masterItems_.end(),index));
+    }
+    
+    else
+    { nonMasterItems_.erase(std::find(nonMasterItems_.begin(), nonMasterItems_.end(), index)); }
+    
+    modItems_.erase(modItems_.begin() + index);
 }
 
 unsigned long ModDock::size() const
 {
-    return _mods.size();
+    return modItems_.size();
 }

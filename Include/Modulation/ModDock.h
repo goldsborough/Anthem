@@ -15,9 +15,6 @@
 
 #include <vector>
 
-
-/*! @todo ModDock sidechaining */
-
 class ModUnit;
 
 /*********************************************************************************************//*!
@@ -32,7 +29,7 @@ class ModDock
 {
     
 public:
-    
+
     typedef unsigned short index_t;
     
     /*********************************************************************************************//*!
@@ -202,7 +199,7 @@ public:
     *
     *************************************************************************************************/
     
-    double getDepth(index_t index) const;
+    double getDepth(index_t index);
     
     /*********************************************************************************************//*!
     *
@@ -226,6 +223,77 @@ public:
     
     /*********************************************************************************************//*!
     *
+    *  @brief       Makes a ModUnit sidechain another's depth.
+    *
+    *  @details     Sidechaining means that one ModUnit sidechains/modulates another's depth
+    *               value. Multiple mastery as well as multiple slavery is possible, so you
+    *               can call setSidechain for any two indices you wish as long as the connection
+    *               isn't already established, in which case nothing happens. Note that a ModUnit
+    *               cannot simultaneously be a master of slaves and contribute to the ModDock's
+    *               modulation value, it is either-or.
+    *
+    *  @param       master The index of the ModUnit to be made master.
+    *
+    *  @param       slave The index of the slave.
+    *
+    *************************************************************************************************/
+    
+    void setSidechain(index_t master, index_t slave);
+    
+    /*********************************************************************************************//*!
+    *
+    *  @brief       Cuts the sidechain connection between two ModUnits.
+    *
+    *  @param       master The index of the master.
+    *
+    *  @param       slave The index of the slave.
+    *
+    *  @throws      std::logic_error if the two ModUnits aren't connected.
+    *
+    *************************************************************************************************/
+    
+    void unSidechain(index_t master, index_t slave);
+    
+    /*********************************************************************************************//*!
+    *
+    *  @brief       Returns true if there is a sidechain connection between master and slave.
+    *
+    *  @param       master The index of the master.
+    *
+    *  @param       slave The index of the slave.
+    *
+    *  @return      Boolean, whether or not master is sidechaining slave.
+    *
+    *************************************************************************************************/
+    
+    bool isSidechain(index_t master, index_t slave) const;
+    
+    /*********************************************************************************************//*!
+    *
+    *  @brief       Whether or not a certain ModUnit is a master.
+    *
+    *  @param       index The index of the ModUnit in the ModDock.
+    *
+    *  @return      Boolean, true if the ModUnit is a master of one or more slaves, else false.
+    *
+    *************************************************************************************************/
+    
+    bool isMaster(index_t index) const;
+    
+    /*********************************************************************************************//*!
+    *
+    *  @brief       Whether or not a certain ModUnit is a slave.
+    *
+    *  @param       index The index of the ModUnit in the ModDock.
+    *
+    *  @return      Boolean, true if the ModUnit is a slave of one or more masters, else false.
+    *
+    *************************************************************************************************/
+    
+    bool isSlave(index_t index) const;
+    
+    /*********************************************************************************************//*!
+    *
     *  @brief       Returns the size of the ModDock.
     *
     *  @return      The number of ModUnit docks in the ModDock.
@@ -236,32 +304,62 @@ public:
     
 private:
     
+    struct ModItem;
+    
+    typedef std::vector<ModItem> modVec;
+    
+    // Not using iterators because they're invalidated when
+    // pushing back/erasing from modItems_ and not using
+    // pointers to ModItems because then it's difficult
+    // to interact with modItems_
+    typedef std::vector<modVec::size_type> indexVec;
+    
+    typedef indexVec::iterator indexVecItr;
+    
+    typedef indexVec::const_iterator indexVecItr_const;
+    
     /*! A ModItem contains a ModUnit* and a depth value */
     struct ModItem
     {
         ModItem(ModUnit* modUnit, double dpth = 1)
-        : mod(modUnit), depth(dpth)
+        : mod(modUnit), depth(dpth), baseDepth(dpth)
         { }
     
         ModUnit* mod;
         
         double depth;
+        
+        /*! For sidechaining */
+        double baseDepth;
+        
+        /*! Vector of indexes of all the master's indexes in modItems_*/
+        indexVec masters;
+        
+        /* Vector of all slaves */
+        indexVec slaves;
     };
     
-    /*! Vector of ModItems */
-    std::vector<ModItem> _mods;
+    /*! Pointers to all ModItems that are masters for sidechaining
+        and thus don't contribute to the ModDocks modulation value */
+    indexVec masterItems_;
+    
+    /*! Pointer to all ModItems excluding sidechaining masters */
+    indexVec nonMasterItems_;
+    
+    /*! All ModItems */
+    modVec modItems_;
     
     /*! This is the base value that the modulation happens around */
-    double _baseValue;
+    double baseValue_;
     
     /*! The master depth value */
-    double _masterDepth;
+    double masterDepth_;
     
     /*! Lower boundary value to scale to when modulation trespasses it */
-    double _lowerBoundary;
+    double lowerBoundary_;
     
     /*! Higher boundary value to scale to when modulation trespasses it */
-    double _higherBoundary;
+    double higherBoundary_;
 };
 
 #endif /* defined(__Anthem__ModDock__) */

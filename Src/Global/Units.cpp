@@ -38,6 +38,9 @@ std::vector<ModDock*>::size_type Unit::numDocks() const
 
 void Unit::setDockMasterDepth(index_t dockNum, double depth)
 {
+    if (dockNum >= _mods.size())
+    { throw std::invalid_argument("Dock index out of range!"); }
+    
     if (depth > 1 || depth < 0)
     { throw std::invalid_argument("Master depth value must be between 0 and 1!"); }
     
@@ -53,6 +56,9 @@ void Unit::setModUnitDepth(index_t dockNum,
                            index_t modNum,
                            double depth)
 {
+    if (dockNum >= _mods.size())
+    { throw std::invalid_argument("Dock index out of range!"); }
+    
     if (depth > 1 || depth < 0)
     { throw std::invalid_argument("Depth value must be between 0 and 1!");}
     
@@ -67,13 +73,59 @@ double Unit::getModUnitDepth(index_t dockNum, index_t modNum) const
 void Unit::attachMod(index_t dockNum,
                      ModUnit* mod)
 {
+    if (dockNum >= _mods.size())
+    { throw std::invalid_argument("Dock index out of range!"); }
+    
     _mods[dockNum]->attach(mod);
 }
 
 void Unit::detachMod(index_t dockNum,
                      index_t modNum)
 {
+    if (dockNum >= _mods.size())
+    { throw std::invalid_argument("Dock index out of range!"); }
+    
     _mods[dockNum]->detach(modNum);
+}
+
+void Unit::setSidechain(index_t dockNum, index_t master, index_t slave)
+{
+    if (dockNum >= _mods.size())
+    { throw std::invalid_argument("Dock index out of range!"); }
+    
+    _mods[dockNum]->setSidechain(master, slave);
+}
+
+void Unit::unSidechain(index_t dockNum, index_t master, index_t slave)
+{
+    if (dockNum >= _mods.size())
+    { throw std::invalid_argument("Dock index out of range!"); }
+    
+    _mods[dockNum]->unSidechain(master, slave);
+}
+
+bool Unit::isSidechain(index_t dockNum, index_t master, index_t slave) const
+{
+    if (dockNum >= _mods.size())
+    { throw std::invalid_argument("Dock index out of range!"); }
+    
+    return _mods[dockNum]->isSidechain(master,slave);
+}
+
+bool Unit::isMaster(index_t dockNum, index_t index) const
+{
+    if (dockNum >= _mods.size())
+    { throw std::invalid_argument("Dock index out of range!"); }
+    
+    return _mods[dockNum]->isMaster(index);
+}
+
+bool Unit::isSlave(index_t dockNum, index_t index) const
+{
+    if (dockNum >= _mods.size())
+    { throw std::invalid_argument("Dock index out of range!"); }
+    
+    return _mods[dockNum]->isSlave(index);
 }
 
 EffectUnit::EffectUnit(unsigned short dockNum, double dryWet)

@@ -136,7 +136,6 @@ private:
     /*! The LFO's rate, or frequency */
     double _rate;
     
-    /*! The LFO's phase offset, if any */
     double _phaseOffset;
     
     /*! The oscillator object that LFOs wrap around */

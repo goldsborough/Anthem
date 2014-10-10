@@ -16,7 +16,8 @@
 #include <stdexcept>
 
 LFO::LFO(short wt, double rate, double amp, double phaseOffset)
-: _osc(new Oscillator(wt,rate,amp,phaseOffset)), ModUnit(3,amp)
+: _osc(new Oscillator(wt,rate,amp,phaseOffset)), ModUnit(3,amp),
+  _phaseOffset(phaseOffset)
 {
     _mods[RATE]->setHigherBoundary(Global::nyquistLimit);
     _mods[RATE]->setHigherBoundary(0);
@@ -41,7 +42,10 @@ void LFO::setWavetable(short wt)
 
 void LFO::setPhaseOffset(double degrees)
 {
-    _mods[PHASE]->setBaseValue(degrees);
+    if (_mods[PHASE]->inUse())
+    {
+        _mods[PHASE]->setBaseValue(degrees);
+    }
     
     _osc->setPhaseOffset(degrees);
     
@@ -50,7 +54,12 @@ void LFO::setPhaseOffset(double degrees)
 
 double LFO::getPhaseOffset() const
 {
-    return _phaseOffset;
+    if (_mods[PHASE]->inUse())
+    {
+        return _mods[PHASE]->getBaseValue();
+    }
+    
+    else return _phaseOffset;
 }
 
 void LFO::setRate(double Hz)

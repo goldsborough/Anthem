@@ -102,7 +102,6 @@ public:
                                  index_t modNum,
                                  double depth);
     
-    
     /*************************************************************************************************//*!
     *
     *  @brief       Returns the depth for a single modulation unit of a single dock.
@@ -148,6 +147,87 @@ public:
     
     virtual void detachMod(index_t dockNum,
                            index_t modNum);
+    
+    /*********************************************************************************************//*!
+    *
+    *  @brief       Makes a ModUnit in a ModDock sidechain another's depth.
+    *
+    *  @details     Sidechaining means that one ModUnit sidechains/modulates another's depth
+    *               value. Multiple mastery as well as multiple slavery is possible, so you
+    *               can call setSidechain for any two indices you wish as long as the connection
+    *               isn't already established, in which case nothing happens. Note that a ModUnit
+    *               cannot simultaneously be a master of slaves and contribute to the ModDock's
+    *               modulation value, it is either-or.
+    *
+    *  @param       dockNum The index of the ModDock in which to connect the two ModUnits.
+    *
+    *  @param       master The index of the ModUnit in the ModDock to be made master.
+    *
+    *  @param       slave The index of the slave in the ModDock.
+    *
+    *************************************************************************************************/
+    
+    virtual void setSidechain(index_t dockNum, index_t master, index_t slave);
+    
+    /*********************************************************************************************//*!
+    *
+    *  @brief       Cuts the sidechain connection between two ModUnits in a ModDock.
+    *
+    *  @param       dockNum The index of the ModDock in which to connect the two ModUnits.
+    *
+    *  @param       master The index of the master in the ModDock.
+    *
+    *  @param       slave The index of the slave in the ModDock.
+    *
+    *  @throws      std::logic_error if the two ModUnits aren't connected.
+    *
+    *************************************************************************************************/
+    
+    virtual void unSidechain(index_t dockNum, index_t master, index_t slave);
+    
+    /*******************************************************************************************************//*!
+    *
+    *  @brief       Returns true if there is a sidechain connection between master and slave in a ModDock.
+    *
+    *  @param       dockNum The index of the ModDock in which to connect the two ModUnits.
+    *
+    *  @param       master The index of the master in the ModDock.
+    *
+    *  @param       slave The index of the slave in the ModDock.
+    *
+    *  @return      Boolean, whether or not master is sidechaining slave.
+    *
+    ***********************************************************************************************************/
+    
+    virtual bool isSidechain(index_t dockNum, index_t master, index_t slave) const;
+    
+    /*********************************************************************************************//*!
+    *
+    *  @brief       Whether or not a certain ModUnit in a ModDock is a master.
+    *
+    *  @param       dockNum The index of the ModDock in which to connect the two ModUnits.
+    *
+    *  @param       index The index of the ModUnit in the ModDock.
+    *
+    *  @return      Boolean, true if the ModUnit is a master of one or more slaves, else false.
+    *
+    *************************************************************************************************/
+    
+    virtual bool isMaster(index_t dockNum, index_t index) const;
+    
+    /*********************************************************************************************//*!
+    *
+    *  @brief       Whether or not a certain ModUnit in a Moddock is a slave.
+    *
+    *  @param       dockNum The index of the ModDock in which to connect the two ModUnits.
+    *
+    *  @param       index The index of the ModUnit in the ModDock.
+    *
+    *  @return      Boolean, true if the ModUnit is a slave of one or more masters, else false.
+    *
+    *************************************************************************************************/
+    
+    virtual bool isSlave(index_t dockNum, index_t index) const;
     
     /*********************************************************************************************//*!
     *

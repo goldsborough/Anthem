@@ -30,13 +30,23 @@ int main(int argc, const char * argv[])
     
     LFO lfo;
     
-    lfo.setRate(4);
+    lfo.setRate(2);
+    
+    LFO lfo2;
+    
+    lfo2.setRate(2);
 
     Envelope env;
     
-    op.attachMod(Operator::AMP, &env);
+    env.setSegLen(Envelope::ATK, 1000);
     
-    env.setSustainEnabled(false);
+    env.attachMod_Seg(Envelope::ATK, Envelope::SEG_LEVEL, &lfo);
+    
+    env.attachMod_Seg(Envelope::ATK, Envelope::SEG_LEVEL, &lfo2);
+    
+    env.setSidechain_Seg(Envelope::ATK, Envelope::SEG_LEVEL, 0, 1);
+    
+    op.attachMod(Operator::AMP, &env);
     
     Mixer mixer(0,1);
 
