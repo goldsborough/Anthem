@@ -34,17 +34,25 @@ int main(int argc, const char * argv[])
     
     LFO lfo2;
     
-    lfo2.setRate(2);
+    lfo2.setRate(4);
+    
+    LFO lfo3;
+    
+    lfo3.setRate(3);
 
     Envelope env;
     
     env.setSegLen(Envelope::ATK, 1000);
     
-    env.attachMod_Seg(Envelope::ATK, Envelope::SEG_LEVEL, &lfo);
+    env.attachMod_Seg(Envelope::ATK, Envelope::SEG_RATE, &lfo);
     
-    env.attachMod_Seg(Envelope::ATK, Envelope::SEG_LEVEL, &lfo2);
+    env.attachMod_Seg(Envelope::ATK, Envelope::SEG_RATE, &lfo2);
     
-    env.setSidechain_Seg(Envelope::ATK, Envelope::SEG_LEVEL, 0, 1);
+    env.attachMod_Seg(Envelope::ATK, Envelope::SEG_RATE, &lfo3);
+    
+    env.setSidechain_Seg(Envelope::ATK, Envelope::SEG_RATE, 0, 2);
+    
+    env.setSidechain_Seg(Envelope::ATK, Envelope::SEG_RATE, 0, 1);
     
     op.attachMod(Operator::AMP, &env);
     

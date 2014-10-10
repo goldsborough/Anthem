@@ -93,6 +93,8 @@ void ModDock::setSidechain(index_t master, index_t slave)
     // Add master to slave's master vector
     modItems_[slave].masters.push_back(master);
     
+    modItems_[master].slaves.push_back(slave);
+    
     if (std::find(masterItems_.begin(), masterItems_.end(), master) == masterItems_.end())
     {
         // Add master to masterItems_ if not already present (in case of multiple slavery (haha))
