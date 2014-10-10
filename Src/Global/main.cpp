@@ -30,15 +30,15 @@ int main(int argc, const char * argv[])
     
     LFO lfo;
     
-    lfo.setRate(2);
+    lfo.setFreq(2);
     
     LFO lfo2;
     
-    lfo2.setRate(4);
+    lfo2.setFreq(4);
     
     LFO lfo3;
     
-    lfo3.setRate(3);
+    lfo3.setFreq(3);
 
     Envelope env;
     

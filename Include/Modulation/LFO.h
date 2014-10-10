@@ -13,11 +13,10 @@
 #ifndef __Anthem__LFO__
 #define __Anthem__LFO__
 
+#include "Oscillator.h"
 #include "Units.h"
 #include "EnvSeg.h"
 #include "Crossfader.h"
-
-class Oscillator;
 
 /*************************************************************************************************//*!
 *
@@ -29,7 +28,7 @@ class Oscillator;
 *
 *****************************************************************************************************/
 
-class LFO : public ModUnit
+class LFO : public ModUnit, public Oscillator
 {
     
 public:
@@ -38,7 +37,7 @@ public:
     enum Docks
     {
         AMP,
-        RATE,
+        FREQ,
         PHASE
     };
     
@@ -56,20 +55,8 @@ public:
     
     LFO(short wt = 0, double rate = 1, double amp = 1, double phaseOffset = 0);
     
-    ~LFO();
-    
     /*! @copydoc ModUnit::modulate() */
     double modulate(double sample, double depth, double maximum);
-    
-    /*************************************************************************************************//*!
-    *
-    *  @brief       Sets the LFO's wavetable
-    *
-    *  @param       wt The new wavetable id, typically a member of WavetableDB::Wavetables.
-    *
-    *****************************************************************************************************/
-    
-    void setWavetable(short wt);
     
     /*************************************************************************************************//*!
     *
@@ -77,19 +64,23 @@ public:
     *
     *  @param       Hz The new frequency, in Hertz.
     *
+    *  @see         getFreq()
+    *
     *****************************************************************************************************/
     
-    void setRate(double Hz);
+    void setFreq(double Hz);
     
     /*************************************************************************************************//*!
     *
-    *  @brief       Returns the LFO's rate.
+    *  @brief       Gets the LFO's frequency.
     *
-    *  @return      The rate.
+    *  @return      The LFO's current frequency.
+    *
+    *  @see         setFreq()
     *
     *****************************************************************************************************/
     
-    double getRate() const;
+    double getFreq() const;
     
     /*************************************************************************************************//*!
     *
@@ -130,16 +121,6 @@ public:
     *****************************************************************************************************/
     
     double getAmp() const;
-    
-private:
-    
-    /*! The LFO's rate, or frequency */
-    double _rate;
-    
-    double _phaseOffset;
-    
-    /*! The oscillator object that LFOs wrap around */
-    Oscillator* _osc;
 };
 
 /****************************************************************************************************//*!

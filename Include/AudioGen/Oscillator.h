@@ -13,7 +13,7 @@
 #ifndef __Anthem__Oscillator__
 #define __Anthem__Oscillator__
 
-#include "Units.h"
+#include "Wavetable.h"
 
 /*************************************************************************************************//*!
 *
@@ -26,7 +26,7 @@
 *
 *****************************************************************************************************/
 
-class Oscillator : public GenUnit
+class Oscillator
 {
     
 public:
@@ -48,13 +48,15 @@ public:
     Oscillator(short wt = -1, double frq = 1,
                double amp = 1, short phaseOffset = 0);
     
+    virtual ~Oscillator() { }
+    
     /*************************************************************************************************//*!
     *
     *  @brief       Generates a sample.
     *
     *****************************************************************************************************/
     
-    double tick();
+    virtual double tick();
     
     /*************************************************************************************************//*!
     *
@@ -66,7 +68,7 @@ public:
     *
     *****************************************************************************************************/
     
-    void setFreq(double Hz);
+    virtual void setFreq(double Hz);
     
     /*************************************************************************************************//*!
     *
@@ -78,7 +80,7 @@ public:
     *
     *****************************************************************************************************/
     
-    double getFreq() const;
+    virtual double getFreq() const;
     
     /*************************************************************************************************//*!
     *
@@ -88,7 +90,7 @@ public:
     *
     *****************************************************************************************************/
     
-    void setSemitoneOffset(short semitoneOffset);
+    virtual void setSemitoneOffset(short semitoneOffset);
     
     /*************************************************************************************************//*!
     *
@@ -98,7 +100,7 @@ public:
     *
     *****************************************************************************************************/
     
-    short getSemitoneOffset() const;
+    virtual short getSemitoneOffset() const;
     
     /*************************************************************************************************//*!
     *
@@ -108,7 +110,7 @@ public:
     *
     *****************************************************************************************************/
     
-    void setCentOffset(short centOffset);
+    virtual void setCentOffset(short centOffset);
     
     /*************************************************************************************************//*!
     *
@@ -118,7 +120,7 @@ public:
     *
     *****************************************************************************************************/
     
-    short getCentOffset() const;
+    virtual short getCentOffset() const;
     
     /*************************************************************************************************//*!
     *
@@ -128,7 +130,7 @@ public:
     *
     *****************************************************************************************************/
     
-    void setPhaseOffset(short degrees);
+    virtual void setPhaseOffset(short degrees);
     
     /*************************************************************************************************//*!
     *
@@ -138,7 +140,7 @@ public:
     *
     *****************************************************************************************************/
     
-    short getPhaseOffset() const;
+    virtual double getPhaseOffset() const;
     
     /*************************************************************************************************//*!
     *
@@ -148,7 +150,27 @@ public:
     *
     *****************************************************************************************************/
     
-    void setWavetable(short wt);
+    virtual void setWavetable(short wt);
+    
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Sets the current amplitude value.
+    *
+    *  @param       amp The new amplitude value, between 0 and 1.
+    *
+    *****************************************************************************************************/
+    
+    virtual void setAmp(double amp);
+    
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Returns the current amplitude value.
+    *
+    *  @return      The amplitude.
+    *
+    *****************************************************************************************************/
+    
+    virtual double getAmp() const;
     
     /*************************************************************************************************//*!
     *
@@ -156,30 +178,33 @@ public:
     *
     *****************************************************************************************************/
     
-    void reset();
+    virtual void reset();
     
-private:
+protected:
+    
+    /*! The amplitude value */
+    double amp_;
     
     /*! The current frequency */
-    double _freq;
+    double freq_;
     
     /*! The current wavetable index */
-    double _ind;
+    double ind_;
     
     /*! The wavetable index increment per sample */
-    double _indIncr;
+    double indIncr_;
     
     /*! The current phase offset value */
-    double _phaseOffset;
+    double phaseOffset_;
     
     /*! The current semitone offset of the frequency */
-    double _semitoneOffset;
+    double semitoneOffset_;
     
     /*! The current cent offset of the frequency */
-    double _centOffset;
+    double centOffset_;
     
     /*! The wavetable member currently in use */
-    Wavetable _wt;
+    Wavetable wt_;
 };
 
 #endif /* defined(__Anthem__Oscillator__) */

@@ -16,12 +16,11 @@
 #include <stdexcept>
 
 LFO::LFO(short wt, double rate, double amp, double phaseOffset)
-: _osc(new Oscillator(wt,rate,amp,phaseOffset)), ModUnit(3,amp),
-  _phaseOffset(phaseOffset)
+: Oscillator(wt,rate,amp,phaseOffset), ModUnit(3,amp)
 {
-    _mods[RATE]->setHigherBoundary(Global::nyquistLimit);
-    _mods[RATE]->setHigherBoundary(0);
-    _mods[RATE]->setBaseValue(rate);
+    _mods[FREQ]->setHigherBoundary(Global::nyquistLimit);
+    _mods[FREQ]->setHigherBoundary(0);
+    _mods[FREQ]->setBaseValue(rate);
     
     _mods[PHASE]->setHigherBoundary(360);
     _mods[PHASE]->setLowerBoundary(0);
@@ -32,24 +31,34 @@ LFO::LFO(short wt, double rate, double amp, double phaseOffset)
     _mods[AMP]->setBaseValue(amp);
 }
 
-LFO::~LFO()
-{ delete _osc; }
-
-void LFO::setWavetable(short wt)
+void LFO::setFreq(double Hz)
 {
-    _osc->setWavetable(wt);
+    Oscillator::setFreq(Hz);
+    
+    if (_mods[FREQ]->inUse())
+    {
+        _mods[FREQ]->setBaseValue(Hz);
+    }
+}
+
+double LFO::getFreq() const
+{
+    if (_mods[FREQ]->inUse())
+    {
+        return _mods[FREQ]->getBaseValue();
+    }
+    
+    else return freq_;
 }
 
 void LFO::setPhaseOffset(double degrees)
 {
+    Oscillator::setPhaseOffset(degrees);
+    
     if (_mods[PHASE]->inUse())
     {
         _mods[PHASE]->setBaseValue(degrees);
     }
-    
-    _osc->setPhaseOffset(degrees);
-    
-    _phaseOffset = degrees;
 }
 
 double LFO::getPhaseOffset() const
@@ -59,59 +68,54 @@ double LFO::getPhaseOffset() const
         return _mods[PHASE]->getBaseValue();
     }
     
-    else return _phaseOffset;
-}
-
-void LFO::setRate(double Hz)
-{
-    _mods[RATE]->setBaseValue(Hz);
-    
-    _osc->setFreq(Hz);
-    
-    _rate = Hz;
-}
-
-double LFO::getRate() const
-{
-    return _rate;
+    else return Oscillator::getPhaseOffset();
 }
 
 void LFO::setAmp(double amp)
 {
-    _osc->setAmp(amp);
+    // For boundary checking
+    Oscillator::setAmp(amp);
     
-    _mods[AMP]->setBaseValue(amp);
+    if (_mods[AMP]->inUse())
+    {
+        _mods[AMP]->setBaseValue(amp);
+    }
 }
 
 double LFO::getAmp() const
 {
-    return _osc->getAmp();
+    if (_mods[AMP]->inUse())
+    {
+        return _mods[AMP]->getBaseValue();
+    }
+    
+    else return amp_;
 }
 
 double LFO::modulate(double sample, double depth, double maximum)
 {
     // Modulate rate/frequency
-    if (_mods[RATE]->inUse())
-    { _osc->setFreq(_mods[RATE]->tick()); }
+    if (_mods[FREQ]->inUse())
+    {
+        Oscillator::setFreq(_mods[FREQ]->tick());
+    }
     
     // Modulate phase offset
     if (_mods[PHASE]->inUse())
-    { _osc->setPhaseOffset(_mods[PHASE]->tick()); }
-    
-    double tick = _osc->tick();
+    {
+        Oscillator::setPhaseOffset(_mods[PHASE]->tick());
+    }
     
     // Get amplitude modulation
     if (_mods[AMP]->inUse())
     {
-        tick *= _mods[AMP]->tick();
+        amp_ = _mods[AMP]->tick();
     }
-    
+
     // Actual modulation by LFO
-    sample += (maximum * tick * depth);
-    
-    // Note that the LFO's amplitude is taken care of by the oscillator
-    // (LFO::setAmp() controls the oscillator's amplitude)
-    return sample;
+    sample += (maximum * tick() * depth);
+
+    return sample * amp_;
 }
 
 LFOSeq::LFOSeq(unsigned short seqLength, double rate)
@@ -149,7 +153,7 @@ void LFOSeq::_setScaledModRate(seg_t seg, double rate)
     {
         double freq = (Global::samplerate / static_cast<double>(segs_[seg].getLen())) * rate;
         
-        _lfos[seg].setRate(freq);
+        _lfos[seg].setFreq(freq);
     }
 }
 
@@ -216,7 +220,7 @@ void LFOSeq::setModRate(seg_t seg, double rate)
     if (segs_.begin() + seg == currSeg_)
     { _currSegModRate = rate; }
     
-    _lfos[seg].setRate(rate);
+    _lfos[seg].setFreq(rate);
 }
 
 double LFOSeq::getModRate(seg_t seg) const
@@ -224,7 +228,7 @@ double LFOSeq::getModRate(seg_t seg) const
     if (seg >= segs_.size())
     { throw std::invalid_argument("Segment out of range for LFOSeq!"); }
     
-    return _lfos[seg].getRate();
+    return _lfos[seg].getFreq();
 }
 
 void LFOSeq::setModPhaseOffset(seg_t seg, double degrees)

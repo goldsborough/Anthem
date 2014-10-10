@@ -13,9 +13,13 @@
 
 #include <stdexcept>
 
-Oscillator::Oscillator(short wt, double frq,
-                       double amp, short phaseOffset)
-: GenUnit(0,amp), _ind(0), _phaseOffset(phaseOffset)
+Oscillator::Oscillator(short wt,
+                       double frq,
+                       double amp,
+                       short phaseOffset)
+
+: amp_(amp), ind_(0), phaseOffset_(phaseOffset)
+
 {
     setWavetable(wt);
     
@@ -26,7 +30,20 @@ Oscillator::Oscillator(short wt, double frq,
 
 void Oscillator::setWavetable(short wt)
 {
-    _wt = wavetableDB[wt];
+    wt_ = wavetableDB[wt];
+}
+
+void Oscillator::setAmp(double amp)
+{
+    if (amp < 0 || amp > 1)
+    { throw std::invalid_argument("Amplitude must be between 0 and 1!"); }
+    
+    amp_ = amp;
+}
+
+double Oscillator::getAmp() const
+{
+    return amp_;
 }
 
 void Oscillator::setSemitoneOffset(short semitoneOffset)
@@ -35,21 +52,21 @@ void Oscillator::setSemitoneOffset(short semitoneOffset)
     if (! semitoneOffset) return;
     
     // Add or subtract the semitones from the current frequency
-    double newFreq = Util::semiToFreq(_freq, semitoneOffset);
+    double newFreq = Util::semiToFreq(freq_, semitoneOffset);
     
     // Check nyquist limit
     if (newFreq > Global::nyquistLimit)
     { newFreq = Global::nyquistLimit; }
     
     // calculate new index increment
-    _indIncr = Global::tableIncr * newFreq;
+    indIncr_ = Global::tableIncr * newFreq;
     
-    _semitoneOffset = semitoneOffset;
+    semitoneOffset_ = semitoneOffset;
 }
 
 short Oscillator::getSemitoneOffset() const
 {
-    return _semitoneOffset;
+    return semitoneOffset_;
 }
 
 void Oscillator::setCentOffset(short centOffset)
@@ -58,21 +75,21 @@ void Oscillator::setCentOffset(short centOffset)
     if (! centOffset) return;
     
     // Add or subtract the centOffset from the current frequency
-    double newFreq = Util::centToFreq(_freq, centOffset);
+    double newFreq = Util::centToFreq(freq_, centOffset);
     
     // Check nyquist limit
     if (newFreq > Global::nyquistLimit)
     { newFreq = Global::nyquistLimit; }
         
     // calculate new index increment
-    _indIncr = Global::tableIncr * newFreq;
+    indIncr_ = Global::tableIncr * newFreq;
     
-    _centOffset = centOffset;
+    centOffset_ = centOffset;
 }
 
 short Oscillator::getCentOffset() const
 {
-    return _centOffset;
+    return centOffset_;
 }
 
 void Oscillator::setFreq(double Hz)
@@ -80,13 +97,13 @@ void Oscillator::setFreq(double Hz)
     if (Hz < 0 || Hz > Global::nyquistLimit)
     { throw std::invalid_argument("Frequency must be greater 0 and less than the nyquist limit!"); }
     
-    _freq = Hz;
-    _indIncr = Global::tableIncr * Hz;
+    freq_ = Hz;
+    indIncr_ = Global::tableIncr * Hz;
 }
 
 double Oscillator::getFreq() const
 {
-    return _freq;
+    return freq_;
 }
 
 void Oscillator::setPhaseOffset(short degrees)
@@ -103,33 +120,38 @@ void Oscillator::setPhaseOffset(short degrees)
     // Return to original index (without offset), so
     // that setting a new offset doesn't add to the
     // old one but really set a new one
-    _ind -= _phaseOffset;
+    ind_ -= phaseOffset_;
     
     // The wavetable holds 360 degrees, so divide the degrees
-    // by 360 to get e.g. 1/4 and multiply by the wavetablelength
+    // by 360 to get e.g. 1/4 and multiply by the wavetable's length
     // to get the number of samples to shift by
-    _phaseOffset = ((Global::wtLen + 1) * degrees) / 360.0;
+    phaseOffset_ = ((Global::wtLen + 1) * degrees) / 360.0;
     
     // Add new offset
-    _ind += _phaseOffset;
+    ind_ += phaseOffset_;
+}
+
+double Oscillator::getPhaseOffset() const
+{
+    return (phaseOffset_ * 360) / (Global::wtLen + 1);
 }
 
 void Oscillator::reset()
 {
-    _ind = _phaseOffset;
+    ind_ = phaseOffset_;
 }
 
 double Oscillator::tick()
 {
     // Grab a value through interpolation from the wavetable
-    double value = _wt.interpolate(_ind);
+    double value = wt_.interpolate(ind_);
     
     // Increment wavetable index
-    _ind += _indIncr;
+    ind_ += indIncr_;
     
     // Check index against wavetable length
-    if ( _ind >= Global::wtLen)
-    { _ind -= Global::wtLen; }
+    if ( ind_ >= Global::wtLen)
+    { ind_ -= Global::wtLen; }
     
-    return value * _amp;
+    return value * amp_;
 }

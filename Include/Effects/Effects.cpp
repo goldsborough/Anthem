@@ -168,7 +168,7 @@ Flanger::Flanger(const double& center,
 
 void Flanger::setRate(const double& rate)
 {
-    _lfo->setRate(rate);
+    _lfo->setFreq(rate);
 }
 
 void Flanger::setCenter(const double& center)
