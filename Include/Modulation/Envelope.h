@@ -42,6 +42,13 @@ public:
 
     typedef unsigned short seg_t;
     
+    /*! Available ModDocks for segments. */
+    enum Seg_Docks
+    {
+        SEG_RATE,
+        SEG_LEVEL
+    };
+    
     /*! Available ModDocks. */
     enum Docks { AMP };
     
@@ -167,6 +174,163 @@ public:
     ********************************************************************************************/
     
     bool sustainEnabled() const;
+    
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Sets the depth for a single modulation unit of a segment's dock.
+    *
+    *  @param       segNum The segment index in the sequence to do this for.
+    *
+    *  @param       dockNum The dock number of the modulation unit (e.g. Operator::AMP).
+    *
+    *  @param       modNum  The modulation unit number within the dock.
+    *
+    *  @param       depth The new depth value, between 0 and 1.
+    *
+    *****************************************************************************************************/
+    
+    void setModUnitDepth_Seg(seg_t segNum, index_t dockNum, index_t modNum, double depth);
+    
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Returns the depth for a single modulation unit of a segment's  dock.
+    *
+    *  @param       segNum The segment index in the sequence to do this for.
+    *
+    *  @param       dockNum The dock number of the modulation unit (e.g. Operator::AMP).
+    *
+    *  @param       modNum  The modulation unit number within the dock.
+    *
+    *  @return      The depth of that modulation unit.
+    *
+    *****************************************************************************************************/
+    
+    double getModUnitDepth_Seg(seg_t segNum, index_t dockNum, index_t modNum) const;
+    
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Attaches a new modulation unit to a segment's dock.
+    *
+    *  @param       segNum The segment index in the sequence to do this for.
+    *
+    *  @param       dockNum The dock number of the dock to attach the new modulation unit to.
+    *
+    *  @param       modNum The number of the modulation space into which to place the mod unit.
+    *
+    *  @param       mod A pointer to a GenUnit or one of its derived class.
+    *
+    *  @see         detachMod()
+    *
+    *****************************************************************************************************/
+    
+    void attachMod_Seg(seg_t segNum, index_t dockNum, ModUnit* mod);
+    
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Detaches a modulation unit from a segment's dock.
+    *
+    *  @param       segNum The segment index in the sequence to do this for.
+    *
+    *  @param       dockNum The dock number of the dock to detach from.
+    *
+    *  @param       modNum The number of the modulation space to detach.
+    *
+    *  @see         attachMod()
+    *
+    *****************************************************************************************************/
+    
+    void detachMod_Seg(seg_t segNum, index_t dockNum, index_t modNum);
+    
+    /*********************************************************************************************//*!
+    *
+    *  @brief       Makes a ModUnit in a segment's ModDock sidechain another's depth.
+    *
+    *  @details     Sidechaining means that one ModUnit sidechains/modulates another's depth
+    *               value. Multiple mastery as well as multiple slavery is possible, so you
+    *               can call setSidechain for any two indices you wish as long as the connection
+    *               isn't already established, in which case nothing happens. Note that a ModUnit
+    *               cannot simultaneously be a master of slaves and contribute to the ModDock's
+    *               modulation value, it is either-or.
+    *
+    *  @param       segNum The segment index in the sequence to do this for.
+    *
+    *  @param       dockNum The index of the ModDock in which to connect the two ModUnits.
+    *
+    *  @param       master The index of the ModUnit in the ModDock to be made master.
+    *
+    *  @param       slave The index of the slave in the ModDock.
+    *
+    *************************************************************************************************/
+    
+    void setSidechain_Seg(seg_t segNum, index_t dockNum, index_t master, index_t slave);
+    
+    /*********************************************************************************************//*!
+    *
+    *  @brief       Cuts the sidechain connection between two ModUnits in a segment's ModDock.
+    *
+    *  @param       segNum The segment index in the sequence to do this for.
+    *
+    *  @param       dockNum The index of the ModDock in which to connect the two ModUnits.
+    *
+    *  @param       master The index of the master in the ModDock.
+    *
+    *  @param       slave The index of the slave in the ModDock.
+    *
+    *  @throws      std::logic_error if the two ModUnits aren't connected.
+    *
+    *************************************************************************************************/
+    
+    void unSidechain_Seg(seg_t segNum, index_t dockNum, index_t master, index_t slave);
+    
+    /*******************************************************************************************************//*!
+    *
+    *  @brief       Returns true if there is a sidechain connection between master and slave in a segment's ModDock.
+    *
+    *  @param       segNum The segment index in the sequence to do this for.
+    *
+    *  @param       dockNum The index of the ModDock in which to connect the two ModUnits.
+    *
+    *  @param       master The index of the master in the ModDock.
+    *
+    *  @param       slave The index of the slave in the ModDock.
+    *
+    *  @return      Boolean, whether or not master is sidechaining slave.
+    *
+    ***********************************************************************************************************/
+    
+    bool isSidechain_Seg(seg_t segNum, index_t dockNum, index_t master, index_t slave) const;
+    
+    /*********************************************************************************************//*!
+    *
+    *  @brief       Whether or not a certain ModUnit in a segment's ModDock is a master.
+    *
+    *  @param       segNum The segment index in the sequence to do this for.
+    *
+    *  @param       dockNum The index of the ModDock in which to connect the two ModUnits.
+    *
+    *  @param       index The index of the ModUnit in the ModDock.
+    *
+    *  @return      Boolean, true if the ModUnit is a master of one or more slaves, else false.
+    *
+    *************************************************************************************************/
+    
+    bool isMaster_Seg(seg_t segNum, index_t dockNum, index_t index) const;
+    
+    /*********************************************************************************************//*!
+    *
+    *  @brief       Whether or not a certain ModUnit in a segment's Moddock is a slave.
+    *
+    *  @param       segNum The segment index in the sequence to do this for.
+    *
+    *  @param       dockNum The index of the ModDock in which to connect the two ModUnits.
+    *
+    *  @param       index The index of the ModUnit in the ModDock.
+    *
+    *  @return      Boolean, true if the ModUnit is a slave of one or more masters, else false.
+    *
+    *************************************************************************************************/
+    
+    bool isSlave_Seg(seg_t segNum, index_t dockNum, index_t index) const;
     
     /*! @copydoc GenUnit::setAmp() */
     void setAmp(double amp);

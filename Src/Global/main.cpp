@@ -39,7 +39,7 @@ int main(int argc, const char * argv[])
     LFO lfo3;
     
     lfo3.setFreq(3);
-
+    
     Envelope env;
     
     env.setSegLen(Envelope::ATK, 1000);
@@ -57,7 +57,7 @@ int main(int argc, const char * argv[])
     op.attachMod(Operator::AMP, &env);
     
     Mixer mixer(0,1);
-
+    
     for (int i = 0; i < len; ++i)
     {
         double tick = op.tick();

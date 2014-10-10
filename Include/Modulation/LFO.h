@@ -133,7 +133,7 @@ public:
 *
 ********************************************************************************************************/
 
-class LFOSeq : public EnvSegSeq, public ModUnit
+class LFOSeq : public ModEnvSegSeq
 {
     
 public:

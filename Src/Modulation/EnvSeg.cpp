@@ -417,20 +417,7 @@ void ModEnvSegSeq::setModUnitDepth_Seg(seg_t segNum,
     if (segNum >= segs_.size())
     { throw std::invalid_argument("Segment index out of range!"); }
     
-    if (dockNum == SEG_LEVEL)
-    {
-        segs_[segNum].setModUnitDepth(EnvSeg::END_LEVEL, modNum, depth);
-        
-        if (segNum < segs_.size() - 1)
-        {
-            segs_[segNum + 1].setModUnitDepth(EnvSeg::START_LEVEL, modNum, depth);
-        }
-    }
-    
-    else
-    {
-        segs_[segNum].setModUnitDepth(dockNum,modNum, depth);
-    }
+    segs_[segNum].setModUnitDepth(dockNum,modNum, depth);
 }
 
 double ModEnvSegSeq::getModUnitDepth_Seg(seg_t segNum, index_t dockNum, index_t modNum) const
@@ -448,22 +435,7 @@ void ModEnvSegSeq::attachMod_Seg(seg_t segNum,
     if (segNum >= segs_.size())
     { throw std::invalid_argument("Segment index out of range!"); }
     
-    // Set linked modulator if SEG_LEVEL
-    if (dockNum == SEG_LEVEL)
-    {
-        segs_[segNum].attachMod(EnvSeg::END_LEVEL, mod);
-        
-        // If last segment chosen, no next segment to set start level for
-        if (segNum < segs_.size() - 1)
-        {
-            segs_[segNum + 1].attachMod(EnvSeg::START_LEVEL, mod);
-        }
-    }
-    
-    else
-    {
-        segs_[segNum].attachMod(dockNum, mod);
-    }
+    segs_[segNum].attachMod(dockNum, mod);
 }
 
 void ModEnvSegSeq::detachMod_Seg(seg_t segNum,
@@ -472,22 +444,8 @@ void ModEnvSegSeq::detachMod_Seg(seg_t segNum,
 {
     if (segNum >= segs_.size())
     { throw std::invalid_argument("Segment index out of range!"); }
-    
-    if (dockNum == SEG_LEVEL)
-    {
-        segs_[segNum].detachMod(dockNum, modNum);
-        
-        // If last segment chosen, no next segment to set start level for
-        if (segNum < segs_.size() - 1)
-        {
-            segs_[segNum + 1].detachMod(dockNum, modNum);
-        }
-    }
-    
-    else
-    {
-        segs_[segNum].detachMod(dockNum, modNum);
-    }
+
+    segs_[segNum].detachMod(dockNum, modNum);
 }
 
 void ModEnvSegSeq::setSidechain_Seg(seg_t segNum, index_t dockNum, index_t master, index_t slave)
@@ -495,20 +453,7 @@ void ModEnvSegSeq::setSidechain_Seg(seg_t segNum, index_t dockNum, index_t maste
     if (segNum >= segs_.size())
     { throw std::invalid_argument("Segment index out of range!"); }
     
-    if (dockNum == SEG_LEVEL)
-    {
-        segs_[segNum].setSidechain(EnvSeg::END_LEVEL, master, slave);
-
-        if (segNum < segs_.size() - 1)
-        {
-            segs_[segNum + 1].setSidechain(EnvSeg::START_LEVEL, master, slave);
-        }
-    }
-    
-    else
-    {
-        segs_[segNum].setSidechain(dockNum, master, slave);
-    }
+    segs_[segNum].setSidechain(dockNum, master, slave);
 }
 
 void ModEnvSegSeq::unSidechain_Seg(seg_t segNum, index_t dockNum, index_t master, index_t slave)
@@ -516,20 +461,7 @@ void ModEnvSegSeq::unSidechain_Seg(seg_t segNum, index_t dockNum, index_t master
     if (segNum >= segs_.size())
     { throw std::invalid_argument("Segment index out of range!"); }
     
-    if (dockNum == SEG_LEVEL)
-    {
-        segs_[segNum].unSidechain(EnvSeg::END_LEVEL, master, slave);
-        
-        if (segNum < segs_.size() - 1)
-        {
-            segs_[segNum + 1].unSidechain(EnvSeg::START_LEVEL, master, slave);
-        }
-    }
-    
-    else
-    {
-        segs_[segNum].unSidechain(dockNum, master, slave);
-    }
+    segs_[segNum].unSidechain(dockNum, master, slave);
 }
 
 bool ModEnvSegSeq::isSidechain_Seg(seg_t segNum, index_t dockNum, index_t master, index_t slave) const
@@ -537,13 +469,7 @@ bool ModEnvSegSeq::isSidechain_Seg(seg_t segNum, index_t dockNum, index_t master
     if (segNum >= segs_.size())
     { throw std::invalid_argument("Segment index out of range!"); }
     
-    if (dockNum == SEG_LEVEL)
-    {
-        // Only need this segment here, segNum + 1 is the same for START_LEVEL
-        return segs_[segNum].isSidechain(EnvSeg::END_LEVEL, master, slave);
-    }
-    
-    else return segs_[segNum].isSidechain(dockNum, master, slave);
+    return segs_[segNum].isSidechain(dockNum, master, slave);
 }
 
 bool ModEnvSegSeq::isMaster_Seg(seg_t segNum, index_t dockNum, index_t index) const
@@ -551,12 +477,7 @@ bool ModEnvSegSeq::isMaster_Seg(seg_t segNum, index_t dockNum, index_t index) co
     if (segNum >= segs_.size())
     { throw std::invalid_argument("Segment index out of range!"); }
     
-    if (dockNum == SEG_LEVEL)
-    {
-        return segs_[segNum].isMaster(EnvSeg::END_LEVEL, index);
-    }
-    
-    else return segs_[segNum].isMaster(dockNum, index);
+    return segs_[segNum].isMaster(dockNum, index);
 }
 
 bool ModEnvSegSeq::isSlave_Seg(seg_t segNum, index_t dockNum, index_t index) const
@@ -564,10 +485,5 @@ bool ModEnvSegSeq::isSlave_Seg(seg_t segNum, index_t dockNum, index_t index) con
     if (segNum >= segs_.size())
     { throw std::invalid_argument("Segment index out of range!"); }
     
-    if (dockNum == SEG_LEVEL)
-    {
-        return segs_[segNum].isSlave(EnvSeg::END_LEVEL, index);
-    }
-    
-    else return segs_[segNum].isSlave(dockNum, index);
+    return segs_[segNum].isSlave(dockNum, index);
 }

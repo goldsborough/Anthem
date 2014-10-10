@@ -119,7 +119,7 @@ double LFO::modulate(double sample, double depth, double maximum)
 }
 
 LFOSeq::LFOSeq(unsigned short seqLength, double rate)
-: EnvSegSeq(seqLength),_lfos(seqLength)
+: ModEnvSegSeq(seqLength),_lfos(seqLength)
 {
     EnvSegSeq::setLoopStart(0);
     EnvSegSeq::setLoopEnd(seqLength - 1);

@@ -590,13 +590,6 @@ class ModEnvSegSeq : public EnvSegSeq, public ModUnit
     
 public:
     
-    /*! Available ModDocks. */
-    enum Docks
-    {
-        SEG_RATE,
-        SEG_LEVEL
-    };
-    
     ModEnvSegSeq(seg_t numSegs,
                  seg_t dockNum = 0,
                  double amp = 1);
