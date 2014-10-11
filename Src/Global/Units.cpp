@@ -36,22 +36,6 @@ std::vector<ModDock*>::size_type Unit::numDocks() const
     return _mods.size();
 }
 
-void Unit::setDockMasterDepth(index_t dockNum, double depth)
-{
-    if (dockNum >= _mods.size())
-    { throw std::invalid_argument("Dock index out of range!"); }
-    
-    if (depth > 1 || depth < 0)
-    { throw std::invalid_argument("Master depth value must be between 0 and 1!"); }
-    
-    _mods[dockNum]->setMasterDepth(depth);
-}
-
-double Unit::getDockMasterDepth(index_t dockNum) const
-{
-    return _mods[dockNum]->getMasterDepth();
-}
-
 void Unit::setModUnitDepth(index_t dockNum,
                            index_t modNum,
                            double depth)
@@ -126,6 +110,11 @@ bool Unit::isSlave(index_t dockNum, index_t index) const
     { throw std::invalid_argument("Dock index out of range!"); }
     
     return _mods[dockNum]->isSlave(index);
+}
+
+unsigned long Unit::dockSize(index_t dockNum) const
+{
+    return _mods[dockNum]->size();
 }
 
 EffectUnit::EffectUnit(unsigned short dockNum, double dryWet)

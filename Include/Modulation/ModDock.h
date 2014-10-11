@@ -58,8 +58,7 @@ public:
     
     ModDock(double lowerBoundary,
             double higherBoundary,
-            double baseValue,
-            double masterDepth = 1);
+            double baseValue);
     
     /*********************************************************************************************//*!
     *
@@ -118,26 +117,6 @@ public:
     *************************************************************************************************/
     
     bool inUse() const;
-    
-    /*********************************************************************************************//*!
-    *
-    *  @brief       Sets the master depth.
-    *
-    *  @param       depth The new depth value.
-    *
-    *************************************************************************************************/
-    
-    void setMasterDepth(double depth);
-    
-    /*********************************************************************************************//*!
-    *
-    *  @brief       Returns the master depth.
-    *
-    *  @return      The master depth.
-    *
-    *************************************************************************************************/
-    
-    double getMasterDepth() const;
     
     /*********************************************************************************************//*!
     *
@@ -351,9 +330,6 @@ private:
     
     /*! This is the base value that the modulation happens around */
     double baseValue_;
-    
-    /*! The master depth value */
-    double masterDepth_;
     
     /*! Lower boundary value to scale to when modulation trespasses it */
     double lowerBoundary_;

@@ -12,23 +12,21 @@
 #include <stdexcept>
 
 ModDock::ModDock()
-: masterDepth_(1)
 { }
 
 ModDock::ModDock(double lowerBoundary,
                  double higherBoundary,
-                 double baseValue,
-                 double masterDepth)
+                 double baseValue)
+
 : lowerBoundary_(lowerBoundary), higherBoundary_(higherBoundary),
   baseValue_(baseValue)
+
 {
     // Reserve space so that iterators aren't invalidated
     // when pushing back
     nonMasterItems_.reserve(256);
     masterItems_.reserve(256);
     modItems_.reserve(256);
-    
-    setMasterDepth(masterDepth);
 }
 
 void ModDock::setBaseValue(double baseValue)
@@ -61,22 +59,9 @@ double ModDock::getHigherBoundary() const
     return higherBoundary_;
 }
 
-void ModDock::setMasterDepth(double depth)
-{
-    if (depth < 0 || depth > 1)
-    { throw std::invalid_argument("Depth value must be between 0 and 1!"); }
-    
-    masterDepth_ = depth;;
-}
-
-double ModDock::getMasterDepth() const
-{
-    return masterDepth_;
-}
-
 bool ModDock::inUse() const
 {
-    return (masterDepth_ > 0 && ! modItems_.empty());
+    return ! modItems_.empty();
 }
 
 void ModDock::setSidechain(index_t master, index_t slave)
@@ -196,7 +181,7 @@ double ModDock::modulate(double sample)
     
     // Modulation
     
-    double result = 0;
+    double temp = 0;
     
     // Get modulation from all non-master items
     for(indexVecItr_const itr = nonMasterItems_.begin(), end = nonMasterItems_.end();
@@ -206,16 +191,13 @@ double ModDock::modulate(double sample)
         // Add to result so we can average later
         // Use the sample as base, the modItem's depth as depth and the
         // higherBoundary as maximum
-        result += modItems_[*itr].mod->modulate(sample,
-                                                modItems_[*itr].depth,
-                                                higherBoundary_);
+        temp += modItems_[*itr].mod->modulate(sample,
+                                              modItems_[*itr].depth,
+                                              higherBoundary_);
     }
     
     // Average
-    result /= nonMasterItems_.size();
-    
-    // Apply master depth like dry/wet
-    sample = (sample * (1 - masterDepth_)) + (result * masterDepth_);
+    sample = temp / nonMasterItems_.size();
     
     // Boundary checking
     if (sample > higherBoundary_) { sample = higherBoundary_; }

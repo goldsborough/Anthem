@@ -12,7 +12,7 @@
 
 #include <fstream>
 
-Wavetable WavetableParser::readWavetable(const std::string &fname)
+Wavetable WavetableParser::readWavetable(const std::string &fname, size_t id)
 {
     std::ifstream file(fname);
     
@@ -22,11 +22,11 @@ Wavetable WavetableParser::readWavetable(const std::string &fname)
     if (! file.good())
     { throw FileOpenError("Error opening wavetable: " + fname); }
     
-    char id[6];
+    char signature[6];
     
-    file.read(id, 6);
+    file.read(signature, 6);
     
-    if (strncmp(id, "ANTHEM", 6))
+    if (strncmp(signature, "ANTHEM", 6))
     { throw ParseError("Invalid signature for Anthem file!"); }
     
     int len = Global::wtLen + 1;
@@ -36,7 +36,7 @@ Wavetable WavetableParser::readWavetable(const std::string &fname)
     
     file.read(reinterpret_cast<char*>(wt), size);
     
-    return Wavetable(wt,Global::wtLen);
+    return Wavetable(wt,Global::wtLen,id);
 }
 
 void WavetableParser::writeWavetable(const std::string &fname, const Wavetable& wt)

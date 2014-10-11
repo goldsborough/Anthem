@@ -27,9 +27,11 @@ namespace WavetableParser
     *
     *   @param fname The name of the file to read from.
     *
+    *  @param       id The wavetable's id, defaults to -1.
+    *
     ****************************************************************************/
     
-    Wavetable readWavetable(const std::string& fname);
+    Wavetable readWavetable(const std::string& fname, size_t id = -1);
     
     
     /*************************************************************************//*!

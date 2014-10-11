@@ -36,9 +36,9 @@ public:
     /*! Various ModDocks available for modulation */
     enum Docks
     {
-        AMP,
         FREQ,
-        PHASE
+        PHASE,
+        AMP
     };
     
     /*************************************************************************************************//*!
@@ -53,7 +53,7 @@ public:
     *
     *****************************************************************************************************/
     
-    LFO(short wt = 0, double rate = 1, double amp = 1, double phaseOffset = 0);
+    LFO(short wt = -1, double rate = 1, double amp = 1, double phaseOffset = 0);
     
     /*! @copydoc ModUnit::modulate() */
     double modulate(double sample, double depth, double maximum);
@@ -138,13 +138,16 @@ class LFOSeq : public ModEnvSegSeq
     
 public:
     
-    enum Docks
+    /*! ModDocks for segments */
+    enum Seg_Docks
     {
-        SEG_RATE,
-        MOD_DEPTH,
-        MOD_RATE,
-        RATE
+        MOD_FREQ,
+        MOD_PHASE,
+        MOD_DEPTH
     };
+    
+    /*! ModDocks for LFOSeq (entire unit, not segments) */
+    enum Docks { RATE };
     
     /*************************************************************************************************//*!
     *
@@ -230,13 +233,13 @@ public:
     *
     *  @param       seg The segment to set the rate for.
     *
-    *  @param       rate The new rate value.
+    *  @param       freq The new rate value.
     *
     *  @throws      std::invalid_argument if seg out of range.
     *
     *****************************************************************************************************/
     
-    void setModRate(seg_t seg, double rate);
+    void setModFreq(seg_t seg, double freq);
     
     /*************************************************************************************************//*!
     *
@@ -250,7 +253,7 @@ public:
     *
     *****************************************************************************************************/
     
-    double getModRate(seg_t seg) const;
+    double getModFreq(seg_t seg) const;
     
     /*************************************************************************************************//*!
     *
@@ -282,11 +285,23 @@ public:
     
     /*************************************************************************************************//*!
     *
+    *  @brief       Sets a segment's lfo's wavetable.
+    *
+    *  @param       seg The segment to set the lfo's wavetable for.
+    *
+    *  @param       wt The new wavetable id, usually a member of WavetableDB::Wavetables.
+    *
+    *  @throws      std::invalid_argument if seg out of range.
+    *
+    *****************************************************************************************************/
+    
+    void setModWavetable(seg_t seg, short wt);
+    
+    /*************************************************************************************************//*!
+    *
     *  @brief       Adds a segment to the sequence.
     *
     *  @details     Maximum number of segments is 10.
-    *
-    *  @throws      std::runtime_error if segment number is already 10.
     *
     *****************************************************************************************************/
     
@@ -312,25 +327,47 @@ public:
     
     void removeSegment(seg_t seg);
     
+    /*! @copydoc ModEnvSegSeq::setModUnitDepth_Seg() */
+    void setModUnitDepth_Seg(seg_t segNum, index_t dockNum, index_t modNum, double depth);
+    
+    /*! @copydoc ModEnvSegSeq::getModUnitDepth_Seg() */
+    double getModUnitDepth_Seg(seg_t segNum, index_t dockNum, index_t modNum) const;
+    
+    /*! @copydoc ModEnvSegSeq::attachMod_Seg() */
+    void attachMod_Seg(seg_t segNum, index_t dockNum, ModUnit* mod);
+    
+    /*! @copydoc ModEnvSegSeq::detachMod_Seg() */
+    void detachMod_Seg(seg_t segNum, index_t dockNum, index_t modNum);
+    
+    /*! @copydoc ModEnvSegSeq::setSidechain_Seg() */
+    void setSidechain_Seg(seg_t segNum, index_t dockNum, index_t master, index_t slave);
+    
+    /*! @copydoc ModEnvSegSeq::unSidechain_Seg() */
+    void unSidechain_Seg(seg_t segNum, index_t dockNum, index_t master, index_t slave);
+    
+    /*! @copydoc ModEnvSegSeq::isSidechain_Seg() */
+    bool isSidechain_Seg(seg_t segNum, index_t dockNum, index_t master, index_t slave) const;
+    
+    /*! @copydoc ModEnvSegSeq::isMaster_Seg() */
+    bool isMaster_Seg(seg_t segNum, index_t dockNum, index_t index) const;
+    
+    /*! @copydoc ModEnvSegSeq::isSlave_Seg() */
+    bool isSlave_Seg(seg_t segNum, index_t dockNum, index_t index) const;
+    
+    /*! @copydoc ModEnvSegSeq::dockSize_Seg() */
+    unsigned long dockSize_Seg(seg_t segNum, index_t dockNum) const;
+    
     /*! @copydoc ModUnit::modulate() */
     double modulate(double sample, double depth, double maximum);
     
 private:
     
-    void _setScaledModRate(seg_t seg, double rate);
+    std::vector<LFO> lfos_;
+    
+    void setScaledModFreq_(seg_t seg, double rate);
     
     /*! The current rate of the sequence */
-    double _rate;
-    
-    double _currSegRate;
-    
-    double _currSegModDepth;
-    
-    double _currSegModRate;
-    
-    double _currSegPhaseOffset;
-    
-    std::vector<LFO> _lfos;
+    double rate_;
 };
 
 /****************************************************************************************************//*!

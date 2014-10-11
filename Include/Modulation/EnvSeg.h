@@ -610,36 +610,6 @@ public:
     
     /*************************************************************************************************//*!
     *
-    *  @brief       Sets the macro depth for all modulation units of a segment's ModDock.
-    *
-    *  @details     This function reduces the overall depth of all modulation units currently in use.
-    *
-    *  @param       segNum The segment index in the sequence to do this for.
-    *
-    *  @param       dockNum The dock number of the dock to set the master depth for (e.g. Operator::AMP).
-    *
-    *  @param       depth The new depth level, between 0 and 1.
-    *
-    *****************************************************************************************************/
-    
-    virtual void setDockMasterDepth_Seg(seg_t segNum, index_t dockNum, double depth);
-    
-    /*************************************************************************************************//*!
-    *
-    *  @brief       Returns the master depth of a segment's dock.
-    *
-    *  @param       segNum The segment index in the sequence to do this for.
-    *
-    *  @param       dockNum The dock number of the ModDock to get the master depth from.
-    *
-    *  @return      The master depth value.
-    *
-    *****************************************************************************************************/
-    
-    virtual double getDockMasterDepth_Seg(seg_t segNum, index_t dockNum) const;
-    
-    /*************************************************************************************************//*!
-    *
     *  @brief       Sets the depth for a single modulation unit of a segment's dock.
     *
     *  @param       segNum The segment index in the sequence to do this for.
@@ -794,6 +764,20 @@ public:
     *************************************************************************************************/
     
     virtual bool isSlave_Seg(seg_t segNum, index_t dockNum, index_t index) const;
+    
+    /*********************************************************************************************//*!
+    *
+    *  @brief       Returns the size of a segment's ModDock.
+    *
+    *  @param       segNum The segment index in the sequence to do this for.
+    *
+    *  @param       dockNum The index of the ModDock
+    *
+    *  @return      The number of ModUnits in the ModDock.
+    *
+    *************************************************************************************************/
+    
+    virtual unsigned long dockSize_Seg(seg_t segNum, index_t dockNum) const;
 };
 
 #endif /* defined(__Anthem__EnvSeg__) */

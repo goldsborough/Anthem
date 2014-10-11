@@ -397,3 +397,16 @@ bool Envelope::isSlave_Seg(seg_t segNum,
     
     else return segs_[segNum].isSlave(dockNum, index);
 }
+
+unsigned long Envelope::dockSize_Seg(seg_t segNum, index_t dockNum) const
+{
+    if (segNum >= segs_.size())
+    { throw std::invalid_argument("Segment index out of range!"); }
+    
+    if (dockNum == SEG_LEVEL)
+    {
+        return segs_[segNum].dockSize(EnvSeg::END_LEVEL);
+    }
+    
+    else return segs_[segNum].dockSize(dockNum);
+}

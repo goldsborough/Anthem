@@ -143,6 +143,8 @@ void Oscillator::reset()
 
 double Oscillator::tick()
 {
+    if (wt_.id() == -1) return 0;
+        
     // Grab a value through interpolation from the wavetable
     double value = wt_.interpolate(ind_);
     

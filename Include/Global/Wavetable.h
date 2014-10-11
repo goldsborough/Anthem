@@ -147,10 +147,6 @@ public:
     
     typedef unsigned long size_t;
     
-    Wavetable()
-    : _data(0), _size(0), _refptr(new size_t(1))
-    { }
-    
     /*************************************************************************************************//*!
     *
     *  @brief       Constructs a Wavetable additively.
@@ -171,6 +167,8 @@ public:
     *
     *  @param       bitWidth Number of bits to scale to, defaults to 16 (bits).
     *
+    *  @param       id The wavetable's id, defaults to -1.
+    *
     *****************************************************************************************************/
     
     template <class PartItr>
@@ -178,7 +176,8 @@ public:
               size_t wtLength,
               double masterAmp = 1,
               bool sigmaAprox = false,
-              unsigned int bitWidth = 16);
+              unsigned int bitWidth = 16,
+              size_t id = -1);
     
     /*************************************************************************************************//*!
     *
@@ -188,11 +187,11 @@ public:
     *
     *  @param       wtLength The length of the wavetable (and the array of values pointed to by ptr).
     *
+    *  @param       id The wavetable's id, defaults to -1.
+    *
     *****************************************************************************************************/
     
-    Wavetable(double * ptr, size_t wtLength)
-    : _data(ptr), _size(wtLength), _refptr(new size_t(1))
-    { }
+    Wavetable(double * ptr = 0, size_t wtLength = 0, size_t id = -1);
     
     /*************************************************************************************************//*!
     *
@@ -246,6 +245,12 @@ public:
     /*! Returns the wavetable's data. */
     double* get() const;
     
+    /*! Sets the wavetable's id */
+    void setId(size_t id);
+    
+    /*! Returns the wavetable's id. */
+    size_t id() const;
+    
     /*************************************************************************************************//*!
     *
     *  @brief       Makes a unique copy of the pointed-to data.
@@ -262,13 +267,16 @@ public:
 private:
     
     /*! The pointed-to data */
-    double* _data;
+    double* data_;
+    
+    /*! ID of the wavetable */
+    size_t id_;
     
     /*! Current size of the wavetable. */
-    size_t _size;
+    size_t size_;
     
     /*! Pointer to the number of objects pointing to _data. */
-    size_t* _refptr;
+    size_t* refptr_;
 };
 
 /*********************************************************************************************//*!

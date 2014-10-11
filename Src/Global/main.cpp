@@ -32,29 +32,15 @@ int main(int argc, const char * argv[])
     
     lfo.setFreq(2);
     
-    LFO lfo2;
+    LFOSeq seq(10);
     
-    lfo2.setFreq(4);
+    //seq.setModWavetable(1, 0);
     
-    LFO lfo3;
+    //seq.setModDepth(1, 0.5);
     
-    lfo3.setFreq(3);
+    seq.setSegBothLevels(1, 0.5);
     
-    Envelope env;
-    
-    env.setSegLen(Envelope::ATK, 1000);
-    
-    env.attachMod_Seg(Envelope::ATK, Envelope::SEG_RATE, &lfo);
-    
-    env.attachMod_Seg(Envelope::ATK, Envelope::SEG_RATE, &lfo2);
-    
-    env.attachMod_Seg(Envelope::ATK, Envelope::SEG_RATE, &lfo3);
-    
-    env.setSidechain_Seg(Envelope::ATK, Envelope::SEG_RATE, 0, 2);
-    
-    env.setSidechain_Seg(Envelope::ATK, Envelope::SEG_RATE, 0, 1);
-    
-    op.attachMod(Operator::AMP, &env);
+    op.attachMod(Operator::AMP, &seq);
     
     Mixer mixer(0,1);
     

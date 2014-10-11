@@ -38,17 +38,28 @@ void round(double& val, unsigned int bitWidth)
     { val = (nFloor - 1) * factor; }
 }
 
+Wavetable::Wavetable(double * ptr,
+                     size_t wtLength,
+                     size_t id)
+: data_(ptr), size_(wtLength),
+  refptr_(new size_t(1)), id_(id)
+{ }
 
 template <class PartItr>
-Wavetable::Wavetable(PartItr start, PartItr end, size_t wtLength, double masterAmp,
-                     bool sigmaAprox, unsigned int bitWidth)
+Wavetable::Wavetable(PartItr start,
+                     PartItr end,
+                     size_t wtLength,
+                     double masterAmp,
+                     bool sigmaAprox,
+                     unsigned int bitWidth,
+                     size_t id)
 
-: _refptr(new size_t(1))
+: refptr_(new size_t(1)), id_(id)
 {
     // calculate number of partials
     size_t partNum = end - start;
     
-    _data = new double [wtLength + 1];
+    data_ = new double [wtLength + 1];
     
     double * amp = new double [partNum];        // the amplitudes
     double * phase = new double [partNum];      // the current phase
@@ -131,11 +142,11 @@ Wavetable::Wavetable(PartItr start, PartItr end, size_t wtLength, double masterA
         if (bitWidth < 65536)
             round(value, bitWidth);
         
-        _data[n] = value;
+        data_[n] = value;
     }
     
     // Append the last item for interpolation
-    _data[wtLength] = _data[0];
+    data_[wtLength] = data_[0];
     
     delete [] phase;
     delete [] phaseIncr;
@@ -147,14 +158,15 @@ Wavetable::Wavetable(const Wavetable& other)
     if (&other != this)
     {
         // copy data
-        _data = other._data;
-        _size = other._size;
+        this->data_ = other.data_;
+        this->size_ = other.size_;
+        this->id_ = other.id_;
         
-        _refptr = other._refptr;
+        this->refptr_ = other.refptr_;
         
         // now one more instance is pointing to
         // the same data
-        ++(*_refptr);
+        ++(*refptr_);
     }
 }
 
@@ -164,20 +176,21 @@ Wavetable& Wavetable::operator=(const Wavetable &other)
     {
         // delete current data if this is the last
         // instance pointing to this data
-        if (! --(*_refptr))
+        if (! --(*refptr_))
         {
-            delete [] _data;
-            delete _refptr;
+            delete [] data_;
+            delete refptr_;
         }
         
         // copy other's data
-        _data = other._data;
-        _size = other._size;
+        this->data_ = other.data_;
+        this->size_ = other.size_;
+        this->id_ = other.id_;
         
-        _refptr = other._refptr;
+        this->refptr_ = other.refptr_;
         
         // one more pointing to this data now
-        ++(*_refptr);
+        ++(*refptr_);
     }
     
     return *this;
@@ -189,7 +202,7 @@ double& Wavetable::operator[] (size_t ind)
     // have to be changed
     makeUnique();
     
-    return _data[ind];
+    return data_[ind];
 }
 
 double Wavetable::interpolate(double ind) const
@@ -198,8 +211,8 @@ double Wavetable::interpolate(double ind) const
     double indexFract = ind - indexBase;    // The remaining fractional part
     
     // grab the two items in-between which the actual value lies
-    double value1 = _data[indexBase];
-    double value2 = _data[indexBase+1];
+    double value1 = data_[indexBase];
+    double value2 = data_[indexBase+1];
     
     // interpolate: integer part + (fractional part * difference between value2 and value1)
     double final = value1 + ((value2 - value1) * indexFract);
@@ -209,42 +222,47 @@ double Wavetable::interpolate(double ind) const
 
 const double& Wavetable::operator[] (size_t ind) const
 {
-    return _data[ind];
+    return data_[ind];
 }
 
 size_t Wavetable::size() const
 {
-    return _size;
+    return size_;
 }
 
 double* Wavetable::get() const
 {
-    return _data;
+    return data_;
+}
+
+size_t Wavetable::id() const
+{
+    return id_;
 }
 
 Wavetable::~Wavetable()
 {
-    if (! --(*_refptr))
+    if (! --(*refptr_))
     {
-        delete [] _data;
-        delete _refptr;
+        delete [] data_;
+        delete refptr_;
     }
 }
 
 Wavetable& Wavetable::makeUnique()
 {
-    if ((*_refptr) > 1)
+    if ((*refptr_) > 1)
     {
-        --(*_refptr);
+        --(*refptr_);
         
-        _refptr = new size_t(1);
+        refptr_ = new size_t(1);
         
-        double* temp = _data;
+        double* temp = data_;
         
-        _data = new double [_size];
+        data_ = new double [size_];
         
-        for (size_t i = 0; i < _size; ++i)
-        { _data[i] = temp[i]; }
+        for (size_t i = 0; i < size_; ++i)
+        { data_[i] = temp[i]; }
     }
     
     return *this;
@@ -264,7 +282,7 @@ void WavetableDB::init()
     {
         fname = "/Users/petergoldsborough/Documents/Anthem/Resources/Wavetables/" + names[i] + ".wavetable";
         
-        _tables.push_back(WavetableParser::readWavetable(fname));
+        _tables.push_back(WavetableParser::readWavetable(fname,i));
     }
     
     // For NONE

@@ -140,7 +140,10 @@ void EnvSeg::setEndLevel(double lv)
     
     endAmp_ = lv;
     
-    _mods[END_LEVEL]->setBaseValue(endAmp_);
+    if (_mods[END_LEVEL]->inUse())
+    {
+        _mods[END_LEVEL]->setBaseValue(endAmp_);
+    }
     
     calcRange_();
 }
@@ -236,7 +239,8 @@ unsigned long EnvSegSeq::getSegLen(seg_t seg) const
 
 void EnvSegSeq::setSegBothLevels(seg_t seg, double lv)
 {
-    setSegStartLevel(seg, lv), setSegEndLevel(seg, lv);
+    setSegStartLevel(seg, lv);
+    setSegEndLevel(seg, lv);
 }
 
 
@@ -320,7 +324,7 @@ void EnvSegSeq::removeSegment()
     if (segs_.empty())
     { throw std::runtime_error("Cannot remove segment from LFOSeq if already empty!"); }
     
-    segs_.erase(segs_.end() - 1);
+    segs_.pop_back();
 }
 
 void EnvSegSeq::removeSegment(seg_t seg)
@@ -391,22 +395,6 @@ std::vector<ModDock*>::size_type ModEnvSegSeq::numDocks_Seg(seg_t segNum) const
     { throw std::invalid_argument("Segment index out of range!"); }
     
     return segs_[segNum].numDocks();
-}
-
-void ModEnvSegSeq::setDockMasterDepth_Seg(seg_t segNum, index_t dockNum, double depth)
-{
-    if (segNum >= segs_.size())
-    { throw std::invalid_argument("Segment index out of range!"); }
-    
-    segs_[segNum].setDockMasterDepth(dockNum, depth);
-}
-
-double ModEnvSegSeq::getDockMasterDepth_Seg(seg_t segNum, index_t dockNum) const
-{
-    if (segNum >= segs_.size())
-    { throw std::invalid_argument("Segment index out of range!"); }
-    
-    return segs_[segNum].getDockMasterDepth(dockNum);
 }
 
 void ModEnvSegSeq::setModUnitDepth_Seg(seg_t segNum,
@@ -486,4 +474,12 @@ bool ModEnvSegSeq::isSlave_Seg(seg_t segNum, index_t dockNum, index_t index) con
     { throw std::invalid_argument("Segment index out of range!"); }
     
     return segs_[segNum].isSlave(dockNum, index);
+}
+
+unsigned long ModEnvSegSeq::dockSize_Seg(seg_t segNum, index_t dockNum) const
+{
+    if (segNum >= segs_.size())
+    { throw std::invalid_argument("Segment index out of range!"); }
+    
+    return segs_[segNum].dockSize(dockNum);
 }
