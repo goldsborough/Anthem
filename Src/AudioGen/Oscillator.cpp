@@ -33,6 +33,11 @@ void Oscillator::setWavetable(short wt)
     wt_ = wavetableDB[wt];
 }
 
+short Oscillator::getWavetable() const
+{
+    return wt_.id();
+}
+
 void Oscillator::setAmp(double amp)
 {
     if (amp < 0 || amp > 1)

@@ -15,6 +15,8 @@
 
 #include "Units.h"
 
+#include <memory>
+
 class Oscillator;
 
 /*************************************************************************************************//*!
@@ -54,8 +56,6 @@ public:
     *****************************************************************************************************/
     
     Operator(short wt = 0, double amp = 1);
-    
-    ~Operator();
     
     /*************************************************************************************************//*!
     *
@@ -189,19 +189,19 @@ public:
     
 private:
     
-    typedef std::vector<Oscillator*> noteVec;
+    typedef std::vector<std::unique_ptr<Oscillator>> noteVec;
     
     /*! The std::vector of pointers to Oscillators that holds current notes */
-    noteVec _notes;
+    noteVec notes_;
     
     /*! The current semitone offset value */
-    unsigned short _semitoneOffset;
+    unsigned short semitoneOffset_;
     
     /*! The current cent offset value */
-    unsigned short _centOffset;
+    unsigned short centOffset_;
     
     /*! The id of the current wavetable */
-    short _wavetableID;
+    short wavetableID_;
 };
 
 #endif /* defined(__Anthem__Operator__) */

@@ -154,6 +154,16 @@ public:
     
     /*************************************************************************************************//*!
     *
+    *  @brief       Returns the oscillator's wavetable id.
+    *
+    *  @return      The wavetable id.
+    *
+    *****************************************************************************************************/
+    
+    virtual short getWavetable() const;
+    
+    /*************************************************************************************************//*!
+    *
     *  @brief       Sets the current amplitude value.
     *
     *  @param       amp The new amplitude value, between 0 and 1.

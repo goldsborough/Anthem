@@ -282,36 +282,37 @@ void WavetableDB::init()
     {
         fname = "/Users/petergoldsborough/Documents/Anthem/Resources/Wavetables/" + names[i] + ".wavetable";
         
-        _tables.push_back(WavetableParser::readWavetable(fname,i));
+        // Read wavetables with i as their id and push them into the tables_ vector. 
+        tables_.push_back(WavetableParser::readWavetable(fname,i));
     }
     
     // For NONE
-    _tables.push_back(Wavetable());
+    tables_.push_back(Wavetable());
 }
 
 Wavetable& WavetableDB::operator[](short wt)
 {
     if (wt == NONE)
-    { return _tables[_tables.size() - 1]; }
+    { return tables_[tables_.size() - 1]; }
         
-    if (wt < NONE || wt >= _tables.size())
+    if (wt < NONE || wt >= tables_.size())
     { throw std::invalid_argument("Wavetable ID out of range!"); }
     
-    return _tables[wt];
+    return tables_[wt];
 }
 
 const Wavetable& WavetableDB::operator[](short wt) const
 {
     if (wt == NONE)
-    { return _tables[_tables.size() - 1]; }
+    { return tables_[tables_.size() - 1]; }
     
-    if (wt < NONE || wt >= _tables.size())
+    if (wt < NONE || wt >= tables_.size())
     { throw std::invalid_argument("Wavetable ID out of range!"); }
     
-    return _tables[wt];
+    return tables_[wt];
 }
 
-Wavetable WavetableDB::_smoothSaw()
+Wavetable WavetableDB::smoothSaw_()
 {
     double* wt = new double[Global::wtLen + 1];
     
@@ -378,7 +379,7 @@ Wavetable WavetableDB::_smoothSaw()
     return Wavetable(wt,Global::wtLen);
 }
 
-Wavetable WavetableDB::_smoothSquare()
+Wavetable WavetableDB::smoothSquare_()
 {
     double* wt = new double[Global::wtLen + 1];
     
@@ -422,7 +423,7 @@ Wavetable WavetableDB::_smoothSquare()
     return Wavetable(wt,Global::wtLen);
 }
 
-Wavetable WavetableDB::_directSquare()
+Wavetable WavetableDB::directSquare_()
 {
     // the sample buffer
     double * wt = new double [Global::wtLen + 1];
@@ -449,7 +450,7 @@ Wavetable WavetableDB::_directSquare()
     return Wavetable(wt,Global::wtLen);
 }
 
-Wavetable WavetableDB::_directSaw()
+Wavetable WavetableDB::directSaw_()
 {
     // the sample buffer
     double * wt = new double [Global::wtLen];
@@ -474,7 +475,7 @@ Wavetable WavetableDB::_directSaw()
     return Wavetable(wt,Global::wtLen);
 }
 
-Wavetable WavetableDB::_directTriangle()
+Wavetable WavetableDB::directTriangle_()
 {
     double* wt = new double[Global::wtLen + 1];
     

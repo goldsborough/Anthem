@@ -350,21 +350,21 @@ public:
 private:
     
     /*! Generates a sawtooth wave directly/mathematically */
-    Wavetable _directSaw();
+    Wavetable directSaw_();
     
     /*! Generates a square wave directly/mathematically */
-    Wavetable _directSquare();
+    Wavetable directSquare_();
     
     /*! Generates a triangle wave directly/mathematically */
-    Wavetable _directTriangle();
+    Wavetable directTriangle_();
     
     /*! Generates a smoothed sawtooth wave directly/mathematically */
-    Wavetable _smoothSaw();
+    Wavetable smoothSaw_();
     
     /*! Generates a smoothed square wave directly/mathematically */
-    Wavetable _smoothSquare();
+    Wavetable smoothSquare_();
     
-    std::vector<Wavetable> _tables;
+    std::vector<Wavetable> tables_;
 };
 
 // One global instance

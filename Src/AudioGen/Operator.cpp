@@ -31,23 +31,13 @@ Operator::Operator(short wt, double amp)
     setWavetable(wt);
 }
 
-Operator::~Operator()
-{
-    for (noteVec::iterator itr = _notes.begin(), end = _notes.end();
-         itr != end;
-         ++itr)
-    {
-        delete *itr;
-    }
-}
-
 void Operator::setWavetable(short wt)
 {
     // Store id to add new notes with the same wavetable
-    _wavetableID = wt;
+    wavetableID_ = wt;
     
     // Reset wavetable for all notes
-    for (noteVec::iterator itr = _notes.begin(), end = _notes.end();
+    for (noteVec::iterator itr = notes_.begin(), end = notes_.end();
          itr != end;
          ++itr)
     {
@@ -57,69 +47,76 @@ void Operator::setWavetable(short wt)
 
 short Operator::getWavetableID() const
 {
-    return _wavetableID;
+    return wavetableID_;
 }
 
 void Operator::setSemitoneOffset(short semitoneOffset)
 {
     _mods[SEMI_OFFSET]->setBaseValue(semitoneOffset);
     
-    for (noteVec::iterator itr = _notes.begin(), end = _notes.end();
+    for (noteVec::iterator itr = notes_.begin(), end = notes_.end();
          itr != end;
          ++itr)
     {
         (*itr)->setSemitoneOffset(semitoneOffset);
     }
     
-    _semitoneOffset = semitoneOffset;
+    semitoneOffset_ = semitoneOffset;
 }
 
 short Operator::getSemitoneOffset() const
 {
-    return _semitoneOffset;
+    if (_mods[SEMI_OFFSET]->inUse())
+    {
+        return _mods[SEMI_OFFSET]->getBaseValue();
+    }
+    
+    else return semitoneOffset_;
 }
 
 void Operator::setCentOffset(short centOffset)
 {
     _mods[CENT_OFFSET]->setBaseValue(centOffset);
     
-    for (noteVec::iterator itr = _notes.begin(), end = _notes.end();
+    for (noteVec::iterator itr = notes_.begin(), end = notes_.end();
          itr != end;
          ++itr)
     {
         (*itr)->setCentOffset(centOffset);
     }
     
-    _centOffset = centOffset;
+    centOffset_ = centOffset;
 }
 
 short Operator::getCentOffset() const
 {
-    return _centOffset;
+    if (_mods[CENT_OFFSET]->inUse())
+    {
+        return _mods[CENT_OFFSET]->getBaseValue();
+    }
+    
+    else return centOffset_;
 }
 
 void Operator::addNote(double frq)
 {
-    // Initialize and push back a new oscillator with the
+    // Initialize and push back a new oscillator in a unique_ptr with the
     // operator's current wavetable id and the new frequency
-    _notes.push_back(new Oscillator(_wavetableID,frq));
+    notes_.push_back(std::unique_ptr<Oscillator>(new Oscillator(wavetableID_,frq)));
 }
 
 void Operator::relNote(double frq)
 {
     // Iterate over all notes
-    for (noteVec::iterator itr = _notes.begin(), end = _notes.end();
+    for (noteVec::iterator itr = notes_.begin(), end = notes_.end();
          itr != end;
          ++itr)
     {
         // If that frequency is found
         if ((*itr)->getFreq() == frq)
         {
-            // Delete the oscillator
-            delete *itr;
-            
             // And erase the pointer from the vector
-            _notes.erase(itr);
+            notes_.erase(itr);
             
             break;
         }
@@ -128,16 +125,13 @@ void Operator::relNote(double frq)
 
 void Operator::relNote(unsigned short ind)
 {
-    // Delete the oscillator
-    delete _notes[ind];
-    
     // Remove the pointer from the vector
-    _notes.erase(_notes.begin() + ind);
+    notes_.erase(notes_.begin() + ind);
 }
 
 double Operator::getNoteFreq(unsigned short ind)
 {
-    return _notes[ind]->getFreq();
+    return notes_[ind]->getFreq();
 }
 
 void Operator::setAmp(double amp)
@@ -159,7 +153,7 @@ double Operator::tick()
     {
         double newSemitoneOffset = _mods[SEMI_OFFSET]->tick();
         
-        for (noteVec::iterator itr = _notes.begin(), end = _notes.end();
+        for (noteVec::iterator itr = notes_.begin(), end = notes_.end();
              itr != end;
              ++itr)
         {
@@ -172,7 +166,7 @@ double Operator::tick()
     {
         double newCentOffset = _mods[CENT_OFFSET]->tick();
         
-        for (noteVec::iterator itr = _notes.begin(), end = _notes.end();
+        for (noteVec::iterator itr = notes_.begin(), end = notes_.end();
              itr != end;
              ++itr)
         {
@@ -181,7 +175,7 @@ double Operator::tick()
     }
     
     // Add up all notes
-    for (noteVec::iterator itr = _notes.begin(), end = _notes.end();
+    for (noteVec::iterator itr = notes_.begin(), end = notes_.end();
          itr != end;
          ++itr)
     {
