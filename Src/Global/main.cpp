@@ -28,17 +28,15 @@ int main(int argc, const char * argv[])
     
     op.addNote(440);
     
-    LFO lfo;
+    LFOSeq seq;
     
-    lfo.setFreq(2);
+    seq.setModWavetable(0, WavetableDB::SINE);
     
-    LFOSeq seq(10);
+    //seq.setModFreq(0, 3);
     
-    //seq.setModWavetable(1, 0);
+    seq.setModDepth(0, 0.5);
     
-    //seq.setModDepth(1, 0.5);
-    
-    seq.setSegBothLevels(1, 0.5);
+    seq.setSegBothLevels(0, 0.5);
     
     op.attachMod(Operator::AMP, &seq);
     
@@ -47,6 +45,9 @@ int main(int argc, const char * argv[])
     for (int i = 0; i < len; ++i)
     {
         double tick = op.tick();
+        
+        seq.increment();
+        op.increment();
         
         mixer.process(tick);
     }

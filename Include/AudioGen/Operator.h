@@ -69,6 +69,14 @@ public:
     
     /*************************************************************************************************//*!
     *
+    *  @brief       Increments oscillators. Call after ticking.
+    *
+    *****************************************************************************************************/
+    
+    void increment();
+    
+    /*************************************************************************************************//*!
+    *
     *  @brief       Sets a semitone offset to all currently available oscillators.
     *
     *  @param       semitones The semitone offset, between -48 and +48.

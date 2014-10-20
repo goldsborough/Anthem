@@ -21,7 +21,7 @@ Oscillator::Oscillator(short wt,
 : amp_(amp), ind_(0), phaseOffset_(phaseOffset)
 
 {
-    setWavetable(wt);
+    wt_ = wavetableDB[wt];
     
     setPhaseOffset(phaseOffset);
     
@@ -33,7 +33,7 @@ void Oscillator::setWavetable(short wt)
     wt_ = wavetableDB[wt];
 }
 
-short Oscillator::getWavetable() const
+short Oscillator::getWavetableID() const
 {
     return wt_.id();
 }
@@ -146,19 +146,20 @@ void Oscillator::reset()
     ind_ = phaseOffset_;
 }
 
-double Oscillator::tick()
+void Oscillator::increment()
 {
-    if (wt_.id() == -1) return 0;
-        
-    // Grab a value through interpolation from the wavetable
-    double value = wt_.interpolate(ind_);
-    
     // Increment wavetable index
     ind_ += indIncr_;
     
     // Check index against wavetable length
     if ( ind_ >= Global::wtLen)
     { ind_ -= Global::wtLen; }
-    
-    return value * amp_;
+}
+
+double Oscillator::tick()
+{
+    if (wt_.id() == -1) return 0;
+        
+    // Grab a value through interpolation from the wavetable
+    return wt_.interpolate(ind_) * amp_;
 }

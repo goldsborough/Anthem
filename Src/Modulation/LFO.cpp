@@ -114,7 +114,7 @@ double LFO::modulate(double sample, double depth, double maximum)
     }
 
     // Actual modulation by LFO
-    sample += (maximum * tick() * depth);
+    sample += (maximum * Oscillator::tick() * depth);
 
     return sample * amp_;
 }
@@ -129,18 +129,17 @@ LFOSeq::LFOSeq(unsigned short seqLength, double rate)
     
     setRate(rate);
     
+    // Init segs
     for (int i = 0; i < seqLength; ++i)
     {
-        setScaledModFreq_(i, lfos_[i].getFreq());
-        
-        // Attach lfos
+        // Attach lfos to segment
+        segs_[i].attachMod(EnvSeg::START_LEVEL, &lfos_[i]);
         segs_[i].attachMod(EnvSeg::END_LEVEL, &lfos_[i]);
         
         setSegBothLevels(i, 1);
+        
+        setScaledModFreq_(i, 1);
     }
-    
-    setSegStartLevel(0, 0);
-    setSegEndLevel(seqLength - 1, 0);
 }
 
 void LFOSeq::setScaledModFreq_(seg_t seg, double rate)
@@ -157,6 +156,9 @@ void LFOSeq::setScaledModFreq_(seg_t seg, double rate)
     if (segs_[seg].getLen() > 0)
     {
         double freq = (Global::samplerate / static_cast<double>(segs_[seg].getLen())) * rate;
+        
+        // For some reason this is necessary
+        //freq /= 2;
         
         lfos_[seg].setFreq(freq);
     }
@@ -187,6 +189,15 @@ double LFOSeq::getRate() const
     return rate_;
 }
 
+void LFOSeq::setSegLen(seg_t seg, unsigned long ms)
+{
+    double oldUnscaledFreq = lfos_[seg].getFreq() / (Global::samplerate/segs_[seg].getLen());
+    
+    segs_[seg].setLen(ms * 44.1);
+    
+    setScaledModFreq_(seg, oldUnscaledFreq);
+}
+
 void LFOSeq::setSegRate(seg_t seg, double rate)
 {
     if (seg >= segs_.size())
@@ -203,11 +214,20 @@ void LFOSeq::setModWavetable(seg_t seg, short wt)
     lfos_[seg].setWavetable(wt);
 }
 
+short LFOSeq::getModWavetableID(seg_t seg) const
+{
+    if (seg >= segs_.size())
+    { throw std::invalid_argument("Segment out of range for LFOSeq!"); }
+    
+    return lfos_[seg].getWavetableID();
+}
+
 void LFOSeq::setModDepth(seg_t seg, double depth)
 {
     if (seg >= segs_.size())
     { throw std::invalid_argument("Segment out of range for LFOSeq!"); }
     
+    segs_[seg].setModUnitDepth(EnvSeg::START_LEVEL, 0, depth);
     segs_[seg].setModUnitDepth(EnvSeg::END_LEVEL, 0, depth);
 }
 
@@ -216,6 +236,7 @@ double LFOSeq::getModDepth(seg_t seg) const
     if (seg >= segs_.size())
     { throw std::invalid_argument("Segment out of range for LFOSeq!"); }
     
+    return segs_[seg].getModUnitDepth(EnvSeg::END_LEVEL, 0);
     return segs_[seg].getModUnitDepth(EnvSeg::END_LEVEL, 0);
 }
 
@@ -257,12 +278,12 @@ void LFOSeq::addSegment()
     lfos_.push_back(LFO());
 }
 
-void LFOSeq::removeSegment()
+void LFOSeq::removeLastSegment()
 {
     if (segs_.empty())
     { throw std::runtime_error("Cannot remove segment from LFOSeq if already empty!"); }
     
-    ModEnvSegSeq::removeSegment();
+    ModEnvSegSeq::removeLastSegment();
     lfos_.pop_back();
 }
 
@@ -294,7 +315,7 @@ void LFOSeq::setModUnitDepth_Seg(seg_t segNum,
         segs_[segNum].setModUnitDepth(EnvSeg::END_LEVEL, modNum + 1, depth);
     }
     
-    // All other parameters belong to the lfo (phase + freq)
+    // All other parameters belong to the lfo (phase and freq)
     else lfos_[segNum].setModUnitDepth(dockNum,modNum, depth);
 }
 
@@ -437,9 +458,21 @@ unsigned long LFOSeq::dockSize_Seg(seg_t segNum, index_t dockNum) const
     else return lfos_[segNum].dockSize(dockNum);
 }
 
+void LFOSeq::increment()
+{
+    ModEnvSegSeq::increment();
+    
+    for (std::vector<LFO>::iterator itr = lfos_.begin(), end = lfos_.end();
+         itr != end;
+         ++itr)
+    {
+        itr->increment();
+    }
+}
+
 double LFOSeq::modulate(double sample, double depth, double)
 {
-    return sample * ModEnvSegSeq::tick() * depth * _amp;
+    return sample * tick() * depth * _amp;
 }
 
 LFOUnit::LFOUnit(unsigned short mode)

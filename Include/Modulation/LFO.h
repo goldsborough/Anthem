@@ -193,8 +193,8 @@ public:
     *
     *  @param      rate The new rate. 0-1 is exp., 1 is linear and 1-2 is log.
     *
-     *  @throws      std::invalid_argument if seg out of range.
-     *
+    *  @throws      std::invalid_argument if seg out of range.
+    *
     *********************************************************************************/
     
     void setSegRate(seg_t seg, double rate);
@@ -202,6 +202,9 @@ public:
     /*************************************************************************************************//*!
     *
     *  @brief       Sets the depth of a segment's modulator.
+    *
+    *  @details     Do not confuse with setModUnitDepth_Seg to set the depth of a modulator in a
+    *               segment's wave's ModDock. 
     *
     *  @param       seg The segment to set the depth for.
     *
@@ -299,6 +302,20 @@ public:
     
     /*************************************************************************************************//*!
     *
+    *  @brief       Returns the wavetable id of a segment's modulator.
+    *
+    *  @param       seg The segment to return the depth from.
+    *
+    *  @return      The wavetable id of a segment's modulator.
+    *
+    *  @throws      std::invalid_argument if seg out of range.
+    *
+    *****************************************************************************************************/
+    
+    short getModWavetableID(seg_t seg) const;
+    
+    /*************************************************************************************************//*!
+    *
     *  @brief       Adds a segment to the sequence.
     *
     *  @details     Maximum number of segments is 10.
@@ -315,17 +332,25 @@ public:
     *
     *****************************************************************************************************/
     
-    void removeSegment();
+    void removeLastSegment();
     
     /*************************************************************************************************//*!
     *
-    *  @brief       Removes the last segment from the sequence.
+    *  @brief       Removes a segment from the sequence.
+    *
+    *  @param       seg The segment to return the depth from.
     *
     *  @throws      std::invalid_argument if segment number invalid.
     *
     *****************************************************************************************************/
     
     void removeSegment(seg_t seg);
+    
+    /*! @copydoc EnvSegSeq::increment() */
+    void increment();
+    
+    /*! @copydoc EnvSegSeq::setSegLen() */
+    void setSegLen(seg_t seg, unsigned long ms);
     
     /*! @copydoc ModEnvSegSeq::setModUnitDepth_Seg() */
     void setModUnitDepth_Seg(seg_t segNum, index_t dockNum, index_t modNum, double depth);

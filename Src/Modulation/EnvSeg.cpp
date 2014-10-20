@@ -49,24 +49,17 @@ void EnvSeg::calcIncr_()
     incr_ = (len_) ? 1.0/len_ : 0;
 }
 
-double EnvSeg::calc_()
+void EnvSeg::increment()
 {
-    // Calculate value
-    double ret = range_ * pow(curr_,rate_) + startAmp_;
-    
     // Increment curr_
     curr_ += incr_;
-    
-    return ret;
 }
 
 double EnvSeg::tick()
 {
     // If the segment is still supposed to
     // tick after reaching the end amplitude
-    // (which shouldn't happen because the
-    // envelope should move on), just return
-    // the end amplitude.
+    // just return the end amplitude
     
     if (curr_ >= 1) return endAmp_;
     
@@ -93,7 +86,7 @@ double EnvSeg::tick()
         calcRange_();
     }
     
-    return calc_();
+    return range_ * pow(curr_,rate_) + startAmp_;
 }
 
 void EnvSeg::setLen(EnvSeg::len_t sampleLen)
@@ -319,7 +312,7 @@ void EnvSegSeq::addSegment()
     segs_.push_back(EnvSeg());
 }
 
-void EnvSegSeq::removeSegment()
+void EnvSegSeq::removeLastSegment()
 {
     if (segs_.empty())
     { throw std::runtime_error("Cannot remove segment from LFOSeq if already empty!"); }
@@ -353,9 +346,14 @@ void EnvSegSeq::resetLoop_()
     ++loopCount_;
 }
 
+void EnvSegSeq::increment()
+{
+    currSample_++;
+}
+
 double EnvSegSeq::tick()
 {
-    if (currSample_++ >= currSeg_->getLen())
+    if (currSample_ >= currSeg_->getLen())
     {
         if (currSeg_ != segs_.end()) currSeg_++;
         

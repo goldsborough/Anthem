@@ -368,6 +368,14 @@ public:
     
     virtual double tick() = 0;
     
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Increments values in the GenUnit.
+    *
+    *****************************************************************************************************/
+    
+    virtual void increment() = 0;
+    
 protected:
     
     /*! The current amplitude value */

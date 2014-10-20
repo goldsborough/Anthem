@@ -144,6 +144,16 @@ void Operator::setAmp(double amp)
     _mods[AMP]->setBaseValue(amp);
 }
 
+void Operator::increment()
+{
+    for (noteVec::iterator itr = notes_.begin(), end = notes_.end();
+         itr != end;
+         ++itr)
+    {
+        ((*itr).get())->increment();
+    }
+}
+
 double Operator::tick()
 {
     double val = 0;
@@ -179,7 +189,7 @@ double Operator::tick()
          itr != end;
          ++itr)
     {
-        val += (*itr)->tick();
+        val += ((*itr).get())->tick();
     }
     
     double amp = _amp;
