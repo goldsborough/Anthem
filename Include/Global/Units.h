@@ -226,7 +226,7 @@ public:
 protected:
     
     /*! The std::vector holding the modulation docks. */
-    std::vector<ModDock*> _mods;
+    std::vector<ModDock*> mods_;
 };
 
 /*********************************************************************************************//*!

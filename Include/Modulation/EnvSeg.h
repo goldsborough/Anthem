@@ -257,9 +257,6 @@ private:
     
     /*! Length of segment in samples */
     len_t len_;
-    
-    /*! Maximum possible segment length, a good value is 60 seconds */
-    static const len_t maxLen_;
 };
 
 /******************************************************************************//*!

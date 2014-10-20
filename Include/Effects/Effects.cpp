@@ -36,17 +36,17 @@ Reverb::Reverb(double reverbTime, double reverbRate, double dryWet)
     setDryWet(dryWet);
     
     // Initialize ModDocks
-    _mods[REVERB_RATE]->setHigherBoundary(1);
-    _mods[REVERB_RATE]->setLowerBoundary(0);
-    _mods[REVERB_RATE]->setBaseValue(reverbRate);
+    mods_[REVERB_RATE]->setHigherBoundary(1);
+    mods_[REVERB_RATE]->setLowerBoundary(0);
+    mods_[REVERB_RATE]->setBaseValue(reverbRate);
     
-    _mods[REVERB_TIME]->setHigherBoundary(100);
-    _mods[REVERB_TIME]->setLowerBoundary(0);
-    _mods[REVERB_TIME]->setBaseValue(reverbTime);
+    mods_[REVERB_TIME]->setHigherBoundary(100);
+    mods_[REVERB_TIME]->setLowerBoundary(0);
+    mods_[REVERB_TIME]->setBaseValue(reverbTime);
     
-    _mods[DRYWET]->setHigherBoundary(1);
-    _mods[DRYWET]->setLowerBoundary(0);
-    _mods[DRYWET]->setBaseValue(dryWet);
+    mods_[DRYWET]->setHigherBoundary(1);
+    mods_[DRYWET]->setLowerBoundary(0);
+    mods_[DRYWET]->setBaseValue(dryWet);
 }
 
 void Reverb::setDryWet(double dw)
@@ -54,7 +54,7 @@ void Reverb::setDryWet(double dw)
     if (dw < 0 || dw > 1)
     { throw std::invalid_argument("Dry/wet control must be between 0 and 1!"); }
     
-    _mods[DRYWET]->setBaseValue(dw);
+    mods_[DRYWET]->setBaseValue(dw);
     
     _dw = dw;
     
@@ -67,9 +67,9 @@ void Reverb::setDryWet(double dw)
 double Reverb::process(double sample)
 {
     // Modulate time
-    if (_mods[REVERB_TIME]->inUse())
+    if (mods_[REVERB_TIME]->inUse())
     {
-        double newReverbTime = _mods[REVERB_TIME]->tick();
+        double newReverbTime = mods_[REVERB_TIME]->tick();
         
         for (unsigned short i = 0; i < 4; ++i)
         {
@@ -78,9 +78,9 @@ double Reverb::process(double sample)
     }
     
     // Modulate rate
-    if (_mods[REVERB_RATE]->inUse())
+    if (mods_[REVERB_RATE]->inUse())
     {
-        double newReverbRate = _mods[REVERB_RATE]->tick();
+        double newReverbRate = mods_[REVERB_RATE]->tick();
         
         for (unsigned short i = 0; i < 4; ++i)
         {
@@ -100,9 +100,9 @@ double Reverb::process(double sample)
     output = _allPasses[1]->process(_allPasses[0]->process(output));
     
     // Modulate the dry/wet
-    if (_mods[DRYWET]->inUse())
+    if (mods_[DRYWET]->inUse())
     {
-        double dw = _mods[DRYWET]->tick();
+        double dw = mods_[DRYWET]->tick();
         
         // Call _dryWet with custom dry/wet value (instead of _dw)
         return _dryWet(sample, output, dw);
@@ -116,7 +116,7 @@ void Reverb::setReverbRate(double reverbRate)
     if (reverbRate < 0 || reverbRate > 1)
     { throw std::invalid_argument("Reverb rate must be between 0 and 1!"); }
     
-    _mods[REVERB_RATE]->setBaseValue(reverbRate);
+    mods_[REVERB_RATE]->setBaseValue(reverbRate);
     
     _reverbRate = reverbRate;
     
@@ -131,7 +131,7 @@ void Reverb::setReverbTime(double reverbTime)
     if (reverbTime < 0 || reverbTime > 100)
     { throw std::invalid_argument("Reverb time must be between 0 and 100!"); }
     
-    _mods[REVERB_TIME]->setBaseValue(reverbTime);
+    mods_[REVERB_TIME]->setBaseValue(reverbTime);
     
     _reverbTime = reverbTime;
     

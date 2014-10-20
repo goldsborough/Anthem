@@ -18,9 +18,9 @@ Noise::Noise(unsigned short color, double amp)
 {
     setColor(color);
     
-    _mods[AMP]->setHigherBoundary(1);
-    _mods[AMP]->setLowerBoundary(0);
-    _mods[AMP]->setBaseValue(amp);
+    mods_[AMP]->setHigherBoundary(1);
+    mods_[AMP]->setLowerBoundary(0);
+    mods_[AMP]->setBaseValue(amp);
 }
 
 Noise::~Noise()
@@ -33,7 +33,7 @@ void Noise::setAmp(double amp)
     GenUnit::setAmp(amp);
     
     // Sets new base value for modulation
-    _mods[AMP]->setBaseValue(amp);
+    mods_[AMP]->setBaseValue(amp);
 }
 
 void Noise::setColor(unsigned short color)
@@ -114,8 +114,8 @@ double Noise::tick()
     { value  = _filter->process(value); }
     
     // Check modulation dock for the amplitude parameter
-    if (_mods[AMP]->inUse())
-    { return value * _mods[AMP]->tick(); }
+    if (mods_[AMP]->inUse())
+    { return value * mods_[AMP]->tick(); }
     
     return value * _amp;
 }

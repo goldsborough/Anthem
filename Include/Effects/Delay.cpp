@@ -37,26 +37,26 @@ Delay::Delay(double delayLen,
     _readFract = _delayLen - static_cast<double>(_readInt);
     
     // Initialize mod docks
-    _mods[DECAY_TIME]->setHigherBoundary(_delayCapacity);
-    _mods[DECAY_TIME]->setLowerBoundary(0);
-    _mods[DECAY_TIME]->setBaseValue(decayTime);
+    mods_[DECAY_TIME]->setHigherBoundary(_delayCapacity);
+    mods_[DECAY_TIME]->setLowerBoundary(0);
+    mods_[DECAY_TIME]->setBaseValue(decayTime);
     
-    _mods[DECAY_RATE]->setHigherBoundary(1);
-    _mods[DECAY_RATE]->setLowerBoundary(0);
-    _mods[DECAY_RATE]->setBaseValue(decayRate);
+    mods_[DECAY_RATE]->setHigherBoundary(1);
+    mods_[DECAY_RATE]->setLowerBoundary(0);
+    mods_[DECAY_RATE]->setBaseValue(decayRate);
     
-    _mods[FEEDBACK]->setHigherBoundary(1);
-    _mods[FEEDBACK]->setLowerBoundary(0);
-    _mods[FEEDBACK]->setBaseValue(feedbackLevel);
+    mods_[FEEDBACK]->setHigherBoundary(1);
+    mods_[FEEDBACK]->setLowerBoundary(0);
+    mods_[FEEDBACK]->setBaseValue(feedbackLevel);
     
-    _mods[DRYWET]->setHigherBoundary(1);
-    _mods[DRYWET]->setLowerBoundary(0);
-    _mods[DRYWET]->setBaseValue(1);
+    mods_[DRYWET]->setHigherBoundary(1);
+    mods_[DRYWET]->setLowerBoundary(0);
+    mods_[DRYWET]->setBaseValue(1);
 }
 
 void Delay::setDryWet(double dw)
 {
-    _mods[DRYWET]->setBaseValue(dw);
+    mods_[DRYWET]->setBaseValue(dw);
     
     // For error checking
     EffectUnit::setDryWet(dw);
@@ -67,7 +67,7 @@ void Delay::setDecayRate(double decayRate)
     if (decayRate > 1 || decayRate < 0)
     { throw std::invalid_argument("Decay rate must be between 0 and 1!"); }
     
-    _mods[DECAY_RATE]->setBaseValue(decayRate);
+    mods_[DECAY_RATE]->setBaseValue(decayRate);
     
     _decayRate = decayRate;
 }
@@ -111,7 +111,7 @@ void Delay::setFeedback(double feedbackLevel)
     if (feedbackLevel < 0 || feedbackLevel > 1)
     { throw std::invalid_argument("Feedback level must be between 0 and 1!"); }
     
-    _mods[FEEDBACK]->setBaseValue(feedbackLevel);
+    mods_[FEEDBACK]->setBaseValue(feedbackLevel);
     
     _feedback = feedbackLevel;
 }
@@ -126,7 +126,7 @@ void Delay::setDecayTime(double decayTime)
     if (decayTime < 0 || decayTime > _delayCapacity)
     { throw std::invalid_argument("Decay time must be greater 0 and less than capacity!"); }
     
-    _mods[DECAY_TIME]->setBaseValue(decayTime);
+    mods_[DECAY_TIME]->setBaseValue(decayTime);
     
     _decayTime = decayTime * Global::samplerate;
     
@@ -165,17 +165,17 @@ double Delay::offset(unsigned int offset)
 double Delay::process(double sample)
 {
     // Modulate decay time
-    if (_mods[DECAY_TIME]->inUse())
+    if (mods_[DECAY_TIME]->inUse())
     {
-        double newDecayTime = _mods[DECAY_TIME]->tick();
+        double newDecayTime = mods_[DECAY_TIME]->tick();
         
         _calcDecay(_decayRate, newDecayTime, _delayLen);
     }
     
     // Modulate decay rate
-    if (_mods[DECAY_RATE]->inUse())
+    if (mods_[DECAY_RATE]->inUse())
     {
-        double newDecayRate = _mods[DECAY_RATE]->tick();
+        double newDecayRate = mods_[DECAY_RATE]->tick();
         
         _calcDecay(newDecayRate, _decayTime, _delayLen);
     }
@@ -209,9 +209,9 @@ double Delay::process(double sample)
     double feedback = _feedback;
     
     // Modulate feedback value
-    if (_mods[FEEDBACK]->inUse())
+    if (mods_[FEEDBACK]->inUse())
     {
-        feedback = _mods[FEEDBACK]->tick();
+        feedback = mods_[FEEDBACK]->tick();
     }
 
     // If the sample hasn't been written yet, write it now
@@ -226,9 +226,9 @@ double Delay::process(double sample)
     output *= _decayValue;
     
     // Modulate dry wet value
-    if (_mods[DRYWET]->inUse())
+    if (mods_[DRYWET]->inUse())
     {
-        double newDryWet = _mods[DRYWET]->tick();
+        double newDryWet = mods_[DRYWET]->tick();
         
         return _dryWet(sample, output, newDryWet);
     }

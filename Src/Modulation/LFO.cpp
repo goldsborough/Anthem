@@ -19,34 +19,34 @@
 LFO::LFO(short wt, double rate, double amp, double phaseOffset)
 : Oscillator(wt,rate,amp,phaseOffset), ModUnit(3,amp)
 {
-    _mods[FREQ]->setHigherBoundary(Global::nyquistLimit);
-    _mods[FREQ]->setHigherBoundary(0);
-    _mods[FREQ]->setBaseValue(rate);
+    mods_[FREQ]->setHigherBoundary(Global::nyquistLimit);
+    mods_[FREQ]->setHigherBoundary(0);
+    mods_[FREQ]->setBaseValue(rate);
     
-    _mods[PHASE]->setHigherBoundary(360);
-    _mods[PHASE]->setLowerBoundary(0);
-    _mods[PHASE]->setBaseValue(phaseOffset);
+    mods_[PHASE]->setHigherBoundary(360);
+    mods_[PHASE]->setLowerBoundary(0);
+    mods_[PHASE]->setBaseValue(phaseOffset);
     
-    _mods[AMP]->setHigherBoundary(1);
-    _mods[AMP]->setLowerBoundary(0);
-    _mods[AMP]->setBaseValue(amp);
+    mods_[AMP]->setHigherBoundary(1);
+    mods_[AMP]->setLowerBoundary(0);
+    mods_[AMP]->setBaseValue(amp);
 }
 
 void LFO::setFreq(double Hz)
 {
     Oscillator::setFreq(Hz);
     
-    if (_mods[FREQ]->inUse())
+    if (mods_[FREQ]->inUse())
     {
-        _mods[FREQ]->setBaseValue(Hz);
+        mods_[FREQ]->setBaseValue(Hz);
     }
 }
 
 double LFO::getFreq() const
 {
-    if (_mods[FREQ]->inUse())
+    if (mods_[FREQ]->inUse())
     {
-        return _mods[FREQ]->getBaseValue();
+        return mods_[FREQ]->getBaseValue();
     }
     
     else return freq_;
@@ -56,17 +56,17 @@ void LFO::setPhaseOffset(double degrees)
 {
     Oscillator::setPhaseOffset(degrees);
     
-    if (_mods[PHASE]->inUse())
+    if (mods_[PHASE]->inUse())
     {
-        _mods[PHASE]->setBaseValue(degrees);
+        mods_[PHASE]->setBaseValue(degrees);
     }
 }
 
 double LFO::getPhaseOffset() const
 {
-    if (_mods[PHASE]->inUse())
+    if (mods_[PHASE]->inUse())
     {
-        return _mods[PHASE]->getBaseValue();
+        return mods_[PHASE]->getBaseValue();
     }
     
     else return Oscillator::getPhaseOffset();
@@ -77,17 +77,17 @@ void LFO::setAmp(double amp)
     // For boundary checking
     Oscillator::setAmp(amp);
     
-    if (_mods[AMP]->inUse())
+    if (mods_[AMP]->inUse())
     {
-        _mods[AMP]->setBaseValue(amp);
+        mods_[AMP]->setBaseValue(amp);
     }
 }
 
 double LFO::getAmp() const
 {
-    if (_mods[AMP]->inUse())
+    if (mods_[AMP]->inUse())
     {
-        return _mods[AMP]->getBaseValue();
+        return mods_[AMP]->getBaseValue();
     }
     
     else return amp_;
@@ -96,21 +96,21 @@ double LFO::getAmp() const
 double LFO::modulate(double sample, double depth, double maximum)
 {
     // Modulate rate/frequency
-    if (_mods[FREQ]->inUse())
+    if (mods_[FREQ]->inUse())
     {
-        Oscillator::setFreq(_mods[FREQ]->tick());
+        Oscillator::setFreq(mods_[FREQ]->tick());
     }
     
     // Modulate phase offset
-    if (_mods[PHASE]->inUse())
+    if (mods_[PHASE]->inUse())
     {
-        Oscillator::setPhaseOffset(_mods[PHASE]->tick());
+        Oscillator::setPhaseOffset(mods_[PHASE]->tick());
     }
     
     // Get amplitude modulation
-    if (_mods[AMP]->inUse())
+    if (mods_[AMP]->inUse())
     {
-        amp_ = _mods[AMP]->tick();
+        amp_ = mods_[AMP]->tick();
     }
 
     // Actual modulation by LFO
@@ -120,7 +120,7 @@ double LFO::modulate(double sample, double depth, double maximum)
 }
 
 LFOSeq::LFOSeq(unsigned short seqLength, double rate)
-: ModEnvSegSeq(seqLength), lfos_(seqLength)
+: ModEnvSegSeq(seqLength,1), lfos_(seqLength)
 {
     setLoopStart(0);
     setLoopEnd(seqLength - 1);
@@ -133,21 +133,21 @@ LFOSeq::LFOSeq(unsigned short seqLength, double rate)
     for (int i = 0; i < seqLength; ++i)
     {
         // Attach lfos to segment
-        segs_[i].attachMod(EnvSeg::START_LEVEL, &lfos_[i]);
-        segs_[i].attachMod(EnvSeg::END_LEVEL, &lfos_[i]);
+        segs_[i].attachMod(EnvSeg::START_LEVEL, &lfos_[i].lfo);
+        segs_[i].attachMod(EnvSeg::END_LEVEL, &lfos_[i].lfo);
         
         setSegBothLevels(i, 1);
         
-        setScaledModFreq_(i, 1);
+        setScaledModFreq_(i);
     }
+    
+    mods_[RATE]->setHigherBoundary(10);
+    mods_[RATE]->setLowerBoundary(0);
+    mods_[RATE]->setBaseValue(rate);
 }
 
-void LFOSeq::setScaledModFreq_(seg_t seg, double rate)
+void LFOSeq::setScaledModFreq_(seg_t seg)
 {
-    // To go from samples to Hertz, simply
-    // divide the samplerate by the length
-    // in samples e.g. 44100 / 22050 = 2 Hz
-    
     // Since the rate is the cycles per segment
     // and not cycles per second, we get the
     // "period" of the segment and multiply that
@@ -155,24 +155,21 @@ void LFOSeq::setScaledModFreq_(seg_t seg, double rate)
     
     if (segs_[seg].getLen() > 0)
     {
-        double freq = (Global::samplerate / static_cast<double>(segs_[seg].getLen())) * rate;
+        // To go from samples to Hertz, simply
+        // divide the samplerate by the length
+        // in samples e.g. 44100 / 22050 = 2 Hz
+        double freq = (Global::samplerate / static_cast<double>(segs_[seg].getLen()));
         
-        // For some reason this is necessary
-        //freq /= 2;
+        freq *= lfos_[seg].freq;
         
-        lfos_[seg].setFreq(freq);
+        lfos_[seg].lfo.setFreq(freq);
     }
 }
 
-void LFOSeq::setRate(double Hz)
+void LFOSeq::resizeSegsFromRate_(double rate)
 {
-    if (Hz < 0)
-    { throw std::invalid_argument("Rate cannot be less than zero!"); }
-    
-    rate_ = Hz;
-    
     // get the period, divide up into _segNum pieces
-    double len = (1.0 / rate_) / segs_.size();
+    double len = (1.0 / rate) / segs_.size();
     
     // seconds to milliseconds
     len *= 1000;
@@ -181,21 +178,42 @@ void LFOSeq::setRate(double Hz)
     for (int i = 0; i < segs_.size(); i++)
     {
         EnvSegSeq::setSegLen(i, len);
+        
+        // Scale frequency of mods according to length
+        setScaledModFreq_(i);
     }
+}
+
+void LFOSeq::setRate(double Hz)
+{
+    if (Hz < 0 || Hz > 10)
+    { throw std::invalid_argument("Rate cannot be less than zero or greater 10!"); }
+    
+    rate_ = Hz;
+    
+    if (mods_[RATE]->inUse())
+    {
+        mods_[RATE]->setBaseValue(rate_);
+    }
+    
+    resizeSegsFromRate_(rate_);
 }
 
 double LFOSeq::getRate() const
 {
-    return rate_;
+    if (mods_[RATE]->inUse())
+    {
+        return mods_[RATE]->getBaseValue();
+    }
+    
+    else return rate_;
 }
 
 void LFOSeq::setSegLen(seg_t seg, unsigned long ms)
 {
-    double oldUnscaledFreq = lfos_[seg].getFreq() / (Global::samplerate/segs_[seg].getLen());
-    
     segs_[seg].setLen(ms * 44.1);
     
-    setScaledModFreq_(seg, oldUnscaledFreq);
+    setScaledModFreq_(seg);
 }
 
 void LFOSeq::setSegRate(seg_t seg, double rate)
@@ -211,7 +229,7 @@ void LFOSeq::setModWavetable(seg_t seg, short wt)
     if (seg >= segs_.size())
     { throw std::invalid_argument("Segment out of range for LFOSeq!"); }
     
-    lfos_[seg].setWavetable(wt);
+    lfos_[seg].lfo.setWavetable(wt);
 }
 
 short LFOSeq::getModWavetableID(seg_t seg) const
@@ -219,7 +237,7 @@ short LFOSeq::getModWavetableID(seg_t seg) const
     if (seg >= segs_.size())
     { throw std::invalid_argument("Segment out of range for LFOSeq!"); }
     
-    return lfos_[seg].getWavetableID();
+    return lfos_[seg].lfo.getWavetableID();
 }
 
 void LFOSeq::setModDepth(seg_t seg, double depth)
@@ -245,7 +263,9 @@ void LFOSeq::setModFreq(seg_t seg, double freq)
     if (seg >= segs_.size())
     { throw std::invalid_argument("Segment out of range for LFOSeq!"); }
     
-    setScaledModFreq_(seg, freq);
+    lfos_[seg].freq = freq;
+    
+    setScaledModFreq_(seg);
 }
 
 double LFOSeq::getModFreq(seg_t seg) const
@@ -253,7 +273,7 @@ double LFOSeq::getModFreq(seg_t seg) const
     if (seg >= segs_.size())
     { throw std::invalid_argument("Segment out of range for LFOSeq!"); }
     
-    return lfos_[seg].getFreq();
+    return lfos_[seg].freq;
 }
 
 void LFOSeq::setModPhaseOffset(seg_t seg, double degrees)
@@ -261,7 +281,7 @@ void LFOSeq::setModPhaseOffset(seg_t seg, double degrees)
     if (seg >= segs_.size())
     { throw std::invalid_argument("Segment out of range for LFOSeq!"); }
     
-    lfos_[seg].setPhaseOffset(degrees);
+    lfos_[seg].lfo.setPhaseOffset(degrees);
 }
 
 double LFOSeq::getModPhaseOffset(seg_t seg)
@@ -269,13 +289,13 @@ double LFOSeq::getModPhaseOffset(seg_t seg)
     if (seg >= segs_.size())
     { throw std::invalid_argument("Segment out of range for LFOSeq!"); }
     
-    return lfos_[seg].getPhaseOffset();
+    return lfos_[seg].lfo.getPhaseOffset();
 }
 
 void LFOSeq::addSegment()
 {
     ModEnvSegSeq::addSegment();
-    lfos_.push_back(LFO());
+    lfos_.push_back(Mod());
 }
 
 void LFOSeq::removeLastSegment()
@@ -316,7 +336,7 @@ void LFOSeq::setModUnitDepth_Seg(seg_t segNum,
     }
     
     // All other parameters belong to the lfo (phase and freq)
-    else lfos_[segNum].setModUnitDepth(dockNum,modNum, depth);
+    else lfos_[segNum].lfo.setModUnitDepth(dockNum,modNum, depth);
 }
 
 double LFOSeq::getModUnitDepth_Seg(seg_t segNum, index_t dockNum, index_t modNum) const
@@ -331,7 +351,7 @@ double LFOSeq::getModUnitDepth_Seg(seg_t segNum, index_t dockNum, index_t modNum
     }
     
     // All other parameters belong to the lfo (phase + freq)
-    else return lfos_[segNum].getModUnitDepth(dockNum, modNum);
+    else return lfos_[segNum].lfo.getModUnitDepth(dockNum, modNum);
 }
 
 void LFOSeq::attachMod_Seg(seg_t segNum,
@@ -351,7 +371,7 @@ void LFOSeq::attachMod_Seg(seg_t segNum,
         segs_[segNum].setSidechain(EnvSeg::END_LEVEL, segs_[segNum].dockSize(EnvSeg::END_LEVEL) - 1, 0);
     }
     
-    else lfos_[segNum].attachMod(dockNum, mod);
+    else lfos_[segNum].lfo.attachMod(dockNum, mod);
 }
 
 void LFOSeq::detachMod_Seg(seg_t segNum,
@@ -366,7 +386,7 @@ void LFOSeq::detachMod_Seg(seg_t segNum,
         segs_[segNum].detachMod(EnvSeg::END_LEVEL, modNum);
     }
     
-    else lfos_[segNum].detachMod(dockNum, modNum);
+    else lfos_[segNum].lfo.detachMod(dockNum, modNum);
 }
 
 void LFOSeq::setSidechain_Seg(seg_t segNum, index_t dockNum, index_t master, index_t slave)
@@ -384,7 +404,7 @@ void LFOSeq::setSidechain_Seg(seg_t segNum, index_t dockNum, index_t master, ind
         segs_[segNum].setSidechain(EnvSeg::END_LEVEL, master + 1, slave + 1);
     }
     
-    else lfos_[segNum].setSidechain(dockNum, master, slave);
+    else lfos_[segNum].lfo.setSidechain(dockNum, master, slave);
 }
 
 void LFOSeq::unSidechain_Seg(seg_t segNum, index_t dockNum, index_t master, index_t slave)
@@ -401,7 +421,7 @@ void LFOSeq::unSidechain_Seg(seg_t segNum, index_t dockNum, index_t master, inde
         segs_[segNum].setSidechain(EnvSeg::END_LEVEL, master + 1, 0);
     }
     
-    else lfos_[segNum].unSidechain(dockNum, master, slave);
+    else lfos_[segNum].lfo.unSidechain(dockNum, master, slave);
 }
 
 bool LFOSeq::isSidechain_Seg(seg_t segNum, index_t dockNum, index_t master, index_t slave) const
@@ -415,7 +435,7 @@ bool LFOSeq::isSidechain_Seg(seg_t segNum, index_t dockNum, index_t master, inde
         return segs_[segNum].isSidechain(EnvSeg::END_LEVEL, master + 1, slave + 1);
     }
     
-    else return lfos_[segNum].isSidechain(dockNum, master, slave);
+    else return lfos_[segNum].lfo.isSidechain(dockNum, master, slave);
 }
 
 bool LFOSeq::isMaster_Seg(seg_t segNum, index_t dockNum, index_t index) const
@@ -428,7 +448,7 @@ bool LFOSeq::isMaster_Seg(seg_t segNum, index_t dockNum, index_t index) const
         return segs_[segNum].isMaster(EnvSeg::END_LEVEL, index + 1);
     }
     
-    else return lfos_[segNum].isMaster(dockNum, index);
+    else return lfos_[segNum].lfo.isMaster(dockNum, index);
 }
 
 bool LFOSeq::isSlave_Seg(seg_t segNum, index_t dockNum, index_t index) const
@@ -441,7 +461,7 @@ bool LFOSeq::isSlave_Seg(seg_t segNum, index_t dockNum, index_t index) const
         return segs_[segNum].isSlave(EnvSeg::END_LEVEL, index + 1);
     }
     
-    else return lfos_[segNum].isSlave(dockNum, index);
+    else return lfos_[segNum].lfo.isSlave(dockNum, index);
 }
 
 unsigned long LFOSeq::dockSize_Seg(seg_t segNum, index_t dockNum) const
@@ -455,23 +475,28 @@ unsigned long LFOSeq::dockSize_Seg(seg_t segNum, index_t dockNum) const
         return segs_[segNum].dockSize(EnvSeg::END_LEVEL) - 1;
     }
     
-    else return lfos_[segNum].dockSize(dockNum);
+    else return lfos_[segNum].lfo.dockSize(dockNum);
 }
 
 void LFOSeq::increment()
 {
     ModEnvSegSeq::increment();
     
-    for (std::vector<LFO>::iterator itr = lfos_.begin(), end = lfos_.end();
+    for (std::vector<Mod>::iterator itr = lfos_.begin(), end = lfos_.end();
          itr != end;
          ++itr)
     {
-        itr->increment();
+        itr->lfo.increment();
     }
 }
 
 double LFOSeq::modulate(double sample, double depth, double)
 {
+    if (mods_[RATE]->inUse())
+    {
+        resizeSegsFromRate_(mods_[RATE]->tick());
+    }
+    
     return sample * tick() * depth * _amp;
 }
 

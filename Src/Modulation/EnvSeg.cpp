@@ -5,9 +5,6 @@
 
 #include <cmath>
 
-// 60 seconds
-const unsigned long EnvSeg::maxLen_ = 2646000;
-
 EnvSeg::EnvSeg(double startAmp,
                double endAmp,
                len_t len,
@@ -17,17 +14,17 @@ EnvSeg::EnvSeg(double startAmp,
   curr_(0),len_(len), GenUnit(3) // three ModDocks
 
 {
-    _mods[RATE]->setHigherBoundary(2);
-    _mods[RATE]->setLowerBoundary(0);
-    _mods[RATE]->setBaseValue(rate);
+    mods_[RATE]->setHigherBoundary(2);
+    mods_[RATE]->setLowerBoundary(0);
+    mods_[RATE]->setBaseValue(rate);
     
-    _mods[START_LEVEL]->setHigherBoundary(1);
-    _mods[START_LEVEL]->setLowerBoundary(0);
-    _mods[START_LEVEL]->setBaseValue(startAmp);
+    mods_[START_LEVEL]->setHigherBoundary(1);
+    mods_[START_LEVEL]->setLowerBoundary(0);
+    mods_[START_LEVEL]->setBaseValue(startAmp);
     
-    _mods[END_LEVEL]->setHigherBoundary(1);
-    _mods[END_LEVEL]->setLowerBoundary(0);
-    _mods[END_LEVEL]->setBaseValue(endAmp);
+    mods_[END_LEVEL]->setHigherBoundary(1);
+    mods_[END_LEVEL]->setLowerBoundary(0);
+    mods_[END_LEVEL]->setBaseValue(endAmp);
     
     calcRange_();
     calcIncr_();
@@ -64,23 +61,23 @@ double EnvSeg::tick()
     if (curr_ >= 1) return endAmp_;
     
     // Modulate members
-    if (_mods[RATE]->inUse()        ||
-        _mods[START_LEVEL]->inUse() ||
-        _mods[END_LEVEL]->inUse())
+    if (mods_[RATE]->inUse()        ||
+        mods_[START_LEVEL]->inUse() ||
+        mods_[END_LEVEL]->inUse())
     {
-        if (_mods[RATE]->inUse())
+        if (mods_[RATE]->inUse())
         {
-            rate_ = _mods[RATE]->tick();
+            rate_ = mods_[RATE]->tick();
         }
         
-        if (_mods[START_LEVEL]->inUse())
+        if (mods_[START_LEVEL]->inUse())
         {
-            startAmp_ = _mods[START_LEVEL]->tick();
+            startAmp_ = mods_[START_LEVEL]->tick();
         }
         
-        if (_mods[END_LEVEL]->inUse())
+        if (mods_[END_LEVEL]->inUse())
         {
-            endAmp_ = _mods[END_LEVEL]->tick();
+            endAmp_ = mods_[END_LEVEL]->tick();
         }
         
         calcRange_();
@@ -91,9 +88,6 @@ double EnvSeg::tick()
 
 void EnvSeg::setLen(EnvSeg::len_t sampleLen)
 {
-    if (sampleLen > maxLen_)
-    { throw std::invalid_argument("EnvSeg length cannot exceed max length!"); }
-    
     len_ = sampleLen;
     
     calcIncr_();
@@ -111,16 +105,16 @@ void EnvSeg::setStartLevel(double lv)
     
     startAmp_ = lv;
     
-    _mods[START_LEVEL]->setBaseValue(startAmp_);
+    mods_[START_LEVEL]->setBaseValue(startAmp_);
     
     calcRange_();
 }
 
 double EnvSeg::getStartLevel() const
 {
-    if (_mods[START_LEVEL]->inUse())
+    if (mods_[START_LEVEL]->inUse())
     {
-        return _mods[START_LEVEL]->getBaseValue();
+        return mods_[START_LEVEL]->getBaseValue();
     }
     
     else return startAmp_;
@@ -133,9 +127,9 @@ void EnvSeg::setEndLevel(double lv)
     
     endAmp_ = lv;
     
-    if (_mods[END_LEVEL]->inUse())
+    if (mods_[END_LEVEL]->inUse())
     {
-        _mods[END_LEVEL]->setBaseValue(endAmp_);
+        mods_[END_LEVEL]->setBaseValue(endAmp_);
     }
     
     calcRange_();
@@ -143,9 +137,9 @@ void EnvSeg::setEndLevel(double lv)
 
 double EnvSeg::getEndLevel() const
 {
-    if (_mods[END_LEVEL]->inUse())
+    if (mods_[END_LEVEL]->inUse())
     {
-        return _mods[END_LEVEL]->getBaseValue();
+        return mods_[END_LEVEL]->getBaseValue();
     }
     
     else return endAmp_;
@@ -164,14 +158,14 @@ void EnvSeg::setRate(double rate)
     
     rate_ = rate;
     
-    _mods[RATE]->setBaseValue(rate_);
+    mods_[RATE]->setBaseValue(rate_);
 }
 
 double EnvSeg::getRate() const
 {
-    if (_mods[RATE]->inUse())
+    if (mods_[RATE]->inUse())
     {
-        return _mods[RATE]->getBaseValue();
+        return mods_[RATE]->getBaseValue();
     }
     
     else return rate_;
@@ -349,6 +343,8 @@ void EnvSegSeq::resetLoop_()
 void EnvSegSeq::increment()
 {
     currSample_++;
+    
+    currSeg_->increment();
 }
 
 double EnvSegSeq::tick()

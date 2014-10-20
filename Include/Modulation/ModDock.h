@@ -112,7 +112,7 @@ public:
     *
     *  @brief       Checks whether or not the ModDock is in use.
     *
-    *  @details     The ModDock is in use it isn't empty and if the master depth is greater than 1.
+    *  @details     The ModDock is in use if it isn't empty.
     *
     *************************************************************************************************/
     

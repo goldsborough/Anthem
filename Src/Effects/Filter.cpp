@@ -26,26 +26,26 @@ Filter::Filter(unsigned short mode,
     // Initial coefficients
     _calcCoefs(mode,cutoff,q, gain);
     
-    _mods[CUTOFF]->setHigherBoundary(Global::nyquistLimit);
-    _mods[CUTOFF]->setLowerBoundary(0);
-    _mods[CUTOFF]->setBaseValue(cutoff);
+    mods_[CUTOFF]->setHigherBoundary(Global::nyquistLimit);
+    mods_[CUTOFF]->setLowerBoundary(0);
+    mods_[CUTOFF]->setBaseValue(cutoff);
     
-    _mods[Q]->setHigherBoundary(20);
-    _mods[Q]->setLowerBoundary(0.01);
-    _mods[Q]->setBaseValue(q);
+    mods_[Q]->setHigherBoundary(20);
+    mods_[Q]->setLowerBoundary(0.01);
+    mods_[Q]->setBaseValue(q);
     
-    _mods[GAIN]->setHigherBoundary(20);
-    _mods[GAIN]->setLowerBoundary(-20);
-    _mods[GAIN]->setBaseValue(gain);
+    mods_[GAIN]->setHigherBoundary(20);
+    mods_[GAIN]->setLowerBoundary(-20);
+    mods_[GAIN]->setBaseValue(gain);
     
-    _mods[DRYWET]->setHigherBoundary(1);
-    _mods[DRYWET]->setLowerBoundary(0);
-    _mods[DRYWET]->setBaseValue(1);
+    mods_[DRYWET]->setHigherBoundary(1);
+    mods_[DRYWET]->setLowerBoundary(0);
+    mods_[DRYWET]->setBaseValue(1);
 }
 
 void Filter::setDryWet(double dw)
 {
-    _mods[DRYWET]->setBaseValue(dw);
+    mods_[DRYWET]->setBaseValue(dw);
     
     // For error checking
     EffectUnit::setDryWet(dw);
@@ -54,17 +54,17 @@ void Filter::setDryWet(double dw)
 double Filter::process(double sample)
 {
     // Modulate cutoff
-    if (_mods[CUTOFF]->inUse())
+    if (mods_[CUTOFF]->inUse())
     {
-        double newCutoff = _mods[CUTOFF]->tick();
+        double newCutoff = mods_[CUTOFF]->tick();
         
         _calcCoefs(_mode, newCutoff, _q, _gain);
     }
     
     // And Q factor
-    if (_mods[Q]->inUse())
+    if (mods_[Q]->inUse())
     {
-        double newQ = _mods[Q]->tick();
+        double newQ = mods_[Q]->tick();
         
         _calcCoefs(_mode, _cutoff, newQ, _gain);
     }
@@ -83,10 +83,10 @@ double Filter::process(double sample)
     _delayA = temp;
     
     // Check the gain modulation
-    if (_mods[GAIN]->inUse())
+    if (mods_[GAIN]->inUse())
     {
         // Convert db to amplitude
-        double newGain = Util::dbToAmp(1,_mods[GAIN]->tick());
+        double newGain = Util::dbToAmp(1,mods_[GAIN]->tick());
         
         _calcCoefs(_mode, _cutoff, _q, newGain);
     }
@@ -94,9 +94,9 @@ double Filter::process(double sample)
     output *= _amp;
     
     // Set the dry/wet
-    if (_mods[DRYWET]->inUse())
+    if (mods_[DRYWET]->inUse())
     {
-        double newDryWet = _mods[DRYWET]->tick();
+        double newDryWet = mods_[DRYWET]->tick();
         
         // Call _dryWet with custom dry/wet value (instead of _dw)
         return _dryWet(sample, output, newDryWet);
@@ -245,7 +245,7 @@ void Filter::setCutoff(double cutoff)
     if (cutoff < 0 || cutoff > Global::nyquistLimit)
     { throw std::invalid_argument("Cutoff out of range, must be between 0 and nyquist limit (20 Khz)"); }
     
-    _mods[CUTOFF]->setBaseValue(cutoff);
+    mods_[CUTOFF]->setBaseValue(cutoff);
     
     _cutoff = cutoff;
     
@@ -263,7 +263,7 @@ void Filter::setQ(double q)
     if (q < 0.01 || q > 20)
     { throw std::invalid_argument("Bandwith out of range, must be between 0 and 20!"); }
     
-    _mods[Q]->setBaseValue(q);
+    mods_[Q]->setBaseValue(q);
     
     _q = q;
     
@@ -280,7 +280,7 @@ void Filter::setGain(double gain)
     if (gain < -20 || gain > 20)
     { throw std::invalid_argument("Gain out of range, must be between -20dB and +20dB! "); }
     
-    _mods[GAIN]->setBaseValue(gain);
+    mods_[GAIN]->setBaseValue(gain);
     
     _gain = gain;
     

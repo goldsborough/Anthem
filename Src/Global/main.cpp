@@ -28,15 +28,19 @@ int main(int argc, const char * argv[])
     
     op.addNote(440);
     
+    LFO lfo(WavetableDB::SINE);
+    
+    lfo.setFreq(20);
+    
     LFOSeq seq;
     
     seq.setModWavetable(0, WavetableDB::SINE);
     
-    //seq.setModFreq(0, 3);
-    
     seq.setModDepth(0, 0.5);
     
     seq.setSegBothLevels(0, 0.5);
+    
+    seq.attachMod_Seg(0,LFOSeq::MOD_FREQ, &lfo);
     
     op.attachMod(Operator::AMP, &seq);
     
@@ -48,6 +52,7 @@ int main(int argc, const char * argv[])
         
         seq.increment();
         op.increment();
+        lfo.increment();
         
         mixer.process(tick);
     }

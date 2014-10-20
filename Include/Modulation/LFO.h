@@ -387,9 +387,22 @@ public:
     
 private:
     
-    std::vector<LFO> lfos_;
+    struct Mod
+    {
+        Mod(double f = 1)
+        : freq(f)
+        { }
+        
+        LFO lfo;
+        
+        double freq;
+    };
     
-    void setScaledModFreq_(seg_t seg, double rate);
+    std::vector<Mod> lfos_;
+    
+    void setScaledModFreq_(seg_t seg);
+    
+    void resizeSegsFromRate_(double rate);
     
     /*! The current rate of the sequence */
     double rate_;
