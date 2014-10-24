@@ -58,9 +58,10 @@ double EnvSeg::tick()
     // tick after reaching the end amplitude
     // just return the end amplitude
     
-    if (curr_ >= 1) return endAmp_;
+    if (curr_ >= 1 || ! len_) return endAmp_;
     
     // Modulate members
+    // All together so we only call calcRange_ once
     if (mods_[RATE]->inUse()        ||
         mods_[START_LEVEL]->inUse() ||
         mods_[END_LEVEL]->inUse())
@@ -173,7 +174,7 @@ double EnvSeg::getRate() const
 
 EnvSegSeq::EnvSegSeq(EnvSegSeq::seg_t seqLen)
 : segs_(seqLen), currSample_(0), loopCount_(0),
-  loopMax_(0), loopInf_(false), lastTick_(0)
+  loopMax_(0), loopInf_(false), currSegNum_(0)
 {
     loopStart_ = loopEnd_ = segs_.end();
     
@@ -212,10 +213,9 @@ double EnvSegSeq::getSegEndLevel(seg_t seg) const
     return segs_[seg].getEndLevel();
 }
 
-
 void EnvSegSeq::setSegLen(seg_t seg, unsigned long ms)
 {
-    segs_[seg].setLen(ms * 44.1);
+    segs_[seg].setLen(ms * (Global::samplerate/1000));
 }
 
 unsigned long EnvSegSeq::getSegLen(seg_t seg) const
@@ -300,31 +300,9 @@ std::vector<EnvSeg>::size_type EnvSegSeq::size() const
     return segs_.size();
 }
 
-
-void EnvSegSeq::addSegment()
-{
-    segs_.push_back(EnvSeg());
-}
-
-void EnvSegSeq::removeLastSegment()
-{
-    if (segs_.empty())
-    { throw std::runtime_error("Cannot remove segment from LFOSeq if already empty!"); }
-    
-    segs_.pop_back();
-}
-
-void EnvSegSeq::removeSegment(seg_t seg)
-{
-    if (seg >= segs_.size())
-    { throw std::invalid_argument("Invalid segment index!"); }
-    
-    segs_.erase(segs_.begin() + seg);
-}
-
 void EnvSegSeq::changeSeg_(EnvSegSeq::segItr seg)
 {
-    currSeg_ = seg;
+    currSegNum_ = std::distance(segs_.begin(), seg);
     
     currSample_ = 0;
 }
@@ -335,6 +313,10 @@ void EnvSegSeq::resetLoop_()
     for (segItr itr = loopStart_; itr != loopEnd_; ++itr)
     { itr->reset(); }
     
+    // Set current segment to loop start
+    currSeg_ = loopStart_;
+    
+    // Change currSegNum_ and reset currSample
     changeSeg_(loopStart_);
     
     ++loopCount_;
@@ -343,7 +325,6 @@ void EnvSegSeq::resetLoop_()
 void EnvSegSeq::increment()
 {
     currSample_++;
-    
     currSeg_->increment();
 }
 
@@ -351,29 +332,22 @@ double EnvSegSeq::tick()
 {
     if (currSample_ >= currSeg_->getLen())
     {
-        if (currSeg_ != segs_.end()) currSeg_++;
+        // Increment segment
+        currSeg_++;
         
         // Check if we need to reset the loop
         if (currSeg_ == loopEnd_ && (loopInf_ || loopCount_ < loopMax_))
         { resetLoop_(); }
         
-        // send out the last good value if no more segments left
-        else if (currSeg_ == segs_.end()) return lastTick_;
+        // If we've reached the end, go back to last segment
+        // which will continue to tick its end amplitude value
+        else if (currSeg_ == segs_.end()) currSeg_--;
         
-        // else increment segment
-        else
-        {
-            changeSeg_(currSeg_);
-            
-            // Return last tick if the new segment has no length
-            if (! currSeg_->getLen()) return lastTick_;
-        }
+        // else change
+        else changeSeg_(currSeg_);
     }
 
-    lastTick_ = currSeg_->tick();
-    
-    return lastTick_;
-    
+    return currSeg_->tick();
 }
 
 ModEnvSegSeq::ModEnvSegSeq(seg_t numSegs,
@@ -428,6 +402,11 @@ void ModEnvSegSeq::detachMod_Seg(seg_t segNum,
     { throw std::invalid_argument("Segment index out of range!"); }
 
     segs_[segNum].detachMod(dockNum, modNum);
+}
+
+bool ModEnvSegSeq::dockInUse_Seg(seg_t segNum, index_t dockNum) const
+{
+    return segs_[segNum].dockInUse(dockNum);
 }
 
 void ModEnvSegSeq::setSidechain_Seg(seg_t segNum, index_t dockNum, index_t master, index_t slave)

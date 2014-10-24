@@ -150,7 +150,7 @@ void Operator::increment()
          itr != end;
          ++itr)
     {
-        ((*itr).get())->increment();
+        (*itr)->increment();
     }
 }
 
@@ -189,7 +189,7 @@ double Operator::tick()
          itr != end;
          ++itr)
     {
-        val += ((*itr).get())->tick();
+        val += (*itr)->tick();
     }
     
     double amp = _amp;

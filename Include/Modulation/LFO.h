@@ -314,15 +314,35 @@ public:
     
     short getModWavetableID(seg_t seg) const;
     
-    /*************************************************************************************************//*!
+    /******************************************************************************//*!
     *
-    *  @brief       Adds a segment to the sequence.
+    *  @brief      Adds a segment to the sequence.
     *
-    *  @details     Maximum number of segments is 10.
-    *
-    *****************************************************************************************************/
+    *********************************************************************************/
     
     void addSegment();
+    
+    /******************************************************************************//*!
+    *
+    *  @brief      Adds a segment to the sequence.
+    *
+    *  @param      pos The position where to insert the new segment.
+    *
+    *********************************************************************************/
+    
+    void insertSegment(seg_t pos);
+    
+    /******************************************************************************//*!
+    *
+    *  @brief      Adds a segment to the sequence.
+    *
+    *  @param      pos The position where to insert the new segment.
+    *
+    *  @param      seg The EnvSeg to insert.
+    *
+    *********************************************************************************/
+    
+    void insertSegment(seg_t pos, const EnvSeg& seg);
     
     /*************************************************************************************************//*!
     *
@@ -336,9 +356,7 @@ public:
     
     /*************************************************************************************************//*!
     *
-    *  @brief       Removes a segment from the sequence.
-    *
-    *  @param       seg The segment to return the depth from.
+    *  @brief       Removes the last segment from the sequence.
     *
     *  @throws      std::invalid_argument if segment number invalid.
     *
@@ -387,9 +405,9 @@ public:
     
 private:
     
-    struct Mod
+    struct LFOSeq_LFO
     {
-        Mod(double f = 1)
+        LFOSeq_LFO(double f = 1)
         : freq(f)
         { }
         
@@ -398,10 +416,17 @@ private:
         double freq;
     };
     
-    std::vector<Mod> lfos_;
+    /*! Vector of above Mod structs */
+    std::vector<LFOSeq_LFO> lfos_;
     
+    /*! Converts cycles per second to cycles per segment */
+    double getScaledModFreqValue_(seg_t seg, double freq) const;
+    
+    /*! Calls getScaledModFreqValue() for seg */
     void setScaledModFreq_(seg_t seg);
     
+    /*! Resets the length of all segments according 
+        to the sequence's rate parameter */
     void resizeSegsFromRate_(double rate);
     
     /*! The current rate of the sequence */

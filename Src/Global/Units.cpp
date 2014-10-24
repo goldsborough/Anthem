@@ -21,6 +21,33 @@ Unit::Unit(index_t numDocks)
     }
 }
 
+Unit::Unit(const Unit& other)
+: mods_(other.numDocks())
+{
+    if (this != &other)
+    {
+        for (index_t i = 0; i < mods_.size(); ++i)
+        {
+            mods_[i] = new ModDock(*other.mods_[i]);
+        }
+    }
+}
+
+Unit& Unit::operator=(const Unit& other)
+{
+    mods_.resize(other.mods_.size());
+    
+    if (this != &other)
+    {
+        for (index_t i = 0; i < mods_.size(); ++i)
+        {
+            mods_[i] = new ModDock(*other.mods_[i]);
+        }
+    }
+    
+    return *this;
+}
+
 Unit::~Unit()
 {
     for (std::vector<ModDock*>::iterator itr = mods_.begin(), end = mods_.end();
@@ -70,6 +97,11 @@ void Unit::detachMod(index_t dockNum,
     { throw std::invalid_argument("Dock index out of range!"); }
     
     mods_[dockNum]->detach(modNum);
+}
+
+bool Unit::dockInUse(index_t dockNum) const
+{
+    return mods_[dockNum]->inUse();
 }
 
 void Unit::setSidechain(index_t dockNum, index_t master, index_t slave)

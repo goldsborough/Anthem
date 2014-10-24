@@ -308,34 +308,6 @@ public:
     
     /******************************************************************************//*!
     *
-    *  @brief      Adds a segment to the sequence.
-    *
-    *********************************************************************************/
-    
-    virtual void addSegment();
-    
-    /*************************************************************************************************//*!
-    *
-    *  @brief       Removes the last segment from the sequence.
-    *
-    *  @throws      std::runtime_error if segment number is 0.
-    *
-    *****************************************************************************************************/
-    
-    virtual void removeLastSegment();
-    
-    /*************************************************************************************************//*!
-    *
-    *  @brief       Removes the last segment from the sequence.
-    *
-    *  @throws      std::invalid_argument if segment number invalid.
-    *
-    *****************************************************************************************************/
-    
-    virtual void removeSegment(seg_t seg);
-    
-    /******************************************************************************//*!
-    *
     *  @brief      Sets the rate of a segment.
     *
     *  @param      seg The segment in the sequence.
@@ -433,7 +405,7 @@ public:
     *********************************************************************************/
     
     virtual void setSegBothLevels(seg_t seg, double lv);
-        
+    
     /******************************************************************************//*!
     *
     *  @brief       Sets the length of a segment.
@@ -443,7 +415,7 @@ public:
     *  @param       ms The new length of the segment, in milliseconds.
     *
     *********************************************************************************/
-
+    
     virtual void setSegLen(seg_t seg, unsigned long ms);
     
     /******************************************************************************//*!
@@ -563,6 +535,9 @@ protected:
     /*! The number of samples passed since starting the current segment */
     unsigned long currSample_;
     
+    /*! Number of the current segment in the sequence */
+    seg_t currSegNum_;
+    
     /*! Iterator pointing to the current segment */
     segItr currSeg_;
     
@@ -580,9 +555,6 @@ protected:
  
     /*! Boolean whether or not to loop infinitely */
     bool loopInf_;
-    
-    /*! The last ticked value */
-    double lastTick_;
     
     /*! The segment sequence */
     std::vector<EnvSeg> segs_;
@@ -688,6 +660,20 @@ public:
     *****************************************************************************************************/
     
     virtual void detachMod_Seg(seg_t segNum, index_t dockNum, index_t modNum);
+    
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Returns boolean whether or not a dock of a segment is in use.
+    *
+    *  @param       segNum The segment index in the sequence to do this for.
+    *
+    *  @param       dockNum The dock number of the modulation unit (e.g. Operator::AMP).
+    *
+    *  @return      True if dock has at least one ModUnit, else false.
+    *
+    *****************************************************************************************************/
+    
+    virtual bool dockInUse_Seg(seg_t segNum, index_t dockNum) const;
     
     /*********************************************************************************************//*!
     *

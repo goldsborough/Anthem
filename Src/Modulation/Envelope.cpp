@@ -5,7 +5,7 @@
 Envelope::Envelope(bool sustainEnabled)
 
 : ModEnvSegSeq(7,1), sustainEnabled_(sustainEnabled),
-  currSegNum_(DEL)
+  currSegNum_(DEL), lastTick_(0)
 
 {
     currSeg_ = segs_.begin() + DEL;

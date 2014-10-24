@@ -15,7 +15,6 @@
 #ifndef __Anthem__Units__
 #define __Anthem__Units__
 
-#include <vector>
 #include "Wavetable.h"
 
 class ModDock;
@@ -49,6 +48,10 @@ public:
     *****************************************************************************************************/
     
     Unit(index_t numDocks = 0);
+    
+    Unit(const Unit& other);
+    
+    Unit& operator=(const Unit& other);
     
     /*************************************************************************************************//*!
     *
@@ -89,6 +92,19 @@ public:
     *****************************************************************************************************/
     
     virtual double getModUnitDepth(index_t dockNum, index_t modNum) const;
+    
+    
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Returns boolean whether or not a dock is in use.
+    *
+    *  @param       dockNum The dock number of the modulation unit (e.g. Operator::AMP).
+    *
+    *  @return      True if dock has at least one ModUnit, else false.
+    *
+    *****************************************************************************************************/
+    
+    virtual bool dockInUse(index_t dockNum) const;
     
     /*************************************************************************************************//*!
     *

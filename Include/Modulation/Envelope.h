@@ -226,6 +226,9 @@ private:
     /*! Resets the loop segments and changes to hidden connector segment */
     void resetLoop_();
     
+    /*! The last ticked value */
+    double lastTick_;
+    
     /*! Whether or not to return the last tick forever after SEG_C finished */
     bool sustainEnabled_;
     

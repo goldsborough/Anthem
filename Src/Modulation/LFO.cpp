@@ -19,8 +19,8 @@
 LFO::LFO(short wt, double rate, double amp, double phaseOffset)
 : Oscillator(wt,rate,amp,phaseOffset), ModUnit(3,amp)
 {
-    mods_[FREQ]->setHigherBoundary(Global::nyquistLimit);
-    mods_[FREQ]->setHigherBoundary(0);
+    mods_[FREQ]->setHigherBoundary(100);
+    mods_[FREQ]->setLowerBoundary(0);
     mods_[FREQ]->setBaseValue(rate);
     
     mods_[PHASE]->setHigherBoundary(360);
@@ -146,24 +146,28 @@ LFOSeq::LFOSeq(unsigned short seqLength, double rate)
     mods_[RATE]->setBaseValue(rate);
 }
 
-void LFOSeq::setScaledModFreq_(seg_t seg)
+double LFOSeq::getScaledModFreqValue_(seg_t seg, double freq) const
 {
     // Since the rate is the cycles per segment
     // and not cycles per second, we get the
     // "period" of the segment and multiply that
     // by the rate, giving the mod wave's frequency.
     
-    if (segs_[seg].getLen() > 0)
-    {
-        // To go from samples to Hertz, simply
-        // divide the samplerate by the length
-        // in samples e.g. 44100 / 22050 = 2 Hz
-        double freq = (Global::samplerate / static_cast<double>(segs_[seg].getLen()));
-        
-        freq *= lfos_[seg].freq;
-        
-        lfos_[seg].lfo.setFreq(freq);
-    }
+    if (! segs_[seg].getLen()) return 0;
+    
+    // To go from samples to Hertz, simply
+    // divide the samplerate by the length
+    // in samples e.g. 44100 / 22050 = 2 Hz
+    double temp = (Global::samplerate / static_cast<double>(segs_[seg].getLen()));
+    
+    // Multiply by wanted frequency
+    return freq * temp;
+}
+
+void LFOSeq::setScaledModFreq_(seg_t seg)
+{
+    // Set to frequency of lfo
+    lfos_[seg].lfo.setFreq(getScaledModFreqValue_(seg, lfos_[seg].freq));
 }
 
 void LFOSeq::resizeSegsFromRate_(double rate)
@@ -171,13 +175,10 @@ void LFOSeq::resizeSegsFromRate_(double rate)
     // get the period, divide up into _segNum pieces
     double len = (1.0 / rate) / segs_.size();
     
-    // seconds to milliseconds
-    len *= 1000;
-    
     // Set all segment's lengths
     for (int i = 0; i < segs_.size(); i++)
     {
-        EnvSegSeq::setSegLen(i, len);
+        segs_[i].setLen(len * Global::samplerate);
         
         // Scale frequency of mods according to length
         setScaledModFreq_(i);
@@ -292,19 +293,66 @@ double LFOSeq::getModPhaseOffset(seg_t seg)
     return lfos_[seg].lfo.getPhaseOffset();
 }
 
+void LFOSeq::insertSegment(seg_t pos, const EnvSeg& seg)
+{
+    if (pos > segs_.size())
+    { throw std::invalid_argument("Invalid insertion position!"); }
+    
+    // pushing back a segment is faster and simpler than insertion
+    else if (pos == segs_.size() && segs_.size() + 1 < segs_.capacity())
+    { addSegment(); }
+    
+    // Store distances because the iterators will be invalidated
+    seg_t start = std::distance(segs_.begin(), loopStart_);
+    seg_t end = std::distance(segs_.begin(), loopEnd_);
+    
+    // Positions that are greater than the insertion point have to
+    // increment together with the segment they refer to
+    if (end > pos) ++end;
+    
+    if (start > pos) ++start;
+    
+    // Note the greater or equal
+    if (currSegNum_ >= pos) ++currSegNum_;
+    
+    segs_.insert(segs_.begin() + pos, seg);
+    
+    // Set iterators to valid items now
+    loopEnd_ = segs_.begin() + end;
+    loopStart_ = segs_.begin() + start;
+    
+    currSeg_ = segs_.begin() + currSegNum_;
+    
+    resizeSegsFromRate_(rate_);
+    
+    lfos_.insert(lfos_.begin() + pos, LFOSeq_LFO());
+}
+
+void LFOSeq::insertSegment(seg_t pos)
+{
+    insertSegment(pos, EnvSeg());
+}
+
 void LFOSeq::addSegment()
 {
-    ModEnvSegSeq::addSegment();
-    lfos_.push_back(Mod());
+    // If there will be a re-allocation we need to update
+    // iterators whicc is done in insertSegment()
+    if (segs_.size() + 1 == segs_.capacity())
+    { insertSegment(segs_.size() - 1); }
+    
+    else
+    {
+        segs_.push_back(EnvSeg());
+        
+        resizeSegsFromRate_(rate_);
+        
+        lfos_.push_back(LFOSeq_LFO());
+    }
 }
 
 void LFOSeq::removeLastSegment()
 {
-    if (segs_.empty())
-    { throw std::runtime_error("Cannot remove segment from LFOSeq if already empty!"); }
-    
-    ModEnvSegSeq::removeLastSegment();
-    lfos_.pop_back();
+    removeSegment(segs_.size() - 1);
 }
 
 void LFOSeq::removeSegment(seg_t seg)
@@ -312,7 +360,32 @@ void LFOSeq::removeSegment(seg_t seg)
     if (seg >= segs_.size())
     { throw std::invalid_argument("Invalid segment index!"); }
     
+    // Store distances because the iterators will be invalidated
+    seg_t start = std::distance(segs_.begin(), loopStart_);
+    seg_t end = std::distance(segs_.begin(), loopEnd_);
+    
+    if (end > seg) --end;
+    
+    if (start > seg) --start;
+    
+    if (currSegNum_ > seg) --currSegNum_;
+    
     segs_.erase(segs_.begin() + seg);
+    
+    // Set iterators to valid items now
+    loopEnd_ = segs_.begin() + end;
+    loopStart_ = segs_.begin() + start;
+    
+    currSeg_ = segs_.begin() + currSegNum_;
+    
+    if (seg == currSegNum_)
+    {
+        // Change segment to new current one
+        changeSeg_(currSeg_);
+    }
+    
+    resizeSegsFromRate_(rate_);
+    
     lfos_.erase(lfos_.begin() + seg);
 }
 
@@ -482,7 +555,7 @@ void LFOSeq::increment()
 {
     ModEnvSegSeq::increment();
     
-    for (std::vector<Mod>::iterator itr = lfos_.begin(), end = lfos_.end();
+    for (std::vector<LFOSeq_LFO>::iterator itr = lfos_.begin(), end = lfos_.end();
          itr != end;
          ++itr)
     {

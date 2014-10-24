@@ -34,13 +34,18 @@ int main(int argc, const char * argv[])
     
     LFOSeq seq;
     
-    seq.setModWavetable(0, WavetableDB::SINE);
+    for (int i = 0; i < 10; ++i)
+    {
+        seq.setSegBothLevels(i, 1);
+    }
     
-    seq.setModDepth(0, 0.5);
+    seq.setModWavetable(0, WavetableDB::SINE);
     
     seq.setSegBothLevels(0, 0.5);
     
-    seq.attachMod_Seg(0,LFOSeq::MOD_FREQ, &lfo);
+    seq.setModDepth(0, 0.5);
+    
+    seq.attachMod_Seg(0, LFOSeq::MOD_DEPTH, &lfo);
     
     op.attachMod(Operator::AMP, &seq);
     
@@ -49,6 +54,8 @@ int main(int argc, const char * argv[])
     for (int i = 0; i < len; ++i)
     {
         double tick = op.tick();
+        
+        tick *= seq.tick();
         
         seq.increment();
         op.increment();
