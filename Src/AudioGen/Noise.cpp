@@ -117,5 +117,5 @@ double Noise::tick()
     if (mods_[AMP]->inUse())
     { return value * mods_[AMP]->tick(); }
     
-    return value * _amp;
+    return value * amp_;
 }

@@ -30,26 +30,21 @@ int main(int argc, const char * argv[])
     
     LFO lfo(WavetableDB::SINE);
     
-    LFOSeq seq;
+    Envelope env;
     
-    for (int i = 0; i < 10; ++i)
-    {
-        seq.setSegBothLevels(i, i/10.0);
-    }
+    env.setSegLevel(1, 0.9);
     
-    seq.setRate(0.5);
+    env.setSustainEnabled(true);
     
-    op.attachMod(Operator::AMP, &seq);
+    op.attachMod(Operator::AMP, &env);
     
     Mixer mixer(0,1);
     
     for (int i = 0; i < len; ++i)
     {
         double tick = op.tick();
-        
-        tick *= seq.tick();
-        
-        seq.increment();
+    
+        env.increment();
         op.increment();
         lfo.increment();
         

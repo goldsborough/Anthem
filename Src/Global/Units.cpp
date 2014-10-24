@@ -150,7 +150,7 @@ unsigned long Unit::dockSize(index_t dockNum) const
 }
 
 EffectUnit::EffectUnit(unsigned short dockNum, double dryWet)
-: _dw(dryWet), Unit(dockNum)
+: dw_(dryWet), Unit(dockNum)
 { }
 
 void EffectUnit::setDryWet(double dw)
@@ -158,26 +158,26 @@ void EffectUnit::setDryWet(double dw)
     if (dw < 0 || dw > 1)
     { throw std::invalid_argument("Dry/wet level must be between 0 and 1!"); }
     
-    _dw = dw;
+    dw_ = dw;
 }
 
 double EffectUnit::getDryWet() const
 {
-    return _dw;
+    return dw_;
 }
 
-double EffectUnit::_dryWet(double originalSample, double processedSample)
+double EffectUnit::dryWet_(double originalSample, double processedSample)
 {
-    return (originalSample * (1 - _dw)) + (processedSample * _dw);
+    return (originalSample * (1 - dw_)) + (processedSample * dw_);
 }
 
-double EffectUnit::_dryWet(double originalSample, double processedSample, double dryWet)
+double EffectUnit::dryWet_(double originalSample, double processedSample, double dryWet)
 {
     return (originalSample * (1 - dryWet)) + (processedSample * dryWet);
 }
 
 GenUnit::GenUnit(unsigned short dockNum, double amp)
-: Unit(dockNum), _amp(amp)
+: Unit(dockNum), amp_(amp)
 { }
 
 void GenUnit::setAmp(double amp)
@@ -185,16 +185,16 @@ void GenUnit::setAmp(double amp)
     if (amp < 0 || amp > 1)
     { throw std::invalid_argument("Amplitude must be between 0 and 1!"); }
     
-    _amp = amp;
+    amp_ = amp;
 }
 
 double GenUnit::getAmp() const
 {
-    return _amp;
+    return amp_;
 }
 
 ModUnit::ModUnit(unsigned short dockNum, double amp)
-: Unit(dockNum), _amp(amp)
+: Unit(dockNum), amp_(amp)
 { }
 
 void ModUnit::setAmp(double amp)
@@ -202,10 +202,10 @@ void ModUnit::setAmp(double amp)
     if (amp < 0 || amp > 1)
     { throw std::invalid_argument("Amplitude must be between 0 and 1!"); }
     
-    _amp = amp;
+    amp_ = amp;
 }
 
 double ModUnit::getAmp() const
 {
-    return _amp;
+    return amp_;
 }

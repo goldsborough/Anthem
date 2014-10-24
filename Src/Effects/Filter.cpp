@@ -91,18 +91,18 @@ double Filter::process(double sample)
         _calcCoefs(_mode, _cutoff, _q, newGain);
     }
     
-    output *= _amp;
+    output *= amp_;
     
     // Set the dry/wet
     if (mods_[DRYWET]->inUse())
     {
         double newDryWet = mods_[DRYWET]->tick();
         
-        // Call _dryWet with custom dry/wet value (instead of _dw)
-        return _dryWet(sample, output, newDryWet);
+        // Call dryWet_ with custom dry/wet value (instead of dw_)
+        return dryWet_(sample, output, newDryWet);
     }
     
-    return _dryWet(sample, output);
+    return dryWet_(sample, output);
 }
 
 void Filter::_calcCoefs(short mode, double cutoff, double q, double gain)
@@ -285,7 +285,7 @@ void Filter::setGain(double gain)
     _gain = gain;
     
     // Convert decibels to amplitude
-    _amp = Util::dbToAmp(1,gain);
+    amp_ = Util::dbToAmp(1,gain);
     
     _calcCoefs(_mode,_cutoff,_q, _gain);
 }

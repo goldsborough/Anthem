@@ -201,7 +201,7 @@ public:
 protected:
     
     /*! The amplitude value */
-    double amp_;
+    double amplitude_;
     
     /*! The current frequency */
     double freq_;

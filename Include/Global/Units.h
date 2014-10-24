@@ -312,16 +312,16 @@ public:
 protected:
     
     /*! Method that controls the dry/wet content of the signal */
-    double _dryWet(double originalSample,
+    double dryWet_(double originalSample,
                    double processedSample);
     
-    /*! Overloaded version of _dryWet for setting a custom dryWet value */
-    double _dryWet(double originalSample,
+    /*! Overloaded version of dryWet_ for setting a custom dryWet value */
+    double dryWet_(double originalSample,
                    double processedSample,
                    double dryWetValue);
     
     /*! Dry/wet level */
-    double _dw;
+    double dw_;
 };
 
 /*********************************************************************************************//*!
@@ -330,7 +330,7 @@ protected:
 *
 *  @details     This is the base class for all Units that generate samples, such as Oscillators,
 *               Operators, Envelopes and more. Its members are a pure virtual method for generating
-*               a sample, tick(), as well as an amplitude member, _amp, along with a method to
+*               a sample, tick(), as well as an amplitude member, amp_, along with a method to
 *               set the amplitude.
 *
 *  @see         EffectUnit
@@ -395,7 +395,7 @@ public:
 protected:
     
     /*! The current amplitude value */
-    double _amp;
+    double amp_;
 };
 
 class ModUnit : public Unit
@@ -446,7 +446,7 @@ public:
 protected:
     
     /*! The amplitude value */
-    double _amp;
+    double amp_;
 };
 
 #endif /* defined(__Anthem__Units__) */

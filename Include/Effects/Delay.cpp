@@ -230,10 +230,10 @@ double Delay::process(double sample)
     {
         double newDryWet = mods_[DRYWET]->tick();
         
-        return _dryWet(sample, output, newDryWet);
+        return dryWet_(sample, output, newDryWet);
     }
     
-    return _dryWet(sample, output);
+    return dryWet_(sample, output);
 }
 
 Delay::~Delay()

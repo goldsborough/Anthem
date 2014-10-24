@@ -231,9 +231,6 @@ private:
     
     /*! Whether or not to return the last tick forever after SEG_C finished */
     bool sustainEnabled_;
-    
-    /*! Current segment number in the sequence */
-    seg_t currSegNum_;
 };
 
 #endif /* defined(__Anthem__Envelope__) */

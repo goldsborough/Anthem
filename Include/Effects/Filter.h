@@ -213,7 +213,7 @@ private:
     double _gain;
     
     /*! The amplitude value obtained from the gain value */
-    double _amp;
+    double amp_;
     
     /*! The first delay buffer */
     double _delayA;

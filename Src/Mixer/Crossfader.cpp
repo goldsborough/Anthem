@@ -139,7 +139,7 @@ double Crossfader::modulate(double sample, double depth, double maximum)
     double right = (_rightUnit) ? _rightUnit->modulate(sample, depth, maximum) * this->right() : 0;
     
     // Return the combined value 
-    return (left + right) * _amp;
+    return (left + right) * amp_;
 }
 
 void Crossfader::setLeftUnit(ModUnit* unit)

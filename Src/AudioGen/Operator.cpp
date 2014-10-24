@@ -192,7 +192,10 @@ double Operator::tick()
         val += (*itr)->tick();
     }
     
-    double amp = _amp;
+    // Fix this: amp_ can be set directly because of ModDock base value
+    // Also for LFO?
+    
+    double amp = amp_;
     
     // Check modulation dock for the amplitude parameter
     if (mods_[AMP]->inUse())

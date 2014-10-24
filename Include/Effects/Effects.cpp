@@ -56,9 +56,9 @@ void Reverb::setDryWet(double dw)
     
     mods_[DRYWET]->setBaseValue(dw);
     
-    _dw = dw;
+    dw_ = dw;
     
-    _attenuation = 1 - _dw;
+    _attenuation = 1 - dw_;
     
     if (_attenuation < 0.25)
     { _attenuation = 0.25; }
@@ -104,11 +104,11 @@ double Reverb::process(double sample)
     {
         double dw = mods_[DRYWET]->tick();
         
-        // Call _dryWet with custom dry/wet value (instead of _dw)
-        return _dryWet(sample, output, dw);
+        // Call dryWet_ with custom dry/wet value (instead of dw_)
+        return dryWet_(sample, output, dw);
     }
     
-    return _dryWet(sample, output);
+    return dryWet_(sample, output);
 }
 
 void Reverb::setReverbRate(double reverbRate)
@@ -204,7 +204,7 @@ double Flanger::process(double sample)
     
     output += _delay.process(output);
     
-    return _dryWet(sample, output);
+    return dryWet_(sample, output);
 }
 
 Flanger::~Flanger()

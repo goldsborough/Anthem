@@ -18,7 +18,7 @@ Oscillator::Oscillator(short wt,
                        double amp,
                        short phaseOffset)
 
-: amp_(amp), ind_(0), phaseOffset_(phaseOffset)
+: amplitude_(amp), ind_(0), phaseOffset_(phaseOffset)
 
 {
     wt_ = wavetableDB[wt];
@@ -43,12 +43,12 @@ void Oscillator::setAmp(double amp)
     if (amp < 0 || amp > 1)
     { throw std::invalid_argument("Amplitude must be between 0 and 1!"); }
     
-    amp_ = amp;
+    amplitude_ = amp;
 }
 
 double Oscillator::getAmp() const
 {
-    return amp_;
+    return amplitude_;
 }
 
 void Oscillator::setSemitoneOffset(short semitoneOffset)
@@ -161,5 +161,5 @@ double Oscillator::tick()
     if (wt_.id() == -1) return 0;
         
     // Grab a value through interpolation from the wavetable
-    return wt_.interpolate(ind_) * amp_;
+    return wt_.interpolate(ind_) * amplitude_;
 }

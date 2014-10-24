@@ -340,10 +340,10 @@ double EnvSegSeq::tick()
 }
 
 ModEnvSegSeq::ModEnvSegSeq(seg_t numSegs,
-                           seg_t dockNum,
-                           double amp)
+                           seg_t numDocks,
+                           double masterAmp)
 : EnvSegSeq(numSegs),
-  ModUnit(dockNum + 2,amp)
+  ModUnit(numDocks + 2,masterAmp)
 { }
 
 std::vector<ModDock*>::size_type ModEnvSegSeq::numDocks_Seg(seg_t segNum) const
@@ -447,14 +447,14 @@ unsigned long ModEnvSegSeq::dockSize_Seg(seg_t segNum, index_t dockNum) const
 }
 
 ModEnvSegSeqFlexible::ModEnvSegSeqFlexible(seg_t numSegs,
-                                           seg_t dockNum,
-                                           double amp)
-: ModEnvSegSeq(numSegs,dockNum,amp)
+                                           seg_t numDocks,
+                                           double masterAmp)
+: ModEnvSegSeq(numSegs,numDocks,masterAmp)
 { }
 
 void ModEnvSegSeqFlexible::setSegLen(seg_t seg, unsigned long ms)
 {
-    segs_[seg].setLen(ms * (Global::samplerate/1000));
+    segs_[seg].setLen(ms * (Global::samplerate/1000.0));
 }
 
 unsigned long ModEnvSegSeqFlexible::getSegLen(seg_t seg) const

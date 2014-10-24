@@ -568,7 +568,7 @@ double LFOSeq::modulate(double sample, double depth, double)
         resizeSegsFromRate_(mods_[RATE]->tick());
     }
     
-    return sample * tick() * depth * _amp;
+    return sample * tick() * depth * amp_;
 }
 
 LFOUnit::LFOUnit(unsigned short mode)
@@ -633,5 +633,5 @@ double LFOUnit::modulate(double sample, double depth, double maximum)
 {
     // Tick the crossfaded value from the lfos and multiply by the envelope
     // value and the total amplitude value
-    return fader.modulate(sample, depth, maximum) * env.tick() * _amp;
+    return fader.modulate(sample, depth, maximum) * env.tick() * amp_;
 }

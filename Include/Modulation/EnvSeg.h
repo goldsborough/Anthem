@@ -541,10 +541,10 @@ protected:
 *
 *  @brief      An EnvSegSeq with ModDocks.
 *
-*  @details
-*
-*
-*
+*  @details    ModEnvSegSeq is an abstract class that implements methods for
+*              envelope classes that have to handle the modulation of their
+*              own ModDocks (e.g. for rate or master depth) as well as those
+*              of their segments (rate, amplitude).
 *
 *********************************************************************************/
 
@@ -553,9 +553,19 @@ class ModEnvSegSeq : public EnvSegSeq, public ModUnit
     
 public:
     
+    /******************************************************************************//*!
+    *
+    *  @param       numSegs The number of segments in the sequence.
+    *
+    *  @param       numDocks The number of ModDocks for the sequence (not segments).
+    *
+    *  @param       amp An initial master amplitude value for the sequence.
+    *
+    *********************************************************************************/
+    
     ModEnvSegSeq(seg_t numSegs,
-                 seg_t dockNum = 0,
-                 double amp = 1);
+                 seg_t numDocks = 0,
+                 double masterAmp = 1);
     
     virtual ~ModEnvSegSeq() { }
     
@@ -757,14 +767,30 @@ public:
     virtual unsigned long dockSize_Seg(seg_t segNum, index_t dockNum) const;
 };
 
+/******************************************************************************//*!
+ *
+ *  @brief      An Extension to the ModEnvSegSeq for flexible segment lengths.
+ *
+ *  @details    Neither the EnvSegSeq nor the ModEnvSegSeq classes allow for
+ *              the adjustment of segments' length because some classes that
+ *              inherit from them, like LFOSeq, don't let the user adjust the
+ *              lengths of individual segments. This class extends ModEnvSegSeq
+ *              and implements two methods for getting and setting an individual
+ *              segment's length.
+ *
+ *********************************************************************************/
+
 class ModEnvSegSeqFlexible : public ModEnvSegSeq
 {
     
 public:
     
+    /*! @copydoc ModEnvSegSeq::ModEnvSegSeq() */
     ModEnvSegSeqFlexible(seg_t numSegs,
-                         seg_t dockNum = 0,
-                         double amp = 1);
+                         seg_t numDocks = 0,
+                         double masterAmp = 1);
+    
+    virtual ~ModEnvSegSeqFlexible() { }
     
     /******************************************************************************//*!
     *

@@ -5,7 +5,7 @@
 Envelope::Envelope(bool sustainEnabled)
 
 : ModEnvSegSeqFlexible(7,1), sustainEnabled_(sustainEnabled),
-  currSegNum_(DEL), lastTick_(0)
+  lastTick_(0)
 
 {
     currSeg_ = segs_.begin() + DEL;
@@ -15,16 +15,16 @@ Envelope::Envelope(bool sustainEnabled)
     // too long to be noticed too much but just enough
     // to prevent transitions between loops from being
     // too abrupt
-    segs_[CONNECTOR].setLen(Global::samplerate / 40);
+    segs_[CONNECTOR].setLen(Global::samplerate / 40.0);
     
     // Initial settings
     setSegLevel(ATK, 0.8);
     setSegLen(ATK, 500);
-    setSegRate(ATK, 0.8);
+    setSegRate(ATK, 1.2);
     
     setSegLevel(SEG_A, 0.5);
     setSegLen(SEG_A, 500);
-    setSegRate(SEG_A, 0.8);
+    setSegRate(SEG_A, 1.2);
     
     setSegRate(REL, 0.6);
     setSegLen(REL, 500);
@@ -51,15 +51,17 @@ double Envelope::getAmp() const
         return mods_[AMP]->getBaseValue();
     }
     
-    else return _amp;
+    else return amp_;
 }
 
 void Envelope::changeSeg_(segItr seg)
 {
-    EnvSegSeq::changeSeg_(seg);
+    currSeg_ = seg;
     
-    currSegNum_ = seg - segs_.begin();
+    currSample_ = 0;
 
+    currSegNum_ = std::distance(segs_.begin(), seg);
+    
     // If we just changed to the release segment
     // set the start level of the segment to the
     // last ticked value, (because note-off could be
@@ -83,29 +85,26 @@ void Envelope::resetLoop_()
     
     // no need for connecting segment if the amplitude
     // is the same e.g. for the constant sustain
-    if (lastTick_ == loopStart_->getStartLevel())
+    if (loopEnd_->getEndLevel() == loopStart_->getStartLevel())
     {
         changeSeg_(loopStart_);
     }
     
     else
     {
-        // Set currSeg_ to connector segment
-        changeSeg_(segs_.end() - 1);
+        // Update values
+        changeSeg_(segs_.begin() + CONNECTOR);
         
+        // Reset the connector segment first
         currSeg_->reset();
     }
 }
 
 double Envelope::tick_()
 {
-    if (currSample_++ >= currSeg_->getLen())
+    if (currSample_ >= currSeg_->getLen())
     {
-        // If we're crossing over the release segment, just return 0
-        if (currSegNum_ == REL)
-        {
-            return 0;
-        }
+        if (currSegNum_ == REL) return 0;
         
         // If this is the end of the connecting segment, change back to the
         // loop start
@@ -116,23 +115,21 @@ double Envelope::tick_()
         
         // If we reached the loop end segment and there are more loops to go
         // through, reset the loop
-        else if (currSeg_ == loopEnd_ && ( loopInf_ || loopCount_++ < loopMax_))
-        {
-           resetLoop_();
-        }
+        else if (currSeg_ == loopEnd_ && (loopInf_ || loopCount_++ < loopMax_))
+        { resetLoop_(); }
         
         // if we reached the end of segment c and the sustain is set to infinity
         // return the last tick
         else if (currSegNum_ == SEG_C && sustainEnabled_)
-        {
-           return lastTick_;
-        }
+        { return lastTick_; }
         
         else
         {
+            // Change to next segment
             changeSeg_(++currSeg_);
             
-            if ( ! currSeg_->getLen() ) return lastTick_;
+            // Return last tick if the new segment has no length
+            if (! currSeg_->getLen()) return lastTick_;
         }
     }
     
@@ -148,10 +145,10 @@ double Envelope::modulate(double sample, double depth, double)
     // Modulate
     if (mods_[AMP]->inUse())
     {
-        _amp = mods_[AMP]->tick();
+        amp_ = mods_[AMP]->tick();
     }
     
-    return ret * _amp;
+    return ret * amp_;
 }
 
 void Envelope::setLoopStart(seg_t seg)
@@ -187,9 +184,7 @@ void Envelope::setSegLevel(seg_t seg, double lv)
     
     // Delay is always sustain so also set start level
     if (seg == DEL)
-    {
-        segs_[DEL].setStartLevel(lv);
-    }
+    { segs_[DEL].setStartLevel(lv); }
     
     // Set new linked levels
     EnvSegSeq::setLinkedLevel(seg, lv);
