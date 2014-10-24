@@ -213,17 +213,6 @@ double EnvSegSeq::getSegEndLevel(seg_t seg) const
     return segs_[seg].getEndLevel();
 }
 
-void EnvSegSeq::setSegLen(seg_t seg, unsigned long ms)
-{
-    segs_[seg].setLen(ms * (Global::samplerate/1000));
-}
-
-unsigned long EnvSegSeq::getSegLen(seg_t seg) const
-{
-    return segs_[seg].getLen();
-}
-
-
 void EnvSegSeq::setSegBothLevels(seg_t seg, double lv)
 {
     setSegStartLevel(seg, lv);
@@ -455,4 +444,20 @@ unsigned long ModEnvSegSeq::dockSize_Seg(seg_t segNum, index_t dockNum) const
     { throw std::invalid_argument("Segment index out of range!"); }
     
     return segs_[segNum].dockSize(dockNum);
+}
+
+ModEnvSegSeqFlexible::ModEnvSegSeqFlexible(seg_t numSegs,
+                                           seg_t dockNum,
+                                           double amp)
+: ModEnvSegSeq(numSegs,dockNum,amp)
+{ }
+
+void ModEnvSegSeqFlexible::setSegLen(seg_t seg, unsigned long ms)
+{
+    segs_[seg].setLen(ms * (Global::samplerate/1000));
+}
+
+unsigned long ModEnvSegSeqFlexible::getSegLen(seg_t seg) const
+{
+    return segs_[seg].getLen();
 }

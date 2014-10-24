@@ -30,22 +30,14 @@ int main(int argc, const char * argv[])
     
     LFO lfo(WavetableDB::SINE);
     
-    lfo.setFreq(20);
-    
     LFOSeq seq;
     
     for (int i = 0; i < 10; ++i)
     {
-        seq.setSegBothLevels(i, 1);
+        seq.setSegBothLevels(i, i/10.0);
     }
     
-    seq.setModWavetable(0, WavetableDB::SINE);
-    
-    seq.setSegBothLevels(0, 0.5);
-    
-    seq.setModDepth(0, 0.5);
-    
-    seq.attachMod_Seg(0, LFOSeq::MOD_DEPTH, &lfo);
+    seq.setRate(0.5);
     
     op.attachMod(Operator::AMP, &seq);
     

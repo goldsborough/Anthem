@@ -408,30 +408,6 @@ public:
     
     /******************************************************************************//*!
     *
-    *  @brief       Sets the length of a segment.
-    *
-    *  @param       seg The segment in the sequence.
-    *
-    *  @param       ms The new length of the segment, in milliseconds.
-    *
-    *********************************************************************************/
-    
-    virtual void setSegLen(seg_t seg, unsigned long ms);
-    
-    /******************************************************************************//*!
-    *
-    *  @brief      Returns the current length of a segment.
-    *
-    *  @param     seg The segment, of which to get the length.
-    *
-    *  @return     The length of a segment.
-    *
-    *********************************************************************************/
-    
-    virtual unsigned long getSegLen(seg_t seg) const;
-    
-    /******************************************************************************//*!
-    *
     *  @brief       Sets the sequence's loop start segment.
     *
     *  @param       seg The segment to start the loop from.
@@ -779,6 +755,40 @@ public:
     *************************************************************************************************/
     
     virtual unsigned long dockSize_Seg(seg_t segNum, index_t dockNum) const;
+};
+
+class ModEnvSegSeqFlexible : public ModEnvSegSeq
+{
+    
+public:
+    
+    ModEnvSegSeqFlexible(seg_t numSegs,
+                         seg_t dockNum = 0,
+                         double amp = 1);
+    
+    /******************************************************************************//*!
+    *
+    *  @brief       Sets the length of a segment.
+    *
+    *  @param       seg The segment in the sequence.
+    *
+    *  @param       ms The new length of the segment, in milliseconds.
+    *
+    *********************************************************************************/
+    
+    virtual void setSegLen(seg_t seg, unsigned long ms);
+    
+    /******************************************************************************//*!
+    *
+    *  @brief      Returns the current length of a segment.
+    *
+    *  @param     seg The segment, of which to get the length.
+    *
+    *  @return     The length of a segment.
+    *
+    *********************************************************************************/
+    
+    virtual unsigned long getSegLen(seg_t seg) const;
 };
 
 #endif /* defined(__Anthem__EnvSeg__) */

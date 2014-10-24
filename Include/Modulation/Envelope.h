@@ -36,7 +36,7 @@
 *
 *************************************************************************************************/
 
-class Envelope : public ModEnvSegSeq
+class Envelope : public ModEnvSegSeqFlexible
 {
 public:
 

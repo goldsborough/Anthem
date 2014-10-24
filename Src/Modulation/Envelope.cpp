@@ -4,7 +4,7 @@
 
 Envelope::Envelope(bool sustainEnabled)
 
-: ModEnvSegSeq(7,1), sustainEnabled_(sustainEnabled),
+: ModEnvSegSeqFlexible(7,1), sustainEnabled_(sustainEnabled),
   currSegNum_(DEL), lastTick_(0)
 
 {

@@ -314,6 +314,20 @@ public:
     
     short getModWavetableID(seg_t seg) const;
     
+    /****************************************************************************************************//*!
+    *
+    *  @brief       Returns the segments' length.
+    *
+    *  @details     The length is the same for all LFOSeqs and depends on the rate. Computed in setRate().
+    *
+    *  @return      The segment's length.
+    *
+    *  @see      setRate()
+    *
+    ********************************************************************************************************/
+    
+    unsigned long getSegLen() const;
+    
     /******************************************************************************//*!
     *
     *  @brief      Adds a segment to the sequence.
@@ -364,11 +378,24 @@ public:
     
     void removeSegment(seg_t seg);
     
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Converts cycles per second to cycles per segment.
+    *
+    *  @details     If you call setModFreq() you're inputting the cycles per segment but that value
+    *               has to be converted to cycles per second for the modulating LFO/Oscillator. That's
+    *               what this function is for.
+    *
+    *  @param       The cycles per second value, in Hertz.
+    *
+    *  @return      The cycles per segment value.
+    *
+    *****************************************************************************************************/
+    
+    double getScaledModFreqValue(double freq) const;
+    
     /*! @copydoc EnvSegSeq::increment() */
     void increment();
-    
-    /*! @copydoc EnvSegSeq::setSegLen() */
-    void setSegLen(seg_t seg, unsigned long ms);
     
     /*! @copydoc ModEnvSegSeq::setModUnitDepth_Seg() */
     void setModUnitDepth_Seg(seg_t segNum, index_t dockNum, index_t modNum, double depth);
@@ -419,9 +446,6 @@ private:
     /*! Vector of above Mod structs */
     std::vector<LFOSeq_LFO> lfos_;
     
-    /*! Converts cycles per second to cycles per segment */
-    double getScaledModFreqValue_(seg_t seg, double freq) const;
-    
     /*! Calls getScaledModFreqValue() for seg */
     void setScaledModFreq_(seg_t seg);
     
@@ -431,6 +455,9 @@ private:
     
     /*! The current rate of the sequence */
     double rate_;
+    
+    /*! Length of the segments */
+    unsigned long segLen_;
 };
 
 /****************************************************************************************************//*!
@@ -493,6 +520,9 @@ public:
     *  @brief       An LFOUnit specific envelope.
     *
     ********************************************************************************************************/
+    
+    
+    // Change to inherit from ModEnvSegSeqFlexible and implement modulate() method
     
     struct Env : public EnvSegSeq
     {

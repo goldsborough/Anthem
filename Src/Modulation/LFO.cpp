@@ -146,19 +146,19 @@ LFOSeq::LFOSeq(unsigned short seqLength, double rate)
     mods_[RATE]->setBaseValue(rate);
 }
 
-double LFOSeq::getScaledModFreqValue_(seg_t seg, double freq) const
+double LFOSeq::getScaledModFreqValue(double freq) const
 {
     // Since the rate is the cycles per segment
     // and not cycles per second, we get the
     // "period" of the segment and multiply that
     // by the rate, giving the mod wave's frequency.
     
-    if (! segs_[seg].getLen()) return 0;
+    if (! segLen_) return 0;
     
     // To go from samples to Hertz, simply
     // divide the samplerate by the length
     // in samples e.g. 44100 / 22050 = 2 Hz
-    double temp = (Global::samplerate / static_cast<double>(segs_[seg].getLen()));
+    double temp = Global::samplerate / static_cast<double>(segLen_);
     
     // Multiply by wanted frequency
     return freq * temp;
@@ -166,23 +166,28 @@ double LFOSeq::getScaledModFreqValue_(seg_t seg, double freq) const
 
 void LFOSeq::setScaledModFreq_(seg_t seg)
 {
-    // Set to frequency of lfo
-    lfos_[seg].lfo.setFreq(getScaledModFreqValue_(seg, lfos_[seg].freq));
+    // Set scaled frequency to frequency of lfo
+    lfos_[seg].lfo.setFreq(getScaledModFreqValue(lfos_[seg].freq));
 }
 
 void LFOSeq::resizeSegsFromRate_(double rate)
 {
     // get the period, divide up into _segNum pieces
-    double len = (1.0 / rate) / segs_.size();
+    segLen_ = (Global::samplerate / rate) / segs_.size();
     
-    // Set all segment's lengths
+    // Set all segments' lengths
     for (int i = 0; i < segs_.size(); i++)
     {
-        segs_[i].setLen(len * Global::samplerate);
+        segs_[i].setLen(segLen_);
         
         // Scale frequency of mods according to length
         setScaledModFreq_(i);
     }
+}
+
+unsigned long LFOSeq::getSegLen() const
+{
+    return segLen_;
 }
 
 void LFOSeq::setRate(double Hz)
@@ -208,13 +213,6 @@ double LFOSeq::getRate() const
     }
     
     else return rate_;
-}
-
-void LFOSeq::setSegLen(seg_t seg, unsigned long ms)
-{
-    segs_[seg].setLen(ms * 44.1);
-    
-    setScaledModFreq_(seg);
 }
 
 void LFOSeq::setSegRate(seg_t seg, double rate)
@@ -605,7 +603,7 @@ bool LFOUnit::getMode() const
 LFOUnit::Env::Env()
 : EnvSegSeq(2)
 {
-    setSegLen(0, 500);
+    //setSegLen(0, 500);
     setEnvLevel(MID, 1);
 }
 
