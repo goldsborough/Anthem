@@ -57,6 +57,10 @@ public:
     
     Operator(short wt = 0, double amp = 1);
     
+    Operator(const Operator& other);
+    
+    Operator& operator= (const Operator& other);
+    
     /*************************************************************************************************//*!
     *
     *  @brief       Generates a sample.

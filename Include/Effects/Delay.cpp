@@ -31,19 +31,75 @@ Delay::Delay(double delayLen,
     // Initialize mod docks
     mods_[DECAY_TIME]->setHigherBoundary(buffer_.size());
     mods_[DECAY_TIME]->setLowerBoundary(0);
-    mods_[DECAY_TIME]->setBaseValue(decayTime);
+    mods_[DECAY_TIME]->setBaseValue(decayTime_);
     
     mods_[DECAY_RATE]->setHigherBoundary(1);
     mods_[DECAY_RATE]->setLowerBoundary(0);
-    mods_[DECAY_RATE]->setBaseValue(decayRate);
+    mods_[DECAY_RATE]->setBaseValue(decayRate_);
     
     mods_[FEEDBACK]->setHigherBoundary(1);
     mods_[FEEDBACK]->setLowerBoundary(0);
-    mods_[FEEDBACK]->setBaseValue(feedbackLevel);
+    mods_[FEEDBACK]->setBaseValue(feedback_);
     
     mods_[DRYWET]->setHigherBoundary(1);
     mods_[DRYWET]->setLowerBoundary(0);
     mods_[DRYWET]->setBaseValue(1);
+}
+
+Delay::Delay(const Delay& other)
+: EffectUnit(other),
+  buffer_(other.buffer_),
+  delayLen_(other.delayLen_),
+  decayRate_(other.decayRate_),
+  decayTime_(other.decayTime_),
+  decayValue_(other.decayValue_),
+  readInt_(other.readInt_),
+  readFract_(other.readFract_),
+  feedback_(other.feedback_)
+{
+    // Convert iterator to const_iterator because other is const
+    const_iterator itr = other.write_;
+    
+    write_ = buffer_.begin() + std::distance(other.buffer_.begin(), itr);
+    
+    itr = other.end_;
+    
+    end_ = buffer_.begin() + std::distance(other.buffer_.begin(), itr);
+}
+
+Delay& Delay::operator=(const Delay &other)
+{
+    if (this != &other)
+    {
+        EffectUnit::operator=(other);
+        
+        buffer_ = other.buffer_;
+        
+        decayRate_ = other.decayRate_;
+        
+        decayTime_ = other.decayTime_;
+        
+        decayValue_ = other.decayValue_;
+        
+        delayLen_ = other.delayLen_;
+        
+        readInt_ = other.readInt_;
+        
+        readFract_ = other.readFract_;
+        
+        feedback_ = other.feedback_;
+        
+        // Convert iterator to const_iterator because other is const
+        const_iterator itr = other.write_;
+        
+        write_ = buffer_.begin() + std::distance(other.buffer_.begin(), itr);
+        
+        itr = other.end_;
+        
+        end_ = buffer_.begin() + std::distance(other.buffer_.begin(), itr);
+    }
+    
+    return *this;
 }
 
 void Delay::setDryWet(double dw)
@@ -293,4 +349,17 @@ double AllPassDelay::process(double sample)
     }
     
     return outputA + (outputB * decayValue_);
+}
+
+Echo::Echo(double delayLen,
+           double decayTime,
+           double decayRate,
+           double feedbackLevel,
+           double capacity)
+: Delay(delayLen,decayTime,decayRate,feedbackLevel,capacity)
+{ }
+
+double Echo::process(double sample)
+{
+    return sample + Delay::process(sample);
 }

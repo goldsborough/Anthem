@@ -58,6 +58,10 @@ public:
           bool waveOut = false,
           double amp = 0.5);
     
+    Mixer(const Mixer& other);
+    
+    Mixer& operator= (const Mixer& other);
+    
     ~Mixer();
     
     /*********************************************************************************************//*!

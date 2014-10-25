@@ -24,12 +24,9 @@ Unit::Unit(index_t numDocks)
 Unit::Unit(const Unit& other)
 : mods_(other.numDocks())
 {
-    if (this != &other)
+    for (index_t i = 0; i < mods_.size(); ++i)
     {
-        for (index_t i = 0; i < mods_.size(); ++i)
-        {
-            mods_[i].reset(new ModDock(*other.mods_[i]));
-        }
+        mods_[i].reset(new ModDock(*other.mods_[i]));
     }
 }
 
@@ -41,7 +38,7 @@ Unit& Unit::operator=(const Unit& other)
         
         for (index_t i = 0; i < mods_.size(); ++i)
         {
-            mods_[i].reset(new ModDock(*other.mods_[i]));
+            *mods_[i] = *other.mods_[i];
         }
     }
     

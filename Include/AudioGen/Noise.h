@@ -102,6 +102,10 @@ public:
     
     Noise(unsigned short color = 0, double amp = 1);
     
+    Noise(const Noise& other);
+    
+    Noise& operator= (const Noise& other);
+    
     /*************************************************************************************************//*!
     *
     *  @brief       Generates a noise sample.

@@ -1,6 +1,7 @@
 #include "Crossfader.h"
 #include "Global.h"
 #include "ModDock.h"
+#include "Sample.h"
 
 #include <stdexcept>
 #include <cmath>
@@ -8,32 +9,72 @@
 CrossfadeUnit::CrossfadeUnit(unsigned short type,
                              bool scalingEnabled,
                              unsigned short offset)
-: scalingEnabled_(scalingEnabled)
+: scalingEnabled_(scalingEnabled),
+  tables_(new std::unique_ptr<Sample[]> [3])
 {
-    for (int n = 0; n <= 200; ++n)
+    for (unsigned short i = 0; i < 3; ++i)
     {
-        double value = (n - 100) / 100.0;
+        tables_[i].reset(new Sample[201]);
+    }
+    
+    for (unsigned short j = 0; j <= 200; ++j)
+    {
+        double value = (j - 100) / 100.0;
         
         // Linear table
-        tables_[CrossfadeTypes::LINEAR][n].left = (1 - value) / 2.0;
+        tables_[CrossfadeTypes::LINEAR][j].left = (1 - value) / 2.0;
         
-        tables_[CrossfadeTypes::LINEAR][n].right = (1 + value) / 2.0;
+        tables_[CrossfadeTypes::LINEAR][j].right = (1 + value) / 2.0;
         
         // Sine table
-        tables_[CrossfadeTypes::SINE][n].left = sin((1 -  value) / 2 * Global::pi/2);
+        tables_[CrossfadeTypes::SINE][j].left = sin((1 -  value) / 2 * Global::pi/2);
         
-        tables_[CrossfadeTypes::SINE][n].right = sin((1 +  value) / 2 * Global::pi/2);
+        tables_[CrossfadeTypes::SINE][j].right = sin((1 +  value) / 2 * Global::pi/2);
         
         // Square root table
-        tables_[CrossfadeTypes::SQRT][n].left = sqrt((1 -  value) / 2);
+        tables_[CrossfadeTypes::SQRT][j].left = sqrt((1 -  value) / 2);
         
-        tables_[CrossfadeTypes::SQRT][n].right = sqrt((1 +  value) / 2);
+        tables_[CrossfadeTypes::SQRT][j].right = sqrt((1 +  value) / 2);
     }
     
     setType(type);
     
     setValue(offset);
 }
+
+CrossfadeUnit::CrossfadeUnit(const CrossfadeUnit& other)
+: scalingEnabled_(other.scalingEnabled_),
+  type_(other.type_), index_(other.index_),
+  tables_(new std::unique_ptr<Sample[]> [3])
+{
+    for (unsigned short i = 0; i < 3; ++i)
+    {
+        tables_[i].reset(new Sample[201]);
+        
+        for (unsigned short j = 0; j <= 200; ++j)
+        {
+            tables_[i][j] = other.tables_[i][j];
+        }
+    }
+}
+
+CrossfadeUnit& CrossfadeUnit::operator= (const CrossfadeUnit& other)
+{
+    if (this != &other)
+    {
+        scalingEnabled_ = other.scalingEnabled_;
+        
+        type_ = other.type_;
+        
+        index_ = other.index_;
+        
+        // Table data is the same
+    }
+    
+    return *this;
+}
+
+CrossfadeUnit::~CrossfadeUnit() { }
 
 void CrossfadeUnit::setType(unsigned short type)
 {
@@ -116,12 +157,22 @@ Crossfader::Crossfader(unsigned short type,
 
 void Crossfader::setValue(short value)
 {
-    if (value < -100 || value > 100)
-    {  throw std::invalid_argument("Crossfade value must be between -100 and 100"); }
+    CrossfadeUnit::setValue(value);
     
-    mods_[VALUE]->setBaseValue(value);
+    if (mods_[VALUE]->inUse())
+    {
+        mods_[VALUE]->setBaseValue(value);
+    }
+}
+
+short Crossfader::getValue() const
+{
+    if (mods_[VALUE]->inUse())
+    {
+        return mods_[VALUE]->getBaseValue();
+    }
     
-    index_ = 100 + value;
+    else return CrossfadeUnit::getValue();
 }
 
 double Crossfader::modulate(double sample, double depth, double maximum)

@@ -181,6 +181,52 @@ EnvSegSeq::EnvSegSeq(EnvSegSeq::seg_t seqLen)
     currSeg_ = segs_.begin();
 }
 
+EnvSegSeq::EnvSegSeq(const EnvSegSeq& other)
+: segs_(other.segs_), currSample_(other.currSample_),
+  currSegNum_(other.currSegNum_), loopCount_(other.loopCount_),
+  loopMax_(other.loopMax_), loopInf_(other.loopInf_)
+{
+    currSeg_ = segs_.begin() + currSegNum_;
+    
+    std::vector<EnvSeg>::const_iterator itr = other.loopStart_;
+    
+    loopStart_ = segs_.begin() + std::distance(other.segs_.begin(), itr);
+    
+    itr = other.loopEnd_;
+    
+    loopEnd_ = segs_.begin() + std::distance(other.segs_.begin(), itr);
+}
+
+EnvSegSeq& EnvSegSeq::operator= (const EnvSegSeq& other)
+{
+    if (this != &other)
+    {
+        segs_ = other.segs_;
+        
+        currSample_ = other.currSample_;
+        
+        currSegNum_ = other.currSegNum_;
+        
+        loopCount_ = other.loopCount_;
+        
+        loopMax_ = other.loopMax_;
+        
+        loopInf_ = other.loopInf_;
+        
+        currSeg_ = segs_.begin() + currSegNum_;
+        
+        std::vector<EnvSeg>::const_iterator itr = other.loopStart_;
+        
+        loopStart_ = segs_.begin() + std::distance(other.segs_.begin(), itr);
+        
+        itr = other.loopEnd_;
+        
+        loopEnd_ = segs_.begin() + std::distance(other.segs_.begin(), itr);
+    }
+    
+    return *this;
+}
+
 void EnvSegSeq::setSegRate(seg_t seg, double rate)
 {
     segs_[seg].setRate(rate);

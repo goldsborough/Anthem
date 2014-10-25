@@ -19,6 +19,36 @@ Noise::Noise(unsigned short color, double amp)
     mods_[AMP]->setBaseValue(amp);
 }
 
+Noise::Noise(const Noise& other)
+: GenUnit(other),
+  dist_(other.dist_), color_(other.color_),
+  filter_(new Filter(*other.filter_)),
+  rval_(other.rval_)
+{
+    // Seed random number generator
+    rgen_.seed((unsigned)time(0));
+}
+
+Noise& Noise::operator= (const Noise& other)
+{
+    if (this != &other)
+    {
+        GenUnit::operator=(other);
+        
+        dist_ = other.dist_;
+        
+        color_ = other.color_;
+        
+        rgen_ = other.rgen_;
+        
+        rval_ = other.rval_;
+        
+        *filter_ = *other.filter_;
+    }
+    
+    return *this;
+}
+
 void Noise::setAmp(double amp)
 {
     // Takes care of boundary checking and

@@ -596,13 +596,46 @@ double LFOSeq::modulate(double sample, double depth, double)
 }
 
 LFOUnit::LFOUnit(unsigned short mode)
-: ModUnit(1)
+: ModUnit(1), fader_(new Crossfader)
 {
     mods_[AMP]->setHigherBoundary(1);
     mods_[AMP]->setLowerBoundary(0);
     mods_[AMP]->setBaseValue(1);
     
     setMode(mode);
+}
+
+LFOUnit::LFOUnit(const LFOUnit& other)
+: ModUnit(other),
+  fader_(new Crossfader(*other.fader_))
+{
+    for (unsigned short i = 0; i < 2; ++i)
+    {
+        lfoSeqs_[i] = other.lfoSeqs_[i];
+        lfos_[i] = other.lfos_[i];
+    }
+    
+    setMode(other.mode_);
+}
+
+LFOUnit& LFOUnit::operator= (const LFOUnit& other)
+{
+    if (this != &other)
+    {
+        ModUnit::operator=(other);
+        
+        *fader_ = *other.fader_;
+        
+        for (unsigned short i = 0; i < 2; ++i)
+        {
+            lfoSeqs_[i] = other.lfoSeqs_[i];
+            lfos_[i] = other.lfos_[i];
+        }
+        
+        setMode(other.mode_);
+    }
+    
+    return *this;
 }
 
 void LFOUnit::setAmp(double amp)
@@ -626,22 +659,37 @@ double LFOUnit::getAmp() const
     else return amp_;
 }
 
+LFOSeq& LFOUnit::seqs(bool unit)
+{
+    return lfoSeqs_[unit];
+}
+
+LFO& LFOUnit::lfos(bool unit)
+{
+    return lfos_[unit];
+}
+
+Crossfader& LFOUnit::fader()
+{
+    return *fader_;
+}
+
 void LFOUnit::setMode(bool mode)
 {
     mode_ = mode;
     
     if (mode_)
     {
-        fader.setLeftUnit(&lfoSeqs[0]);
+        fader_->setLeftUnit(&lfoSeqs_[0]);
         
-        fader.setRightUnit(&lfoSeqs[1]);
+        fader_->setRightUnit(&lfoSeqs_[1]);
     }
     
     else
     {
-        fader.setLeftUnit(&lfos[0]);
+        fader_->setLeftUnit(&lfos_[0]);
         
-        fader.setRightUnit(&lfos[1]);
+        fader_->setRightUnit(&lfos_[1]);
     }
 }
 
@@ -654,14 +702,14 @@ void LFOUnit::increment()
 {
     if (mode_)
     {
-        lfoSeqs[0].increment();
-        lfoSeqs[1].increment();
+        lfoSeqs_[0].increment();
+        lfoSeqs_[1].increment();
     }
     
     else
     {
-        lfos[0].increment();
-        lfos[1].increment();
+        lfos_[0].increment();
+        lfos_[1].increment();
     }
     
 }
@@ -675,5 +723,5 @@ double LFOUnit::modulate(double sample, double depth, double maximum)
     
     // Tick the crossfaded value from the lfos and multiply by the envelope
     // value and the total amplitude value
-    return fader.modulate(sample, depth, maximum) * amp_;
+    return fader_->modulate(sample, depth, maximum) * amp_;
 }

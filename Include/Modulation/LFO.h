@@ -14,9 +14,7 @@
 #define __Anthem__LFO__
 
 #include "Oscillator.h"
-#include "Units.h"
 #include "EnvSeg.h"
-#include "Crossfader.h"
 
 /*************************************************************************************************//*!
 *
@@ -480,6 +478,8 @@ private:
     unsigned long segLen_;
 };
 
+class Crossfader;
+
 /****************************************************************************************************//*!
 *
 *  @brief       The main "LFO" interface for Anthem.
@@ -499,6 +499,9 @@ public:
     /*! LFO modes - lfo mode and sequencer mode */
     enum Modes { LFO_MODE, SEQ_MODE };
     
+    /*! One of the two units of a mode (e.g. LFO A and B)*/
+    enum Units { A, B };
+    
     /*! Available ModDocks */
     enum Docks { AMP };
     
@@ -511,6 +514,10 @@ public:
     ********************************************************************************************************/
     
     LFOUnit(unsigned short mode = LFO_MODE);
+    
+    LFOUnit(const LFOUnit& other);
+    
+    LFOUnit& operator= (const LFOUnit& other);
     
     /*************************************************************************************************//*!
     *
@@ -552,22 +559,56 @@ public:
     
     bool getMode() const;
     
+    /****************************************************************************************************//*!
+    *
+    *  @brief       Returns one of the LFOUnit's LFOSeqs.
+    *
+    *  @param       unit The unit number, LFOUnit::A or ::B.
+    *
+    *  @return      A reference to the LFOSeq.
+    *
+    ********************************************************************************************************/
+    
+    LFOSeq& seqs(bool unit);
+    
+    /****************************************************************************************************//*!
+    *
+    *  @brief       Returns one of the LFOUnit's LFOs.
+    *
+    *  @param       unit The unit number, LFOUnit::A or ::B.
+    *
+    *  @return      A reference to the LFO.
+    *
+    ********************************************************************************************************/
+    
+    LFO& lfos(bool unit);
+    
+    /****************************************************************************************************//*!
+    *
+    *  @brief       Returns the LFOUnit's crossfader.
+    *
+    *  @return      A reference to the Crossfader object.
+    *
+    ********************************************************************************************************/
+    
+    Crossfader& fader();
+    
     /*! @copydoc GenUnit::increment() */
     void increment();
     
     /*! @copydoc ModUnit::modulate() */
     double modulate(double sample, double depth, double maximum);
-
-    /*! The Crossfader that fades between the A and B units */
-    Crossfader fader;
-
-    /*! The step sequencer lfos, activated with setMode() and Modes::SEQ_MODE */
-    LFOSeq lfoSeqs[2];
-
-    /*! The normal lfos, activated with setMode() and Modes::LFO_MODE */
-    LFO lfos[2];
     
 private:
+    
+    /*! The Crossfader that fades between the A and B units */
+    std::unique_ptr<Crossfader> fader_;
+    
+    /*! The step sequencer lfos, activated with setMode() and Modes::SEQ_MODE */
+    LFOSeq lfoSeqs_ [2];
+    
+    /*! The normal lfos, activated with setMode() and Modes::LFO_MODE */
+    LFO lfos_ [2];
     
     bool mode_;
 };

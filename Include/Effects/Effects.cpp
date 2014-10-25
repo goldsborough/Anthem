@@ -16,7 +16,9 @@
 #include <cmath>
 
 Reverb::Reverb(double reverbTime, double reverbRate, double dryWet)
-: EffectUnit(3,1)
+: EffectUnit(3,1),
+  delays_(new Delay[4]),
+  allPasses_(new AllPassDelay [2])
 {
     for (unsigned short i = 0; i < 4; ++i)
     {
@@ -50,6 +52,51 @@ Reverb::Reverb(double reverbTime, double reverbRate, double dryWet)
     mods_[DRYWET]->setHigherBoundary(1);
     mods_[DRYWET]->setLowerBoundary(0);
     mods_[DRYWET]->setBaseValue(dryWet);
+}
+
+Reverb::Reverb(const Reverb& other)
+: EffectUnit(other),
+  delays_(new Delay [4]),
+  allPasses_(new AllPassDelay [2]),
+  reverbRate_(other.reverbRate_),
+  reverbTime_(other.reverbTime_),
+  attenuation_(other.attenuation_)
+{
+    for (unsigned short i = 0; i < 4; ++i)
+    {
+        if (i < 2)
+        {
+            allPasses_[i] = other.allPasses_[i];
+        }
+        
+        delays_[i] = other.delays_[i];
+    }
+}
+
+Reverb& Reverb::operator= (const Reverb& other)
+{
+    if (this != &other)
+    {
+        EffectUnit::operator=(other);
+        
+        reverbTime_ = other.reverbTime_;
+        
+        reverbRate_ = other.reverbRate_;
+        
+        attenuation_ = other.attenuation_;
+        
+        for (unsigned short i = 0; i < 4; ++i)
+        {
+            if (i < 2)
+            {
+                allPasses_[i] = other.allPasses_[i];
+            }
+            
+            delays_[i] = other.delays_[i];
+        }
+    }
+    
+    return *this;
 }
 
 void Reverb::setDryWet(double dw)
@@ -148,11 +195,39 @@ Flanger::Flanger(const double& center,
                  const double& depth,
                  const double& rate,
                  const double& feedback)
-: center_(center), depth_(depth/2),
-  feedback_(feedback), lfo_(new LFO(0,rate)),
-  delay_(10,1,1,0)
+: EffectUnit(),
+  center_(center), depth_(depth/2),
+  feedback_(feedback),
+  lfo_(new LFO(0,rate)),
+  delay_( new Delay(10,1,1,0) )
+{ }
+
+Flanger::Flanger(const Flanger& other)
+: EffectUnit(other),
+  center_(other.center_), depth_(other.depth_),
+  feedback_(other.feedback_),
+  lfo_(new LFO(*other.lfo_)),
+  delay_(new Delay(*other.delay_))
+{ }
+
+Flanger& Flanger::operator= (const Flanger& other)
 {
+    if (this != &other)
+    {
+        EffectUnit::operator=(other);
+        
+        center_ = other.center_;
+        
+        feedback_ = other.feedback_;
+        
+        depth_ = other.depth_;
+        
+        *lfo_ = *other.lfo_;
+        
+        *delay_ = *other.delay_;
+    }
     
+    return *this;
 }
 
 void Flanger::setRate(const double& rate)
@@ -164,7 +239,7 @@ void Flanger::setCenter(const double& center)
 {
     center_ = center;
     
-    delay_.setDelayLen(center_);
+    delay_->setDelayLen(center_);
 }
 
 void Flanger::setDepth(const double& depth)
@@ -185,13 +260,13 @@ double Flanger::process(double sample)
     double output = sample;
     
     if (feedback_)
-    { output -= delay_.offset(center_ * Global::samplerate) * feedback_; }
+    { output -= delay_->offset(center_ * Global::samplerate) * feedback_; }
     
     //double val = center_ + (depth_ * lfo_->tick());
     
     //delay_.setDelayLen(val);
     
-    output += delay_.process(output);
+    output += delay_->process(output);
     
     return dryWet_(sample, output);
 }

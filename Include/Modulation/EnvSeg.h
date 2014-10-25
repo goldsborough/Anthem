@@ -286,6 +286,10 @@ public:
     
     EnvSegSeq(seg_t seqLen);
     
+    EnvSegSeq(const EnvSegSeq& other);
+    
+    EnvSegSeq& operator= (const EnvSegSeq& other);
+    
     virtual ~EnvSegSeq() { }
 
     /******************************************************************************//*!

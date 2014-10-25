@@ -14,13 +14,14 @@
 #define __Anthem__Crossfade__
 
 #include "Units.h"
-#include "Sample.h"
 
 namespace CrossfadeTypes
 {
     /*! Different types of crossfading*/
     enum { LINEAR, SINE, SQRT };
 }
+
+class Sample;
 
 /*********************************************************************************************//*!
 *
@@ -54,7 +55,11 @@ public:
                   bool scalingEnabled = false,
                   unsigned short offset = 0);
     
-    virtual ~CrossfadeUnit() { }
+    CrossfadeUnit(const CrossfadeUnit& other);
+    
+    CrossfadeUnit& operator= (const CrossfadeUnit& other);
+    
+    virtual ~CrossfadeUnit();
     
     /*********************************************************************************************//*!
     *
@@ -148,7 +153,7 @@ protected:
     bool scalingEnabled_;
     
     /*! Array of Sample tables for crossfading values */
-    Sample tables_ [3][201];
+    std::unique_ptr<std::unique_ptr<Sample[]>[]> tables_;
 };
 
 /*********************************************************************************************//*!
@@ -191,15 +196,11 @@ public:
                ModUnit* left = 0,
                ModUnit* right = 0);
     
-    /*********************************************************************************************//*!
-    *
-    *  @brief       Sets the crossfade value for the two sides.
-    *
-    *  @param       value The crossfade value, between -100 (full left) and +100 (full right).
-    *
-    *************************************************************************************************/
-    
+    /*! @copydoc CrossfadeUnit::setValue() */
     void setValue(short value);
+    
+    /*! @copydoc CrossfadeUnit::getValue() */
+    short getValue() const;
     
     /*! @copydoc ModUnit::modulate() */
     double modulate(double sample, double depth, double maximum);

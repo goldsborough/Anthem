@@ -31,6 +31,42 @@ Operator::Operator(short wt, double amp)
     setWavetable(wt);
 }
 
+Operator::Operator(const Operator& other)
+: GenUnit(other),
+  semitoneOffset_(other.semitoneOffset_),
+  centOffset_(other.centOffset_),
+  wavetableID_(other.wavetableID_),
+  notes_(other.notes_.size())
+{
+    for (noteVec::size_type i = 0; i < notes_.size(); ++i)
+    {
+        notes_[i].reset(new Oscillator(*other.notes_[i]));
+    }
+}
+
+Operator& Operator::operator= (const Operator& other)
+{
+    if (this != &other)
+    {
+        GenUnit::operator=(other);
+        
+        semitoneOffset_ = other.semitoneOffset_;
+        
+        centOffset_ = other.centOffset_;
+        
+        wavetableID_ = other.wavetableID_;
+        
+        notes_.resize(other.notes_.size());
+        
+        for (noteVec::size_type i = 0; i < notes_.size(); ++i)
+        {
+            *notes_[i] = *other.notes_[i];
+        }
+    }
+    
+    return *this;
+}
+
 void Operator::setWavetable(short wt)
 {
     // Store id to add new notes with the same wavetable

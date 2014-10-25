@@ -35,6 +35,44 @@ Mixer::Mixer(bool directOut, bool waveOut, double amp)
     mods_[PAN]->setBaseValue(0);
 }
 
+Mixer::Mixer(const Mixer& other)
+: Unit(other),
+  directOutputEnabled_(other.directOutputEnabled_),
+  wavefileEnabled_(other.wavefileEnabled_),
+  masterAmp_(other.masterAmp_),
+  stopped_(other.stopped_),
+  pan_(new CrossfadeUnit(*other.pan_)),
+  sampleDataBuffer_(new SampleBuffer(*other.sampleDataBuffer_)),
+  directOut_(new DirectOutput(*other.directOut_)),
+  waveOut_(new Wavefile(*other.waveOut_))
+{ }
+
+Mixer& Mixer::operator= (const Mixer& other)
+{
+    if (this != &other)
+    {
+        Unit::operator=(other);
+        
+        directOutputEnabled_ = other.directOutputEnabled_;
+        
+        wavefileEnabled_ = other.wavefileEnabled_;
+        
+        masterAmp_ = other.masterAmp_;
+        
+        stopped_ = other.stopped_;
+        
+        *pan_ = *other.pan_;
+        
+        *sampleDataBuffer_ = *other.sampleDataBuffer_;
+        
+        *directOut_ = *other.directOut_;
+        
+        *waveOut_ = *other.waveOut_;
+    }
+    
+    return *this;
+}
+
 void Mixer::process(Sample sample)
 {
     // Modulate panning value

@@ -29,14 +29,6 @@ int main(int argc, const char * argv[])
     
     op.addNote(440);
     
-    LFO lfo(WavetableDB::SINE);
-    
-    op.attachMod(Operator::AMP, &lfo);
-    
-    op.setAmp(0.5);
-    
-    op.setModUnitDepth(Operator::AMP, 0, 0.5);
-    
     Mixer mixer(0,1);
     
     for (int i = 0; i < len; ++i)
@@ -44,8 +36,6 @@ int main(int argc, const char * argv[])
         double tick = op.tick();
         
         op.increment();
-        
-        lfo.increment();
         
         mixer.process(tick);
     }
