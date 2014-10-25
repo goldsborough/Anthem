@@ -140,15 +140,13 @@ double Envelope::tick_()
 
 double Envelope::modulate(double sample, double depth, double)
 {
-    double ret = sample * tick_() * depth;
-    
     // Modulate
     if (mods_[AMP]->inUse())
     {
         amp_ = mods_[AMP]->tick();
     }
     
-    return ret * amp_;
+    return sample * tick_() * depth * amp_;
 }
 
 void Envelope::setLoopStart(seg_t seg)

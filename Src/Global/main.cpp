@@ -13,6 +13,7 @@
 #include "Effects.h"
 #include "Noise.h"
 #include "Crossfader.h"
+#include "Macro.h"
 
 #include <iostream>
 
@@ -28,25 +29,23 @@ int main(int argc, const char * argv[])
     
     op.addNote(440);
     
-    Noise noise;
-    
     LFO lfo(WavetableDB::SINE);
     
-    noise.attachMod(Noise::AMP, &lfo);
+    Macro macro;
     
-    noise.setAmp(0.5);
+    macro.attachMod(Macro::VALUE, &lfo);
     
-    noise.setModUnitDepth(Noise::AMP, 0, 0.5);
+    op.attachMod(Operator::AMP, &macro);
+    
+    op.setAmp(0.5);
     
     Mixer mixer(0,1);
     
     for (int i = 0; i < len; ++i)
     {
-        double tick = noise.tick();
+        double tick = op.tick();
 
-        //op.increment();
-        
-        noise.increment();
+        op.increment();
         lfo.increment();
         
         mixer.process(tick);

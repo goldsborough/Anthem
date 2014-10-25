@@ -114,9 +114,7 @@ double LFO::modulate(double sample, double depth, double maximum)
     }
 
     // Actual modulation by LFO
-    sample += (maximum * Oscillator::tick() * depth);
-
-    return sample * amp_;
+    return sample + (maximum * Oscillator::tick() * depth * amp_);
 }
 
 LFOSeq::LFOSeq(unsigned short seqLength, double rate)
