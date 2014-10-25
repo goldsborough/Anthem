@@ -14,9 +14,9 @@ Noise::Noise(unsigned short color, double amp)
     
     setColor(color);
     
-    mods_[AMP]->setHigherBoundary(1);
-    mods_[AMP]->setLowerBoundary(0);
-    mods_[AMP]->setBaseValue(amp);
+    mods_[AMP].setHigherBoundary(1);
+    mods_[AMP].setLowerBoundary(0);
+    mods_[AMP].setBaseValue(amp);
 }
 
 Noise::Noise(const Noise& other)
@@ -55,14 +55,14 @@ void Noise::setAmp(double amp)
     // member setting
     GenUnit::setAmp(amp);
 
-    mods_[AMP]->setBaseValue(amp);
+    mods_[AMP].setBaseValue(amp);
 }
 
 double Noise::getAmp() const
 {
-    if (mods_[AMP]->inUse())
+    if (mods_[AMP].inUse())
     {
-        return mods_[AMP]->getBaseValue();
+        return mods_[AMP].getBaseValue();
     }
     
     else return amp_;
@@ -149,9 +149,9 @@ void Noise::increment()
 double Noise::tick()
 {
     // Check modulation dock for the amplitude parameter
-    if (mods_[AMP]->inUse())
+    if (mods_[AMP].inUse())
     {
-        amp_ = mods_[AMP]->tick();
+        amp_ = mods_[AMP].tick();
     }
     
     return rval_ * amp_;

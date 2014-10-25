@@ -14,17 +14,17 @@ EnvSeg::EnvSeg(double startAmp,
   curr_(0),len_(len), GenUnit(3) // three ModDocks
 
 {
-    mods_[RATE]->setHigherBoundary(2);
-    mods_[RATE]->setLowerBoundary(0);
-    mods_[RATE]->setBaseValue(rate);
+    mods_[RATE].setHigherBoundary(2);
+    mods_[RATE].setLowerBoundary(0);
+    mods_[RATE].setBaseValue(rate);
     
-    mods_[START_LEVEL]->setHigherBoundary(1);
-    mods_[START_LEVEL]->setLowerBoundary(0);
-    mods_[START_LEVEL]->setBaseValue(startAmp);
+    mods_[START_LEVEL].setHigherBoundary(1);
+    mods_[START_LEVEL].setLowerBoundary(0);
+    mods_[START_LEVEL].setBaseValue(startAmp);
     
-    mods_[END_LEVEL]->setHigherBoundary(1);
-    mods_[END_LEVEL]->setLowerBoundary(0);
-    mods_[END_LEVEL]->setBaseValue(endAmp);
+    mods_[END_LEVEL].setHigherBoundary(1);
+    mods_[END_LEVEL].setLowerBoundary(0);
+    mods_[END_LEVEL].setBaseValue(endAmp);
     
     calcRange_();
     calcIncr_();
@@ -62,23 +62,23 @@ double EnvSeg::tick()
     
     // Modulate members
     // All together so we only call calcRange_ once
-    if (mods_[RATE]->inUse()        ||
-        mods_[START_LEVEL]->inUse() ||
-        mods_[END_LEVEL]->inUse())
+    if (mods_[RATE].inUse()        ||
+        mods_[START_LEVEL].inUse() ||
+        mods_[END_LEVEL].inUse())
     {
-        if (mods_[RATE]->inUse())
+        if (mods_[RATE].inUse())
         {
-            rate_ = mods_[RATE]->tick();
+            rate_ = mods_[RATE].tick();
         }
         
-        if (mods_[START_LEVEL]->inUse())
+        if (mods_[START_LEVEL].inUse())
         {
-            startAmp_ = mods_[START_LEVEL]->tick();
+            startAmp_ = mods_[START_LEVEL].tick();
         }
         
-        if (mods_[END_LEVEL]->inUse())
+        if (mods_[END_LEVEL].inUse())
         {
-            endAmp_ = mods_[END_LEVEL]->tick();
+            endAmp_ = mods_[END_LEVEL].tick();
         }
         
         calcRange_();
@@ -106,16 +106,16 @@ void EnvSeg::setStartLevel(double lv)
     
     startAmp_ = lv;
     
-    mods_[START_LEVEL]->setBaseValue(startAmp_);
+    mods_[START_LEVEL].setBaseValue(startAmp_);
     
     calcRange_();
 }
 
 double EnvSeg::getStartLevel() const
 {
-    if (mods_[START_LEVEL]->inUse())
+    if (mods_[START_LEVEL].inUse())
     {
-        return mods_[START_LEVEL]->getBaseValue();
+        return mods_[START_LEVEL].getBaseValue();
     }
     
     else return startAmp_;
@@ -128,16 +128,16 @@ void EnvSeg::setEndLevel(double lv)
     
     endAmp_ = lv;
     
-    mods_[END_LEVEL]->setBaseValue(endAmp_);
+    mods_[END_LEVEL].setBaseValue(endAmp_);
     
     calcRange_();
 }
 
 double EnvSeg::getEndLevel() const
 {
-    if (mods_[END_LEVEL]->inUse())
+    if (mods_[END_LEVEL].inUse())
     {
-        return mods_[END_LEVEL]->getBaseValue();
+        return mods_[END_LEVEL].getBaseValue();
     }
     
     else return endAmp_;
@@ -156,14 +156,14 @@ void EnvSeg::setRate(double rate)
     
     rate_ = rate;
     
-    mods_[RATE]->setBaseValue(rate_);
+    mods_[RATE].setBaseValue(rate_);
 }
 
 double EnvSeg::getRate() const
 {
-    if (mods_[RATE]->inUse())
+    if (mods_[RATE].inUse())
     {
-        return mods_[RATE]->getBaseValue();
+        return mods_[RATE].getBaseValue();
     }
     
     else return rate_;
@@ -491,12 +491,12 @@ unsigned long ModEnvSegSeq::dockSize_Seg(seg_t segNum, index_t dockNum) const
 
 void ModEnvSegSeq::setSegModDockBaseValue(seg_t segNum, index_t dockNum, double value)
 {
-    segs_[segNum].mods_[dockNum]->setBaseValue(value);
+    segs_[segNum].mods_[dockNum].setBaseValue(value);
 }
 
 double ModEnvSegSeq::getSegModDockBaseValue(seg_t segNum, index_t dockNum) const
 {
-    return segs_[segNum].mods_[dockNum]->getBaseValue();
+    return segs_[segNum].mods_[dockNum].getBaseValue();
 }
 
 ModEnvSegSeqFlexible::ModEnvSegSeqFlexible(seg_t numSegs,

@@ -29,21 +29,21 @@ Delay::Delay(double delayLen,
     setDelayLen(delayLen);
     
     // Initialize mod docks
-    mods_[DECAY_TIME]->setHigherBoundary(buffer_.size());
-    mods_[DECAY_TIME]->setLowerBoundary(0);
-    mods_[DECAY_TIME]->setBaseValue(decayTime_);
+    mods_[DECAY_TIME].setHigherBoundary(buffer_.size());
+    mods_[DECAY_TIME].setLowerBoundary(0);
+    mods_[DECAY_TIME].setBaseValue(decayTime_);
     
-    mods_[DECAY_RATE]->setHigherBoundary(1);
-    mods_[DECAY_RATE]->setLowerBoundary(0);
-    mods_[DECAY_RATE]->setBaseValue(decayRate_);
+    mods_[DECAY_RATE].setHigherBoundary(1);
+    mods_[DECAY_RATE].setLowerBoundary(0);
+    mods_[DECAY_RATE].setBaseValue(decayRate_);
     
-    mods_[FEEDBACK]->setHigherBoundary(1);
-    mods_[FEEDBACK]->setLowerBoundary(0);
-    mods_[FEEDBACK]->setBaseValue(feedback_);
+    mods_[FEEDBACK].setHigherBoundary(1);
+    mods_[FEEDBACK].setLowerBoundary(0);
+    mods_[FEEDBACK].setBaseValue(feedback_);
     
-    mods_[DRYWET]->setHigherBoundary(1);
-    mods_[DRYWET]->setLowerBoundary(0);
-    mods_[DRYWET]->setBaseValue(1);
+    mods_[DRYWET].setHigherBoundary(1);
+    mods_[DRYWET].setLowerBoundary(0);
+    mods_[DRYWET].setBaseValue(1);
 }
 
 Delay::Delay(const Delay& other)
@@ -107,14 +107,14 @@ void Delay::setDryWet(double dw)
     // For error checking
     EffectUnit::setDryWet(dw);
 
-    mods_[DRYWET]->setBaseValue(dw);
+    mods_[DRYWET].setBaseValue(dw);
 }
 
 double Delay::getDryWet() const
 {
-    if (mods_[DRYWET]->inUse())
+    if (mods_[DRYWET].inUse())
     {
-        return mods_[DRYWET]->getBaseValue();
+        return mods_[DRYWET].getBaseValue();
     }
     
     else return dw_;
@@ -125,16 +125,16 @@ void Delay::setDecayRate(double decayRate)
     if (decayRate > 1 || decayRate < 0)
     { throw std::invalid_argument("Decay rate must be between 0 and 1!"); }
     
-    mods_[DECAY_RATE]->setBaseValue(decayRate);
+    mods_[DECAY_RATE].setBaseValue(decayRate);
     
     decayRate_ = decayRate;
 }
 
 double Delay::getDecayRate() const
 {
-    if (mods_[DECAY_RATE]->inUse())
+    if (mods_[DECAY_RATE].inUse())
     {
-        return mods_[DECAY_RATE]->getBaseValue();
+        return mods_[DECAY_RATE].getBaseValue();
     }
     
     else return decayRate_;
@@ -173,16 +173,16 @@ void Delay::setFeedback(double feedbackLevel)
     if (feedbackLevel < 0 || feedbackLevel > 1)
     { throw std::invalid_argument("Feedback level must be between 0 and 1!"); }
 
-    mods_[FEEDBACK]->setBaseValue(feedbackLevel);
+    mods_[FEEDBACK].setBaseValue(feedbackLevel);
     
     feedback_ = feedbackLevel;
 }
 
 double Delay::getFeedback() const
 {
-    if (mods_[FEEDBACK]->inUse())
+    if (mods_[FEEDBACK].inUse())
     {
-        return mods_[FEEDBACK]->getBaseValue();
+        return mods_[FEEDBACK].getBaseValue();
     }
     
     else return feedback_;
@@ -195,7 +195,7 @@ void Delay::setDecayTime(double decayTime)
     if (decayTime < 0 || decayTime > buffer_.size())
     { throw std::invalid_argument("Decay time must be greater 0 and less than capacity!"); }
 
-    mods_[DECAY_TIME]->setBaseValue(decayTime);
+    mods_[DECAY_TIME].setBaseValue(decayTime);
     
     decayTime_ = decayTime;
     
@@ -204,9 +204,9 @@ void Delay::setDecayTime(double decayTime)
 
 double Delay::getDecayTime() const
 {
-    if (mods_[DECAY_TIME]->inUse())
+    if (mods_[DECAY_TIME].inUse())
     {
-        return mods_[DECAY_TIME]->getBaseValue() / Global::samplerate;
+        return mods_[DECAY_TIME].getBaseValue() / Global::samplerate;
     }
     
     // return seconds, not samples
@@ -238,34 +238,34 @@ double Delay::offset(unsigned int offset)
 
 double Delay::process(double sample)
 {
-    if (mods_[DECAY_TIME]->inUse() ||
-        mods_[DECAY_RATE]->inUse())
+    if (mods_[DECAY_TIME].inUse() ||
+        mods_[DECAY_RATE].inUse())
     {
         // Modulate decay time
-        if (mods_[DECAY_TIME]->inUse())
+        if (mods_[DECAY_TIME].inUse())
         {
-            decayTime_ = mods_[DECAY_TIME]->tick();
+            decayTime_ = mods_[DECAY_TIME].tick();
         }
         
         // Modulate decay rate
-        if (mods_[DECAY_RATE]->inUse())
+        if (mods_[DECAY_RATE].inUse())
         {
-            decayRate_ = mods_[DECAY_RATE]->tick();
+            decayRate_ = mods_[DECAY_RATE].tick();
         }
         
         calcDecay_();
     }
     
     // Modulate feedback value
-    if (mods_[FEEDBACK]->inUse())
+    if (mods_[FEEDBACK].inUse())
     {
-        feedback_ = mods_[FEEDBACK]->tick();
+        feedback_ = mods_[FEEDBACK].tick();
     }
     
     // Modulate dry wet value
-    if (mods_[DRYWET]->inUse())
+    if (mods_[DRYWET].inUse())
     {
-        dw_ = mods_[DRYWET]->tick();
+        dw_ = mods_[DRYWET].tick();
     }
     
     iterator read = write_ - readInt_;

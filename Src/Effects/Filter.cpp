@@ -26,21 +26,21 @@ Filter::Filter(unsigned short mode,
     // Initial coefficients
     calcCoefs_();
     
-    mods_[CUTOFF]->setHigherBoundary(Global::nyquistLimit);
-    mods_[CUTOFF]->setLowerBoundary(0);
-    mods_[CUTOFF]->setBaseValue(cutoff);
+    mods_[CUTOFF].setHigherBoundary(Global::nyquistLimit);
+    mods_[CUTOFF].setLowerBoundary(0);
+    mods_[CUTOFF].setBaseValue(cutoff);
     
-    mods_[Q]->setHigherBoundary(20);
-    mods_[Q]->setLowerBoundary(0.01);
-    mods_[Q]->setBaseValue(q);
+    mods_[Q].setHigherBoundary(20);
+    mods_[Q].setLowerBoundary(0.01);
+    mods_[Q].setBaseValue(q);
     
-    mods_[GAIN]->setHigherBoundary(20);
-    mods_[GAIN]->setLowerBoundary(-20);
-    mods_[GAIN]->setBaseValue(gain);
+    mods_[GAIN].setHigherBoundary(20);
+    mods_[GAIN].setLowerBoundary(-20);
+    mods_[GAIN].setBaseValue(gain);
     
-    mods_[DRYWET]->setHigherBoundary(1);
-    mods_[DRYWET]->setLowerBoundary(0);
-    mods_[DRYWET]->setBaseValue(1);
+    mods_[DRYWET].setHigherBoundary(1);
+    mods_[DRYWET].setLowerBoundary(0);
+    mods_[DRYWET].setBaseValue(1);
 }
 
 void Filter::setDryWet(double dw)
@@ -48,14 +48,14 @@ void Filter::setDryWet(double dw)
     // For error checking
     EffectUnit::setDryWet(dw);
     
-    mods_[DRYWET]->setBaseValue(dw);
+    mods_[DRYWET].setBaseValue(dw);
 }
 
 double Filter::getDryWet() const
 {
-    if (mods_[DRYWET]->inUse())
+    if (mods_[DRYWET].inUse())
     {
-        return mods_[DRYWET]->getBaseValue();
+        return mods_[DRYWET].getBaseValue();
     }
     
     else return dw_;
@@ -63,36 +63,36 @@ double Filter::getDryWet() const
 
 double Filter::process(double sample)
 {
-    if (mods_[CUTOFF]->inUse() ||
-        mods_[Q]->inUse()      ||
-        mods_[GAIN]->inUse())
+    if (mods_[CUTOFF].inUse() ||
+        mods_[Q].inUse()      ||
+        mods_[GAIN].inUse())
     {
         // Modulate cutoff
-        if (mods_[CUTOFF]->inUse())
+        if (mods_[CUTOFF].inUse())
         {
-            cutoff_ = mods_[CUTOFF]->tick();
+            cutoff_ = mods_[CUTOFF].tick();
         }
         
         // And Q factor
-        if (mods_[Q]->inUse())
+        if (mods_[Q].inUse())
         {
-            q_ = mods_[Q]->tick();
+            q_ = mods_[Q].tick();
         }
         
         // Check the gain modulation
-        if (mods_[GAIN]->inUse())
+        if (mods_[GAIN].inUse())
         {
             // Convert db to amplitude
-            gain_ = Util::dbToAmp(1,mods_[GAIN]->tick());
+            gain_ = Util::dbToAmp(1,mods_[GAIN].tick());
         }
         
         calcCoefs_();
     }
     
     // Set the dry/wet
-    if (mods_[DRYWET]->inUse())
+    if (mods_[DRYWET].inUse())
     {
-        dw_ = mods_[DRYWET]->tick();
+        dw_ = mods_[DRYWET].tick();
     }
     
     double temp = sample
@@ -253,9 +253,9 @@ void Filter::setCutoff(double cutoff)
     if (cutoff < 0 || cutoff > Global::nyquistLimit)
     { throw std::invalid_argument("Cutoff out of range, must be between 0 and nyquist limit (20 Khz)"); }
     
-    if (mods_[CUTOFF]->inUse())
+    if (mods_[CUTOFF].inUse())
     {
-        mods_[CUTOFF]->setBaseValue(cutoff);
+        mods_[CUTOFF].setBaseValue(cutoff);
     }
     
     cutoff_ = cutoff;
@@ -265,9 +265,9 @@ void Filter::setCutoff(double cutoff)
 
 double Filter::getCutoff() const
 {
-    if (mods_[CUTOFF]->inUse())
+    if (mods_[CUTOFF].inUse())
     {
-        return mods_[CUTOFF]->getBaseValue();
+        return mods_[CUTOFF].getBaseValue();
     }
     
     else return cutoff_;
@@ -279,9 +279,9 @@ void Filter::setQ(double q)
     if (q < 0.01 || q > 20)
     { throw std::invalid_argument("Bandwith out of range, must be between 0 and 20!"); }
     
-    if (mods_[Q])
+    if (mods_[Q].inUse())
     {
-        mods_[Q]->setBaseValue(q);
+        mods_[Q].setBaseValue(q);
     }
     
     q_ = q;
@@ -291,9 +291,9 @@ void Filter::setQ(double q)
 
 double Filter::getQ() const
 {
-    if (mods_[Q]->inUse())
+    if (mods_[Q].inUse())
     {
-        return mods_[Q]->getBaseValue();
+        return mods_[Q].getBaseValue();
     }
     
     else return q_;
@@ -304,9 +304,9 @@ void Filter::setGain(double gain)
     if (gain < -20 || gain > 20)
     { throw std::invalid_argument("Gain out of range, must be between -20dB and +20dB! "); }
     
-    if (mods_[GAIN]->inUse())
+    if (mods_[GAIN].inUse())
     {
-        mods_[GAIN]->setBaseValue(gain);
+        mods_[GAIN].setBaseValue(gain);
     }
     
     gain_ = gain;
@@ -319,9 +319,9 @@ void Filter::setGain(double gain)
 
 double Filter::getGain() const
 {
-    if (mods_[GAIN]->inUse())
+    if (mods_[GAIN].inUse())
     {
-        return  mods_[GAIN]->getBaseValue();
+        return  mods_[GAIN].getBaseValue();
     }
     
     else return gain_;

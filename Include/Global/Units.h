@@ -71,7 +71,7 @@ public:
     *
     *****************************************************************************************************/
     
-    virtual std::vector<ModDock*>::size_type numDocks() const;
+    virtual index_t numDocks() const;
     
     /*************************************************************************************************//*!
     *
@@ -243,8 +243,10 @@ public:
     
 protected:
     
-    /*! The std::vector holding the modulation docks. */
-    std::vector<std::unique_ptr<ModDock>> mods_;
+    index_t numDocks_;
+    
+    /*! The array of modulation docks. */
+    std::unique_ptr<ModDock[]> mods_;
 };
 
 /*********************************************************************************************//*!

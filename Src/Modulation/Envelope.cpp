@@ -29,9 +29,9 @@ Envelope::Envelope(bool sustainEnabled)
     setSegRate(REL, 0.6);
     setSegLen(REL, 500);
 
-    mods_[AMP]->setHigherBoundary(1);
-    mods_[AMP]->setLowerBoundary(0);
-    mods_[AMP]->setBaseValue(1);
+    mods_[AMP].setHigherBoundary(1);
+    mods_[AMP].setLowerBoundary(0);
+    mods_[AMP].setBaseValue(1);
 }
 
 void Envelope::setAmp(double amp)
@@ -41,14 +41,14 @@ void Envelope::setAmp(double amp)
     ModUnit::setAmp(amp);
     
     // Sets new base value for modulation
-    mods_[AMP]->setBaseValue(amp);
+    mods_[AMP].setBaseValue(amp);
 }
 
 double Envelope::getAmp() const
 {
-    if (mods_[AMP]->inUse())
+    if (mods_[AMP].inUse())
     {
-        return mods_[AMP]->getBaseValue();
+        return mods_[AMP].getBaseValue();
     }
     
     else return amp_;
@@ -141,9 +141,9 @@ double Envelope::tick_()
 double Envelope::modulate(double sample, double depth, double)
 {
     // Modulate
-    if (mods_[AMP]->inUse())
+    if (mods_[AMP].inUse())
     {
-        amp_ = mods_[AMP]->tick();
+        amp_ = mods_[AMP].tick();
     }
     
     return sample * tick_() * depth * amp_;

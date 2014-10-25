@@ -150,23 +150,23 @@ Crossfader::Crossfader(unsigned short type,
   ModUnit(1,1)
 {
     // Initialize ModDocks
-    mods_[VALUE]->setHigherBoundary(100);
-    mods_[VALUE]->setLowerBoundary(-100);
-    mods_[VALUE]->setBaseValue(offset);
+    mods_[VALUE].setHigherBoundary(100);
+    mods_[VALUE].setLowerBoundary(-100);
+    mods_[VALUE].setBaseValue(offset);
 }
 
 void Crossfader::setValue(short value)
 {
     CrossfadeUnit::setValue(value);
     
-    mods_[VALUE]->setBaseValue(value);
+    mods_[VALUE].setBaseValue(value);
 }
 
 short Crossfader::getValue() const
 {
-    if (mods_[VALUE]->inUse())
+    if (mods_[VALUE].inUse())
     {
-        return mods_[VALUE]->getBaseValue();
+        return mods_[VALUE].getBaseValue();
     }
     
     else return CrossfadeUnit::getValue();
@@ -175,9 +175,9 @@ short Crossfader::getValue() const
 double Crossfader::modulate(double sample, double depth, double maximum)
 {
     // Modulate value
-    if (mods_[VALUE]->inUse())
+    if (mods_[VALUE].inUse())
     {
-        index_ = mods_[VALUE]->tick() + 100;
+        index_ = mods_[VALUE].tick() + 100;
     }
     
     // Get left and right ticks (if a ModUnit is available) and fade them appropriately to current

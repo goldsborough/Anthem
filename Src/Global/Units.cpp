@@ -13,20 +13,16 @@
 #include <stdexcept>
 
 Unit::Unit(index_t numDocks)
-: mods_(numDocks)
-{
-    for (index_t i = 0; i < numDocks; ++i)
-    {
-        mods_[i].reset(new ModDock);
-    }
-}
+: mods_(new ModDock [numDocks]),
+  numDocks_(numDocks)
+{ }
 
 Unit::Unit(const Unit& other)
-: mods_(other.numDocks())
+: mods_(new ModDock [other.numDocks_])
 {
-    for (index_t i = 0; i < mods_.size(); ++i)
+    for (index_t i = 0; i < other.numDocks_; ++i)
     {
-        mods_[i].reset(new ModDock(*other.mods_[i]));
+        mods_[i] = other.mods_[i];
     }
 }
 
@@ -34,11 +30,11 @@ Unit& Unit::operator=(const Unit& other)
 {
     if (this != &other)
     {
-        mods_.resize(other.mods_.size());
+        mods_.reset(new ModDock [other.numDocks_]);
         
-        for (index_t i = 0; i < mods_.size(); ++i)
+        for (index_t i = 0; i < other.numDocks_; ++i)
         {
-            *mods_[i] = *other.mods_[i];
+            mods_[i] = other.mods_[i];
         }
     }
     
@@ -47,95 +43,95 @@ Unit& Unit::operator=(const Unit& other)
 
 Unit::~Unit() { }
 
-std::vector<ModDock*>::size_type Unit::numDocks() const
+Unit::index_t Unit::numDocks() const
 {
-    return mods_.size();
+    return numDocks_;
 }
 
 void Unit::setModUnitDepth(index_t dockNum,
                            index_t modNum,
                            double depth)
 {
-    if (dockNum >= mods_.size())
+    if (dockNum >= numDocks_)
     { throw std::invalid_argument("Dock index out of range!"); }
     
     if (depth > 1 || depth < 0)
     { throw std::invalid_argument("Depth value must be between 0 and 1!");}
     
-    mods_[dockNum]->setDepth(modNum, depth);
+    mods_[dockNum].setDepth(modNum, depth);
 }
 
 double Unit::getModUnitDepth(index_t dockNum, index_t modNum) const
 {
-    return mods_[dockNum]->getDepth(modNum);
+    return mods_[dockNum].getDepth(modNum);
 }
 
 void Unit::attachMod(index_t dockNum,
                      ModUnit* mod)
 {
-    if (dockNum >= mods_.size())
+    if (dockNum >= numDocks_)
     { throw std::invalid_argument("Dock index out of range!"); }
     
-    mods_[dockNum]->attach(mod);
+    mods_[dockNum].attach(mod);
 }
 
 void Unit::detachMod(index_t dockNum,
                      index_t modNum)
 {
-    if (dockNum >= mods_.size())
+    if (dockNum >= numDocks_)
     { throw std::invalid_argument("Dock index out of range!"); }
     
-    mods_[dockNum]->detach(modNum);
+    mods_[dockNum].detach(modNum);
 }
 
 bool Unit::dockInUse(index_t dockNum) const
 {
-    return mods_[dockNum]->inUse();
+    return mods_[dockNum].inUse();
 }
 
 void Unit::setSidechain(index_t dockNum, index_t master, index_t slave)
 {
-    if (dockNum >= mods_.size())
+    if (dockNum >= numDocks_)
     { throw std::invalid_argument("Dock index out of range!"); }
     
-    mods_[dockNum]->setSidechain(master, slave);
+    mods_[dockNum].setSidechain(master, slave);
 }
 
 void Unit::unSidechain(index_t dockNum, index_t master, index_t slave)
 {
-    if (dockNum >= mods_.size())
+    if (dockNum >= numDocks_)
     { throw std::invalid_argument("Dock index out of range!"); }
     
-    mods_[dockNum]->unSidechain(master, slave);
+    mods_[dockNum].unSidechain(master, slave);
 }
 
 bool Unit::isSidechain(index_t dockNum, index_t master, index_t slave) const
 {
-    if (dockNum >= mods_.size())
+    if (dockNum >= numDocks_)
     { throw std::invalid_argument("Dock index out of range!"); }
     
-    return mods_[dockNum]->isSidechain(master,slave);
+    return mods_[dockNum].isSidechain(master,slave);
 }
 
 bool Unit::isMaster(index_t dockNum, index_t index) const
 {
-    if (dockNum >= mods_.size())
+    if (dockNum >= numDocks_)
     { throw std::invalid_argument("Dock index out of range!"); }
     
-    return mods_[dockNum]->isMaster(index);
+    return mods_[dockNum].isMaster(index);
 }
 
 bool Unit::isSlave(index_t dockNum, index_t index) const
 {
-    if (dockNum >= mods_.size())
+    if (dockNum >= numDocks_)
     { throw std::invalid_argument("Dock index out of range!"); }
     
-    return mods_[dockNum]->isSlave(index);
+    return mods_[dockNum].isSlave(index);
 }
 
 unsigned long Unit::dockSize(index_t dockNum) const
 {
-    return mods_[dockNum]->size();
+    return mods_[dockNum].size();
 }
 
 EffectUnit::EffectUnit(unsigned short numDocks, double dryWet)

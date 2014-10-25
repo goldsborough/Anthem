@@ -6,9 +6,9 @@
 Macro::Macro(double value)
 : ModUnit(1), value_(value)
 {
-    mods_[VALUE]->setHigherBoundary(1);
-    mods_[VALUE]->setLowerBoundary(-1);
-    mods_[VALUE]->setBaseValue(value);
+    mods_[VALUE].setHigherBoundary(1);
+    mods_[VALUE].setLowerBoundary(-1);
+    mods_[VALUE].setBaseValue(value);
 }
 
 void Macro::setValue(double value)
@@ -18,14 +18,14 @@ void Macro::setValue(double value)
     
     value_ = value;
     
-    mods_[VALUE]->setBaseValue(value_);
+    mods_[VALUE].setBaseValue(value_);
 }
 
 double Macro::getValue() const
 {
-    if (mods_[VALUE]->inUse())
+    if (mods_[VALUE].inUse())
     {
-        return mods_[VALUE]->getBaseValue();
+        return mods_[VALUE].getBaseValue();
     }
     
     else return value_;
@@ -33,9 +33,9 @@ double Macro::getValue() const
 
 double Macro::modulate(double sample, double depth, double maximum)
 {
-    if (mods_[VALUE]->inUse())
+    if (mods_[VALUE].inUse())
     {
-        value_ = mods_[VALUE]->tick();
+        value_ = mods_[VALUE].tick();
     }
     
     return sample + (maximum * value_ * depth);

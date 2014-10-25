@@ -15,17 +15,17 @@
 Operator::Operator(short wt, double amp)
 : GenUnit(3,amp)
 {
-    mods_[AMP]->setHigherBoundary(1);
-    mods_[AMP]->setLowerBoundary(0);
-    mods_[AMP]->setBaseValue(amp);
+    mods_[AMP].setHigherBoundary(1);
+    mods_[AMP].setLowerBoundary(0);
+    mods_[AMP].setBaseValue(amp);
     
-    mods_[SEMI_OFFSET]->setHigherBoundary(48);
-    mods_[SEMI_OFFSET]->setLowerBoundary(-48);
-    mods_[SEMI_OFFSET]->setBaseValue(0);
+    mods_[SEMI_OFFSET].setHigherBoundary(48);
+    mods_[SEMI_OFFSET].setLowerBoundary(-48);
+    mods_[SEMI_OFFSET].setBaseValue(0);
     
-    mods_[CENT_OFFSET]->setHigherBoundary(100);
-    mods_[CENT_OFFSET]->setLowerBoundary(0);
-    mods_[CENT_OFFSET]->setBaseValue(0);
+    mods_[CENT_OFFSET].setHigherBoundary(100);
+    mods_[CENT_OFFSET].setLowerBoundary(0);
+    mods_[CENT_OFFSET].setBaseValue(0);
     
     // Set wavetable for all oscillators
     setWavetable(wt);
@@ -88,7 +88,7 @@ short Operator::getWavetableID() const
 
 void Operator::setSemitoneOffset(short semitoneOffset)
 {
-    mods_[SEMI_OFFSET]->setBaseValue(semitoneOffset);
+    mods_[SEMI_OFFSET].setBaseValue(semitoneOffset);
     
     for (noteVec::iterator itr = notes_.begin(), end = notes_.end();
          itr != end;
@@ -102,9 +102,9 @@ void Operator::setSemitoneOffset(short semitoneOffset)
 
 short Operator::getSemitoneOffset() const
 {
-    if (mods_[SEMI_OFFSET]->inUse())
+    if (mods_[SEMI_OFFSET].inUse())
     {
-        return mods_[SEMI_OFFSET]->getBaseValue();
+        return mods_[SEMI_OFFSET].getBaseValue();
     }
     
     else return semitoneOffset_;
@@ -112,7 +112,7 @@ short Operator::getSemitoneOffset() const
 
 void Operator::setCentOffset(short centOffset)
 {
-    mods_[CENT_OFFSET]->setBaseValue(centOffset);
+    mods_[CENT_OFFSET].setBaseValue(centOffset);
     
     for (noteVec::iterator itr = notes_.begin(), end = notes_.end();
          itr != end;
@@ -126,9 +126,9 @@ void Operator::setCentOffset(short centOffset)
 
 short Operator::getCentOffset() const
 {
-    if (mods_[CENT_OFFSET]->inUse())
+    if (mods_[CENT_OFFSET].inUse())
     {
-        return mods_[CENT_OFFSET]->getBaseValue();
+        return mods_[CENT_OFFSET].getBaseValue();
     }
     
     else return centOffset_;
@@ -177,14 +177,14 @@ void Operator::setAmp(double amp)
     GenUnit::setAmp(amp);
     
     // Sets new base value for modulation
-    mods_[AMP]->setBaseValue(amp);
+    mods_[AMP].setBaseValue(amp);
 }
 
 double Operator::getAmp() const
 {
-    if (mods_[AMP]->inUse())
+    if (mods_[AMP].inUse())
     {
-        return mods_[AMP]->getBaseValue();
+        return mods_[AMP].getBaseValue();
     }
     
     else return amp_;
@@ -205,9 +205,9 @@ double Operator::tick()
     double val = 0;
     
     // Modulate semitones for all oscillators/notes
-    if (mods_[SEMI_OFFSET]->inUse())
+    if (mods_[SEMI_OFFSET].inUse())
     {
-        double newSemitoneOffset = mods_[SEMI_OFFSET]->tick();
+        double newSemitoneOffset = mods_[SEMI_OFFSET].tick();
         
         for (noteVec::iterator itr = notes_.begin(), end = notes_.end();
              itr != end;
@@ -218,9 +218,9 @@ double Operator::tick()
     }
     
     // Modulate semitones for all oscillators/notes
-    if (mods_[CENT_OFFSET]->inUse())
+    if (mods_[CENT_OFFSET].inUse())
     {
-        double newCentOffset = mods_[CENT_OFFSET]->tick();
+        double newCentOffset = mods_[CENT_OFFSET].tick();
         
         for (noteVec::iterator itr = notes_.begin(), end = notes_.end();
              itr != end;
@@ -231,9 +231,9 @@ double Operator::tick()
     }
     
     // Check modulation dock for the amplitude parameter
-    if (mods_[AMP]->inUse())
+    if (mods_[AMP].inUse())
     {
-        amp_ = mods_[AMP]->tick();
+        amp_ = mods_[AMP].tick();
     }
     
     // Add up all notes

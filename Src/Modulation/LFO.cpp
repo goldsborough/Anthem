@@ -19,31 +19,31 @@
 LFO::LFO(short wt, double rate, double amp, double phaseOffset)
 : Oscillator(wt,rate,amp,phaseOffset), ModUnit(3,amp)
 {
-    mods_[FREQ]->setHigherBoundary(100);
-    mods_[FREQ]->setLowerBoundary(0);
-    mods_[FREQ]->setBaseValue(rate);
+    mods_[FREQ].setHigherBoundary(100);
+    mods_[FREQ].setLowerBoundary(0);
+    mods_[FREQ].setBaseValue(rate);
     
-    mods_[PHASE]->setHigherBoundary(360);
-    mods_[PHASE]->setLowerBoundary(0);
-    mods_[PHASE]->setBaseValue(phaseOffset);
+    mods_[PHASE].setHigherBoundary(360);
+    mods_[PHASE].setLowerBoundary(0);
+    mods_[PHASE].setBaseValue(phaseOffset);
     
-    mods_[AMP]->setHigherBoundary(1);
-    mods_[AMP]->setLowerBoundary(0);
-    mods_[AMP]->setBaseValue(amp);
+    mods_[AMP].setHigherBoundary(1);
+    mods_[AMP].setLowerBoundary(0);
+    mods_[AMP].setBaseValue(amp);
 }
 
 void LFO::setFreq(double Hz)
 {
     Oscillator::setFreq(Hz);
     
-    mods_[FREQ]->setBaseValue(Hz);
+    mods_[FREQ].setBaseValue(Hz);
 }
 
 double LFO::getFreq() const
 {
-    if (mods_[FREQ]->inUse())
+    if (mods_[FREQ].inUse())
     {
-        return mods_[FREQ]->getBaseValue();
+        return mods_[FREQ].getBaseValue();
     }
     
     else return freq_;
@@ -53,14 +53,14 @@ void LFO::setPhaseOffset(double degrees)
 {
     Oscillator::setPhaseOffset(degrees);
     
-    mods_[PHASE]->setBaseValue(degrees);
+    mods_[PHASE].setBaseValue(degrees);
 }
 
 double LFO::getPhaseOffset() const
 {
-    if (mods_[PHASE]->inUse())
+    if (mods_[PHASE].inUse())
     {
-        return mods_[PHASE]->getBaseValue();
+        return mods_[PHASE].getBaseValue();
     }
     
     else return Oscillator::getPhaseOffset();
@@ -71,14 +71,14 @@ void LFO::setAmp(double amp)
     // For boundary checking
     Oscillator::setAmp(amp);
     
-    mods_[AMP]->setBaseValue(amp);
+    mods_[AMP].setBaseValue(amp);
 }
 
 double LFO::getAmp() const
 {
-    if (mods_[AMP]->inUse())
+    if (mods_[AMP].inUse())
     {
-        return mods_[AMP]->getBaseValue();
+        return mods_[AMP].getBaseValue();
     }
     
     else return amp_;
@@ -87,21 +87,21 @@ double LFO::getAmp() const
 double LFO::modulate(double sample, double depth, double maximum)
 {
     // Modulate rate/frequency
-    if (mods_[FREQ]->inUse())
+    if (mods_[FREQ].inUse())
     {
-        Oscillator::setFreq(mods_[FREQ]->tick());
+        Oscillator::setFreq(mods_[FREQ].tick());
     }
     
     // Modulate phase offset
-    if (mods_[PHASE]->inUse())
+    if (mods_[PHASE].inUse())
     {
-        Oscillator::setPhaseOffset(mods_[PHASE]->tick());
+        Oscillator::setPhaseOffset(mods_[PHASE].tick());
     }
     
     // Get amplitude modulation
-    if (mods_[AMP]->inUse())
+    if (mods_[AMP].inUse())
     {
-        amp_ = mods_[AMP]->tick();
+        amp_ = mods_[AMP].tick();
     }
 
     // Actual modulation by LFO
@@ -130,9 +130,9 @@ LFOSeq::LFOSeq(unsigned short seqLength, double rate)
         setScaledModFreq_(i);
     }
     
-    mods_[RATE]->setHigherBoundary(10);
-    mods_[RATE]->setLowerBoundary(0);
-    mods_[RATE]->setBaseValue(rate);
+    mods_[RATE].setHigherBoundary(10);
+    mods_[RATE].setLowerBoundary(0);
+    mods_[RATE].setBaseValue(rate);
 }
 
 double LFOSeq::getScaledModFreqValue(double freq) const
@@ -184,14 +184,14 @@ void LFOSeq::setAmp(double amp)
     // For boundary checking
     ModUnit::setAmp(amp);
 
-    mods_[AMP]->setBaseValue(amp);
+    mods_[AMP].setBaseValue(amp);
 }
 
 double LFOSeq::getAmp() const
 {
-    if (mods_[AMP]->inUse())
+    if (mods_[AMP].inUse())
     {
-        return mods_[AMP]->getBaseValue();
+        return mods_[AMP].getBaseValue();
     }
     
     else return amp_;
@@ -204,16 +204,16 @@ void LFOSeq::setRate(double Hz)
     
     rate_ = Hz;
     
-    mods_[RATE]->setBaseValue(rate_);
+    mods_[RATE].setBaseValue(rate_);
     
     resizeSegsFromRate_(rate_);
 }
 
 double LFOSeq::getRate() const
 {
-    if (mods_[RATE]->inUse())
+    if (mods_[RATE].inUse())
     {
-        return mods_[RATE]->getBaseValue();
+        return mods_[RATE].getBaseValue();
     }
     
     else return rate_;
@@ -567,16 +567,16 @@ void LFOSeq::increment()
 
 double LFOSeq::modulate(double sample, double depth, double)
 {
-    if (mods_[RATE]->inUse())
+    if (mods_[RATE].inUse())
     {
-        rate_ = mods_[RATE]->tick();
+        rate_ = mods_[RATE].tick();
         
         resizeSegsFromRate_(rate_);
     }
     
-    if (mods_[AMP]->inUse())
+    if (mods_[AMP].inUse())
     {
-        amp_ =  mods_[AMP]->tick();
+        amp_ =  mods_[AMP].tick();
     }
     
     return sample * tick() * depth * amp_;
@@ -585,9 +585,9 @@ double LFOSeq::modulate(double sample, double depth, double)
 LFOUnit::LFOUnit(unsigned short mode)
 : ModUnit(1), fader_(new Crossfader)
 {
-    mods_[AMP]->setHigherBoundary(1);
-    mods_[AMP]->setLowerBoundary(0);
-    mods_[AMP]->setBaseValue(1);
+    mods_[AMP].setHigherBoundary(1);
+    mods_[AMP].setLowerBoundary(0);
+    mods_[AMP].setBaseValue(1);
     
     setMode(mode);
 }
@@ -630,17 +630,17 @@ void LFOUnit::setAmp(double amp)
     // For boundary checking
     ModUnit::setAmp(amp);
     
-    if (mods_[AMP]->inUse())
+    if (mods_[AMP].inUse())
     {
-        mods_[AMP]->setBaseValue(amp);
+        mods_[AMP].setBaseValue(amp);
     }
 }
 
 double LFOUnit::getAmp() const
 {
-    if (mods_[AMP]->inUse())
+    if (mods_[AMP].inUse())
     {
-        return mods_[AMP]->getBaseValue();
+        return mods_[AMP].getBaseValue();
     }
     
     else return amp_;
@@ -703,9 +703,9 @@ void LFOUnit::increment()
 
 double LFOUnit::modulate(double sample, double depth, double maximum)
 {
-    if (mods_[AMP]->inUse())
+    if (mods_[AMP].inUse())
     {
-        amp_ =  mods_[AMP]->tick();
+        amp_ =  mods_[AMP].tick();
     }
     
     // Tick the crossfaded value from the lfos and multiply by the envelope
