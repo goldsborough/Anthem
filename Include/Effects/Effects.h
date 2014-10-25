@@ -119,6 +119,9 @@ public:
     
     void setDryWet(double dw);
     
+    /*! @copydoc EffectUnit::getDryWet() */
+    double getDryWet() const;
+    
 private:
     
     /*! The input signal attenuation factor */

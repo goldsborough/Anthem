@@ -104,13 +104,20 @@ Delay& Delay::operator=(const Delay &other)
 
 void Delay::setDryWet(double dw)
 {
-    if (mods_[DRYWET]->inUse())
-    {
-        mods_[DRYWET]->setBaseValue(dw);
-    }
-    
     // For error checking
     EffectUnit::setDryWet(dw);
+
+    mods_[DRYWET]->setBaseValue(dw);
+}
+
+double Delay::getDryWet() const
+{
+    if (mods_[DRYWET]->inUse())
+    {
+        return mods_[DRYWET]->getBaseValue();
+    }
+    
+    else return dw_;
 }
 
 void Delay::setDecayRate(double decayRate)
@@ -118,10 +125,7 @@ void Delay::setDecayRate(double decayRate)
     if (decayRate > 1 || decayRate < 0)
     { throw std::invalid_argument("Decay rate must be between 0 and 1!"); }
     
-    if (mods_[DECAY_RATE]->inUse())
-    {
-        mods_[DECAY_RATE]->setBaseValue(decayRate);
-    }
+    mods_[DECAY_RATE]->setBaseValue(decayRate);
     
     decayRate_ = decayRate;
 }
@@ -155,7 +159,7 @@ void Delay::setDelayLen(double delayLen)
     // First assign the new buffer end point
     end_ = buffer_.begin() + delayLen_;
     
-    calcDecay_(decayRate_,decayTime_, delayLen_);
+    calcDecay_();
 }
 
 double Delay::getDelayLen() const
@@ -168,11 +172,8 @@ void Delay::setFeedback(double feedbackLevel)
 {
     if (feedbackLevel < 0 || feedbackLevel > 1)
     { throw std::invalid_argument("Feedback level must be between 0 and 1!"); }
-    
-    if (mods_[FEEDBACK]->inUse())
-    {
-        mods_[FEEDBACK]->setBaseValue(feedbackLevel);
-    }
+
+    mods_[FEEDBACK]->setBaseValue(feedbackLevel);
     
     feedback_ = feedbackLevel;
 }
@@ -193,15 +194,12 @@ void Delay::setDecayTime(double decayTime)
     
     if (decayTime < 0 || decayTime > buffer_.size())
     { throw std::invalid_argument("Decay time must be greater 0 and less than capacity!"); }
-    
-    if (mods_[DECAY_TIME]->inUse())
-    {
-        mods_[DECAY_TIME]->setBaseValue(decayTime);
-    }
+
+    mods_[DECAY_TIME]->setBaseValue(decayTime);
     
     decayTime_ = decayTime;
     
-    calcDecay_(decayRate_,decayTime_,delayLen_);
+    calcDecay_();
 }
 
 double Delay::getDecayTime() const
@@ -215,11 +213,11 @@ double Delay::getDecayTime() const
     else return decayTime_ / Global::samplerate;
 }
 
-void Delay::calcDecay_(double decayRate, double decayTime, double delayLen)
+void Delay::calcDecay_()
 {
-    double decayExponent = static_cast<double>(delayLen) / decayTime;
+    double decayExponent = static_cast<double>(delayLen_) / decayTime_;
     
-    decayValue_ = pow(decayRate, decayExponent);
+    decayValue_ = pow(decayRate_, decayExponent);
 }
 
 void Delay::incr_()
@@ -240,20 +238,34 @@ double Delay::offset(unsigned int offset)
 
 double Delay::process(double sample)
 {
-    // Modulate decay time
-    if (mods_[DECAY_TIME]->inUse())
+    if (mods_[DECAY_TIME]->inUse() ||
+        mods_[DECAY_RATE]->inUse())
     {
-        double newDecayTime = mods_[DECAY_TIME]->tick();
+        // Modulate decay time
+        if (mods_[DECAY_TIME]->inUse())
+        {
+            decayTime_ = mods_[DECAY_TIME]->tick();
+        }
         
-        calcDecay_(decayRate_, newDecayTime, delayLen_);
+        // Modulate decay rate
+        if (mods_[DECAY_RATE]->inUse())
+        {
+            decayRate_ = mods_[DECAY_RATE]->tick();
+        }
+        
+        calcDecay_();
     }
     
-    // Modulate decay rate
-    if (mods_[DECAY_RATE]->inUse())
+    // Modulate feedback value
+    if (mods_[FEEDBACK]->inUse())
     {
-        double newDecayRate = mods_[DECAY_RATE]->tick();
-        
-        calcDecay_(newDecayRate, decayTime_, delayLen_);
+        feedback_ = mods_[FEEDBACK]->tick();
+    }
+    
+    // Modulate dry wet value
+    if (mods_[DRYWET]->inUse())
+    {
+        dw_ = mods_[DRYWET]->tick();
     }
     
     iterator read = write_ - readInt_;
@@ -281,12 +293,6 @@ double Delay::process(double sample)
     // And finally add the fractional part of the
     // previous sample
     output += (*read - output) * readFract_;
-    
-    // Modulate feedback value
-    if (mods_[FEEDBACK]->inUse())
-    {
-        feedback_ = mods_[FEEDBACK]->tick();
-    }
 
     // If the sample hasn't been written yet, write it now
     if (readInt_ > 0)
@@ -298,14 +304,6 @@ double Delay::process(double sample)
     
     // Apply decay
     output *= decayValue_;
-    
-    // Modulate dry wet value
-    if (mods_[DRYWET]->inUse())
-    {
-        double newDryWet = mods_[DRYWET]->tick();
-        
-        return dryWet_(sample, output, newDryWet);
-    }
     
     return dryWet_(sample, output);
 }

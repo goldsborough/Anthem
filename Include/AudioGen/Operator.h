@@ -199,6 +199,9 @@ public:
     /*! @copydoc GenUnit::setAmp() */
     void setAmp(double amp);
     
+    /*! @copydoc GenUnit::getAmp() */
+    double getAmp() const;
+    
 private:
     
     typedef std::vector<std::unique_ptr<Oscillator>> noteVec;

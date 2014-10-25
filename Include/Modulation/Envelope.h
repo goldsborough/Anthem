@@ -92,7 +92,7 @@ public:
     
     /*****************************************************************************************//*!
     *
-    *  @brief       Sets The level of a segment.
+    *  @brief       Sets the level of a segment.
     *
     *  @details     Setting the level of a segment sets its end level and the start level of
     *               the next segment.
@@ -104,6 +104,44 @@ public:
     ********************************************************************************************/
     
     void setSegLevel(seg_t seg, double lv);
+    
+    /*****************************************************************************************//*!
+    *
+    *  @brief       Returns the level of a segment.
+    *
+    *  @details     Equivalent to EnvSegSeq::getSegEndLevel()
+    *
+    *  @param       seg The segment in the sequence.
+    *
+    *  @return      The segment's level, between 0 and 1.
+    *
+    ********************************************************************************************/
+    
+    double getSegLevel(seg_t seg) const;
+    
+    /******************************************************************************//*!
+    *
+    *  @brief      Sets the rate of a segment.
+    *
+    *  @param      seg The segment in the sequence.
+    *
+    *  @param      rate The new rate. 0-1 is exp., 1 is linear and 1-2 is log.
+    *
+    *********************************************************************************/
+    
+    void setSegRate(seg_t seg, double rate);
+    
+    /******************************************************************************//*!
+    *
+    *  @brief       Returns the current rate of a segment.
+    *
+    *  @param       seg The segment, of which to get the rate.
+    *
+    *  @return      The rate of a segment.
+    *
+    *********************************************************************************/
+    
+    double getSegRate(seg_t seg) const;
     
     /*****************************************************************************************//*!
     *

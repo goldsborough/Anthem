@@ -26,9 +26,9 @@ Mixer::Mixer(bool directOut, bool waveOut, double amp)
 
 {
     // Initialize ModDocks
-    mods_[AMP]->setHigherBoundary(1);
-    mods_[AMP]->setLowerBoundary(0);
-    mods_[AMP]->setBaseValue(amp);
+    mods_[MASTER_AMP]->setHigherBoundary(1);
+    mods_[MASTER_AMP]->setLowerBoundary(0);
+    mods_[MASTER_AMP]->setBaseValue(amp);
     
     mods_[PAN]->setHigherBoundary(100);
     mods_[PAN]->setLowerBoundary(-100);
@@ -81,19 +81,16 @@ void Mixer::process(Sample sample)
         pan_->setValue(mods_[PAN]->tick());
     }
     
+    if (mods_[MASTER_AMP]->inUse())
+    {
+        masterAmp_ = mods_[MASTER_AMP]->tick();
+    }
+    
     // Attenuate samples with panning
     sample.left *= pan_->left();
     sample.right *= pan_->right();
     
-    // Modulate amplitude
-    double amp = masterAmp_;
-    
-    if (mods_[AMP]->inUse())
-    {
-        amp = mods_[AMP]->tick();
-    }
-    
-    sample *= amp;
+    sample *= masterAmp_;
     
     // Store in wavefile storage buffer
     if (wavefileEnabled_)
@@ -109,14 +106,19 @@ void Mixer::setMasterAmp(double amp)
     if (amp > 1 || amp < 0)
     { throw std::invalid_argument("Amplitude must be between 0 and 1!"); }
     
-    mods_[AMP]->setBaseValue(amp);
+    mods_[MASTER_AMP]->setBaseValue(amp);
     
     masterAmp_ = amp;
 }
 
 double Mixer::getMasterAmp() const
 {
-    return masterAmp_;
+    if (mods_[MASTER_AMP]->inUse())
+    {
+        return mods_[MASTER_AMP]->getBaseValue();
+    }
+    
+    else return masterAmp_;
 }
 
 void Mixer::setPanValue(short pan)
@@ -124,13 +126,18 @@ void Mixer::setPanValue(short pan)
     // Set value to pan object and
     // do boundary checking there
     pan_->setValue(pan);
-    
+
     mods_[PAN]->setBaseValue(pan);
 }
 
 short Mixer::getPanValue() const
 {
-    return pan_->getValue();
+    if (mods_[PAN]->inUse())
+    {
+        return mods_[PAN]->getBaseValue();
+    }
+    
+    else return pan_->getValue();
 }
 
 void Mixer::setPanType(unsigned short type)

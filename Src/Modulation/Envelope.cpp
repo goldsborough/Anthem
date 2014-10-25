@@ -175,6 +175,29 @@ void Envelope::setLoopEnd(seg_t seg)
     { loopStart_ = loopEnd_; }
 }
 
+void Envelope::setSegRate(seg_t seg, double rate)
+{
+    if (seg < ATK || seg > REL)
+    { throw std::invalid_argument("Invalid segment!"); }
+    
+    segs_[seg].setRate(rate);
+    
+    setSegModDockBaseValue(seg, EnvSeg::RATE, rate);
+}
+
+double Envelope::getSegRate(seg_t seg) const
+{
+    if (seg < ATK || seg > REL)
+    { throw std::invalid_argument("Invalid segment!"); }
+    
+    if (segs_[seg].dockInUse(EnvSeg::RATE))
+    {
+        return getSegModDockBaseValue(seg, EnvSeg::RATE);
+    }
+    
+    else return segs_[seg].getRate();
+}
+
 void Envelope::setSegLevel(seg_t seg, double lv)
 {
     if (seg >= REL)
@@ -182,10 +205,25 @@ void Envelope::setSegLevel(seg_t seg, double lv)
     
     // Delay is always sustain so also set start level
     if (seg == DEL)
-    { segs_[DEL].setStartLevel(lv); }
+    {
+        segs_[DEL].setStartLevel(lv);
+    }
     
     // Set new linked levels
     EnvSegSeq::setLinkedLevel(seg, lv);
+    
+    setSegModDockBaseValue(seg, EnvSeg::END_LEVEL, lv);
+    setSegModDockBaseValue(seg + 1, EnvSeg::START_LEVEL, lv);
+}
+
+double Envelope::getSegLevel(seg_t seg) const
+{
+    if (segs_[seg].dockInUse(EnvSeg::END_LEVEL))
+    {
+        return getSegModDockBaseValue(seg, EnvSeg::END_LEVEL);
+    }
+    
+    else return segs_[seg].getEndLevel();
 }
 
 void Envelope::noteOff()

@@ -36,10 +36,7 @@ void LFO::setFreq(double Hz)
 {
     Oscillator::setFreq(Hz);
     
-    if (mods_[FREQ]->inUse())
-    {
-        mods_[FREQ]->setBaseValue(Hz);
-    }
+    mods_[FREQ]->setBaseValue(Hz);
 }
 
 double LFO::getFreq() const
@@ -56,10 +53,7 @@ void LFO::setPhaseOffset(double degrees)
 {
     Oscillator::setPhaseOffset(degrees);
     
-    if (mods_[PHASE]->inUse())
-    {
-        mods_[PHASE]->setBaseValue(degrees);
-    }
+    mods_[PHASE]->setBaseValue(degrees);
 }
 
 double LFO::getPhaseOffset() const
@@ -77,10 +71,7 @@ void LFO::setAmp(double amp)
     // For boundary checking
     Oscillator::setAmp(amp);
     
-    if (mods_[AMP]->inUse())
-    {
-        mods_[AMP]->setBaseValue(amp);
-    }
+    mods_[AMP]->setBaseValue(amp);
 }
 
 double LFO::getAmp() const
@@ -192,11 +183,8 @@ void LFOSeq::setAmp(double amp)
 {
     // For boundary checking
     ModUnit::setAmp(amp);
-    
-    if (mods_[AMP]->inUse())
-    {
-        mods_[AMP]->setBaseValue(amp);
-    }
+
+    mods_[AMP]->setBaseValue(amp);
 }
 
 double LFOSeq::getAmp() const
@@ -216,10 +204,7 @@ void LFOSeq::setRate(double Hz)
     
     rate_ = Hz;
     
-    if (mods_[RATE]->inUse())
-    {
-        mods_[RATE]->setBaseValue(rate_);
-    }
+    mods_[RATE]->setBaseValue(rate_);
     
     resizeSegsFromRate_(rate_);
 }
@@ -445,8 +430,8 @@ double LFOSeq::getModUnitDepth_Seg(seg_t segNum, index_t dockNum, index_t modNum
 }
 
 void LFOSeq::attachMod_Seg(seg_t segNum,
-                                 index_t dockNum,
-                                 ModUnit *mod)
+                           index_t dockNum,
+                           ModUnit *mod)
 {
     if (segNum >= segs_.size())
     { throw std::invalid_argument("Segment index out of range!"); }
@@ -584,7 +569,9 @@ double LFOSeq::modulate(double sample, double depth, double)
 {
     if (mods_[RATE]->inUse())
     {
-        resizeSegsFromRate_(mods_[RATE]->tick());
+        rate_ = mods_[RATE]->tick();
+        
+        resizeSegsFromRate_(rate_);
     }
     
     if (mods_[AMP]->inUse())

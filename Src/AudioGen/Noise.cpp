@@ -54,11 +54,8 @@ void Noise::setAmp(double amp)
     // Takes care of boundary checking and
     // member setting
     GenUnit::setAmp(amp);
-    
-    if (mods_[AMP]->inUse())
-    {
-        mods_[AMP]->setBaseValue(amp);
-    }
+
+    mods_[AMP]->setBaseValue(amp);
 }
 
 double Noise::getAmp() const

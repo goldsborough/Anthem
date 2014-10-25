@@ -38,7 +38,7 @@ public:
     /*! Available ModDocks */
     enum Docks
     {
-        AMP,
+        MASTER_AMP,
         PAN
     };
 

@@ -128,10 +128,7 @@ void EnvSeg::setEndLevel(double lv)
     
     endAmp_ = lv;
     
-    if (mods_[END_LEVEL]->inUse())
-    {
-        mods_[END_LEVEL]->setBaseValue(endAmp_);
-    }
+    mods_[END_LEVEL]->setBaseValue(endAmp_);
     
     calcRange_();
 }
@@ -490,6 +487,16 @@ unsigned long ModEnvSegSeq::dockSize_Seg(seg_t segNum, index_t dockNum) const
     { throw std::invalid_argument("Segment index out of range!"); }
     
     return segs_[segNum].dockSize(dockNum);
+}
+
+void ModEnvSegSeq::setSegModDockBaseValue(seg_t segNum, index_t dockNum, double value)
+{
+    segs_[segNum].mods_[dockNum]->setBaseValue(value);
+}
+
+double ModEnvSegSeq::getSegModDockBaseValue(seg_t segNum, index_t dockNum) const
+{
+    return segs_[segNum].mods_[dockNum]->getBaseValue();
 }
 
 ModEnvSegSeqFlexible::ModEnvSegSeqFlexible(seg_t numSegs,

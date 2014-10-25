@@ -114,6 +114,16 @@ void Reverb::setDryWet(double dw)
     { attenuation_ = 0.25; }
 }
 
+double Reverb::getDryWet() const
+{
+    if (mods_[DRYWET]->inUse())
+    {
+        return mods_[DRYWET]->getBaseValue();
+    }
+    
+    else return dw_;
+}
+
 double Reverb::process(double sample)
 {
     // Modulate time
@@ -138,6 +148,12 @@ double Reverb::process(double sample)
         }
     }
     
+    // Modulate the dry/wet
+    if (mods_[DRYWET]->inUse())
+    {
+        dw_ = mods_[DRYWET]->tick();
+    }
+    
     sample *= attenuation_;
     
     double output = 0;
@@ -148,15 +164,6 @@ double Reverb::process(double sample)
     }
     
     output = allPasses_[1].process(allPasses_[0].process(output));
-    
-    // Modulate the dry/wet
-    if (mods_[DRYWET]->inUse())
-    {
-        double dw = mods_[DRYWET]->tick();
-        
-        // Call dryWet_ with custom dry/wet value (instead of dw_)
-        return dryWet_(sample, output, dw);
-    }
     
     return dryWet_(sample, output);
 }
@@ -176,6 +183,16 @@ void Reverb::setReverbRate(double reverbRate)
     }
 }
 
+double Reverb::getReverbRate() const
+{
+    if (mods_[REVERB_RATE]->inUse())
+    {
+        return mods_[REVERB_RATE]->getBaseValue();
+    }
+    
+    else return reverbRate_;
+}
+
 void Reverb::setReverbTime(double reverbTime)
 {
     if (reverbTime < 0 || reverbTime > 100)
@@ -189,6 +206,16 @@ void Reverb::setReverbTime(double reverbTime)
     {
         delays_[i].setDecayTime(reverbTime);
     }
+}
+
+double Reverb::getReverbTime() const
+{
+    if (mods_[REVERB_TIME]->inUse())
+    {
+        return mods_[REVERB_TIME]->getBaseValue();
+    }
+    
+    else return reverbTime_;
 }
 
 Flanger::Flanger(const double& center,

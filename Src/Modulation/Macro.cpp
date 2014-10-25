@@ -18,10 +18,7 @@ void Macro::setValue(double value)
     
     value_ = value;
     
-    if (mods_[VALUE]->inUse())
-    {
-        mods_[VALUE]->setBaseValue(value_);
-    }
+    mods_[VALUE]->setBaseValue(value_);
 }
 
 double Macro::getValue() const

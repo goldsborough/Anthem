@@ -180,6 +180,16 @@ void Operator::setAmp(double amp)
     mods_[AMP]->setBaseValue(amp);
 }
 
+double Operator::getAmp() const
+{
+    if (mods_[AMP]->inUse())
+    {
+        return mods_[AMP]->getBaseValue();
+    }
+    
+    else return amp_;
+}
+
 void Operator::increment()
 {
     for (noteVec::iterator itr = notes_.begin(), end = notes_.end();
@@ -220,6 +230,12 @@ double Operator::tick()
         }
     }
     
+    // Check modulation dock for the amplitude parameter
+    if (mods_[AMP]->inUse())
+    {
+        amp_ = mods_[AMP]->tick();
+    }
+    
     // Add up all notes
     for (noteVec::iterator itr = notes_.begin(), end = notes_.end();
          itr != end;
@@ -228,16 +244,5 @@ double Operator::tick()
         val += (*itr)->tick();
     }
     
-    // Fix this: amp_ can be set directly because of ModDock base value
-    // Also for LFO?
-    
-    double amp = amp_;
-    
-    // Check modulation dock for the amplitude parameter
-    if (mods_[AMP]->inUse())
-    {
-        amp = mods_[AMP]->tick();
-    }
-    
-    return val * amp;
+    return val * amp_;
 }

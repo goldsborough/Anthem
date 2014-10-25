@@ -85,6 +85,9 @@ public:
     /*! @copydoc EffectUnit::setDryWet() */
     virtual void setDryWet(double dw);
     
+    /*! @copydoc EffectUnit::getDryWet() */
+    virtual double getDryWet() const;
+    
     /*************************************************************************//*!
     *
     *  @brief       Sets the length of the delay line.
@@ -185,7 +188,7 @@ protected:
     typedef Buffer::const_iterator const_iterator;
     
     /*! Calculates the _decayValue based on the decay rate, time and delay length*/
-    void calcDecay_(double decayRate, double decayTime, double delayLen);
+    void calcDecay_();
     
     /*! Increments and boundary checks the write pointer */
     void incr_();

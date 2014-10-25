@@ -159,10 +159,7 @@ void Crossfader::setValue(short value)
 {
     CrossfadeUnit::setValue(value);
     
-    if (mods_[VALUE]->inUse())
-    {
-        mods_[VALUE]->setBaseValue(value);
-    }
+    mods_[VALUE]->setBaseValue(value);
 }
 
 short Crossfader::getValue() const

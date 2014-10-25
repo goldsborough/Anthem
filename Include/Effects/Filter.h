@@ -98,6 +98,9 @@ public:
     /*! @copydoc EffectUnit::setDryWet() */
     void setDryWet(double dw);
     
+    /*! @copydoc EffectUnit::getDryWet() */
+    double getDryWet() const;
+    
     /*************************************************************************//*!
     *
     *  @brief       Sets the filter mode.
@@ -198,7 +201,7 @@ private:
     *
     ****************************************************************************/
     
-    void calcCoefs_(short mode, double cutoff, double q, double gain);
+    void calcCoefs_();
     
     /*! The filter mode */
     unsigned short mode_;

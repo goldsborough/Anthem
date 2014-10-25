@@ -32,6 +32,8 @@ class EnvSeg : public GenUnit
     
 public:
     
+    friend class ModEnvSegSeq;
+    
     enum Docks
     {
         RATE,
@@ -769,6 +771,12 @@ public:
     *************************************************************************************************/
     
     virtual unsigned long dockSize_Seg(seg_t segNum, index_t dockNum) const;
+    
+protected:
+    
+    void setSegModDockBaseValue(seg_t segNum, index_t dockNum, double value);
+    
+    double getSegModDockBaseValue(seg_t segNum, index_t dockNum) const;
 };
 
 /******************************************************************************//*!
