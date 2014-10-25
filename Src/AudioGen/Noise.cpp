@@ -1,21 +1,17 @@
-//
-//  Noise.cpp
-//  Anthem
-//
-//  Created by Peter Goldsborough on 15/04/14.
-//  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
-//
-
 #include "Noise.h"
 #include "Filter.h"
 #include "ModDock.h"
 
-#include <cstdlib>
+#include <ctime>
 #include <stdexcept>
 
 Noise::Noise(unsigned short color, double amp)
-: GenUnit(1,amp), _filter(new Filter(Filter::LOW_PASS,1,0.1))
+: GenUnit(1,amp), filter_(new Filter(Filter::LOW_PASS,1,0.1)),
+  dist_(-1,1)
 {
+    // Seed random number generator
+    rgen_.seed((unsigned)time(0));
+    
     setColor(color);
     
     mods_[AMP]->setHigherBoundary(1);
@@ -23,17 +19,26 @@ Noise::Noise(unsigned short color, double amp)
     mods_[AMP]->setBaseValue(amp);
 }
 
-Noise::~Noise()
-{ delete _filter; }
-
 void Noise::setAmp(double amp)
 {
     // Takes care of boundary checking and
     // member setting
     GenUnit::setAmp(amp);
     
-    // Sets new base value for modulation
-    mods_[AMP]->setBaseValue(amp);
+    if (mods_[AMP]->inUse())
+    {
+        mods_[AMP]->setBaseValue(amp);
+    }
+}
+
+double Noise::getAmp() const
+{
+    if (mods_[AMP]->inUse())
+    {
+        return mods_[AMP]->getBaseValue();
+    }
+    
+    else return amp_;
 }
 
 void Noise::setColor(unsigned short color)
@@ -50,9 +55,9 @@ void Noise::setColor(unsigned short color)
         {
             // Pink noise has a decrease of 3dB/Octave
             
-            _filter->setMode(Filter::LOW_PASS);
-            _filter->setCutoff(10000);
-            _filter->setGain(6);
+            filter_->setMode(Filter::LOW_PASS);
+            filter_->setCutoff(10000);
+            filter_->setGain(6);
             
             break;
         }
@@ -61,9 +66,9 @@ void Noise::setColor(unsigned short color)
         {
             // Red noise has a decrease of 6dB/Octave
             
-            _filter->setMode(Filter::LOW_PASS);
-            _filter->setCutoff(1500);
-            _filter->setGain(14);
+            filter_->setMode(Filter::LOW_PASS);
+            filter_->setCutoff(1500);
+            filter_->setGain(14);
             
             break;
         }
@@ -72,10 +77,10 @@ void Noise::setColor(unsigned short color)
         {
             // Blue noise has an increase of 3dB/Octave
             
-            _filter->setMode(Filter::HIGH_PASS);
-            _filter->setCutoff(1000);
-            _filter->setQ(0.2);
-            _filter->setGain(-3);
+            filter_->setMode(Filter::HIGH_PASS);
+            filter_->setCutoff(1000);
+            filter_->setQ(0.2);
+            filter_->setGain(-3);
             
             break;
         }
@@ -84,38 +89,43 @@ void Noise::setColor(unsigned short color)
         {
             // Violet noise has an increase of 6dB/Octave
             
-            _filter->setMode(Filter::HIGH_PASS);
-            _filter->setCutoff(6000);
-            _filter->setQ(0.2);
-            _filter->setGain(3);
+            filter_->setMode(Filter::HIGH_PASS);
+            filter_->setCutoff(6000);
+            filter_->setQ(0.2);
+            filter_->setGain(3);
         }
             
         default:
             break;
     }
     
-    _color = color;
+    color_ = color;
 }
 
 unsigned short Noise::getColor() const
 {
-    return _color;
+    return color_;
+}
+
+void Noise::increment()
+{
+    // Get random value
+    rval_ = dist_(rgen_);
+    
+    // All noise colors except white noise are filtered
+    if (color_ != WHITE)
+    {
+        rval_  = filter_->process(rval_);
+    }
 }
 
 double Noise::tick()
 {
-    static double randHalf = RAND_MAX/2.0;
-    
-    // Get random noise
-    double value = (rand() - randHalf) / randHalf;
-    
-    // All noise colors except white noise are filtered
-    if (_color != WHITE)
-    { value  = _filter->process(value); }
-    
     // Check modulation dock for the amplitude parameter
     if (mods_[AMP]->inUse())
-    { return value * mods_[AMP]->tick(); }
+    {
+        amp_ = mods_[AMP]->tick();
+    }
     
-    return value * amp_;
+    return rval_ * amp_;
 }

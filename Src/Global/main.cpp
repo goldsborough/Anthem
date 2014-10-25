@@ -28,24 +28,25 @@ int main(int argc, const char * argv[])
     
     op.addNote(440);
     
+    Noise noise;
+    
     LFO lfo(WavetableDB::SINE);
     
-    Envelope env;
+    noise.attachMod(Noise::AMP, &lfo);
     
-    env.setSegLevel(1, 0.9);
+    noise.setAmp(0.5);
     
-    env.setSustainEnabled(true);
-    
-    op.attachMod(Operator::AMP, &env);
+    noise.setModUnitDepth(Noise::AMP, 0, 0.5);
     
     Mixer mixer(0,1);
     
     for (int i = 0; i < len; ++i)
     {
-        double tick = op.tick();
-    
-        env.increment();
-        op.increment();
+        double tick = noise.tick();
+
+        //op.increment();
+        
+        noise.increment();
         lfo.increment();
         
         mixer.process(tick);

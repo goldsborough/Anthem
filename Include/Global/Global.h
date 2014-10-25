@@ -15,9 +15,6 @@
 #ifndef __Anthem__Global__
 #define __Anthem__Global__
 
-#include <ctime>
-#include <cstdlib>
-
 // http://goo.gl/748HMW
 
 namespace Global

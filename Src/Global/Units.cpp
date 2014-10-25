@@ -149,8 +149,8 @@ unsigned long Unit::dockSize(index_t dockNum) const
     return mods_[dockNum]->size();
 }
 
-EffectUnit::EffectUnit(unsigned short dockNum, double dryWet)
-: dw_(dryWet), Unit(dockNum)
+EffectUnit::EffectUnit(unsigned short numDocks, double dryWet)
+: dw_(dryWet), Unit(numDocks)
 { }
 
 void EffectUnit::setDryWet(double dw)
@@ -176,8 +176,8 @@ double EffectUnit::dryWet_(double originalSample, double processedSample, double
     return (originalSample * (1 - dryWet)) + (processedSample * dryWet);
 }
 
-GenUnit::GenUnit(unsigned short dockNum, double amp)
-: Unit(dockNum), amp_(amp)
+GenUnit::GenUnit(unsigned short numDocks, double amp)
+: Unit(numDocks), amp_(amp)
 { }
 
 void GenUnit::setAmp(double amp)
@@ -193,8 +193,8 @@ double GenUnit::getAmp() const
     return amp_;
 }
 
-ModUnit::ModUnit(unsigned short dockNum, double amp)
-: Unit(dockNum), amp_(amp)
+ModUnit::ModUnit(unsigned short numDocks, double amp)
+: Unit(numDocks), amp_(amp)
 { }
 
 void ModUnit::setAmp(double amp)

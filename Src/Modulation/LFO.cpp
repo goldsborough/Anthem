@@ -190,6 +190,27 @@ unsigned long LFOSeq::getSegLen() const
     return segLen_;
 }
 
+void LFOSeq::setAmp(double amp)
+{
+    // For boundary checking
+    ModUnit::setAmp(amp);
+    
+    if (mods_[AMP]->inUse())
+    {
+        mods_[AMP]->setBaseValue(amp);
+    }
+}
+
+double LFOSeq::getAmp() const
+{
+    if (mods_[AMP]->inUse())
+    {
+        return mods_[AMP]->getBaseValue();
+    }
+    
+    else return amp_;
+}
+
 void LFOSeq::setRate(double Hz)
 {
     if (Hz < 0 || Hz > 10)
@@ -568,19 +589,50 @@ double LFOSeq::modulate(double sample, double depth, double)
         resizeSegsFromRate_(mods_[RATE]->tick());
     }
     
+    if (mods_[AMP]->inUse())
+    {
+        amp_ =  mods_[AMP]->tick();
+    }
+    
     return sample * tick() * depth * amp_;
 }
 
 LFOUnit::LFOUnit(unsigned short mode)
+: ModUnit(1)
 {
+    mods_[AMP]->setHigherBoundary(1);
+    mods_[AMP]->setLowerBoundary(0);
+    mods_[AMP]->setBaseValue(1);
+    
     setMode(mode);
+}
+
+void LFOUnit::setAmp(double amp)
+{
+    // For boundary checking
+    ModUnit::setAmp(amp);
+    
+    if (mods_[AMP]->inUse())
+    {
+        mods_[AMP]->setBaseValue(amp);
+    }
+}
+
+double LFOUnit::getAmp() const
+{
+    if (mods_[AMP]->inUse())
+    {
+        return mods_[AMP]->getBaseValue();
+    }
+    
+    else return amp_;
 }
 
 void LFOUnit::setMode(bool mode)
 {
-    _mode = mode;
+    mode_ = mode;
     
-    if (_mode)
+    if (mode_)
     {
         fader.setLeftUnit(&lfoSeqs[0]);
         
@@ -597,41 +649,33 @@ void LFOUnit::setMode(bool mode)
 
 bool LFOUnit::getMode() const
 {
-    return _mode;
+    return mode_;
 }
 
-LFOUnit::Env::Env()
-: EnvSegSeq(2)
+void LFOUnit::increment()
 {
-    //setSegLen(0, 500);
-    setEnvLevel(MID, 1);
-}
-
-void LFOUnit::Env::setEnvLevel(short point, double lvl)
-{
-    switch (point)
+    if (mode_)
     {
-        case BEG:
-            setSegStartLevel(SEG_A, lvl);
-            break;
-            
-        case MID:
-            setSegEndLevel(SEG_A, lvl);
-            setSegStartLevel(SEG_B, lvl);
-            break;
-            
-        case END:
-            setSegEndLevel(SEG_B, lvl);
-            break;
-            
-        default:
-            break;
+        lfoSeqs[0].increment();
+        lfoSeqs[1].increment();
     }
+    
+    else
+    {
+        lfos[0].increment();
+        lfos[1].increment();
+    }
+    
 }
 
 double LFOUnit::modulate(double sample, double depth, double maximum)
 {
+    if (mods_[AMP]->inUse())
+    {
+        amp_ =  mods_[AMP]->tick();
+    }
+    
     // Tick the crossfaded value from the lfos and multiply by the envelope
     // value and the total amplitude value
-    return fader.modulate(sample, depth, maximum) * env.tick() * amp_;
+    return fader.modulate(sample, depth, maximum) * amp_;
 }

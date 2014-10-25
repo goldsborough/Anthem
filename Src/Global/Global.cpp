@@ -22,9 +22,9 @@
 
 namespace Global
 {
-    unsigned int samplerate = 0,
-                 nyquistLimit = 0,
-                 wtLen = 0;
+    unsigned int samplerate = 0;
+    unsigned int nyquistLimit = 0;
+    unsigned int wtLen = 0;
     
     double tableIncr = 0;
     
@@ -36,7 +36,5 @@ namespace Global
         wtLen = wavetableLen;
         
         tableIncr = static_cast<double>(wtLen) / smplr;
-        
-        srand((unsigned)time(0));
     }
 }

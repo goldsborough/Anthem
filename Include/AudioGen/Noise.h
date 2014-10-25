@@ -15,6 +15,9 @@
 
 #include "Units.h"
 
+#include <random>
+#include <memory>
+
 class Filter;
 
 /*********************************************************************************************//*!
@@ -100,8 +103,6 @@ public:
     
     Noise(unsigned short color = 0, double amp = 1);
     
-    ~Noise();
-    
     /*************************************************************************************************//*!
     *
     *  @brief       Generates a noise sample.
@@ -111,6 +112,9 @@ public:
     *****************************************************************************************************/
     
     double tick();
+    
+    /*! @copydoc GenUnit::increment() */
+    void increment();
     
     /*************************************************************************************************//*!
     *
@@ -135,13 +139,25 @@ public:
     /*! @copydoc GenUnit::setAmp() */
     void setAmp(double amp);
     
+    /*! @copydoc GenUnit::getAmp() */
+    double getAmp() const;
+    
 private:
     
     /*! Filter that changes the noise color */
-    Filter* _filter;
+    std::unique_ptr<Filter> filter_;
     
     /*! Current noise color */
-    unsigned short _color;
+    unsigned short color_;
+    
+    /*! Current random value */
+    double rval_;
+    
+    /*! Mersenne-twister random number generator */
+    std::mt19937 rgen_;
+    
+    /*! Random number distribution (uniform) */
+    std::uniform_real_distribution<double> dist_;
 };
 
 #endif /* defined(__Anthem__Noise__) */

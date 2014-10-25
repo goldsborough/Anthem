@@ -147,7 +147,7 @@ public:
     };
     
     /*! ModDocks for LFOSeq (entire unit, not segments) */
-    enum Docks { RATE };
+    enum Docks { AMP, RATE };
     
     /*************************************************************************************************//*!
     *
@@ -157,7 +157,27 @@ public:
     *
     *****************************************************************************************************/
     
-    LFOSeq(unsigned short seqLength = 10, double rate = 1);
+    LFOSeq(unsigned short seqLength = 5, double rate = 1);
+    
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Sets the amplitude value.
+    *
+    *  @param       amp The new amplitude value, between 0 and 1.
+    *
+    *****************************************************************************************************/
+    
+    void setAmp(double amp);
+    
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Gets the amplitude value.
+    *
+    *  @return      The amplitude value.
+    *
+    *****************************************************************************************************/
+    
+    double getAmp() const;
     
     /*************************************************************************************************//*!
     *
@@ -397,6 +417,9 @@ public:
     /*! @copydoc EnvSegSeq::increment() */
     void increment();
     
+    /*! @copydoc ModUnit::modulate() */
+    double modulate(double sample, double depth, double maximum);
+    
     /*! @copydoc ModEnvSegSeq::setModUnitDepth_Seg() */
     void setModUnitDepth_Seg(seg_t segNum, index_t dockNum, index_t modNum, double depth);
     
@@ -426,9 +449,6 @@ public:
     
     /*! @copydoc ModEnvSegSeq::dockSize_Seg() */
     unsigned long dockSize_Seg(seg_t segNum, index_t dockNum) const;
-    
-    /*! @copydoc ModUnit::modulate() */
-    double modulate(double sample, double depth, double maximum);
     
 private:
     
@@ -467,7 +487,7 @@ private:
 *  @details     In Anthem, an LFO is relatively large unit, consisting of two normal LFOs (Oscillators)
 *               and two LFOSeqs (EnvSegSeqs). The user can switch between the normal LFO mode and the
 *               Sequencer mode. In both cases, the user can then crossfade between the two respective
-*               units, e.g. between LFO A and LFO B. There is also a dedicated Envelope.
+*               units, e.g. between LFO A and LFO B.
 *
 ********************************************************************************************************/
 
@@ -478,9 +498,9 @@ public:
     
     /*! LFO modes - lfo mode and sequencer mode */
     enum Modes { LFO_MODE, SEQ_MODE };
-
-    /*! The two units each mode has to crossfade between */
-    enum Units { A, B };
+    
+    /*! Available ModDocks */
+    enum Docks { AMP };
     
     /****************************************************************************************************//*!
     *
@@ -491,6 +511,26 @@ public:
     ********************************************************************************************************/
     
     LFOUnit(unsigned short mode = LFO_MODE);
+    
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Sets the amplitude value.
+    *
+    *  @param       amp The new amplitude value, between 0 and 1.
+    *
+    *****************************************************************************************************/
+    
+    void setAmp(double amp);
+    
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Gets the amplitude value.
+    *
+    *  @return      The amplitude value.
+    *
+    *****************************************************************************************************/
+    
+    double getAmp() const;
     
     /****************************************************************************************************//*!
     *
@@ -512,41 +552,11 @@ public:
     
     bool getMode() const;
     
+    /*! @copydoc GenUnit::increment() */
+    void increment();
+    
     /*! @copydoc ModUnit::modulate() */
     double modulate(double sample, double depth, double maximum);
-
-    /****************************************************************************************************//*!
-    *
-    *  @brief       An LFOUnit specific envelope.
-    *
-    ********************************************************************************************************/
-    
-    
-    // Change to inherit from ModEnvSegSeqFlexible and implement modulate() method
-    
-    struct Env : public EnvSegSeq
-    {
-        /*! The two parts of the envelope: SegA / SegB \ Together /\ */
-        enum Segments { SEG_A, SEG_B };
-        
-        /*! The adjustable points of the envelope */
-        enum Points { BEG, MID, END };
-        
-        Env();
-        
-        /****************************************************************************************************//*!
-        *
-        *  @brief       Sets the level of one of the envelope's points.
-        *
-        *  @param       point The point of which to set the level. Usually a member of Env::Points.
-        *
-        *  @param       lvl The new level, between 0 and 1.
-        *
-        ********************************************************************************************************/
-        
-        void setEnvLevel(short point, double lvl);
-        
-    } env;
 
     /*! The Crossfader that fades between the A and B units */
     Crossfader fader;
@@ -559,7 +569,7 @@ public:
     
 private:
     
-    bool _mode;
+    bool mode_;
 };
 
 #endif /* defined(__Anthem__LFO__) */
