@@ -42,11 +42,11 @@ public:
     
 private:
     
-    PaStream * _stream;
+    PaStream * stream_;
     
-    static Sample _getSampleFromQueue();
+    static Sample getSampleFromQueue_();
     
-    static SampleBuffer _dataBuffer;
+    static SampleBuffer dataBuffer_;
     
 };
 

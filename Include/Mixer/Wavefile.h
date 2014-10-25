@@ -103,10 +103,10 @@ private:
         
         uint32_t waveSize; // byte total
         
-    } _header;
+    } header_;
     
     // The file name 
-    std::string _fname;
+    std::string fname_;
 };
 
 #endif

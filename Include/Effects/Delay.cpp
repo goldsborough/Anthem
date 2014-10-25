@@ -18,26 +18,26 @@ Delay::Delay(double delayLen,
              double decayRate,
              double feedbackLevel,
              double capacity)
-: EffectUnit(4,1), _delayCapacity(capacity * Global::samplerate),
-  _delayLen(delayLen * Global::samplerate)
+: EffectUnit(4,1), delayCapacity_(capacity * Global::samplerate),
+  delayLen_(delayLen * Global::samplerate)
 {
-    if (_delayLen > _delayCapacity)
+    if (delayLen_ > delayCapacity_)
     { throw std::invalid_argument("Delay line length cannot exceed its capacity!"); }
         
-    _buffer = new double[_delayCapacity];
+    buffer_ = new double[delayCapacity_];
     
-    _write = _buffer;
-    _end = _capacity = _buffer + _delayLen;
+    write_ = buffer_;
+    end_ = capacity_ = buffer_ + delayLen_;
     
     setFeedback(feedbackLevel);
     setDecayRate(decayRate);
     setDecayTime(decayTime);
     
-    _readInt = static_cast<int>(_delayLen);
-    _readFract = _delayLen - static_cast<double>(_readInt);
+    readInt_ = static_cast<int>(delayLen_);
+    readFract_ = delayLen_ - static_cast<double>(readInt_);
     
     // Initialize mod docks
-    mods_[DECAY_TIME]->setHigherBoundary(_delayCapacity);
+    mods_[DECAY_TIME]->setHigherBoundary(delayCapacity_);
     mods_[DECAY_TIME]->setLowerBoundary(0);
     mods_[DECAY_TIME]->setBaseValue(decayTime);
     
@@ -69,12 +69,12 @@ void Delay::setDecayRate(double decayRate)
     
     mods_[DECAY_RATE]->setBaseValue(decayRate);
     
-    _decayRate = decayRate;
+    decayRate_ = decayRate;
 }
 
 double Delay::getDecayRate() const
 {
-    return _decayRate;
+    return decayRate_;
 }
 
 void Delay::setDelayLen(double delayLen)
@@ -85,25 +85,25 @@ void Delay::setDelayLen(double delayLen)
     delayLen *= Global::samplerate;
     
     // automatic conversion to int
-    _delayLen = delayLen;
+    delayLen_ = delayLen;
     
     // First assign the new buffer end point
-    _end = _buffer + _delayLen;
+    end_ = buffer_ + delayLen_;
     
     // Then we check if this end point is too far out
-    if (_capacity - _end <= 0)
+    if (capacity_ - end_ <= 0)
     { throw std::invalid_argument("Delay end position cannot be higher than maximum delay line length!"); }
     
-    _readInt = static_cast<int>(delayLen);
-    _readFract = delayLen - static_cast<double>(_readInt);
+    readInt_ = static_cast<int>(delayLen);
+    readFract_ = delayLen - static_cast<double>(readInt_);
     
-    _calcDecay(_decayRate,_decayTime, _delayLen);
+    calcDecay_(decayRate_,decayTime_, delayLen_);
 }
 
 double Delay::getDelayLen() const
 {
     // seconds not samples
-    return _delayLen / (static_cast<double>(Global::samplerate));
+    return delayLen_ / (static_cast<double>(Global::samplerate));
 }
 
 void Delay::setFeedback(double feedbackLevel)
@@ -113,51 +113,51 @@ void Delay::setFeedback(double feedbackLevel)
     
     mods_[FEEDBACK]->setBaseValue(feedbackLevel);
     
-    _feedback = feedbackLevel;
+    feedback_ = feedbackLevel;
 }
 
 double Delay::getFeedback() const
 {
-    return _feedback;
+    return feedback_;
 }
 
 void Delay::setDecayTime(double decayTime)
 {
-    if (decayTime < 0 || decayTime > _delayCapacity)
+    if (decayTime < 0 || decayTime > delayCapacity_)
     { throw std::invalid_argument("Decay time must be greater 0 and less than capacity!"); }
     
     mods_[DECAY_TIME]->setBaseValue(decayTime);
     
-    _decayTime = decayTime * Global::samplerate;
+    decayTime_ = decayTime * Global::samplerate;
     
-    _calcDecay(_decayRate,_decayTime,_delayLen);
+    calcDecay_(decayRate_,decayTime_,delayLen_);
 }
 
 double Delay::getDecayTime() const
 {
     // return seconds, not samples
-    return _decayTime / Global::samplerate;
+    return decayTime_ / Global::samplerate;
 }
 
-void Delay::_calcDecay(double decayRate, double decayTime, double delayLen)
+void Delay::calcDecay_(double decayRate, double decayTime, double delayLen)
 {
     double decayExponent = static_cast<double>(delayLen) / decayTime;
     
-    _decayValue = pow(decayRate, decayExponent);
+    decayValue_ = pow(decayRate, decayExponent);
 }
 
-void Delay::_incr()
+void Delay::incr_()
 {
-    if (++_write >= _end)
-    { _write -= _delayLen; }
+    if (++write_ >= end_)
+    { write_ -= delayLen_; }
 }
 
 double Delay::offset(unsigned int offset)
 {
-    double* ret = _write - offset;
+    double* ret = write_ - offset;
     
-    if (ret < _buffer)
-    { ret += _delayLen; }
+    if (ret < buffer_)
+    { ret += delayLen_; }
     
     return *ret;
 }
@@ -169,7 +169,7 @@ double Delay::process(double sample)
     {
         double newDecayTime = mods_[DECAY_TIME]->tick();
         
-        _calcDecay(_decayRate, newDecayTime, _delayLen);
+        calcDecay_(decayRate_, newDecayTime, delayLen_);
     }
     
     // Modulate decay rate
@@ -177,36 +177,36 @@ double Delay::process(double sample)
     {
         double newDecayRate = mods_[DECAY_RATE]->tick();
         
-        _calcDecay(newDecayRate, _decayTime, _delayLen);
+        calcDecay_(newDecayRate, decayTime_, delayLen_);
     }
     
-    iterator read = _write - _readInt;
+    iterator read = write_ - readInt_;
     
     // Check if we need to wrap around
-    if (read < _buffer)
-    { read += _delayLen; }
+    if (read < buffer_)
+    { read += delayLen_; }
     
     // If the read index is equal to the write index
     // we need to first write the new sample
-    if (! _readInt)
+    if (! readInt_)
     {
-        *_write = sample;
+        *write_ = sample;
         
-        _incr();
+        incr_();
     }
     
     // First add integer part
     double output = *read;
     
     // Then decrement read position (and check)
-    if (--read < _buffer)
-    { read = _end; }
+    if (--read < buffer_)
+    { read = end_; }
     
     // And finally add the fractional part of the
     // previous sample
-    output += (*read - output) * _readFract;
+    output += (*read - output) * readFract_;
     
-    double feedback = _feedback;
+    double feedback = feedback_;
     
     // Modulate feedback value
     if (mods_[FEEDBACK]->inUse())
@@ -215,15 +215,15 @@ double Delay::process(double sample)
     }
 
     // If the sample hasn't been written yet, write it now
-    if (_readInt > 0)
+    if (readInt_ > 0)
     {
-        *_write = sample + (output * feedback);
+        *write_ = sample + (output * feedback);
         
-        _incr();
+        incr_();
     }
     
     // Apply decay
-    output *= _decayValue;
+    output *= decayValue_;
     
     // Modulate dry wet value
     if (mods_[DRYWET]->inUse())
@@ -238,46 +238,46 @@ double Delay::process(double sample)
 
 Delay::~Delay()
 {
-    delete [] _buffer;
+    delete [] buffer_;
 }
 
 double AllPassDelay::process(double sample)
 {
-    iterator read = _write - _readInt;
+    iterator read = write_ - readInt_;
     
     // Check if we need to wrap around
-    if (read < _buffer)
-    { read += _delayLen; }
+    if (read < buffer_)
+    { read += delayLen_; }
     
     // If the read index is equal to the write index
     // we need to first write the new sample
-    if (_readInt == 0)
+    if (readInt_ == 0)
     {
-        *_write = sample;
+        *write_ = sample;
         
-        _incr();
+        incr_();
     }
     
     // First add integer part
     double outputA = *read;
     
     // Then decrement read position (and check)
-    if (--read < _buffer)
-    { read += _delayLen; }
+    if (--read < buffer_)
+    { read += delayLen_; }
     
     // And finally add the fractional part of the
     // previous sample
-    outputA += (*read - outputA) * _readFract;
+    outputA += (*read - outputA) * readFract_;
     
-    double outputB = sample - (outputA * _decayValue);
+    double outputB = sample - (outputA * decayValue_);
     
     // If the sample hasn't been written yet, write it now
-    if (_readInt > 0)
+    if (readInt_ > 0)
     {
-        *_write = outputB;
+        *write_ = outputB;
         
-        _incr();
+        incr_();
     }
     
-    return outputA + (outputB * _decayValue);
+    return outputA + (outputB * decayValue_);
 }

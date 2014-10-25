@@ -20,16 +20,16 @@ Reverb::Reverb(double reverbTime, double reverbRate, double dryWet)
 : EffectUnit(3,1)
 
 {
-    _delays = new Delay*[4];
-    _allPasses = new AllPassDelay*[2];
+    delays_ = new Delay*[4];
+    allPasses_ = new AllPassDelay*[2];
     
-    _delays[0] = new Delay(0.0437,reverbTime);
-    _delays[1] = new Delay(0.0411,reverbTime);
-    _delays[2] = new Delay(0.0371,reverbTime);
-    _delays[3] = new Delay(0.0297,reverbTime);
+    delays_[0] = new Delay(0.0437,reverbTime);
+    delays_[1] = new Delay(0.0411,reverbTime);
+    delays_[2] = new Delay(0.0371,reverbTime);
+    delays_[3] = new Delay(0.0297,reverbTime);
     
-    _allPasses[0] = new AllPassDelay(0.09638,0.0050);
-    _allPasses[1] = new AllPassDelay(0.03292,0.0017);
+    allPasses_[0] = new AllPassDelay(0.09638,0.0050);
+    allPasses_[1] = new AllPassDelay(0.03292,0.0017);
     
     setReverbRate(reverbRate);
     setReverbTime(reverbTime);
@@ -58,10 +58,10 @@ void Reverb::setDryWet(double dw)
     
     dw_ = dw;
     
-    _attenuation = 1 - dw_;
+    attenuation_ = 1 - dw_;
     
-    if (_attenuation < 0.25)
-    { _attenuation = 0.25; }
+    if (attenuation_ < 0.25)
+    { attenuation_ = 0.25; }
 }
 
 double Reverb::process(double sample)
@@ -73,7 +73,7 @@ double Reverb::process(double sample)
         
         for (unsigned short i = 0; i < 4; ++i)
         {
-            _delays[i]->setDecayTime(newReverbTime);
+            delays_[i]->setDecayTime(newReverbTime);
         }
     }
     
@@ -84,20 +84,20 @@ double Reverb::process(double sample)
         
         for (unsigned short i = 0; i < 4; ++i)
         {
-            _delays[i]->setDecayRate(newReverbRate);
+            delays_[i]->setDecayRate(newReverbRate);
         }
     }
     
-    sample *= _attenuation;
+    sample *= attenuation_;
     
     double output = 0;
     
     for (unsigned short i = 0; i < 4; ++i)
     {
-        output += _delays[i]->process(sample);
+        output += delays_[i]->process(sample);
     }
     
-    output = _allPasses[1]->process(_allPasses[0]->process(output));
+    output = allPasses_[1]->process(allPasses_[0]->process(output));
     
     // Modulate the dry/wet
     if (mods_[DRYWET]->inUse())
@@ -118,11 +118,11 @@ void Reverb::setReverbRate(double reverbRate)
     
     mods_[REVERB_RATE]->setBaseValue(reverbRate);
     
-    _reverbRate = reverbRate;
+    reverbRate_ = reverbRate;
     
     for (unsigned short i = 0; i < 4; ++i)
     {
-        _delays[i]->setDecayRate(reverbRate);
+        delays_[i]->setDecayRate(reverbRate);
     }
 }
 
@@ -133,11 +133,11 @@ void Reverb::setReverbTime(double reverbTime)
     
     mods_[REVERB_TIME]->setBaseValue(reverbTime);
     
-    _reverbTime = reverbTime;
+    reverbTime_ = reverbTime;
     
     for (unsigned short i = 0; i < 4; ++i)
     {
-        _delays[i]->setDecayTime(reverbTime);
+        delays_[i]->setDecayTime(reverbTime);
     }
 }
 
@@ -146,41 +146,41 @@ Reverb::~Reverb()
     for (unsigned short i = 0; i < 4; ++i)
     {
         if (i < 2)
-        { delete _allPasses[i]; }
+        { delete allPasses_[i]; }
         
-        delete _delays[i];
+        delete delays_[i];
     }
     
-    delete [] _delays;
-    delete [] _allPasses;
+    delete [] delays_;
+    delete [] allPasses_;
 }
 
 Flanger::Flanger(const double& center,
                  const double& depth,
                  const double& rate,
                  const double& feedback)
-: _center(center), _depth(depth/2),
-  _feedback(feedback), _lfo(new LFO(0,rate)),
-  _delay(10,1,1,0)
+: center_(center), depth_(depth/2),
+  feedback_(feedback), lfo_(new LFO(0,rate)),
+  delay_(10,1,1,0)
 {
     
 }
 
 void Flanger::setRate(const double& rate)
 {
-    _lfo->setFreq(rate);
+    lfo_->setFreq(rate);
 }
 
 void Flanger::setCenter(const double& center)
 {
-    _center = center;
+    center_ = center;
     
-    _delay.setDelayLen(_center);
+    delay_.setDelayLen(center_);
 }
 
 void Flanger::setDepth(const double& depth)
 {
-    _depth = depth;
+    depth_ = depth;
 }
 
 void Flanger::setFeedback(const double& feedback)
@@ -188,26 +188,26 @@ void Flanger::setFeedback(const double& feedback)
     if (feedback < 0 || feedback > 1)
     { throw std::invalid_argument("Feedback must be > 0 and and <= 1!"); }
     
-    _feedback = feedback;
+    feedback_ = feedback;
 }
 
 double Flanger::process(double sample)
 {
     double output = sample;
     
-    if (_feedback)
-    { output -= _delay.offset(_center * Global::samplerate) * _feedback; }
+    if (feedback_)
+    { output -= delay_.offset(center_ * Global::samplerate) * feedback_; }
     
-    //double val = _center + (_depth * _lfo->tick());
+    //double val = center_ + (depth_ * lfo_->tick());
     
-    //_delay.setDelayLen(val);
+    //delay_.setDelayLen(val);
     
-    output += _delay.process(output);
+    output += delay_.process(output);
     
     return dryWet_(sample, output);
 }
 
 Flanger::~Flanger()
 {
-    delete _lfo;
+    delete lfo_;
 }

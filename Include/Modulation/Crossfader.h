@@ -136,19 +136,19 @@ protected:
     
     /*! Checks if scaling is necessary and returns scaled value if appropriate. 
         Scaling is appropriate if scalign is enabled and if the type is either SQRT or SINE. */
-    double _scale(const double& value) const;
+    double scale_(const double& value) const;
     
     /*! Current index in the lookup table */
-    unsigned short _index;
+    unsigned short index_;
     
     /*! The crossfading type */
-    unsigned short _type;
+    unsigned short type_;
     
     /*! Boolean whether or not scaling is enabled*/
-    bool _scalingEnabled;
+    bool scalingEnabled_;
     
     /*! Array of Sample tables for crossfading values */
-    Sample _tables [3][201];
+    Sample tables_ [3][201];
 };
 
 /*********************************************************************************************//*!
@@ -247,10 +247,10 @@ public:
 private:
 
     /*! The pointer to the left GenUnit */
-    ModUnit* _leftUnit;
+    ModUnit* leftUnit_;
     
     /*! The pointer to the right GenUnit */
-    ModUnit* _rightUnit;
+    ModUnit* rightUnit_;
 };
 
 #endif /* defined(__Anthem__Crossfade__) */

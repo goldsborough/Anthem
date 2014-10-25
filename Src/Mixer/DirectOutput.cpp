@@ -10,7 +10,7 @@
 #include "Global.h"
 #include "Sample.h"
 
-SampleBuffer DirectOutput::_dataBuffer;
+SampleBuffer DirectOutput::dataBuffer_;
 
 DirectOutput::DirectOutput(unsigned char ltncy)
 {
@@ -22,7 +22,7 @@ DirectOutput::DirectOutput(unsigned char ltncy)
     Sample * data;
     
     err = Pa_OpenDefaultStream(
-                                &_stream,
+                                &stream_,
                                 NULL, // no input
                                 2,
                                 paFloat32,
@@ -38,20 +38,20 @@ DirectOutput::DirectOutput(unsigned char ltncy)
 
 void DirectOutput::processTick(const Sample& sample)
 {
-    _dataBuffer.buffer.push_back(sample);
+    dataBuffer_.buffer.push_back(sample);
 }
 
-Sample DirectOutput::_getSampleFromQueue()
+Sample DirectOutput::getSampleFromQueue_()
 {
-    if (! _dataBuffer.buffer.empty())
-    { return _dataBuffer.getpop(); }
+    if (! dataBuffer_.buffer.empty())
+    { return dataBuffer_.getpop(); }
     
     return Sample();
 }
 
 void DirectOutput::play()
 {
-    PaError err = Pa_StartStream( _stream );
+    PaError err = Pa_StartStream( stream_ );
     
     if( err != paNoError )
     { throw std::runtime_error(Pa_GetErrorText( err )); }
@@ -59,13 +59,13 @@ void DirectOutput::play()
 
 void DirectOutput::stop()
 {
-    PaError err = Pa_StopStream( _stream );
+    PaError err = Pa_StopStream( stream_ );
     
     if( err != paNoError )
     { throw std::runtime_error(Pa_GetErrorText( err )); }
     
     // Clear data buffer
-    _dataBuffer.buffer.clear();
+    dataBuffer_.buffer.clear();
 }
 
 int DirectOutput::paCallback( const void *inputBuffer, void *outputBuffer,
@@ -78,11 +78,11 @@ int DirectOutput::paCallback( const void *inputBuffer, void *outputBuffer,
     Sample * outSample = ( Sample * ) userData;
     float * out = (float*)outputBuffer;
     
-    while (_dataBuffer.buffer.size() < framesPerBuffer);
+    while (dataBuffer_.buffer.size() < framesPerBuffer);
     
     for( unsigned int n = 0; n < framesPerBuffer; n++ )
     {
-        Sample sample = _getSampleFromQueue();
+        Sample sample = getSampleFromQueue_();
         
         outSample->left = sample.left;
         outSample->right = sample.right;
@@ -98,15 +98,15 @@ DirectOutput::~DirectOutput()
 {
     PaError err;
     
-    if (Pa_IsStreamActive (_stream))
+    if (Pa_IsStreamActive (stream_))
     {
-        err = Pa_AbortStream(_stream);
+        err = Pa_AbortStream(stream_);
         
         if( err != paNoError )
         { throw std::runtime_error(Pa_GetErrorText( err )); }
     }
     
-    err = Pa_CloseStream( _stream );
+    err = Pa_CloseStream( stream_ );
     
     if( err != paNoError )
     { throw std::runtime_error(Pa_GetErrorText( err )); }

@@ -189,28 +189,28 @@ public:
 private:
     
     /*! The current master amplitude value */
-    double _masterAmp;
+    double masterAmp_;
 
     /*! CrossfadeUnit for panning */
-    CrossfadeUnit* _pan;
+    CrossfadeUnit* pan_;
     
     /*! Whether or not audio output is stopped */
-    bool _stopped;
+    bool stopped_;
     
     /*! Whether or not to send samples to wavefile after stop() ist called */
-    bool _wavefileEnabled;
+    bool wavefileEnabled_;
     
     /*! Whether or not to send samples to direct output */
-    bool _directOutputEnabled;
+    bool directOutputEnabled_;
     
     /*! Stores samples for wavefile output */
-    SampleBuffer*  _sampleDataBuffer;
+    SampleBuffer*  sampleDataBuffer_;
     
     /*! Direct audio output object */
-    DirectOutput* _directOut;
+    DirectOutput* directOut_;
     
     /*! Wavfile object */
-    Wavefile* _waveOut;
+    Wavefile* waveOut_;
 };
 
 #endif /* defined(__Anthem__Mixer__) */

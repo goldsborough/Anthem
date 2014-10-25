@@ -79,7 +79,7 @@ public:
     virtual double process(double sample);
     
     /*! @copydoc EffectUnit::setDryWet() */
-    void setDryWet(double dw);
+    virtual void setDryWet(double dw);
     
     /*************************************************************************//*!
     *
@@ -175,46 +175,46 @@ public:
 protected:
     
     /*! Calculates the _decayValue based on the decay rate, time and delay length*/
-    void _calcDecay(double decayRate, double decayTime, double delayLen);
+    void calcDecay_(double decayRate, double decayTime, double delayLen);
     
     /*! Increments and boundary checks the write pointer */
-    void _incr();
+    void incr_();
     
     /*! Integral part of the read position */
-    int _readInt;
+    int readInt_;
     
     /*! Fractional part of the read position */
-    double _readFract;
+    double readFract_;
     
     /*! Pointer to the actual end of the delay line (total capacity) */
-    iterator _capacity;
+    iterator capacity_;
     
     /*! The pointer to the end of the current delay line  */
-    iterator _end;
+    iterator end_;
     
     /*! The pointer to the write index */
-    iterator _write;
+    iterator write_;
     
     /*! Actual, total size of the delay line */
-    const unsigned int _delayCapacity;
+    const unsigned int delayCapacity_;
     
     /*! Size of the current delay line, equal to _end - _buffer */
-    unsigned int _delayLen;
+    unsigned int delayLen_;
     
     /*! The attenuation value with which to multiply the output */
-    double _decayValue;
+    double decayValue_;
     
     /*! The rate of decay, or fade-out of the delay signal */
-    double _decayRate;
+    double decayRate_;
     
     /*! The total decay time */
-    double _decayTime;
+    double decayTime_;
     
     /*! The value determining how much of the output signal is fed back into the delay line*/
-    double _feedback;
+    double feedback_;
     
     /*! The delay line */
-    double* _buffer;
+    double* buffer_;
 };
 
 /************************************************************************************************//*!

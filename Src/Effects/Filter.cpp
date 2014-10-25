@@ -18,13 +18,13 @@ Filter::Filter(unsigned short mode,
                double cutoff,
                double q,
                double gain)
-: EffectUnit(4,1),_delayA(0), _delayB(0),
-  _cutoff(cutoff), _q(q), _mode(mode)
+: EffectUnit(4,1),delayA_(0), delayB_(0),
+  cutoff_(cutoff), q_(q), mode_(mode)
 {
     setGain(gain);
     
     // Initial coefficients
-    _calcCoefs(mode,cutoff,q, gain);
+    calcCoefs_(mode,cutoff,q, gain);
     
     mods_[CUTOFF]->setHigherBoundary(Global::nyquistLimit);
     mods_[CUTOFF]->setLowerBoundary(0);
@@ -58,7 +58,7 @@ double Filter::process(double sample)
     {
         double newCutoff = mods_[CUTOFF]->tick();
         
-        _calcCoefs(_mode, newCutoff, _q, _gain);
+        calcCoefs_(mode_, newCutoff, q_, gain_);
     }
     
     // And Q factor
@@ -66,21 +66,21 @@ double Filter::process(double sample)
     {
         double newQ = mods_[Q]->tick();
         
-        _calcCoefs(_mode, _cutoff, newQ, _gain);
+        calcCoefs_(mode_, cutoff_, newQ, gain_);
     }
     
     double temp = sample
-                - (_coefA1 * _delayA)
-                - (_coefA2 * _delayB);
+                - (coefA1_ * delayA_)
+                - (coefA2_ * delayB_);
     
-    double output = (_coefB0 * temp)
-                  + (_coefB1 * _delayA)
-                  + (_coefB2 * _delayB);
+    double output = (coefB0_ * temp)
+                  + (coefB1_ * delayA_)
+                  + (coefB2_ * delayB_);
     
     
     // Store values into delay line
-    _delayB = _delayA;
-    _delayA = temp;
+    delayB_ = delayA_;
+    delayA_ = temp;
     
     // Check the gain modulation
     if (mods_[GAIN]->inUse())
@@ -88,7 +88,7 @@ double Filter::process(double sample)
         // Convert db to amplitude
         double newGain = Util::dbToAmp(1,mods_[GAIN]->tick());
         
-        _calcCoefs(_mode, _cutoff, _q, newGain);
+        calcCoefs_(mode_, cutoff_, q_, newGain);
     }
     
     output *= amp_;
@@ -105,7 +105,7 @@ double Filter::process(double sample)
     return dryWet_(sample, output);
 }
 
-void Filter::_calcCoefs(short mode, double cutoff, double q, double gain)
+void Filter::calcCoefs_(short mode, double cutoff, double q, double gain)
 {
     double omega = (Global::twoPi / Global::samplerate) * cutoff;
     
@@ -124,13 +124,13 @@ void Filter::_calcCoefs(short mode, double cutoff, double q, double gain)
     
     b1 = -2 * cosine;
     
-    switch (_mode)
+    switch (mode_)
     {
         case LOW_PASS:
         {
             b0 = (1.0 - cosine) / 2.0;
             b1 = (1.0 - cosine);
-            b2 = _coefB0;
+            b2 = coefB0_;
             
             break;
         }
@@ -217,12 +217,12 @@ void Filter::_calcCoefs(short mode, double cutoff, double q, double gain)
         }
     }
     
-    _coefB0 = b0/a0;
-    _coefB1 = b1/a0;
-    _coefB2 = b2/a0;
+    coefB0_ = b0/a0;
+    coefB1_ = b1/a0;
+    coefB2_ = b2/a0;
     
-    _coefA1 = a1/a0;
-    _coefA2 = a2/a0;
+    coefA1_ = a1/a0;
+    coefA2_ = a2/a0;
 }
 
 void Filter::setMode(unsigned short mode)
@@ -230,14 +230,14 @@ void Filter::setMode(unsigned short mode)
     if (mode > HIGH_SHELF)
     { throw std::invalid_argument("Filter mode out of range!"); }
         
-    _mode = mode;
+    mode_ = mode;
     
-    _calcCoefs(_mode,_cutoff,_q, _gain);
+    calcCoefs_(mode_,cutoff_,q_, gain_);
 }
 
 unsigned short Filter::getMode() const
 {
-    return _mode;
+    return mode_;
 }
 
 void Filter::setCutoff(double cutoff)
@@ -247,32 +247,32 @@ void Filter::setCutoff(double cutoff)
     
     mods_[CUTOFF]->setBaseValue(cutoff);
     
-    _cutoff = cutoff;
+    cutoff_ = cutoff;
     
-    _calcCoefs(_mode,_cutoff,_q, _gain);
+    calcCoefs_(mode_,cutoff_,q_, gain_);
 }
 
 double Filter::getCutoff() const
 {
-    return _cutoff;
+    return cutoff_;
 }
 
 void Filter::setQ(double q)
 {
-    // Q factor cannot be 0 because of division by (2.0 * q) in _calcCoefs
+    // Q factor cannot be 0 because of division by (2.0 * q) in calcCoefs_
     if (q < 0.01 || q > 20)
     { throw std::invalid_argument("Bandwith out of range, must be between 0 and 20!"); }
     
     mods_[Q]->setBaseValue(q);
     
-    _q = q;
+    q_ = q;
     
-    _calcCoefs(_mode,_cutoff,_q, _gain);
+    calcCoefs_(mode_,cutoff_,q_, gain_);
 }
 
 double Filter::getQ() const
 {
-    return _q;
+    return q_;
 }
 
 void Filter::setGain(double gain)
@@ -282,15 +282,15 @@ void Filter::setGain(double gain)
     
     mods_[GAIN]->setBaseValue(gain);
     
-    _gain = gain;
+    gain_ = gain;
     
     // Convert decibels to amplitude
     amp_ = Util::dbToAmp(1,gain);
     
-    _calcCoefs(_mode,_cutoff,_q, _gain);
+    calcCoefs_(mode_,cutoff_,q_, gain_);
 }
 
 double Filter::getGain() const
 {
-    return _gain;
+    return gain_;
 }

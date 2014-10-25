@@ -115,19 +115,19 @@ public:
 private:
     
     /*! The input signal attenuation factor */
-    double _attenuation;
+    double attenuation_;
     
     /*! The *suprise* reverb time */
-    double _reverbTime;
+    double reverbTime_;
     
     /*! Exactly that. */
-    double _reverbRate;
+    double reverbRate_;
     
     /*! The array of delay lines */
-    Delay** _delays;
+    Delay** delays_;
     
     /*! The array of all-pass delays */
-    AllPassDelay** _allPasses;
+    AllPassDelay** allPasses_;
     
 };
 
@@ -206,12 +206,12 @@ public:
     
 private:
     
-    double _center;
-    double _depth;
-    double _feedback;
+    double center_;
+    double depth_;
+    double feedback_;
     
-    LFO* _lfo;
-    Delay _delay;
+    LFO* lfo_;
+    Delay delay_;
 };
 
 #endif /* defined(__Anthem__Effects__) */

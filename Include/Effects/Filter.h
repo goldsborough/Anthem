@@ -198,43 +198,43 @@ private:
     *
     ****************************************************************************/
     
-    void _calcCoefs(short mode, double cutoff, double q, double gain);
+    void calcCoefs_(short mode, double cutoff, double q, double gain);
     
     /*! The filter mode */
-    unsigned short _mode;
+    unsigned short mode_;
     
     /*! The cutoff frequency (frequency at which the filter starts acting) */
-    double _cutoff;
+    double cutoff_;
     
     /*! The Q factor */
-    double _q;
+    double q_;
     
     /*! The overall gain, in decibels */
-    double _gain;
+    double gain_;
     
     /*! The amplitude value obtained from the gain value */
     double amp_;
     
     /*! The first delay buffer */
-    double _delayA;
+    double delayA_;
     
     /*! The second delay buffer */
-    double _delayB;
+    double delayB_;
     
     /*! The first output coefficient */
-    double _coefA1;
+    double coefA1_;
     
     /*! The second output coefficient */
-    double _coefA2;
+    double coefA2_;
     
     /*! The first input coefficient */
-    double _coefB0;
+    double coefB0_;
     
     /*! The second input coefficient */
-    double _coefB1;
+    double coefB1_;
     
     /*! The third input coefficient */
-    double _coefB2;
+    double coefB2_;
 };
 
 #endif /* defined(__Anthem__Filter__) */

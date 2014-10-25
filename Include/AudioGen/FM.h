@@ -30,7 +30,7 @@ public:
     
 private:
     
-    unsigned short _alg;
+    unsigned short alg_;
     
 };
 
