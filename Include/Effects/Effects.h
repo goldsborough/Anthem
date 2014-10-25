@@ -15,6 +15,8 @@
 
 #include "Delay.h"
 
+#include <array>
+
 /************************************************************************************************//*!
 *
 *  @brief       A reverb-effect class.
@@ -50,9 +52,7 @@ public:
     *
     ************************************************************************************************************/
     
-    Reverb(double reverbTime, double reverbRate = 0.001, double dryWet = 0.1);
-    
-    ~Reverb();
+    Reverb(double reverbTime = 1, double reverbRate = 0.001, double dryWet = 0.1);
     
     /*! @copydoc EffectUnit::process() */
     double process(double sample);
@@ -124,11 +124,10 @@ private:
     double reverbRate_;
     
     /*! The array of delay lines */
-    Delay** delays_;
+    std::array<Delay, 4> delays_;
     
     /*! The array of all-pass delays */
-    AllPassDelay** allPasses_;
-    
+    std::array<AllPassDelay, 2> allPasses_;
 };
 
 /************************************************************************************************//*!
@@ -192,8 +191,6 @@ public:
             const double& rate = 0.15,
             const double& feedback = 0);
     
-    ~Flanger();
-    
     double process(double sample);
     
     void setFeedback(const double& feedback);
@@ -210,7 +207,7 @@ private:
     double depth_;
     double feedback_;
     
-    LFO* lfo_;
+    std::unique_ptr<LFO> lfo_;
     Delay delay_;
 };
 

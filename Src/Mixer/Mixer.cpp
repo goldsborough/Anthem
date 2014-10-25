@@ -16,18 +16,15 @@
 
 Mixer::Mixer(bool directOut, bool waveOut, double amp)
 
-: Unit(2), directOutputEnabled_(directOut), wavefileEnabled_(waveOut),
-  masterAmp_(amp), stopped_(true)
+: Unit(2), directOutputEnabled_(directOut),
+  wavefileEnabled_(waveOut),
+  masterAmp_(amp), stopped_(true),
+  pan_(new CrossfadeUnit(CrossfadeTypes::SINE)),
+  sampleDataBuffer_(new SampleBuffer),
+  directOut_(new DirectOutput),
+  waveOut_(new Wavefile)
 
 {
-    pan_ = new CrossfadeUnit(CrossfadeTypes::SINE);
-    
-    sampleDataBuffer_ = new SampleBuffer;
-    
-    directOut_ = new DirectOutput;
-    
-    waveOut_ = new Wavefile;
-    
     // Initialize ModDocks
     mods_[AMP]->setHigherBoundary(1);
     mods_[AMP]->setLowerBoundary(0);
@@ -156,9 +153,4 @@ void Mixer::stop()
 Mixer::~Mixer()
 {
     stop();
-    
-    delete pan_;
-    delete waveOut_;
-    delete directOut_;
-    delete sampleDataBuffer_;
 }

@@ -16,20 +16,23 @@
 #include <cmath>
 
 Reverb::Reverb(double reverbTime, double reverbRate, double dryWet)
-
 : EffectUnit(3,1)
-
 {
-    delays_ = new Delay*[4];
-    allPasses_ = new AllPassDelay*[2];
+    for (unsigned short i = 0; i < 4; ++i)
+    {
+        delays_[i].setDecayTime(reverbTime);
+    }
     
-    delays_[0] = new Delay(0.0437,reverbTime);
-    delays_[1] = new Delay(0.0411,reverbTime);
-    delays_[2] = new Delay(0.0371,reverbTime);
-    delays_[3] = new Delay(0.0297,reverbTime);
+    delays_[0].setDelayLen(0.0437);
+    delays_[1].setDelayLen(0.0411);
+    delays_[2].setDelayLen(0.0371);
+    delays_[3].setDelayLen(0.0297);
     
-    allPasses_[0] = new AllPassDelay(0.09638,0.0050);
-    allPasses_[1] = new AllPassDelay(0.03292,0.0017);
+    allPasses_[0].setDecayTime(0.0050);
+    allPasses_[0].setDelayLen(0.09638);
+    
+    allPasses_[1].setDecayTime(0.0017);
+    allPasses_[1].setDelayLen(0.03292);
     
     setReverbRate(reverbRate);
     setReverbTime(reverbTime);
@@ -73,7 +76,7 @@ double Reverb::process(double sample)
         
         for (unsigned short i = 0; i < 4; ++i)
         {
-            delays_[i]->setDecayTime(newReverbTime);
+            delays_[i].setDecayTime(newReverbTime);
         }
     }
     
@@ -84,7 +87,7 @@ double Reverb::process(double sample)
         
         for (unsigned short i = 0; i < 4; ++i)
         {
-            delays_[i]->setDecayRate(newReverbRate);
+            delays_[i].setDecayRate(newReverbRate);
         }
     }
     
@@ -94,10 +97,10 @@ double Reverb::process(double sample)
     
     for (unsigned short i = 0; i < 4; ++i)
     {
-        output += delays_[i]->process(sample);
+        output += delays_[i].process(sample);
     }
     
-    output = allPasses_[1]->process(allPasses_[0]->process(output));
+    output = allPasses_[1].process(allPasses_[0].process(output));
     
     // Modulate the dry/wet
     if (mods_[DRYWET]->inUse())
@@ -122,7 +125,7 @@ void Reverb::setReverbRate(double reverbRate)
     
     for (unsigned short i = 0; i < 4; ++i)
     {
-        delays_[i]->setDecayRate(reverbRate);
+        delays_[i].setDecayRate(reverbRate);
     }
 }
 
@@ -137,22 +140,8 @@ void Reverb::setReverbTime(double reverbTime)
     
     for (unsigned short i = 0; i < 4; ++i)
     {
-        delays_[i]->setDecayTime(reverbTime);
+        delays_[i].setDecayTime(reverbTime);
     }
-}
-
-Reverb::~Reverb()
-{
-    for (unsigned short i = 0; i < 4; ++i)
-    {
-        if (i < 2)
-        { delete allPasses_[i]; }
-        
-        delete delays_[i];
-    }
-    
-    delete [] delays_;
-    delete [] allPasses_;
 }
 
 Flanger::Flanger(const double& center,
@@ -205,9 +194,4 @@ double Flanger::process(double sample)
     output += delay_.process(output);
     
     return dryWet_(sample, output);
-}
-
-Flanger::~Flanger()
-{
-    delete lfo_;
 }

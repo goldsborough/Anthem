@@ -14,6 +14,7 @@
 #define __Anthem__Delay__
 
 #include "Units.h"
+#include <vector>
 
 /*************************************************************************//*!
 *
@@ -36,7 +37,6 @@ public:
     };
     
     typedef unsigned long size_t;
-    typedef double* iterator;
     
     /***********************************************************************************************//*!
     *
@@ -60,7 +60,7 @@ public:
           double feedbackLevel = 1,
           double capacity = 10);
     
-    virtual ~Delay();
+    virtual ~Delay() { }
     
     /*************************************************************************//*!
     *
@@ -174,6 +174,9 @@ public:
     
 protected:
     
+    typedef std::vector<double> Buffer;
+    typedef Buffer::iterator iterator;
+    
     /*! Calculates the _decayValue based on the decay rate, time and delay length*/
     void calcDecay_(double decayRate, double decayTime, double delayLen);
     
@@ -186,19 +189,13 @@ protected:
     /*! Fractional part of the read position */
     double readFract_;
     
-    /*! Pointer to the actual end of the delay line (total capacity) */
-    iterator capacity_;
-    
     /*! The pointer to the end of the current delay line  */
     iterator end_;
     
     /*! The pointer to the write index */
     iterator write_;
     
-    /*! Actual, total size of the delay line */
-    const unsigned int delayCapacity_;
-    
-    /*! Size of the current delay line, equal to _end - _buffer */
+    /*! Size of the current delay line*/
     unsigned int delayLen_;
     
     /*! The attenuation value with which to multiply the output */
@@ -214,7 +211,7 @@ protected:
     double feedback_;
     
     /*! The delay line */
-    double* buffer_;
+    Buffer buffer_;
 };
 
 /************************************************************************************************//*!

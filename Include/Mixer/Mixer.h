@@ -192,7 +192,7 @@ private:
     double masterAmp_;
 
     /*! CrossfadeUnit for panning */
-    CrossfadeUnit* pan_;
+    std::unique_ptr<CrossfadeUnit> pan_;
     
     /*! Whether or not audio output is stopped */
     bool stopped_;
@@ -204,13 +204,13 @@ private:
     bool directOutputEnabled_;
     
     /*! Stores samples for wavefile output */
-    SampleBuffer*  sampleDataBuffer_;
+    std::unique_ptr<SampleBuffer>  sampleDataBuffer_;
     
     /*! Direct audio output object */
-    DirectOutput* directOut_;
+    std::unique_ptr<DirectOutput> directOut_;
     
     /*! Wavfile object */
-    Wavefile* waveOut_;
+    std::unique_ptr<Wavefile> waveOut_;
 };
 
 #endif /* defined(__Anthem__Mixer__) */

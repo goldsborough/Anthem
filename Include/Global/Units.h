@@ -17,6 +17,8 @@
 
 #include "Wavetable.h"
 
+#include <memory>
+
 class ModDock;
 class ModUnit;
 
@@ -52,6 +54,14 @@ public:
     Unit(const Unit& other);
     
     Unit& operator=(const Unit& other);
+    
+    /*********************************************************************************************//*!
+    *
+    *  @brief       Deconstructs all ModDocks.
+    *
+    *************************************************************************************************/
+    
+    virtual ~Unit();
     
     /*************************************************************************************************//*!
     *
@@ -231,18 +241,10 @@ public:
     
     virtual unsigned long dockSize(index_t dockNum) const;
     
-    /*********************************************************************************************//*!
-    *
-    *  @brief       Deconstructs all ModDocks.
-    *
-    *************************************************************************************************/
-    
-    virtual ~Unit();
-    
 protected:
     
     /*! The std::vector holding the modulation docks. */
-    std::vector<ModDock*> mods_;
+    std::vector<std::unique_ptr<ModDock>> mods_;
 };
 
 /*********************************************************************************************//*!

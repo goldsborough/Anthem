@@ -31,21 +31,20 @@ int main(int argc, const char * argv[])
     
     LFO lfo(WavetableDB::SINE);
     
-    Macro macro;
-    
-    macro.attachMod(Macro::VALUE, &lfo);
-    
-    op.attachMod(Operator::AMP, &macro);
+    op.attachMod(Operator::AMP, &lfo);
     
     op.setAmp(0.5);
+    
+    op.setModUnitDepth(Operator::AMP, 0, 0.5);
     
     Mixer mixer(0,1);
     
     for (int i = 0; i < len; ++i)
     {
         double tick = op.tick();
-
+        
         op.increment();
+        
         lfo.increment();
         
         mixer.process(tick);
