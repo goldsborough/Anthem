@@ -29,14 +29,21 @@ int main(int argc, const char * argv[])
     
     op.addNote(440);
     
+    Reverb reverb;
+    
+    reverb.setReverbTime(2);
+    
     Mixer mixer(0,1);
     
     for (int i = 0; i < len; ++i)
     {
-        double tick = op.tick();
-
+        double tick = 0;
+        
+        if (i < Global::samplerate) tick = op.tick();
         
         op.increment();
+        
+        tick = reverb.process(tick);
         
         mixer.process(tick);
     }

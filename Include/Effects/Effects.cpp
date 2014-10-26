@@ -16,7 +16,7 @@
 #include <cmath>
 
 Reverb::Reverb(double reverbTime, double reverbRate, double dryWet)
-: EffectUnit(3,1),
+: EffectUnit(3),
   delays_(new Delay[4]),
   allPasses_(new AllPassDelay [2])
 {

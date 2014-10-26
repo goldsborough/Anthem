@@ -18,15 +18,18 @@ Delay::Delay(double delayLen,
              double decayRate,
              double feedbackLevel,
              double capacity)
-: EffectUnit(4,1),
-  buffer_(capacity * Global::samplerate)
+: EffectUnit(4,1)
 {
+    capacity *= Global::samplerate;
+    
+    buffer_.reserve(capacity);
+    
     write_ = buffer_.begin();
     
     setFeedback(feedbackLevel);
     setDecayRate(decayRate);
-    setDecayTime(decayTime);
     setDelayLen(delayLen);
+    setDecayTime(decayTime);
     
     // Initialize mod docks
     mods_[DECAY_TIME].setHigherBoundary(buffer_.size());
@@ -49,7 +52,6 @@ Delay::Delay(double delayLen,
 Delay::Delay(const Delay& other)
 : EffectUnit(other),
   buffer_(other.buffer_),
-  delayLen_(other.delayLen_),
   decayRate_(other.decayRate_),
   decayTime_(other.decayTime_),
   decayValue_(other.decayValue_),
@@ -57,14 +59,12 @@ Delay::Delay(const Delay& other)
   readFract_(other.readFract_),
   feedback_(other.feedback_)
 {
+    buffer_.reserve(other.buffer_.capacity());
+    
     // Convert iterator to const_iterator because other is const
     const_iterator itr = other.write_;
     
     write_ = buffer_.begin() + std::distance(other.buffer_.begin(), itr);
-    
-    itr = other.end_;
-    
-    end_ = buffer_.begin() + std::distance(other.buffer_.begin(), itr);
 }
 
 Delay& Delay::operator=(const Delay &other)
@@ -75,13 +75,13 @@ Delay& Delay::operator=(const Delay &other)
         
         buffer_ = other.buffer_;
         
+        buffer_.reserve(other.buffer_.capacity());
+        
         decayRate_ = other.decayRate_;
         
         decayTime_ = other.decayTime_;
         
         decayValue_ = other.decayValue_;
-        
-        delayLen_ = other.delayLen_;
         
         readInt_ = other.readInt_;
         
@@ -93,10 +93,6 @@ Delay& Delay::operator=(const Delay &other)
         const_iterator itr = other.write_;
         
         write_ = buffer_.begin() + std::distance(other.buffer_.begin(), itr);
-        
-        itr = other.end_;
-        
-        end_ = buffer_.begin() + std::distance(other.buffer_.begin(), itr);
     }
     
     return *this;
@@ -142,22 +138,20 @@ double Delay::getDecayRate() const
 
 void Delay::setDelayLen(double delayLen)
 {
-    if (delayLen < 0)
-    { throw std::invalid_argument("Delay length cannot be negative!"); }
-    
     delayLen *= Global::samplerate;
     
-    if (delayLen > buffer_.size())
-    { throw std::invalid_argument("Delay end position cannot be higher than maximum delay line length!"); }
+    if (delayLen < 0 || delayLen >= buffer_.capacity())
+    { throw std::invalid_argument("Delay line length cannot be less than 0 or greater/equal the delay line capacity!"); }
     
-    readInt_ = static_cast<int>(delayLen);
-    readFract_ = delayLen - static_cast<double>(readInt_);
+    // Convert to int
+    readInt_ = delayLen;
     
-    // automatic conversion to int
-    delayLen_ = delayLen;
+    // delayLen is double so get the fractional part
+    // by subtracting the integer part
+    readFract_ = delayLen - readInt_;
     
-    // First assign the new buffer end point
-    end_ = buffer_.begin() + delayLen_;
+    // Resize the buffer to the new length
+    buffer_.resize(delayLen);
     
     calcDecay_();
 }
@@ -165,7 +159,7 @@ void Delay::setDelayLen(double delayLen)
 double Delay::getDelayLen() const
 {
     // seconds not samples
-    return delayLen_ / (static_cast<double>(Global::samplerate));
+    return buffer_.size() / (static_cast<double>(Global::samplerate));
 }
 
 void Delay::setFeedback(double feedbackLevel)
@@ -192,8 +186,8 @@ void Delay::setDecayTime(double decayTime)
 {
     decayTime *= Global::samplerate;
     
-    if (decayTime < 0 || decayTime > buffer_.size())
-    { throw std::invalid_argument("Decay time must be greater 0 and less than capacity!"); }
+    if (decayTime < 0)
+    { throw std::invalid_argument("Decay time must be greater 0!"); }
 
     mods_[DECAY_TIME].setBaseValue(decayTime);
     
@@ -215,15 +209,17 @@ double Delay::getDecayTime() const
 
 void Delay::calcDecay_()
 {
-    double decayExponent = static_cast<double>(delayLen_) / decayTime_;
+    double decayExponent = static_cast<double>(buffer_.size()) / decayTime_;
     
     decayValue_ = pow(decayRate_, decayExponent);
 }
 
-void Delay::incr_()
+void Delay::increment_()
 {
-    if (++write_ >= end_)
-    { write_ -= delayLen_; }
+    if (++write_ == buffer_.end())
+    {
+        write_ = buffer_.begin();
+    }
 }
 
 double Delay::offset(unsigned int offset)
@@ -231,7 +227,7 @@ double Delay::offset(unsigned int offset)
     iterator ret = write_ - offset;
     
     if (ret < buffer_.begin())
-    { ret += delayLen_; }
+    { ret += buffer_.size(); }
     
     return *ret;
 }
@@ -272,38 +268,44 @@ double Delay::process(double sample)
     
     // Check if we need to wrap around
     if (read < buffer_.begin())
-    { read += delayLen_; }
+    {
+        read += buffer_.size();
+    }
     
     // If the read index is equal to the write index
-    // we need to first write the new sample
+    // we need to first write the new sample and increment
     if (! readInt_)
     {
         *write_ = sample;
         
-        incr_();
+        increment_();
     }
     
     // First add integer part
     double output = *read;
     
-    // Then decrement read position (and check)
-    if (--read < buffer_.begin())
-    { read = end_; }
+    // Check if the current read position is the beginning
+    // of the buffer (in which case incrementing means going
+    // to the last index), else the iterator is decremented
+    if (read-- == buffer_.begin())
+    {
+        read = buffer_.end() - 1;
+    }
     
     // And finally add the fractional part of the
     // previous sample
     output += (*read - output) * readFract_;
-
-    // If the sample hasn't been written yet, write it now
-    if (readInt_ > 0)
-    {
-        *write_ = sample + (output * feedback_);
-        
-        incr_();
-    }
     
     // Apply decay
     output *= decayValue_;
+
+    // If the sample hasn't been written yet, write it now
+    if (readInt_)
+    {
+        *write_ = sample + (output * feedback_);
+        
+        increment_();
+    }
     
     return dryWet_(sample, output);
 }
@@ -314,23 +316,29 @@ double AllPassDelay::process(double sample)
     
     // Check if we need to wrap around
     if (read < buffer_.begin())
-    { read += delayLen_; }
+    {
+        read += buffer_.size();
+    }
     
     // If the read index is equal to the write index
     // we need to first write the new sample
-    if (readInt_ == 0)
+    if (! readInt_)
     {
         *write_ = sample;
         
-        incr_();
+        increment_();
     }
     
     // First add integer part
     double outputA = *read;
     
-    // Then decrement read position (and check)
-    if (--read < buffer_.begin())
-    { read += delayLen_; }
+    // Check if the current read position is the beginning
+    // of the buffer (in which case incrementing means going
+    // to the last index), else the iterator is decremented
+    if (read-- == buffer_.begin())
+    {
+        read = buffer_.end() - 1;
+    }
     
     // And finally add the fractional part of the
     // previous sample
@@ -339,11 +347,11 @@ double AllPassDelay::process(double sample)
     double outputB = sample - (outputA * decayValue_);
     
     // If the sample hasn't been written yet, write it now
-    if (readInt_ > 0)
+    if (readInt_)
     {
         *write_ = outputB;
         
-        incr_();
+        increment_();
     }
     
     return outputA + (outputB * decayValue_);

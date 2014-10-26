@@ -56,7 +56,7 @@ public:
     
     Delay(double delayLen = 1,
           double decayTime = 4,
-          double decayRate = 0.01,
+          double decayRate = 0.001,
           double feedbackLevel = 1,
           double capacity = 10);
     
@@ -191,7 +191,7 @@ protected:
     void calcDecay_();
     
     /*! Increments and boundary checks the write pointer */
-    void incr_();
+    inline void increment_();
     
     /*! Integral part of the read position */
     int readInt_;
@@ -199,14 +199,8 @@ protected:
     /*! Fractional part of the read position */
     double readFract_;
     
-    /*! The pointer to the end of the current delay line  */
-    iterator end_;
-    
     /*! The pointer to the write index */
     iterator write_;
-    
-    /*! Size of the current delay line*/
-    unsigned int delayLen_;
     
     /*! The attenuation value with which to multiply the output */
     double decayValue_;
@@ -235,8 +229,8 @@ protected:
 
 struct AllPassDelay : public Delay
 {
-    AllPassDelay(const double& delayLen = 10,
-                 const double& decayTime = 0,
+    AllPassDelay(const double& delayLen = 1,
+                 const double& decayTime = 4,
                  const double& decayRate = 0.001,
                  const double& feedbackLevel = 1)
     : Delay(delayLen,decayTime,decayRate,feedbackLevel)
