@@ -20,13 +20,13 @@ namespace Util
     /*! Returns an std::string with the current date in the format DD_MM_YYYY */
     extern std::string getDate();
     
-    extern double noteToFreq(unsigned short n);
+    extern double noteToFreq(unsigned short note);
 
     extern unsigned short freqToNote(double freq);
 
-    extern double centToFreq(double baseFreq, int centOffset);
-
-    extern double semiToFreq(double baseFreq, int semiToneOffset);
+    extern double semitonesToFreq(double baseFreq, double semitoneOffset);
+    
+    extern double freqToSemitones(double baseFreq, double newFreq);
 
     extern float getPassedTime(unsigned long start);
     

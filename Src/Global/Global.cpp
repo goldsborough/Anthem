@@ -7,6 +7,9 @@
 //
 
 #include "Global.h"
+#include "Wavetable.h"
+
+WavetableDB wavetableDB;
 
 /*******************************************************************************
  * Interestingly enough this is the only way I got it to work.
@@ -36,5 +39,7 @@ namespace Global
         wtLen = wavetableLen;
         
         tableIncr = static_cast<double>(wtLen) / smplr;
+        
+        wavetableDB.init();
     }
 }

@@ -69,6 +69,9 @@ double Unit::getModUnitDepth(index_t dockNum, index_t modNum) const
 void Unit::attachMod(index_t dockNum,
                      ModUnit* mod)
 {
+    if (mod == this)
+    { throw std::invalid_argument("Unit cannot modulate itself!"); }
+    
     if (dockNum >= numDocks_)
     { throw std::invalid_argument("Dock index out of range!"); }
     

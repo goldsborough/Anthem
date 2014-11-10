@@ -13,19 +13,16 @@
 
 #include <stdexcept>
 
-Oscillator::Oscillator(short wt,
-                       double frq,
-                       double amp,
-                       short phaseOffset)
+Oscillator::Oscillator(short wt, double frq, short phaseOffset)
 
-: amplitude_(amp), ind_(0), phaseOffset_(phaseOffset)
+: ind_(0), phaseOffset_(phaseOffset)
 
 {
     wt_ = wavetableDB[wt];
     
     setPhaseOffset(phaseOffset);
     
-    setFreq(frq);
+    setFrequency(frq);
 }
 
 void Oscillator::setWavetable(short wt)
@@ -38,75 +35,17 @@ short Oscillator::getWavetableID() const
     return wt_.id();
 }
 
-void Oscillator::setAmp(double amp)
-{
-    if (amp < 0 || amp > 1)
-    { throw std::invalid_argument("Amplitude must be between 0 and 1!"); }
-    
-    amplitude_ = amp;
-}
-
-double Oscillator::getAmp() const
-{
-    return amplitude_;
-}
-
-void Oscillator::setSemitoneOffset(short semitoneOffset)
-{
-    // Prevent unnecesessary changes
-    if (! semitoneOffset) return;
-    
-    // Add or subtract the semitones from the current frequency
-    double newFreq = Util::semiToFreq(freq_, semitoneOffset);
-    
-    // Check nyquist limit
-    if (newFreq > Global::nyquistLimit)
-    { newFreq = Global::nyquistLimit; }
-    
-    // calculate new index increment
-    indIncr_ = Global::tableIncr * newFreq;
-    
-    semitoneOffset_ = semitoneOffset;
-}
-
-short Oscillator::getSemitoneOffset() const
-{
-    return semitoneOffset_;
-}
-
-void Oscillator::setCentOffset(short centOffset)
-{
-    // Prevent unnecesessary changes
-    if (! centOffset) return;
-    
-    // Add or subtract the centOffset from the current frequency
-    double newFreq = Util::centToFreq(freq_, centOffset);
-    
-    // Check nyquist limit
-    if (newFreq > Global::nyquistLimit)
-    { newFreq = Global::nyquistLimit; }
-        
-    // calculate new index increment
-    indIncr_ = Global::tableIncr * newFreq;
-    
-    centOffset_ = centOffset;
-}
-
-short Oscillator::getCentOffset() const
-{
-    return centOffset_;
-}
-
-void Oscillator::setFreq(double Hz)
+void Oscillator::setFrequency(double Hz)
 {
     if (Hz < 0 || Hz > Global::nyquistLimit)
     { throw std::invalid_argument("Frequency must be greater 0 and less than the nyquist limit!"); }
     
     freq_ = Hz;
+    
     indIncr_ = Global::tableIncr * Hz;
 }
 
-double Oscillator::getFreq() const
+double Oscillator::getFrequency() const
 {
     return freq_;
 }
@@ -161,5 +100,5 @@ double Oscillator::tick()
     if (wt_.id() == -1) return 0;
         
     // Grab a value through interpolation from the wavetable
-    return wt_.interpolate(ind_) * amplitude_;
+    return wt_.interpolate(ind_);
 }

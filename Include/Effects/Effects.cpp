@@ -226,7 +226,7 @@ Flanger::Flanger(const double& center,
   center_(center), depth_(depth/2),
   feedback_(feedback),
   lfo_(new LFO(0,rate)),
-  delay_( new Delay(10,1,1,0) )
+  delay_( new Delay(5,1,1,0) )
 { }
 
 Flanger::Flanger(const Flanger& other)
@@ -259,7 +259,7 @@ Flanger& Flanger::operator= (const Flanger& other)
 
 void Flanger::setRate(const double& rate)
 {
-    lfo_->setFreq(rate);
+    lfo_->setFrequency(rate);
 }
 
 void Flanger::setCenter(const double& center)
@@ -289,9 +289,9 @@ double Flanger::process(double sample)
     if (feedback_)
     { output -= delay_->offset(center_ * Global::samplerate) * feedback_; }
     
-    //double val = center_ + (depth_ * lfo_->tick());
+    double val = center_ + (depth_ * lfo_->tick());
     
-    //delay_.setDelayLen(val);
+    delay_->setDelayLen(val);
     
     output += delay_->process(output);
     

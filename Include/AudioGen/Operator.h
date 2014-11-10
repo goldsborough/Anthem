@@ -4,7 +4,7 @@
 *
 *  @author      Peter Goldsborough
 *
-*  @date        11/10/2014
+*  @date        10/11/2014
 *
 *  @brief       Defines the Operator class.
 *
@@ -13,210 +13,101 @@
 #ifndef __Anthem__Operator__
 #define __Anthem__Operator__
 
+#include "Oscillator.h"
 #include "Units.h"
 
-#include <memory>
 
-class Oscillator;
-
-/*************************************************************************************************//*!
-*
-*  @brief       The Operator class.
-*
-*  @details     An Operator is an interfacing class for playing notes (i.e. pitches/frequencies).
-*               For each note, an oscillator of that frequency is created and added to the other
-*               notes to create a final signal. These operator signals are then synthesized via
-*               Frequency Modulation.
-*
-*****************************************************************************************************/
-
-class Operator : public GenUnit
+class Operator : public Oscillator, public GenUnit
 {
     
 public:
     
-    /*! The available ModDocks/parameters to
-        modulate via other GenUnits */
+    typedef unsigned short note_t;
+    
+    /*! Available ModDocks for modulation */
     enum Docks
     {
-        AMP,
-        SEMI_OFFSET,
-        CENT_OFFSET
+        AMP
     };
     
-    /*************************************************************************************************//*!
-    *
-    *  @brief       Constructs an Operator.
-    *
-    *  @param       wt The id of the wavetable to play. Usually a member of WavetableDB::Wavetables.
-    *                  Defaults to WavetableDB::Wavetables::SINE, or 0.
-    *
-    *  @param       amp The initial amplitude value between 0 and 1. Defaults to 1.
-    *
-    *****************************************************************************************************/
-    
-    Operator(short wt = 0, double amp = 1);
-    
-    Operator(const Operator& other);
-    
-    Operator& operator= (const Operator& other);
-    
-    /*************************************************************************************************//*!
-    *
-    *  @brief       Generates a sample.
-    *
-    *  @return      The generated sample.
-    *
-    *****************************************************************************************************/
+    Operator(short wt = -1, double frq = 1,
+             double amp = 1, short phaseOffset = 0,
+             double ratio = 1, double freqOffset = 0);
     
     double tick();
     
-    /*************************************************************************************************//*!
-    *
-    *  @brief       Increments oscillators. Call after ticking.
-    *
-    *****************************************************************************************************/
-    
     void increment();
     
-    /*************************************************************************************************//*!
-    *
-    *  @brief       Sets a semitone offset to all currently available oscillators.
-    *
-    *  @param       semitones The semitone offset, between -48 and +48.
-    *
-    *  @see         setCents()
-    *
-    *****************************************************************************************************/
+    void modulateFrequency(double value);
     
-    void setSemitoneOffset(short semitoneOffset);
+    void setNoteFrequency(double frequency);
     
-    /*************************************************************************************************//*!
-    *
-    *  @brief       Returns the Operator's current semitone offset, if any.
-    *
-    *  @return      The semitone offset.
-    *
-    *****************************************************************************************************/
+    double getNoteFrequency() const;
     
-    short getSemitoneOffset() const;
+    double getModBaseFrequency() const;
+    
+    void setNote(note_t note);
+    
+    note_t getNote() const;
     
     /*************************************************************************************************//*!
     *
-    *  @brief       Sets a cent offset to all currently available oscillators.
+    *  @brief       Sets the Oscillator's frequency offset.
     *
-    *  @param       cents The cent offset, between 0 and 100.
-    *
-    *  @see         setSemis()
+    *  @param       Hz The new frequency offset, in Hertz.
     *
     *****************************************************************************************************/
     
-    void setCentOffset(short centOffset);
+    void setFrequencyOffset(double Hz);
     
     /*************************************************************************************************//*!
     *
-    *  @brief       Returns the Operator's current cent offset, if any.
+    *  @brief       Returns the Oscillator's frequency offset.
     *
-    *  @return      The cent offset.
-    *
-    *****************************************************************************************************/
-    
-    short getCentOffset() const;
-    
-    /*************************************************************************************************//*!
-    *
-    *  @brief       Sets the operator's wavetable.
-    *
-    *  @details     Behind the scenes the operator just changes the wavetable of its oscillators.
-    *
-    *  @param       wt The id of the new wavetable. Usually a member of WavetableDB::Wavetables.
+    *  @return      The current frequency offset, in Hertz.
     *
     *****************************************************************************************************/
     
-    void setWavetable(short wt);
+    double getFrequencyOffset() const;
     
-    /*************************************************************************************************//*!
-    *
-    *  @brief       Returns the operator's wavetable's ID.
-    *
-    *  @return      The wavetable's ID.
-    *
-    *****************************************************************************************************/
+    void setSemitoneOffset(double semitones);
     
-    short getWavetableID() const;
+    double getSemitoneOffset() const;
     
-    /*************************************************************************************************//*!
-    *
-    *  @brief       Adds a note to the operator.
-    *
-    *  @details     A note is in this case nothing else than a frequency. The operator creates a new
-    *               oscillator and initializes it with this pitch.
-    *
-    *  @param       frq The frequency of the note to add.
-    *
-    *****************************************************************************************************/
+    void setRatio(double ratio);
     
-    void addNote(double frq);
+    double getRatio() const;
     
-    /*************************************************************************************************//*!
-    *
-    *  @brief       Releases a note from the operator.
-    *
-    *  @details     This form of relNote() looks for an oscillator within the operator's vector of 
-    *               oscillators that has the passed frequency and deletes it, if found.
-    *
-    *  @param       frq The frequency of the note to release.
-    *
-    *****************************************************************************************************/
-    
-    void relNote(double frq);
-    
-    /*************************************************************************************************//*!
-    *
-    *  @brief       Releases a note from the operator.
-    *
-    *  @details     This form of relNote() releases an oscillator from the operator's vector of
-    *               oscillators, given its index (in that vector).
-    *
-    *  @param       ind The index of the oscillator to release.
-    *
-    *****************************************************************************************************/
-    
-    void relNote(unsigned short ind);
-    
-    /*************************************************************************************************//*!
-    *
-    *  @brief       Returns the frequency of a note.
-    *
-    *  @param       ind The index of the note.
-    *
-    *  @return      The note's frequency value in Hertz.
-    *
-    *****************************************************************************************************/
-    
-    double getNoteFreq(unsigned short ind);
-    
-    /*! @copydoc GenUnit::setAmp() */
     void setAmp(double amp);
     
-    /*! @copydoc GenUnit::getAmp() */
     double getAmp() const;
     
 private:
     
-    typedef std::vector<std::unique_ptr<Oscillator>> noteVec;
+    /*! The frequency ratio of the Operator
+        relative to the current note */
+    double ratio_;
     
-    /*! The std::vector of pointers to Oscillators that holds current notes */
-    noteVec notes_;
+    /*! Current frequency offset value in table index increment */
+    double indexOffset_;
     
-    /*! The current semitone offset value */
-    unsigned short semitoneOffset_;
+    /*! Current frequency offset value in Hertz */
+    double freqOffset_;
     
-    /*! The current cent offset value */
-    unsigned short centOffset_;
+    /*! Current frequency offset value in semitones */
+    double semitoneOffset_;
     
-    /*! The id of the current wavetable */
-    short wavetableID_;
+    /*! The frequency of the original note, without any ratio */
+    double noteFreq_;
+    
+    /*! The note that was originally input */
+    note_t note_;
+    
+    /*! The base frequency for modulation in Hertz */
+    double modBaseFreq_;
+    
+    /*! The base frequency for modulation as a note */
+    note_t modBaseNote_;
 };
 
 #endif /* defined(__Anthem__Operator__) */

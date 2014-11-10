@@ -25,11 +25,11 @@ namespace Util
         return date;
     }
 
-    double noteToFreq(unsigned short n)
+    double noteToFreq(unsigned short note)
     {
         // Source: http://en.wikipedia.org/wiki/Piano_key_frequencies
         
-        double exp = (n - 49) / 12;
+        double exp = (note - 49) / 12;
         
         return pow(2, exp) * 440;
     }
@@ -39,14 +39,14 @@ namespace Util
         return 12 * log2( (freq / 440) ) + 49;
     }
 
-    double centToFreq(double baseFreq, int centOffset)
+    double semitonesToFreq(double baseFreq, double semitoneOffset)
     {
-        return pow(2, centOffset / 1200) * baseFreq;
+        return pow(2, semitoneOffset / 12) * baseFreq;
     }
-
-    double semiToFreq(double baseFreq, int semiToneOffset)
+    
+    double freqToSemitones(double baseFreq, double newFreq)
     {
-        return pow(2, semiToneOffset / 12.0) * baseFreq;
+        return (12 * (log(newFreq/baseFreq))) / log(2);
     }
 
     float getPassedTime(clock_t start)

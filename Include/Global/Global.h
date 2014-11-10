@@ -49,8 +49,7 @@ namespace Global
     *  @param       wavetableLen The wavetable length.
     *
     *****************************************************************************************************/
-    
-    extern void init(const unsigned int smplr, const unsigned int wavetableLen);
+    extern void init(const unsigned int smplr = 44100, const unsigned int wavetableLen = 4095);
 };
 
 #endif /* defined(__Anthem__Globals__) */

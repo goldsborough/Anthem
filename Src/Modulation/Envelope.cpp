@@ -26,6 +26,7 @@ Envelope::Envelope(bool sustainEnabled)
     setSegLen(SEG_A, 500);
     setSegRate(SEG_A, 1.2);
     
+    setSegStartLevel(REL, 0.5);
     setSegRate(REL, 0.6);
     setSegLen(REL, 500);
 

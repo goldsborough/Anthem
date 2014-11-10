@@ -1,4 +1,3 @@
-#include "Synthesizer.h"
 #include "Mixer.h"
 #include "Global.h"
 #include "Operator.h"
@@ -14,6 +13,7 @@
 #include "Noise.h"
 #include "Crossfader.h"
 #include "Macro.h"
+#include "FM.h"
 
 #include <iostream>
 
@@ -21,33 +21,41 @@ int main(int argc, const char * argv[])
 {
     clock_t t = clock();
     
-    Synthesizer synth;
+    Global::init();
     
     unsigned long len = Global::samplerate * 5;
     
     Operator op(WavetableDB::SINE);
     
-    op.addNote(440);
+    op.setNote(48);
     
-    Reverb reverb;
+    Operator op2(WavetableDB::SINE);
     
-    reverb.setReverbTime(2);
+    op2.setNote(48);
+    
+    op2.setAmp(220);
+    
+    FM fm;
+    
+    fm.setOperator(1, &op);
+    
+    fm.setOperator(0, &op2);
     
     Mixer mixer(0,1);
     
     for (int i = 0; i < len; ++i)
     {
-        double tick = 0;
+        double tick;
         
-        if (i < Global::samplerate) tick = op.tick();
+        tick = fm.tick();
         
         op.increment();
         
-        tick = reverb.process(tick);
+        op2.increment();
         
         mixer.process(tick);
     }
-    
+
     mixer.play();
     
     //while (clock() != t + (5 * CLOCKS_PER_SEC));

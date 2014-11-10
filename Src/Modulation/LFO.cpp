@@ -17,7 +17,7 @@
 #include <stdexcept>
 
 LFO::LFO(short wt, double rate, double amp, double phaseOffset)
-: Oscillator(wt,rate,amp,phaseOffset), ModUnit(3,amp)
+: Oscillator(wt,rate,phaseOffset), ModUnit(3,amp)
 {
     mods_[FREQ].setHigherBoundary(100);
     mods_[FREQ].setLowerBoundary(0);
@@ -32,14 +32,14 @@ LFO::LFO(short wt, double rate, double amp, double phaseOffset)
     mods_[AMP].setBaseValue(amp);
 }
 
-void LFO::setFreq(double Hz)
+void LFO::setFrequency(double Hz)
 {
-    Oscillator::setFreq(Hz);
+    Oscillator::setFrequency(Hz);
     
     mods_[FREQ].setBaseValue(Hz);
 }
 
-double LFO::getFreq() const
+double LFO::getFrequency() const
 {
     if (mods_[FREQ].inUse())
     {
@@ -69,7 +69,10 @@ double LFO::getPhaseOffset() const
 void LFO::setAmp(double amp)
 {
     // For boundary checking
-    Oscillator::setAmp(amp);
+    if (amp < 0 || amp > 1)
+    { throw std::invalid_argument("Amplitude cannot be greater 1 or less than 0!"); }
+    
+    amp_ = amp;
     
     mods_[AMP].setBaseValue(amp);
 }
@@ -89,7 +92,7 @@ double LFO::modulate(double sample, double depth, double maximum)
     // Modulate rate/frequency
     if (mods_[FREQ].inUse())
     {
-        Oscillator::setFreq(mods_[FREQ].tick());
+        Oscillator::setFrequency(mods_[FREQ].tick());
     }
     
     // Modulate phase offset
@@ -156,7 +159,7 @@ double LFOSeq::getScaledModFreqValue(double freq) const
 void LFOSeq::setScaledModFreq_(seg_t seg)
 {
     // Set scaled frequency to frequency of lfo
-    lfos_[seg].lfo.setFreq(getScaledModFreqValue(lfos_[seg].freq));
+    lfos_[seg].lfo.setFrequency(getScaledModFreqValue(lfos_[seg].freq));
 }
 
 void LFOSeq::resizeSegsFromRate_(double rate)
