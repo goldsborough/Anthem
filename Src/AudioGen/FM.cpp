@@ -1,27 +1,28 @@
-//
-//  FM.cpp
-//  Anthem
-//
-//  Created by Peter Goldsborough on 08/09/14.
-//  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
-//
-
 #include "FM.h"
 #include "Operator.h"
 
 #include <stdexcept>
 
-FM::FM(index_t alg,
-       Operator* a,
+FM::FM(Operator* a,
        Operator* b,
        Operator* c,
-       Operator* d)
-: alg_(alg)
+       Operator* d,
+       index_t alg)
 {
-    ops_[A] = a;
-    ops_[B] = b;
-    ops_[C] = c;
-    ops_[D] = d;
+    ops_[A].op = a;
+    ops_[B].op = b;
+    ops_[C].op = c;
+    ops_[D].op = d;
+    
+    setAlgorithm(alg);
+}
+
+void FM::setModes_(bool a, bool b, bool c, bool d)
+{
+    ops_[A].op->setMode(a);
+    ops_[B].op->setMode(b);
+    ops_[C].op->setMode(c);
+    ops_[D].op->setMode(d);
 }
 
 void FM::setAlgorithm(unsigned short alg)
@@ -30,6 +31,32 @@ void FM::setAlgorithm(unsigned short alg)
     { throw std::invalid_argument("Algorithm number must be between 0 and 11!"); }
     
     alg_ = alg;
+    
+    switch (alg_)
+    {
+        case 0:
+        case 1:
+        case 2:
+        case 3:
+        case 6:
+            setModes_(0,0,0,1);
+            break;
+            
+        case 4:
+        case 5:
+        case 7:
+            setModes_(0, 0, 1,1);
+            break;
+            
+        case 8:
+        case 9:
+        case 10:
+            setModes_(0, 1, 1, 1);
+            break;
+            
+        case 11:
+            setModes_(1, 1, 1, 1);
+    }
 }
 
 unsigned short FM::getAlgorithm() const
@@ -37,45 +64,46 @@ unsigned short FM::getAlgorithm() const
     return alg_;
 }
 
-void FM::setOperator(index_t index, Operator* op)
+void FM::setActive(index_t index, bool state)
 {
     if (index > 3)
-    { throw std::invalid_argument("Invalid index! Must be between 0 and 3!"); }
+    { throw std::invalid_argument("Invalid index supplied! Must be between A (0) and B (3); "); }
     
-    ops_[index] = op;
+    ops_[index].active = state;
 }
 
-Operator* FM::getOperator(index_t index) const
+bool  FM::isActive(index_t index) const
 {
     if (index > 3)
-    { throw std::invalid_argument("Invalid index! Must be between 0 and 3!"); }
+    { throw std::invalid_argument("Invalid index supplied! Must be between A (0) and B (3); "); }
     
-    return ops_[index];
+    return ops_[index].active;
+}
+
+double FM::tickIfActive_(index_t index)
+{
+    return (ops_[index].active) ? ops_[index].op->tick() : 0;
 }
 
 double FM::modulate_(index_t carrier, double value)
 {
-    if (! ops_[carrier]) return value;
+    if (! ops_[carrier].active) return 0;
     
-    ops_[carrier]->modulateFrequency(value);
+    ops_[carrier].op->modulateFrequency(value);
     
-    return ops_[carrier]->tick();
+    return ops_[carrier].op->tick();
 }
 
-double FM::add_(index_t left, index_t right)
+double FM::add_(index_t carrier, double value)
 {
-    double leftTick = (ops_[left]) ? ops_[left]->tick() : 0;
+    if (! ops_[carrier].active) return 0;
     
-    double rightTick = (ops_[right]) ? ops_[right]->tick() : 0;
-    
-    return leftTick + rightTick;
+    return ops_[carrier].op->tick() + value;
 }
 
 double FM::tick()
 {
-    const double aTick = (ops_[A]) ? ops_[A]->tick() : 0;
-    
-    double temp;
+    const double aTick = tickIfActive_(A);
     
     switch (alg_)
     {
@@ -83,44 +111,48 @@ double FM::tick()
             return modulate_(D, modulate_(C, modulate_(B, aTick)));
             
         case 1:
-            return modulate_(D, modulate_(C, add_(A, B)));
+            return modulate_(D, modulate_(C, add_(B, aTick)));
             
         case 2:
             return modulate_(D, add_(C, modulate_(B, aTick)));
             
         case 3:
-            return modulate_(D, add_(modulate_(B, aTick), modulate_(C, aTick)));
+            return modulate_(D, modulate_(B, aTick) + modulate_(C, aTick));
             
         case 4:
         {
-            temp = modulate_(B, aTick);
+            double temp = modulate_(B, aTick);
             
-            return add_(modulate_(D, temp), modulate_(C, temp));
+            return modulate_(D, temp) + modulate_(C, temp);
         }
             
         case 5:
             return add_(D, modulate_(C, modulate_(B, aTick)));
             
         case 6:
-            return modulate_(D, add_(C, add_(B, A)));
+        {
+            double bTick = tickIfActive_(B);
+            
+            return modulate_(D, add_(B, aTick + bTick));
+        }
             
         case 7:
         {
-            temp = add_(A, B);
+            double bTick = tickIfActive_(B);
             
-            return add_(modulate_(C, temp), modulate_(D, temp));
+            return modulate_(C, aTick) + modulate_(D, bTick);
         }
             
         case 8:
-            return add_(modulate_(D, aTick), add_(modulate_(C, aTick), modulate_(B, aTick)));
+            return modulate_(D, aTick) + modulate_(C, aTick) + modulate_(B, aTick);
             
         case 9:
             return add_(D, add_(C, modulate_(B, aTick)));
             
         case 10:
-            return add_(D, add_(modulate_(C, aTick), modulate_(B, aTick)));
+            return add_(D, modulate_(C, aTick) + modulate_(B, aTick));
             
         default:
-            return add_(D, add_(C, add_(B, A)));
+            return add_(D, add_(C, add_(B, aTick)));
     }
 }

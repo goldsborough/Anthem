@@ -23,23 +23,58 @@ int main(int argc, const char * argv[])
     
     Global::init();
     
-    unsigned long len = Global::samplerate * 5;
+    const unsigned long len = Global::samplerate * 5;
     
-    Operator op(WavetableDB::SINE);
+    Operator a(WavetableDB::SINE);
     
-    op.setNote(48);
+    Operator b(WavetableDB::SINE);
     
-    Operator op2(WavetableDB::SINE);
+    Operator c(WavetableDB::SINE);
     
-    op2.setNote(48);
+    Operator d(WavetableDB::SINE);
     
-    op2.setAmp(220);
+    FM fm(&a, &b, &c, &d);
     
-    FM fm;
+    a.setFrequencyOffset(1760);
     
-    fm.setOperator(1, &op);
+    a.setLevel(1);
     
-    fm.setOperator(0, &op2);
+    b.setFrequencyOffset(440);
+    
+    b.setLevel(5);
+    
+    c.setFrequencyOffset(880);
+    
+    c.setLevel(2.5);
+    
+    d.setFrequencyOffset(440);
+    
+    d.setLevel(1);
+    
+    fm.setAlgorithm(0);
+    
+    fm.setActive(0, false);
+    fm.setActive(1, false);
+    fm.setActive(2, false);
+    fm.setActive(3, true);
+    
+    Envelope env;
+    
+    env.setSegLevel(Envelope::DEL, 0);
+    
+    LFO lfo(WavetableDB::SINE);
+    
+    lfo.setFrequency(8);
+    
+    env.attachMod_Seg(Envelope::ATK, 0, &lfo);
+    
+    d.attachMod(Operator::LEVEL, &env);
+    
+    Filter filter(Filter::LOW_PASS, 400);
+    
+    Reverb reverb;
+    
+    reverb.setReverbTime(2);
     
     Mixer mixer(0,1);
     
@@ -47,11 +82,23 @@ int main(int argc, const char * argv[])
     {
         double tick;
         
-        tick = fm.tick();
+        tick = (i < Global::samplerate) ? fm.tick() : 0;
         
-        op.increment();
+        tick = filter.process(tick);
         
-        op2.increment();
+        tick = reverb.process(tick);
+        
+        env.increment();
+        
+        lfo.increment();
+        
+        a.increment();
+        
+        b.increment();
+        
+        c.increment();
+        
+        d.increment();
         
         mixer.process(tick);
     }

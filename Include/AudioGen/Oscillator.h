@@ -137,6 +137,8 @@ public:
     
 protected:
     
+    void increment_(double value);
+    
     /*! The current frequency */
     double freq_;
     

@@ -29,14 +29,14 @@ namespace Util
     {
         // Source: http://en.wikipedia.org/wiki/Piano_key_frequencies
         
-        double exp = (note - 49) / 12;
+        double exp = (note - 48) / 12;
         
         return pow(2, exp) * 440;
     }
 
     unsigned short freqToNote(double freq)
     {
-        return 12 * log2( (freq / 440) ) + 49;
+        return 12 * log2( (freq / 440) ) + 48;
     }
 
     double semitonesToFreq(double baseFreq, double semitoneOffset)

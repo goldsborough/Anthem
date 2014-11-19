@@ -4,81 +4,76 @@
 #include "Util.h"
 #include "Global.h"
 
-Operator::Operator(short wt, double frq,
-                   double amp, short phaseOffset,
-                   double ratio, double freqOffset)
-: Oscillator(wt,frq,phaseOffset),
-  ratio_(ratio),
-  GenUnit(1,amp)
+Operator::Operator(short wt, double freqOffset,
+                   double level, bool mode,
+                   short phaseOffset, double ratio)
+: Oscillator(wt,0,phaseOffset), ratio_(ratio),
+  GenUnit(1), level_(level), noteFreq_(0), note_(0),
+  semitoneOffset_(0), freqOffset_(0), realFreq_(0),
+  modOffset_(0)
 {
-    setNoteFrequency(frq);
-    
     setFrequencyOffset(freqOffset);
     
-    mods_[AMP].setHigherBoundary(1);
-    mods_[AMP].setLowerBoundary(0);
-    mods_[AMP].setBaseValue(amp);
+    setMode(mode);
+    
+    mods_[LEVEL].setLowerBoundary(0);
+    mods_[LEVEL].setBaseValue(level);
 }
 
-void Operator::setAmp(double amp)
+void Operator::setMode(bool mode)
 {
-    if (amp < 0)
-    { throw std::invalid_argument("Amplitude cannot be less than 0!"); }
+    if (mode_ == mode) return;
     
-    amp_ = amp;
+    mode_ = mode;
     
-    mods_[AMP].setBaseValue(amp);
-}
-
-double Operator::getAmp() const
-{
-    if (mods_[AMP].inUse())
+    if (mode)
     {
-        return mods_[AMP].getBaseValue();
+        // More efficient to set level here
+        level_ /= (realFreq_ * 10);
+        
+        mods_[LEVEL].setBaseValue(level_);
+        
+        // Like amplitude, between 0 and 1
+        mods_[LEVEL].setHigherBoundary(1);
     }
     
-    return amp_;
+    else
+    {
+        setLevel(level_ * 10);
+        
+        // Index of modulation, between 0 and 10
+        mods_[LEVEL].setHigherBoundary(10);
+    }
 }
 
-void Operator::setNoteFrequency(double frequency)
+bool Operator::getMode() const
 {
-    // Check nyquist limit
-    if (frequency > Global::nyquistLimit)
-    { throw std::invalid_argument("Base frequecy cannot be higher than the nyquist limit!"); }
-    
-    noteFreq_ = frequency;
-    
-    note_ = Util::freqToNote(noteFreq_);
-    
-    freq_ = modBaseFreq_ = noteFreq_ * ratio_;
-    
-    modBaseNote_ = Util::freqToNote(modBaseFreq_);
-    
-    indIncr_ = Global::tableIncr * modBaseFreq_;
+    return mode_;
 }
 
-double Operator::getNoteFrequency() const
+void Operator::setLevel(double level)
 {
-    return noteFreq_;
+    if (level < 0 || (mode_ && level > 1) || (! mode_ && level > 10))
+    { throw std::invalid_argument("Level out of range!"); }
+    
+    level_ = (mode_) ? level : level * realFreq_;
+    
+    mods_[LEVEL].setBaseValue(level);
 }
 
-double Operator::getModBaseFrequency() const
+double Operator::getLevel() const
 {
-    // Return the frequency of the note
-    return modBaseFreq_;
+    if (mods_[LEVEL].inUse())
+    {
+        return mods_[LEVEL].getBaseValue();
+    }
+    
+    return level_ / realFreq_;
 }
 
 void Operator::modulateFrequency(double value)
 {
-    double newFreq = modBaseFreq_ + value;
-    
-    // Check nyquist limit
-    if (newFreq > Global::nyquistLimit)
-    { throw std::invalid_argument("Modulated frequecy cannot be higher than the nyquist limit!"); }
-    
-    freq_ = newFreq;
-    
-    indIncr_ =  Global::tableIncr * freq_;
+    modOffset_ = Global::tableIncr * value;
 }
 
 void Operator::setNote(note_t note)
@@ -87,15 +82,13 @@ void Operator::setNote(note_t note)
     
     // Check nyquist limit
     if (newFreq > Global::nyquistLimit)
-    { throw std::invalid_argument("Note frequecy cannot be higher than the nyquist limit!"); }
+    { throw std::invalid_argument("Note frequency cannot be higher than the nyquist limit!"); }
     
     noteFreq_ = newFreq;
     
-    freq_ = modBaseFreq_ = noteFreq_ * ratio_;
+    freq_ = noteFreq_ * ratio_;
     
-    modBaseNote_ = Util::freqToNote(modBaseFreq_);
-    
-    indIncr_ = Global::tableIncr * modBaseFreq_;
+    indIncr_ = Global::tableIncr * freq_;
     
     note_ = note;
 }
@@ -107,17 +100,13 @@ Operator::note_t Operator::getNote() const
 
 void Operator::setFrequencyOffset(double Hz)
 {
-    double newFreq = freq_ + Hz;
-    
-    // Check nyquist limit
-    if (newFreq > Global::nyquistLimit)
-    { throw std::invalid_argument("Frequeny offset cannot make frequency higher than the nyquist limit!"); }
-    
     freqOffset_ = Hz;
+    
+    realFreq_ = freq_ + freqOffset_;
     
     indexOffset_ = Global::tableIncr * freqOffset_;
     
-    semitoneOffset_ = Util::freqToSemitones(freq_, newFreq);
+    semitoneOffset_ = Util::freqToSemitones(freq_, freq_ + Hz);
 }
 
 double Operator::getFrequencyOffset() const
@@ -125,15 +114,16 @@ double Operator::getFrequencyOffset() const
     return freqOffset_;
 }
 
+double Operator::getFrequency() const
+{
+    return realFreq_;
+}
+
 void Operator::setSemitoneOffset(double semitones)
 {
-    double newFreq = Util::semitonesToFreq(freq_, semitones);
+    freqOffset_ = Util::semitonesToFreq(freq_, semitones) - freq_;
     
-    // Check nyquist limit
-    if (newFreq > Global::nyquistLimit)
-    { throw std::invalid_argument("Semitone offset cannot make frequency higher than the nyquist limit!"); }
-    
-    freqOffset_ = newFreq - freq_;
+    realFreq_ = freq_ + freqOffset_;
     
     indexOffset_ = Global::tableIncr * freqOffset_;
     
@@ -150,15 +140,11 @@ void Operator::setRatio(double ratio)
     if (ratio_ < 0)
     { throw std::invalid_argument("Frequency ratio cannot be less than zero!"); }
     
-    double newFreq = noteFreq_ * ratio;
-    
-    // Check nyquist limit
-    if (newFreq > Global::nyquistLimit)
-    { throw std::invalid_argument("Ratio cannot make frequency higher than the nyquist limit!"); }
-    
     ratio_ = ratio;
     
-    freq_ = modBaseFreq_ = newFreq;
+    freq_ = noteFreq_ * ratio;
+    
+    realFreq_ = freq_ + freqOffset_;
     
     indIncr_ = Global::tableIncr * freq_;
 }
@@ -170,17 +156,20 @@ double Operator::getRatio() const
 
 void Operator::increment()
 {
-    Oscillator::increment();
-    
-    indIncr_ += indexOffset_;
+    // Normal frequency index increment     +
+    // Index increment for frequency offset +
+    // Index increment for frequency modulation value
+    increment_(indIncr_ + indexOffset_ + modOffset_);
 }
 
 double Operator::tick()
 {
-    if (mods_[AMP].inUse())
+    if (mods_[LEVEL].inUse())
     {
-        amp_ = mods_[AMP].tick();
+        level_ = mods_[LEVEL].tick();
+        
+        if (! mode_) level_ *= realFreq_;
     }
     
-    return Oscillator::tick() * amp_;
+    return Oscillator::tick() * level_;
 }

@@ -21,24 +21,6 @@ public:
     
     typedef unsigned short index_t;
     
-    FM(index_t alg = 0,
-       Operator* a = 0,
-       Operator* b = 0,
-       Operator* c = 0,
-       Operator* d = 0);
-    
-    double tick();
-    
-    void setAlgorithm(index_t alg);
-    
-    unsigned short getAlgorithm() const;
-    
-    void setOperator(index_t index, Operator* op);
-    
-    Operator* getOperator(index_t index) const;
-    
-private:
-    
     enum
     {
         A,
@@ -47,13 +29,41 @@ private:
         D
     };
     
+    FM(Operator* a,
+       Operator* b,
+       Operator* c,
+       Operator* d,
+       index_t alg = 0);
+    
+    double tick();
+    
+    void setAlgorithm(index_t alg);
+    
+    unsigned short getAlgorithm() const;
+    
+    void setActive(index_t index, bool state);
+    
+    bool isActive(index_t index) const;
+    
+private:
+    
+    double tickIfActive_(index_t index);
+    
+    void setModes_(bool a, bool b, bool c, bool d);
+    
+    struct
+    {
+        Operator* op = 0;
+        
+        bool active = true;
+        
+    } ops_ [4];
+    
     double modulate_(index_t carrier, double value);
     
-    double add_(index_t left, index_t right);
+    double add_(index_t carrier, double value);
     
     index_t alg_;
-    
-    Operator* ops_ [4];
     
 };
 

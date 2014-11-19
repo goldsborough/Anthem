@@ -37,8 +37,8 @@ short Oscillator::getWavetableID() const
 
 void Oscillator::setFrequency(double Hz)
 {
-    if (Hz < 0 || Hz > Global::nyquistLimit)
-    { throw std::invalid_argument("Frequency must be greater 0 and less than the nyquist limit!"); }
+    //if (Hz < 0 || Hz > Global::nyquistLimit)
+    //{ throw std::invalid_argument("Frequency must be greater 0 and less than the nyquist limit!"); }
     
     freq_ = Hz;
     
@@ -85,14 +85,22 @@ void Oscillator::reset()
     ind_ = phaseOffset_;
 }
 
-void Oscillator::increment()
+void Oscillator::increment_(double value)
 {
     // Increment wavetable index
-    ind_ += indIncr_;
+    ind_ += value;
     
     // Check index against wavetable length
     if ( ind_ >= Global::wtLen)
     { ind_ -= Global::wtLen; }
+    
+    if ( ind_ < 0)
+    { ind_ += Global::wtLen; }
+}
+
+void Oscillator::increment()
+{
+    increment_(indIncr_);
 }
 
 double Oscillator::tick()
