@@ -1,7 +1,7 @@
-#include "Wavefile.h"
-#include "Global.h"
-#include "Util.h"
-#include "Sample.h"
+#include "Wavefile.hpp"
+#include "Global.hpp"
+#include "Util.hpp"
+#include "Sample.hpp"
 
 #include <stdint.h>
 #include <stdexcept>

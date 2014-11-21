@@ -1,7 +1,7 @@
-#include "Crossfader.h"
-#include "Global.h"
-#include "ModDock.h"
-#include "Sample.h"
+#include "Crossfader.hpp"
+#include "Global.hpp"
+#include "ModDock.hpp"
+#include "Sample.hpp"
 
 #include <stdexcept>
 #include <cmath>

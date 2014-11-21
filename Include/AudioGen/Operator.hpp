@@ -1,6 +1,6 @@
 /*********************************************************************************************//*!
 *
-*  @file        Operator.h
+*  @file        Operator.hpp
 *
 *  @author      Peter Goldsborough
 *
@@ -13,8 +13,8 @@
 #ifndef __Anthem__Operator__
 #define __Anthem__Operator__
 
-#include "Oscillator.h"
-#include "Units.h"
+#include "Oscillator.hpp"
+#include "Units.hpp"
 
 
 class Operator : public Oscillator, public GenUnit

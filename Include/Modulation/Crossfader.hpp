@@ -1,6 +1,6 @@
 /*********************************************************************************************//*!
 *
-*  @file        Crossfader.h
+*  @file        Crossfader.hpp
 *
 *  @author      Peter Goldsborough
 *
@@ -13,7 +13,7 @@
 #ifndef __Anthem__Crossfade__
 #define __Anthem__Crossfade__
 
-#include "Units.h"
+#include "Units.hpp"
 
 namespace CrossfadeTypes
 {

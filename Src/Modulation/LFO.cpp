@@ -7,12 +7,12 @@
 //  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
 //
 
-#include "LFO.h"
-#include "EnvSeg.h"
-#include "Crossfader.h"
-#include "Oscillator.h"
-#include "ModDock.h"
-#include "Global.h"
+#include "LFO.hpp"
+#include "EnvSeg.hpp"
+#include "Crossfader.hpp"
+#include "Oscillator.hpp"
+#include "ModDock.hpp"
+#include "Global.hpp"
 
 #include <stdexcept>
 

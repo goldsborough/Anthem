@@ -6,9 +6,9 @@
 //  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
 //
 
-#include "Delay.h"
-#include "Global.h"
-#include "ModDock.h"
+#include "Delay.hpp"
+#include "Global.hpp"
+#include "ModDock.hpp"
 
 #include <cmath>
 #include <stdexcept>

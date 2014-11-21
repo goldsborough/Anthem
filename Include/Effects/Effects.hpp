@@ -1,6 +1,6 @@
 /*********************************************************************************************//*!
 *
-*  @file        Effects.h
+*  @file        Effects.hpp
 *
 *  @author      Peter Goldsborough
 *
@@ -13,7 +13,7 @@
 #ifndef __Anthem__Effects__
 #define __Anthem__Effects__
 
-#include "Units.h"
+#include "Units.hpp"
 
 #include <memory>
 

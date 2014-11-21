@@ -1,4 +1,4 @@
-#include "Midi.h"
+#include "Midi.hpp"
 
 #include <RtMidi.h>
 

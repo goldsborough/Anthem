@@ -1,8 +1,8 @@
-#include "Operator.h"
-#include "Wavetable.h"
-#include "ModDock.h"
-#include "Util.h"
-#include "Global.h"
+#include "Operator.hpp"
+#include "Wavetable.hpp"
+#include "ModDock.hpp"
+#include "Util.hpp"
+#include "Global.hpp"
 
 Operator::Operator(short wt, double freqOffset,
                    double level, bool mode,

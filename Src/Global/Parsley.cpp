@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
 //
 
-#include "Global.h"
-#include "Parsley.h"
+#include "Global.hpp"
+#include "Parsley.hpp"
 
 #include <fstream>
 

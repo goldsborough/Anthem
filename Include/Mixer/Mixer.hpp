@@ -1,6 +1,6 @@
 /*********************************************************************************************//*!
 *
-*  @file        Mixer.h
+*  @file        Mixer.hpp
 *
 *  @author      Peter Goldsborough
 *
@@ -13,7 +13,7 @@
 #ifndef __Anthem__Mixer__
 #define __Anthem__Mixer__
 
-#include "Units.h"
+#include "Units.hpp"
 
 class CrossfadeUnit;
 class AudioOutput;

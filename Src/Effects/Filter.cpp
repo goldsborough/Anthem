@@ -6,10 +6,10 @@
 //  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
 //
 
-#include "Filter.h"
-#include "Global.h"
-#include "Util.h"
-#include "ModDock.h"
+#include "Filter.hpp"
+#include "Global.hpp"
+#include "Util.hpp"
+#include "ModDock.hpp"
 
 #include <stdexcept>
 #include <cmath>

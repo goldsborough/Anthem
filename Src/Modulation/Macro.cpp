@@ -1,5 +1,5 @@
-#include "Macro.h"
-#include "ModDock.h"
+#include "Macro.hpp"
+#include "ModDock.hpp"
 
 #include <stdexcept>
 

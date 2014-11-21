@@ -6,9 +6,9 @@
 //  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
 //
 
-#include "Wavetable.h"
-#include "Global.h"
-#include "Parsley.h"
+#include "Wavetable.hpp"
+#include "Global.hpp"
+#include "Parsley.hpp"
 
 #include <string>
 #include <fstream>

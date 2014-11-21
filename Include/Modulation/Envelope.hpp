@@ -1,6 +1,6 @@
 /*********************************************************************************************//*!
 *
-*  @file        Envelope.h
+*  @file        Envelope.hpp
 *
 *  @author      Peter Goldsborough
 *
@@ -13,7 +13,7 @@
 #ifndef __Anthem__Envelope__
 #define __Anthem__Envelope__
 
-#include "EnvSeg.h"
+#include "EnvSeg.hpp"
 
 /*********************************************************************************************//*!
 *

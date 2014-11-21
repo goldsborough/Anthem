@@ -1,6 +1,6 @@
 /*********************************************************************************************//*!
 *
-*  @file        EnvSeg.h
+*  @file        EnvSeg.hpp
 *
 *  @author      Peter Goldsborough
 *
@@ -13,7 +13,7 @@
 #ifndef __Anthem__EnvSeg__
 #define __Anthem__EnvSeg__
 
-#include "Units.h"
+#include "Units.hpp"
 #include <vector>
 
 /******************************************************************************//*!

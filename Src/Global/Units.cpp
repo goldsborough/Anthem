@@ -6,9 +6,9 @@
 //  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
 //
 
-#include "Units.h"
-#include "ModDock.h"
-#include "Wavetable.h"
+#include "Units.hpp"
+#include "ModDock.hpp"
+#include "Wavetable.hpp"
 
 #include <stdexcept>
 

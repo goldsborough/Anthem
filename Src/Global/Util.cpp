@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
 //
 
-#include "Util.h"
+#include "Util.hpp"
 #include <cmath>
 #include <string>
 

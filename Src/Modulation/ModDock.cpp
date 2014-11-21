@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
 //
 
-#include "ModDock.h"
-#include "Units.h"
+#include "ModDock.hpp"
+#include "Units.hpp"
 
 #include <stdexcept>
 

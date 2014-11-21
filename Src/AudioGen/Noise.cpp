@@ -1,6 +1,6 @@
-#include "Noise.h"
-#include "Filter.h"
-#include "ModDock.h"
+#include "Noise.hpp"
+#include "Filter.hpp"
+#include "ModDock.hpp"
 
 #include <ctime>
 #include <stdexcept>

@@ -1,6 +1,6 @@
 /*********************************************************************************************//*!
 *
-*  @file        LFO.h
+*  @file        LFO.hpp
 *
 *  @author      Peter Goldsborough
 *
@@ -13,8 +13,8 @@
 #ifndef __Anthem__LFO__
 #define __Anthem__LFO__
 
-#include "Oscillator.h"
-#include "EnvSeg.h"
+#include "Oscillator.hpp"
+#include "EnvSeg.hpp"
 
 /*************************************************************************************************//*!
 *

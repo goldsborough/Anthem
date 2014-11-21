@@ -1,16 +1,8 @@
-//
-//  Reverb.cpp
-//  Anthem
-//
-//  Created by Peter Goldsborough on 30/07/14.
-//  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
-//
-
-#include "Effects.h"
-#include "Delay.h"
-#include "LFO.h"
-#include "Global.h"
-#include "ModDock.h"
+#include "Effects.hpp"
+#include "Delay.hpp"
+#include "LFO.hpp"
+#include "Global.hpp"
+#include "ModDock.hpp"
 
 #include <stdexcept>
 #include <cmath>

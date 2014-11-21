@@ -6,10 +6,10 @@
 //  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
 //
 
-#include "Oscillator.h"
-#include "Global.h"
-#include "Util.h"
-#include "Wavetable.h"
+#include "Oscillator.hpp"
+#include "Global.hpp"
+#include "Util.hpp"
+#include "Wavetable.hpp"
 
 #include <stdexcept>
 

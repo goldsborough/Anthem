@@ -1,6 +1,6 @@
 /*********************************************************************************************//*!
 *
-*  @file        AudioOutput.h
+*  @file        AudioOutput.hpp
 *
 *  @author      Peter Goldsborough
 *

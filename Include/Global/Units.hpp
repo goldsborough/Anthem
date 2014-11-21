@@ -1,6 +1,6 @@
 /*********************************************************************************************//*!
 *
-*  @file        Units.h
+*  @file        Units.hpp
 *
 *  @author      Peter Goldsborough
 *
@@ -15,7 +15,7 @@
 #ifndef __Anthem__Units__
 #define __Anthem__Units__
 
-#include "Wavetable.h"
+#include "Wavetable.hpp"
 
 #include <memory>
 

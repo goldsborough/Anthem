@@ -1,6 +1,6 @@
 /*********************************************************************************************//*!
 *
-*  @file        Oscillator.h
+*  @file        Oscillator.hpp
 *
 *  @author      Peter Goldsborough
 *
@@ -13,7 +13,7 @@
 #ifndef __Anthem__Oscillator__
 #define __Anthem__Oscillator__
 
-#include "Wavetable.h"
+#include "Wavetable.hpp"
 
 /*************************************************************************************************//*!
 *

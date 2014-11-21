@@ -1,6 +1,6 @@
 /*********************************************************************************************//*!
 *
-*  @file        Parsley.h
+*  @file        Parsley.hpp
 *
 *  @author      Peter Goldsborough
 *
@@ -13,7 +13,7 @@
 #ifndef __Parsley__
 #define __Parsley__
 
-#include "Wavetable.h"
+#include "Wavetable.hpp"
 
 #include <string>
 #include <vector>

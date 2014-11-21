@@ -1,7 +1,7 @@
-#include "EnvSeg.h"
-#include "Global.h"
-#include "Wavetable.h"
-#include "ModDock.h"
+#include "EnvSeg.hpp"
+#include "Global.hpp"
+#include "Wavetable.hpp"
+#include "ModDock.hpp"
 
 #include <cmath>
 

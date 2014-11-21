@@ -6,13 +6,13 @@
 //  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
 //
 
-#include "Mixer.h"
-#include "Global.h"
-#include "Crossfader.h"
-#include "AudioOutput.h"
-#include "Wavefile.h"
-#include "Sample.h"
-#include "ModDock.h"
+#include "Mixer.hpp"
+#include "Global.hpp"
+#include "Crossfader.hpp"
+#include "AudioOutput.hpp"
+#include "Wavefile.hpp"
+#include "Sample.hpp"
+#include "ModDock.hpp"
 
 Mixer::Mixer(bool audioOut, bool waveOut, double amp)
 

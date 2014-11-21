@@ -1,5 +1,5 @@
-#include "FM.h"
-#include "Operator.h"
+#include "FM.hpp"
+#include "Operator.hpp"
 
 #include <stdexcept>
 

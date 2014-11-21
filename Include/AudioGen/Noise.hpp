@@ -1,6 +1,6 @@
 /*********************************************************************************************//*!
 *
-*  @file        Noise.h
+*  @file        Noise.hpp
 *
 *  @author      Peter Goldsborough
 *
@@ -13,7 +13,7 @@
 #ifndef __Anthem__Noise__
 #define __Anthem__Noise__
 
-#include "Units.h"
+#include "Units.hpp"
 
 #include <random>
 

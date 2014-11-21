@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
 //
 
-#include "Global.h"
-#include "Wavetable.h"
+#include "Global.hpp"
+#include "Wavetable.hpp"
 
 WavetableDB wavetableDB;
 

@@ -1,6 +1,6 @@
-#include "Envelope.h"
-#include "Global.h"
-#include "ModDock.h"
+#include "Envelope.hpp"
+#include "Global.hpp"
+#include "ModDock.hpp"
 
 Envelope::Envelope(bool sustainEnabled)
 

@@ -1,10 +1,10 @@
-#include "AudioOutput.h"
-#include "Global.h"
-#include "Sample.h"
+#include "AudioOutput.hpp"
+#include "Global.hpp"
+#include "Sample.hpp"
 
 
 
-#include "Operator.h"
+#include "Operator.hpp"
 
 
 std::deque<std::unique_ptr<Sample>> AudioOutput::buffer_ = std::deque<std::unique_ptr<Sample>>();

@@ -1,6 +1,6 @@
 /*********************************************************************************************//*!
 *
-*  @file        Delay.h
+*  @file        Delay.hpp
 *
 *  @author      Peter Goldsborough
 *
@@ -13,7 +13,7 @@
 #ifndef __Anthem__Delay__
 #define __Anthem__Delay__
 
-#include "Units.h"
+#include "Units.hpp"
 #include <vector>
 
 /*************************************************************************//*!
