@@ -2,7 +2,16 @@
 #include "Global.h"
 #include "Sample.h"
 
+
+
+#include "Operator.h"
+
+
 std::deque<std::unique_ptr<Sample>> AudioOutput::buffer_ = std::deque<std::unique_ptr<Sample>>();
+
+Operator* AudioOutput::osc = 0;
+
+
 
 AudioOutput::AudioOutput()
 {
@@ -105,8 +114,12 @@ int AudioOutput::callback_(void *output,
         //double left = buffer_.front()->left;
         //double right = buffer_.front()->right;
         
-        *outputBuffer++ = 0;
-        *outputBuffer++ = 0;
+        double tick = osc->tick() / 2;
+        
+        osc->increment();
+        
+        *outputBuffer++ = tick;
+        *outputBuffer++ = tick;
         
         //buffer_.pop_front();
     }

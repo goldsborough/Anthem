@@ -14,6 +14,7 @@
 #include "Crossfader.h"
 #include "Macro.h"
 #include "FM.h"
+#include "AudioOutput.h"
 
 #include <iostream>
 
@@ -35,13 +36,20 @@ int main(int argc, const char * argv[])
     
     op.setNote(48);
     
-    Mixer mixer(1,1);
+    //Mixer mixer(1,1);
     
     double tick;
     
     clock_t t = clock();
     
-    mixer.start();
+    AudioOutput audio;
+    
+    audio.osc = &op;
+    
+    audio.start();
+    
+    /*
+    //mixer.start();
     
     for (int i = 0; i < len; ++i)
     {
@@ -49,12 +57,14 @@ int main(int argc, const char * argv[])
         
         op.increment();
         
-        mixer.process(tick);
-    }
+        //mixer.process(tick);
+    }*/
     
     while (clock() != t + clocks);
     
-    mixer.stop();
+    audio.stop();
+    
+    //mixer.stop();
     
     std::cout << "Execution time: " << Util::getPassedTime(t) << "\n";
     

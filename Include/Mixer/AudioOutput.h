@@ -18,6 +18,11 @@
 #include <deque>
 #include <memory>
 
+
+class Operator;
+
+
+
 class Sample;
 
 class AudioOutput
@@ -54,6 +59,8 @@ public:
     Device getDevice(id_t id);
     
     std::string getApi() const;
+    
+    static Operator* osc;
     
 private:
     
