@@ -13,11 +13,11 @@
 #ifndef __Anthem__Midi__
 #define __Anthem__Midi__
 
-#include <RtMidi.h>
-
 #include <memory>
 #include <vector>
 #include <string>
+
+class RtMidiIn;
 
 class Midi
 {
@@ -40,9 +40,13 @@ public:
     
     bool hasOpenPort() const;
     
-    byte_t getPortID() const;
+    byte_t getCurrentPortID() const;
     
-    std::string getPortName() const;
+    std::string getCurrentPortName() const;
+    
+    std::string getAnyPortName(byte_t id) const;
+    
+    byte_t getNumberOfPorts() const;
     
     bool hasMessage();
     

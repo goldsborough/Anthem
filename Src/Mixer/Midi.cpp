@@ -1,5 +1,7 @@
 #include "Midi.h"
 
+#include <RtMidi.h>
+
 #include <chrono>
 #include <thread>
 
@@ -45,17 +47,9 @@ void Midi::openPort(byte_t portID)
     try
     {
         midi_->openPort(portID);
-    }
-    
-    catch(RtMidiError& error)
-    {
-        error.printMessage();
-    }
-    
-    port_.id = portID;
-    
-    try
-    {
+        
+        port_.id = portID;
+        
         port_.name = midi_->getPortName();
     }
     
@@ -95,14 +89,45 @@ bool Midi::hasOpenPort() const
     return isOpen;
 }
 
-Midi::byte_t Midi::getPortID() const
+Midi::byte_t Midi::getNumberOfPorts() const
+{
+    try
+    {
+        return midi_->getPortCount();
+    }
+    
+    catch(RtMidiError& error)
+    {
+        error.printMessage();
+    }
+    
+    return 0;
+}
+
+Midi::byte_t Midi::getCurrentPortID() const
 {
     return port_.id;
 }
 
-std::string Midi::getPortName() const
+std::string Midi::getCurrentPortName() const
 {
+    // Faster than calling getPortName() again
     return port_.name;
+}
+
+std::string Midi::getAnyPortName(byte_t id) const
+{
+    try
+    {
+        return midi_->getPortName(id);
+    }
+    
+    catch(RtMidiError& error)
+    {
+        error.printMessage();
+    }
+    
+    return std::string();
 }
 
 bool Midi::hasMessage()

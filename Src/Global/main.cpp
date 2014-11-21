@@ -14,17 +14,18 @@
 #include "Crossfader.h"
 #include "Macro.h"
 #include "FM.h"
-#include "Midi.h"
 
 #include <iostream>
 
 int main(int argc, const char * argv[])
-{   
-    clock_t t = clock();
-    
+{
     Global::init();
     
-    const unsigned long len = Global::samplerate * 5;
+    const unsigned short seconds = 1;
+    
+    const unsigned long clocks = seconds * CLOCKS_PER_SEC;
+    
+    const unsigned long len = Global::samplerate * seconds;
     
     Operator op(WavetableDB::SINE);
     
@@ -34,17 +35,13 @@ int main(int argc, const char * argv[])
     
     op.setNote(48);
     
-    Mixer mixer(0,1);
-    
-    Midi midi;
-    
-    while(!midi.hasMessage());
-    
-    std::cout << midi.getLastMessage().note << std::endl;
-    
-    op.setNote(midi.getLastMessage().note);
+    Mixer mixer(1,1);
     
     double tick;
+    
+    clock_t t = clock();
+    
+    mixer.start();
     
     for (int i = 0; i < len; ++i)
     {
@@ -54,10 +51,10 @@ int main(int argc, const char * argv[])
         
         mixer.process(tick);
     }
-
-    mixer.play();
     
-    //while (clock() != t + (5 * CLOCKS_PER_SEC));
+    while (clock() != t + clocks);
+    
+    mixer.stop();
     
     std::cout << "Execution time: " << Util::getPassedTime(t) << "\n";
     

@@ -16,9 +16,8 @@
 #include "Units.h"
 
 class CrossfadeUnit;
-class DirectOutput;
+class AudioOutput;
 class Wavefile;
-class SampleBuffer;
 class Sample;
 
 /*********************************************************************************************//*!
@@ -46,7 +45,7 @@ public:
     *
     *  @brief       Constructs a Mixer object.
     *
-    *  @param       directOut Boolean, whether or not to enable direct audio output (to sound card).
+    *  @param       audioOut Boolean, whether or not to enable direct audio output (to sound card).
     *
     *  @param       waveOut Boolean, whether or not to enable wavefile storage of samples when stop() called.
     *
@@ -54,7 +53,7 @@ public:
     *
     ************************************************************************************************************/
     
-    Mixer(bool directOut = true,
+    Mixer(bool audioOut = true,
           bool waveOut = false,
           double amp = 0.5);
     
@@ -62,6 +61,7 @@ public:
     
     Mixer& operator= (const Mixer& other);
     
+    // Prevents some error .. ?
     ~Mixer();
     
     /*********************************************************************************************//*!
@@ -80,7 +80,7 @@ public:
     *
     *************************************************************************************************/
     
-    void play();
+    void start();
     
     /*********************************************************************************************//*!
     *
@@ -178,25 +178,22 @@ public:
     *
     *************************************************************************************************/
     
-    void setDirectOutputEnabled(bool state);
+    void setAudioOutputEnabled(bool state);
     
     /*********************************************************************************************//*!
     *
-    *  @brief       Returns whether or not directOutput is enabled.
+    *  @brief       Returns whether or not audio output is enabled.
     *
     *  @return      Boolean, true if enabled, false if not.
     *
     *************************************************************************************************/
     
-    bool directOutputEnabled() const;
+    bool isAudioOutputEnabled() const;
     
 private:
     
     /*! The current master amplitude value */
     double masterAmp_;
-
-    /*! CrossfadeUnit for panning */
-    std::unique_ptr<CrossfadeUnit> pan_;
     
     /*! Whether or not audio output is stopped */
     bool stopped_;
@@ -205,16 +202,16 @@ private:
     bool wavefileEnabled_;
     
     /*! Whether or not to send samples to direct output */
-    bool directOutputEnabled_;
+    bool audioOutputEnabled_;
     
-    /*! Stores samples for wavefile output */
-    std::unique_ptr<SampleBuffer>  sampleDataBuffer_;
+    /*! CrossfadeUnit for panning */
+    std::unique_ptr<CrossfadeUnit> pan_;
     
     /*! Direct audio output object */
-    std::unique_ptr<DirectOutput> directOut_;
+    std::unique_ptr<AudioOutput> audioOutput_;
     
     /*! Wavfile object */
-    std::unique_ptr<Wavefile> waveOut_;
+    std::unique_ptr<Wavefile> waveOutput_;
 };
 
 #endif /* defined(__Anthem__Mixer__) */

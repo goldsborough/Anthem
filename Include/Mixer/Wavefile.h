@@ -13,9 +13,12 @@
 #ifndef __Anthem__Wavefile__
 #define __Anthem__Wavefile__
 
+#include <fstream>
 #include <string>
+#include <deque>
+#include <memory>
 
-class SampleBuffer;
+class Sample;
 
 /*********************************************************************************************//*!
 *
@@ -41,6 +44,10 @@ public:
     Wavefile(const std::string& fname = std::string(),
              unsigned short channels = 2);
     
+    Wavefile(const Wavefile& other);
+    
+    Wavefile& operator= (const Wavefile& other);
+    
     /*********************************************************************************************//*!
     *
     *  @brief       Sets the number of channels for the wavefile.
@@ -53,14 +60,33 @@ public:
     
     /*********************************************************************************************//*!
     *
-    *  @brief       Sets the wavefile's file name.
+    *  @brief       Opens a new wavefile.
     *
     *  @param       fname The new file name.
     *
     *************************************************************************************************/
     
-    void setFileName(const std::string& fname);
+    void open(const std::string& fname);
     
+    /*********************************************************************************************//*!
+    *
+    *  @brief       Closes the current wavefile. Samples must be written manually.
+    *
+    *  @see         write()
+    *
+    *************************************************************************************************/
+    
+    void close();
+    
+    /*********************************************************************************************//*!
+    *
+    *  @brief       Pushes a sample into the wavefile's sample buffer.
+    *
+    *  @param       sample A Sample object with two channels.
+    *
+    *************************************************************************************************/
+    
+    void process(const Sample& sample);
     
     /*********************************************************************************************//*!
     *
@@ -68,9 +94,21 @@ public:
     *
     *  @param       sampleBuffer The SampleBuffer to write to a wavefile.
     *
+    *  @see         flush()
+    *
     *************************************************************************************************/
     
-    void write(const SampleBuffer& sampleBuffer);
+    void write();
+    
+    /*********************************************************************************************//*!
+    *
+    *  @brief       Flushes the contents of the Wavefile object's sample buffer.
+    *
+    *  @see         write()
+    *
+    *************************************************************************************************/
+    
+    void flush();
     
 private:
     
@@ -105,8 +143,14 @@ private:
         
     } header_;
     
-    // The file name 
+    /*! The sample buffer */
+    std::deque<std::unique_ptr<Sample>> buffer_;
+    
+    /*! The file name */
     std::string fname_;
+    
+    /*! Wavefile stream object */
+    std::ofstream file_;
 };
 
 #endif

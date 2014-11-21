@@ -8,7 +8,6 @@
 
 #include "Global.h"
 #include "Parsley.h"
-#include "ParsleyErrors.h"
 
 #include <fstream>
 

@@ -1,18 +1,10 @@
-//
-//  Wavefile.cpp
-//  Anthem
-//
-//  Created by Peter Goldsborough on 21/01/14.
-//  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
-//
-
-#include <stdint.h>
-#include <fstream>
-
 #include "Wavefile.h"
 #include "Global.h"
 #include "Util.h"
 #include "Sample.h"
+
+#include <stdint.h>
+#include <stdexcept>
 
 Wavefile::Wavefile(const std::string& fname, unsigned short channels)
 {
@@ -38,42 +30,104 @@ Wavefile::Wavefile(const std::string& fname, unsigned short channels)
     
 	memcpy(header_.waveId, "data", 4*sizeof(char));
     
-    setFileName(fname);
+    open(fname);
+}
+
+Wavefile::Wavefile(const Wavefile& other)
+: fname_(other.fname_),
+  file_(other.fname_, std::ios::out | std::ios::binary | std::ios::trunc),
+  header_(other.header_)
+{
+    // Copy buffer data
+    for(std::deque<std::unique_ptr<Sample>>::const_iterator itr = other.buffer_.begin(),
+        end = other.buffer_.begin();
+        itr != end;
+        ++itr)
+    {
+        buffer_.push_back(std::unique_ptr<Sample>(new Sample(*(*itr))));
+    }
+}
+
+Wavefile& Wavefile::operator= (const Wavefile& other)
+{
+    if (this != &other)
+    {
+        fname_ = other.fname_;
+        
+        file_.close();
+        
+        file_.open(fname_, std::ios::out | std::ios::binary | std::ios::trunc);
+        
+        header_ = other.header_;
+        
+        // Copy buffer data
+        for(std::deque<std::unique_ptr<Sample>>::const_iterator itr = other.buffer_.begin(),
+            end = other.buffer_.begin();
+            itr != end;
+            ++itr)
+        {
+            buffer_.push_back(std::unique_ptr<Sample>(new Sample(*(*itr))));
+        }
+    }
+    
+    return *this;
 }
 
 void Wavefile::setChannels(unsigned short channels)
 { header_.channels = channels; }
 
-void Wavefile::setFileName(const std::string& fname)
+void Wavefile::open(const std::string& fname)
 {
     fname_ = Util::checkFileName(fname, ".wav");
+    
+    file_.open(fname_, std::ios::out | std::ios::binary | std::ios::trunc);
+    
+    if (! file_)
+    { throw std::invalid_argument("Error opening file!"); }
 }
 
-void Wavefile::write(const SampleBuffer& sampleBuffer)
+void Wavefile::close()
 {
-    unsigned int totalSamples = (unsigned) sampleBuffer.buffer.size();
+    file_.close();
+}
+
+void Wavefile::process(const Sample &sample)
+{
+    buffer_.push_back(std::unique_ptr<Sample>(new Sample(sample)));
+}
+
+void Wavefile::flush()
+{
+    buffer_.clear();
+}
+
+void Wavefile::write()
+{
+    unsigned int totalSamples = static_cast<unsigned int>(buffer_.size());
     
     header_.waveSize = totalSamples * header_.align;
     
     header_.riffSize = header_.waveSize + sizeof(header_) - 8;
     
+    unsigned long twoTotalSamples = totalSamples * 2;
+    
     // because the current buffer is of type double
-    int16_t* buffer = new int16_t [totalSamples * 2];
+    int16_t* outBuffer = new int16_t [twoTotalSamples];
     
-    for (unsigned long n = 0, end = totalSamples * 2; n < end;)
+    for (unsigned long n = 0; n < twoTotalSamples;)
     {
-        Sample sample(sampleBuffer.buffer[n/2]);
+        // Convert to 16 bit integer
+        (*buffer_.front()) *= 32767;
         
-        sample *= 32767;
+        // Write to both channels (first channel 1, then channel 2)
+        outBuffer[n++] = buffer_.front()->left;
+        outBuffer[n++] = buffer_.front()->right;
         
-        buffer[n++] = sample.left;
-        buffer[n++] = sample.right;
+        buffer_.pop_front();
     }
-    
-    std::ofstream file(fname_, std::ios::binary | std::ios::trunc);
 
     // Try writing the header_ and the data to file
-    if (! file.write(reinterpret_cast<char*>(&header_), sizeof(header_)) ||
-        ! file.write(reinterpret_cast<char*>(buffer), header_.waveSize))
+    if (! file_.write(reinterpret_cast<char*>(&header_), sizeof(header_)) ||
+        ! file_.write(reinterpret_cast<char*>(outBuffer), header_.waveSize))
     { throw std::runtime_error("Error writing to file"); }
 }

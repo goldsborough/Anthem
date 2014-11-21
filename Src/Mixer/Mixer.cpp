@@ -9,20 +9,19 @@
 #include "Mixer.h"
 #include "Global.h"
 #include "Crossfader.h"
-#include "DirectOutput.h"
+#include "AudioOutput.h"
 #include "Wavefile.h"
 #include "Sample.h"
 #include "ModDock.h"
 
-Mixer::Mixer(bool directOut, bool waveOut, double amp)
+Mixer::Mixer(bool audioOut, bool waveOut, double amp)
 
-: Unit(2), directOutputEnabled_(directOut),
+: Unit(2), audioOutputEnabled_(audioOut),
   wavefileEnabled_(waveOut),
   masterAmp_(amp), stopped_(true),
   pan_(new CrossfadeUnit(CrossfadeTypes::SINE)),
-  sampleDataBuffer_(new SampleBuffer),
-  directOut_(new DirectOutput),
-  waveOut_(new Wavefile)
+  audioOutput_(new AudioOutput),
+  waveOutput_(new Wavefile)
 
 {
     // Initialize ModDocks
@@ -37,14 +36,13 @@ Mixer::Mixer(bool directOut, bool waveOut, double amp)
 
 Mixer::Mixer(const Mixer& other)
 : Unit(other),
-  directOutputEnabled_(other.directOutputEnabled_),
+  audioOutputEnabled_(other.audioOutputEnabled_),
   wavefileEnabled_(other.wavefileEnabled_),
   masterAmp_(other.masterAmp_),
   stopped_(other.stopped_),
   pan_(new CrossfadeUnit(*other.pan_)),
-  sampleDataBuffer_(new SampleBuffer(*other.sampleDataBuffer_)),
-  directOut_(new DirectOutput(*other.directOut_)),
-  waveOut_(new Wavefile(*other.waveOut_))
+  audioOutput_(new AudioOutput(*other.audioOutput_)),
+  waveOutput_(new Wavefile(*other.waveOutput_))
 { }
 
 Mixer& Mixer::operator= (const Mixer& other)
@@ -53,7 +51,7 @@ Mixer& Mixer::operator= (const Mixer& other)
     {
         Unit::operator=(other);
         
-        directOutputEnabled_ = other.directOutputEnabled_;
+        audioOutputEnabled_ = other.audioOutputEnabled_;
         
         wavefileEnabled_ = other.wavefileEnabled_;
         
@@ -63,11 +61,9 @@ Mixer& Mixer::operator= (const Mixer& other)
         
         *pan_ = *other.pan_;
         
-        *sampleDataBuffer_ = *other.sampleDataBuffer_;
+        *audioOutput_ = *other.audioOutput_;
         
-        *directOut_ = *other.directOut_;
-        
-        *waveOut_ = *other.waveOut_;
+        *waveOutput_ = *other.waveOutput_;
     }
     
     return *this;
@@ -94,11 +90,11 @@ void Mixer::process(Sample sample)
     
     // Store in wavefile storage buffer
     if (wavefileEnabled_)
-    { sampleDataBuffer_->buffer.push_back(sample); }
+    { waveOutput_->process(sample); }
     
     // Send to direct audio output
-    if (directOutputEnabled_)
-    { directOut_->processTick(sample); }
+    if (audioOutputEnabled_)
+    { audioOutput_->process(sample); }
 }
 
 void Mixer::setMasterAmp(double amp)
@@ -160,22 +156,22 @@ bool Mixer::wavefileEnabled() const
     return wavefileEnabled_;
 }
 
-void Mixer::setDirectOutputEnabled(bool state)
+void Mixer::setAudioOutputEnabled(bool state)
 {
-    directOutputEnabled_ = state;
+    audioOutputEnabled_ = state;
 }
 
-bool Mixer::directOutputEnabled() const
+bool Mixer::isAudioOutputEnabled() const
 {
-    return directOutputEnabled_;
+    return audioOutputEnabled_;
 }
 
-void Mixer::play()
+void Mixer::start()
 {
     if (stopped_)
     {
-        if (directOutputEnabled_)
-        { directOut_->play(); }
+        if (audioOutputEnabled_)
+        { audioOutput_->start(); }
         
         stopped_ = false;
     }
@@ -187,15 +183,13 @@ void Mixer::stop()
     {
         stopped_ = true;
         
-        if (directOutputEnabled_)
-        { directOut_->stop(); }
+        if (audioOutputEnabled_)
+        { audioOutput_->stop(); }
         
         if (wavefileEnabled_)
-        { waveOut_->write(*sampleDataBuffer_); }
+        { waveOutput_->write(); }
     }
 }
 
 Mixer::~Mixer()
-{
-    stop();
-}
+{ }

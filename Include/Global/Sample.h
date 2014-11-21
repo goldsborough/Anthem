@@ -6,16 +6,14 @@
 *
 *  @date        27/09/2014
 *
-*  @brief       Sample structures.
+*  @brief       Sample structure.
 *
-*  @details     This file defines structs for holding two-channel samples and a sample buffer.
+*  @details     This file defines structs for holding two-channel samples.
 *
 *************************************************************************************************/
 
 #ifndef __Anthem__Sample__
 #define __Anthem__Sample__
-
-#include <deque>
 
 struct Sample
 {
@@ -107,26 +105,5 @@ struct Sample
     double left;
     double right;
 };
-
-/* Deque instead of queue because you can traverse it */
-
-struct SampleBuffer
-{
-    SampleBuffer(unsigned long size = 0)
-    : buffer(size)
-    { }
-
-    Sample getpop()
-    {
-        Sample sampleD = buffer.front();
-        
-        buffer.pop_front();
-        
-        return sampleD;
-    }
- 
-    std::deque<Sample> buffer;
-};
-
 
 #endif /* defined(__Anthem__Sample__) */
