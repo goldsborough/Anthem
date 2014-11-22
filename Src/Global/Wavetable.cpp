@@ -41,8 +41,7 @@ void round(double& val, unsigned int bitWidth)
 Wavetable::Wavetable(double * ptr,
                      size_t wtLength,
                      size_t id)
-: data_(ptr), size_(wtLength),
-  refptr_(new size_t(1)), id_(id)
+: LookupTable<double>(ptr, wtLength, id)
 { }
 
 template <class PartItr>
@@ -54,7 +53,7 @@ Wavetable::Wavetable(PartItr start,
                      unsigned int bitWidth,
                      size_t id)
 
-: refptr_(new size_t(1)), id_(id)
+: LookupTable<double>(0, wtLength, id)
 {
     // calculate number of partials
     size_t partNum = end - start;
@@ -151,121 +150,6 @@ Wavetable::Wavetable(PartItr start,
     delete [] phase;
     delete [] phaseIncr;
     delete [] amp;
-}
-
-Wavetable::Wavetable(const Wavetable& other)
-{
-    if (&other != this)
-    {
-        // copy data
-        this->data_ = other.data_;
-        this->size_ = other.size_;
-        this->id_ = other.id_;
-        
-        this->refptr_ = other.refptr_;
-        
-        // now one more instance is pointing to
-        // the same data
-        ++(*refptr_);
-    }
-}
-
-Wavetable& Wavetable::operator=(const Wavetable &other)
-{
-    if (&other != this)
-    {
-        // delete current data if this is the last
-        // instance pointing to this data
-        if (! --(*refptr_))
-        {
-            delete [] data_;
-            delete refptr_;
-        }
-        
-        // copy other's data
-        this->data_ = other.data_;
-        this->size_ = other.size_;
-        this->id_ = other.id_;
-        
-        this->refptr_ = other.refptr_;
-        
-        // one more pointing to this data now
-        ++(*refptr_);
-    }
-    
-    return *this;
-}
-
-double& Wavetable::operator[] (size_t ind)
-{
-    // Make this object's data unique as it might
-    // have to be changed
-    makeUnique();
-    
-    return data_[ind];
-}
-
-double Wavetable::interpolate(double ind) const
-{
-    int indexBase = static_cast<int>(ind);  // The truncated integer part
-    double indexFract = ind - indexBase;    // The remaining fractional part
-    
-    // grab the two items in-between which the actual value lies
-    double value1 = data_[indexBase];
-    double value2 = data_[indexBase+1];
-    
-    // interpolate: integer part + (fractional part * difference between value2 and value1)
-    double final = value1 + ((value2 - value1) * indexFract);
-    
-    return final;
-}
-
-const double& Wavetable::operator[] (size_t ind) const
-{
-    return data_[ind];
-}
-
-size_t Wavetable::size() const
-{
-    return size_;
-}
-
-double* Wavetable::get() const
-{
-    return data_;
-}
-
-size_t Wavetable::id() const
-{
-    return id_;
-}
-
-Wavetable::~Wavetable()
-{
-    if (! --(*refptr_))
-    {
-        delete [] data_;
-        delete refptr_;
-    }
-}
-
-Wavetable& Wavetable::makeUnique()
-{
-    if ((*refptr_) > 1)
-    {
-        --(*refptr_);
-        
-        refptr_ = new size_t(1);
-        
-        double* temp = data_;
-        
-        data_ = new double [size_];
-        
-        for (size_t i = 0; i < size_; ++i)
-        { data_[i] = temp[i]; }
-    }
-    
-    return *this;
 }
 
 void WavetableDB::init()

@@ -15,6 +15,8 @@
 #ifndef __Anthem__Wavetable__
 #define __Anthem__Wavetable__
 
+#include "LookupTable.hpp"
+
 #include <vector>
 
 /*****************************************************************************//*!
@@ -140,12 +142,10 @@ struct Partial
 *
 *************************************************************************************************/
 
-class Wavetable
+class Wavetable : public LookupTable<double>
 {
     
 public:
-    
-    typedef unsigned long size_t;
     
     /*************************************************************************************************//*!
     *
@@ -192,91 +192,6 @@ public:
     *****************************************************************************************************/
     
     Wavetable(double * ptr = 0, size_t wtLength = 0, size_t id = -1);
-    
-    /*************************************************************************************************//*!
-    *
-    *  @brief       Constructs a Wavetable object from another Wavetable.
-    *
-    *  @details     Because this class uses reference counting, the new Wavetable object will point to
-    *               other's data. Call makeUnique() to create a copy of the data pointed to (after).
-    *
-    *  @param       other The other Wavetable object.
-    *
-    *****************************************************************************************************/
-    
-    Wavetable(const Wavetable& other);
-    
-    ~Wavetable();
-    
-    /*************************************************************************************************//*!
-    *
-    *  @brief       Makes the internal pointer point to other's data.
-    *
-    *  @details     Copying a Wavetable makes it point to other's data and destructs its data if it
-    *               is the last class pointing to it. Use makeUnique() (after) to create a copy of the
-    *               data pointed to.
-    *
-    *  @param       other The other Wavetable object.
-    *
-    *****************************************************************************************************/
-    
-    Wavetable& operator= (const Wavetable& other);
-    
-    double& operator[] (size_t ind);
-    
-    const double& operator[] (size_t ind) const;
-    
-    /*************************************************************************************************//*!
-    *
-    *  @brief       Interpolates values from a fractional index.
-    *
-    *  @details     This function returns a proportionate value from a fractional index. For example,
-    *               passing it an index of 1.5 will return [1] + (([2] - [1]) * 0.5).
-    *
-    *  @param       ind The fractional index.
-    *
-    *****************************************************************************************************/
-    
-    double interpolate(double ind) const;
-    
-    /*! Returns the wavetable's size. */
-    size_t size() const;
-    
-    /*! Returns the wavetable's data. */
-    double* get() const;
-    
-    /*! Sets the wavetable's id */
-    void setId(size_t id);
-    
-    /*! Returns the wavetable's id. */
-    size_t id() const;
-    
-    /*************************************************************************************************//*!
-    *
-    *  @brief       Makes a unique copy of the pointed-to data.
-    *
-    *  @details     The Wavetable class implements reference counting so constructing a new Wavetable
-    *               object from an existing object will make both objects point to the same data. It
-    *               may be required to make the data unique to an object at one point, for which this
-    *               method exists. Note that calling the non-const operator[] also calls makeUnique().
-    *
-    *****************************************************************************************************/
-    
-    Wavetable& makeUnique();
-    
-private:
-    
-    /*! The pointed-to data */
-    double* data_;
-    
-    /*! ID of the wavetable */
-    size_t id_;
-    
-    /*! Current size of the wavetable. */
-    size_t size_;
-    
-    /*! Pointer to the number of objects pointing to _data. */
-    size_t* refptr_;
 };
 
 /*********************************************************************************************//*!
