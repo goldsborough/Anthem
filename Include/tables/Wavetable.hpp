@@ -17,7 +17,7 @@
 
 #include "LookupTable.hpp"
 
-#include <vector>
+#include <string>
 
 /*****************************************************************************//*!
 *
@@ -147,6 +147,16 @@ class Wavetable : public LookupTable<double>
     
 public:
     
+    enum class MathematicalWaveform
+    {
+        DIRECT_TRIANGLE,
+        DIRECT_SQUARE,
+        DIRECT_SAW,
+        
+        SMOOTH_SQUARE,
+        SMOOTH_SAW
+    };
+    
     /*************************************************************************************************//*!
     *
     *  @brief       Constructs a Wavetable additively.
@@ -173,11 +183,12 @@ public:
     
     template <class PartItr>
     Wavetable(PartItr start, PartItr end,
-              size_t wtLength,
+              index_t wtLength,
               double masterAmp = 1,
               bool sigmaAprox = false,
               unsigned int bitWidth = 16,
-              size_t id = -1);
+              index_t id = 0,
+              const std::string& name = std::string());
     
     /*************************************************************************************************//*!
     *
@@ -191,121 +202,44 @@ public:
     *
     *****************************************************************************************************/
     
-    Wavetable(double * ptr = 0, size_t wtLength = 0, size_t id = -1);
-};
-
-/*********************************************************************************************//*!
-*
-*  @brief       Stores Anthem's wavetables.
-*
-*  @details     The WavetableDB class manages all of Anthem's wavetables and is responsible for
-*               providing Oscillators with Wavetables.
-*
-*************************************************************************************************/
-
-class WavetableDB
-{
+    Wavetable(double * ptr = 0,
+              index_t wtLength = 0,
+              index_t id = 0,
+              const std::string& name = std::string());
     
-public:
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Constructs a Wavetable object with a directly calculated, mathematical waveform.
+    *
+    *  @param       waveform A MathematicalWaveform member to generate.
+    *
+    *  @param       wtLength The length of the wavetable (and the array of values pointed to by ptr).
+    *
+    *  @param       id The wavetable's id, defaults to -1.
+    *
+    *****************************************************************************************************/
     
-    /*! Standard wavetables */
-    enum Wavetables
-    {
-        NONE = -1,
-        
-        SINE,
-        SINE_2,
-        SINE_4, // The number is the number of bits, not partials
-        SINE_8,
-        
-        SQUARE, // with sigma
-        SQUARE_2,
-        SQUARE_4,
-        SQUARE_8,
-        SQUARE_16,
-        SQUARE_32,
-        SQUARE_64,
-        
-        SAW, // with sigma
-        SAW_2,
-        SAW_4,
-        SAW_8,
-        SAW_16,
-        SAW_32,
-        SAW_64,
-        
-        TRIANGLE,
-        RAMP,
-        
-        DIRECT_TRI,
-        DIRECT_SQUARE,
-        DIRECT_SAW,
-        
-        SMOOTH_SQUARE,
-        SMOOTH_SAW
-    };
-    
-    /*********************************************************************************************//*!
-    *
-    *  @brief       Initialzes the WavetableDB.
-    *
-    *  @details     The WavetableDB is initialized by reading all available wavetables from the
-    *               wavetable folder.
-    *
-    *************************************************************************************************/
-    
-    void init();
-    
-    Wavetable& operator[] (short wt);
-    
-    const Wavetable& operator[] (short wt) const;
-    
-    /*************************************************************************//*!
-    *
-    *   @brief Reads a wavetable and returns a Wavetable object.
-    *
-    *   @param fname The name of the file to read from.
-    *
-    *   @param id The wavetable's id, defaults to -1.
-    *
-    ****************************************************************************/
-    
-    Wavetable readWavetable(const std::string& fname, size_t id = -1);
-    
-    
-    /*************************************************************************//*!
-    *
-    *   @brief Writes Wavetable object to file.
-    *
-    *   @param fname The name of the file to write to.
-    *
-    *   @param wt The wavetable object to write to file. 
-    *
-    ****************************************************************************/
-    
-    void writeWavetable(const std::string& fname, const Wavetable& wt);
+    Wavetable(MathematicalWaveform waveform,
+              index_t wtLength,
+              index_t id = 0,
+              const std::string& name = std::string());
     
 private:
     
     /*! Generates a sawtooth wave directly/mathematically */
-    Wavetable directSaw_();
+    double* directSaw_() const;
     
     /*! Generates a square wave directly/mathematically */
-    Wavetable directSquare_();
+    double* directSquare_() const;
     
     /*! Generates a triangle wave directly/mathematically */
-    Wavetable directTriangle_();
+    double* directTriangle_() const;
     
     /*! Generates a smoothed sawtooth wave directly/mathematically */
-    Wavetable smoothSaw_();
+    double* smoothSaw_() const;
     
     /*! Generates a smoothed square wave directly/mathematically */
-    Wavetable smoothSquare_();
-    
-    std::vector<Wavetable> tables_;
+    double* smoothSquare_() const;
 };
-
-// One global instance
-extern WavetableDB wavetableDB;
 
 #endif /* defined(__Anthem__Wavetable__) */

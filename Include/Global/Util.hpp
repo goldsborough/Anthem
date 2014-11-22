@@ -22,6 +22,8 @@ namespace Util
     
     extern double noteToFreq(unsigned short note);
 
+    extern void round(double& val, unsigned int bitWidth);
+    
     extern unsigned short freqToNote(double freq);
 
     extern double semitonesToFreq(double baseFreq, double semitoneOffset);

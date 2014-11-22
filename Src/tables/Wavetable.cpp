@@ -1,62 +1,31 @@
-//
-//  Wavetable.cpp
-//  Anthem
-//
-//  Created by Peter Goldsborough on 22/03/14.
-//  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
-//
-
 #include "Wavetable.hpp"
 #include "Global.hpp"
-#include "Parsley.hpp"
+#include "Util.hpp"
 
-#include <string>
-#include <fstream>
 #include <cmath>
 
-void round(double& val, unsigned int bitWidth)
-{
-    // mind = blown
-    
-    // the rounding factor
-    double factor = 1.0 / bitWidth;
-
-    double n = val / factor;
-    
-    int nFloor = static_cast<int>(n);
-    
-    // if the division is greater 0.5, round to the next whole factor
-    // else take the floor value
-    
-    if (n > 0)
-    {
-        if (n - nFloor >= 0.5)
-        { val = (nFloor + 1) * factor; }
-    }
-    
-    else if (n + nFloor <= -0.5)
-    { val = (nFloor - 1) * factor; }
-}
-
 Wavetable::Wavetable(double * ptr,
-                     size_t wtLength,
-                     size_t id)
-: LookupTable<double>(ptr, wtLength, id)
+                     index_t wtLength,
+                     index_t id,
+                     const std::string& name)
+: LookupTable<double>(ptr, wtLength, id, name)
 { }
 
 template <class PartItr>
 Wavetable::Wavetable(PartItr start,
                      PartItr end,
-                     size_t wtLength,
+                     index_t wtLength,
                      double masterAmp,
                      bool sigmaAprox,
                      unsigned int bitWidth,
-                     size_t id)
+                     index_t id,
+                     const std::string& name)
 
-: LookupTable<double>(0, wtLength, id)
+: LookupTable<double>(0, wtLength, id, name)
+
 {
     // calculate number of partials
-    size_t partNum = end - start;
+    index_t partNum = end - start;
     
     data_ = new double [wtLength + 1];
     
@@ -100,7 +69,7 @@ Wavetable::Wavetable(PartItr start,
     static double fundIncr = Global::twoPi / wtLength;
     
     // fill the arrays with the respective partial values
-    for (size_t p = 0; start != end; ++p, ++start)
+    for (index_t p = 0; start != end; ++p, ++start)
     {
         // initial phase
         phase[p] = start->phaseOffs;
@@ -139,7 +108,9 @@ Wavetable::Wavetable(PartItr start,
         
         // round if necessary
         if (bitWidth < 65536)
-            round(value, bitWidth);
+        {
+            Util::round(value, bitWidth);
+        }
         
         data_[n] = value;
     }
@@ -152,95 +123,39 @@ Wavetable::Wavetable(PartItr start,
     delete [] amp;
 }
 
-void WavetableDB::init()
+Wavetable::Wavetable(MathematicalWaveform waveform,
+                     index_t wtLength,
+                     index_t id,
+                     const std::string& name)
+
+: LookupTable<double>(0,wtLength,id, name)
+
 {
-    // The wavetable configuration file
-    TextParsley textParser("/Users/petergoldsborough/Documents/Anthem/rsc/wavetables/wavetables.txt");
-    
-    std::string fname;
-    
-    std::vector<std::string> names = textParser.getAllWords();
-    
-    // Fetch all wavetable names and read their respective data files
-    for (int i = 0; i < names.size(); ++i)
+    switch (waveform)
     {
-        fname = "/Users/petergoldsborough/Documents/Anthem/rsc/wavetables/" + names[i] + ".wavetable";
+        case MathematicalWaveform::DIRECT_SAW:
+            data_ = directSaw_();
+            break;
         
-        // Read wavetables with i as their id and push them into the tables_ vector. 
-        tables_.push_back(readWavetable(fname,i));
+        case MathematicalWaveform::DIRECT_SQUARE:
+            data_ = directSquare_();
+            break;
+            
+        case MathematicalWaveform::DIRECT_TRIANGLE:
+            data_ = directTriangle_();
+            break;
+            
+        case MathematicalWaveform::SMOOTH_SAW:
+            data_ = smoothSaw_();
+            break;
+            
+        case MathematicalWaveform::SMOOTH_SQUARE:
+            data_ = smoothSquare_();
+            break;
     }
-    
-    // For NONE
-    tables_.push_back(Wavetable());
 }
 
-Wavetable WavetableDB::readWavetable(const std::string &fname, size_t id)
-{
-    std::ifstream file(fname);
-    
-    if (! file.is_open())
-    { throw FileNotOpenError("Could not find wavetable file: " + fname); }
-    
-    if (! file.good())
-    { throw FileOpenError("Error opening wavetable: " + fname); }
-    
-    char signature[6];
-    
-    file.read(signature, 6);
-    
-    if (strncmp(signature, "ANTHEM", 6))
-    { throw ParseError("Invalid signature for Anthem file!"); }
-    
-    int len = Global::wtLen + 1;
-    int size = len * sizeof(double);
-    
-    double * wt = new double [len];
-    
-    file.read(reinterpret_cast<char*>(wt), size);
-    
-    return Wavetable(wt,Global::wtLen,id);
-}
-
-void WavetableDB::writeWavetable(const std::string &fname, const Wavetable& wt)
-{
-    std::ofstream file(fname);
-    
-    if (! file.is_open())
-    { throw FileNotOpenError(); }
-    
-    if (! file.good())
-    { throw FileOpenError(); }
-    
-    file.write("ANTHEM", 6);
-    
-    int size = (Global::wtLen + 1) * sizeof(double);
-    
-    file.write(reinterpret_cast<char*>(wt.get()), size);
-}
-
-Wavetable& WavetableDB::operator[](short wt)
-{
-    if (wt == NONE)
-    { return tables_[tables_.size() - 1]; }
-        
-    if (wt < NONE || wt >= tables_.size())
-    { throw std::invalid_argument("Wavetable ID out of range!"); }
-    
-    return tables_[wt];
-}
-
-const Wavetable& WavetableDB::operator[](short wt) const
-{
-    if (wt == NONE)
-    { return tables_[tables_.size() - 1]; }
-    
-    if (wt < NONE || wt >= tables_.size())
-    { throw std::invalid_argument("Wavetable ID out of range!"); }
-    
-    return tables_[wt];
-}
-
-Wavetable WavetableDB::smoothSaw_()
+double* Wavetable::smoothSaw_() const
 {
     double* wt = new double[Global::wtLen + 1];
     
@@ -254,7 +169,7 @@ Wavetable WavetableDB::smoothSaw_()
     double amp = 1;
     
     // The second part is measured in time, going from 0.9
-    // to 1 (of the WavetableDB period)
+    // to 1 (of the Wavetable period)
     
     double ind = 0.9;
     
@@ -304,10 +219,10 @@ Wavetable WavetableDB::smoothSaw_()
     
     wt[Global::wtLen] = wt[0];
     
-    return Wavetable(wt,Global::wtLen);
+    return wt;
 }
 
-Wavetable WavetableDB::smoothSquare_()
+double* Wavetable::smoothSquare_() const
 {
     double* wt = new double[Global::wtLen + 1];
     
@@ -316,7 +231,7 @@ Wavetable WavetableDB::smoothSquare_()
     double incr = 1.0 / Global::wtLen;
     
     float exp = 50;
-
+    
     for (unsigned int n = 0; n < Global::wtLen; n++)
     {
         double val;
@@ -348,10 +263,10 @@ Wavetable WavetableDB::smoothSquare_()
     
     wt[Global::wtLen] = wt[0];
     
-    return Wavetable(wt,Global::wtLen);
+    return wt;
 }
 
-Wavetable WavetableDB::directSquare_()
+double* Wavetable::directSquare_() const
 {
     // the sample buffer
     double * wt = new double [Global::wtLen + 1];
@@ -375,10 +290,10 @@ Wavetable WavetableDB::directSquare_()
     
     wt[Global::wtLen] = wt[0];
     
-    return Wavetable(wt,Global::wtLen);
+    return wt;
 }
 
-Wavetable WavetableDB::directSaw_()
+double* Wavetable::directSaw_() const
 {
     // the sample buffer
     double * wt = new double [Global::wtLen];
@@ -400,10 +315,10 @@ Wavetable WavetableDB::directSaw_()
     
     wt[Global::wtLen] = wt[0];
     
-    return Wavetable(wt,Global::wtLen);
+    return wt;
 }
 
-Wavetable WavetableDB::directTriangle_()
+double* Wavetable::directTriangle_() const
 {
     double* wt = new double[Global::wtLen + 1];
     
@@ -431,5 +346,5 @@ Wavetable WavetableDB::directTriangle_()
     
     wt[Global::wtLen] = wt[0];
     
-    return Wavetable(wt,Global::wtLen);
+    return wt;
 }

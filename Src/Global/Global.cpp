@@ -1,11 +1,3 @@
-//
-//  Global.cpp
-//  Anthem
-//
-//  Created by Peter Goldsborough on 19/07/14.
-//  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
-//
-
 #include "Global.hpp"
 #include "Wavetable.hpp"
 
@@ -41,5 +33,7 @@ namespace Global
         tableIncr = static_cast<double>(wtLen) / smplr;
         
         wavetableDB.init();
+        
+        //Tables::init();
     }
 }

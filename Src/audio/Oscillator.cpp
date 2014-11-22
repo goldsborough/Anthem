@@ -1,15 +1,7 @@
-//
-//  Oscillator.cpp
-//  Anthem
-//
-//  Created by Peter Goldsborough on 15/04/14.
-//  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
-//
-
 #include "Oscillator.hpp"
 #include "Global.hpp"
 #include "Util.hpp"
-#include "Wavetable.hpp"
+#include "Tables.hpp"
 
 #include <stdexcept>
 
@@ -18,7 +10,7 @@ Oscillator::Oscillator(short wt, double frq, short phaseOffset)
 : ind_(0), phaseOffset_(phaseOffset)
 
 {
-    wt_ = wavetableDB[wt];
+     wt_ = Tables::wavetables[wt];
     
     setPhaseOffset(phaseOffset);
     
@@ -27,7 +19,7 @@ Oscillator::Oscillator(short wt, double frq, short phaseOffset)
 
 void Oscillator::setWavetable(short wt)
 {
-    wt_ = wavetableDB[wt];
+    wt_ = Tables::wavetables[wt];
 }
 
 short Oscillator::getWavetableID() const

@@ -24,6 +24,30 @@ namespace Util
         
         return date;
     }
+    
+    void round(double& val, unsigned int bitWidth)
+    {
+        // mind = blown
+        
+        // the rounding factor
+        double factor = 1.0 / bitWidth;
+        
+        double n = val / factor;
+        
+        int nFloor = static_cast<int>(n);
+        
+        // if the division is greater 0.5, round to the next whole factor
+        // else take the floor value
+        
+        if (n > 0)
+        {
+            if (n - nFloor >= 0.5)
+            { val = (nFloor + 1) * factor; }
+        }
+        
+        else if (n + nFloor <= -0.5)
+        { val = (nFloor - 1) * factor; }
+    }
 
     double noteToFreq(unsigned short note)
     {

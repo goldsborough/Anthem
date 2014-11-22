@@ -1,5 +1,7 @@
-#ifndef Anthem_Tables_hpp
-#define Anthem_Tables_hpp
+#ifndef Anthem_LookupTable_hpp
+#define Anthem_LookupTable_hpp
+
+#include <string>
 
 template <typename T>
 class LookupTable
@@ -9,9 +11,14 @@ public:
     
     typedef unsigned long index_t;
     
-    LookupTable(T* data, index_t size, index_t id = -1)
-    : data_(data), size_(size),
+    LookupTable(T* data = 0,
+                index_t size = 0,
+                index_t id = 0,
+                const std::string& name = std::string())
+    
+    : data_(data), size_(size), name_(name),
       id_(id), refptr_(new index_t(1))
+    
     { }
     
     ~LookupTable()
@@ -35,8 +42,10 @@ public:
     *****************************************************************************************************/
     
     LookupTable(const LookupTable& other)
-    : id_(other.id_), size_(other.size_),
+    
+    : id_(other.id_), size_(other.size_), name_(other.name_),
       data_(other.data_), refptr_(other.refptr_)
+    
     {
         // now one more instance is pointing to
         // the same data
@@ -179,6 +188,18 @@ public:
         return *this;
     }
     
+    /*! Returns the name of the table. */
+    std::string getName() const
+    {
+        return name_;
+    }
+    
+    /*! Sets the name of the table. */
+    void setName(const std::string& name)
+    {
+        name_ = name;
+    }
+    
 protected:
     
     /*! The LookupTable's data */
@@ -193,7 +214,9 @@ protected:
     /*! The pointer pointing to the number of LookupTable objects
         pointing to data_ */
     index_t* refptr_;
+    
+    /*! A descriptive name of the waveform in the Wavetable */
+    std::string name_;
 };
-
 
 #endif
