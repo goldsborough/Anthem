@@ -283,11 +283,55 @@ void WavetableDB::init()
         fname = "/Users/petergoldsborough/Documents/Anthem/rsc/wavetables/" + names[i] + ".wavetable";
         
         // Read wavetables with i as their id and push them into the tables_ vector. 
-        tables_.push_back(WavetableParser::readWavetable(fname,i));
+        tables_.push_back(readWavetable(fname,i));
     }
     
     // For NONE
     tables_.push_back(Wavetable());
+}
+
+Wavetable WavetableDB::readWavetable(const std::string &fname, size_t id)
+{
+    std::ifstream file(fname);
+    
+    if (! file.is_open())
+    { throw FileNotOpenError("Could not find wavetable file: " + fname); }
+    
+    if (! file.good())
+    { throw FileOpenError("Error opening wavetable: " + fname); }
+    
+    char signature[6];
+    
+    file.read(signature, 6);
+    
+    if (strncmp(signature, "ANTHEM", 6))
+    { throw ParseError("Invalid signature for Anthem file!"); }
+    
+    int len = Global::wtLen + 1;
+    int size = len * sizeof(double);
+    
+    double * wt = new double [len];
+    
+    file.read(reinterpret_cast<char*>(wt), size);
+    
+    return Wavetable(wt,Global::wtLen,id);
+}
+
+void WavetableDB::writeWavetable(const std::string &fname, const Wavetable& wt)
+{
+    std::ofstream file(fname);
+    
+    if (! file.is_open())
+    { throw FileNotOpenError(); }
+    
+    if (! file.good())
+    { throw FileOpenError(); }
+    
+    file.write("ANTHEM", 6);
+    
+    int size = (Global::wtLen + 1) * sizeof(double);
+    
+    file.write(reinterpret_cast<char*>(wt.get()), size);
 }
 
 Wavetable& WavetableDB::operator[](short wt)

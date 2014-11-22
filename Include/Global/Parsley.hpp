@@ -13,40 +13,9 @@
 #ifndef __Parsley__
 #define __Parsley__
 
-#include "Wavetable.hpp"
-
 #include <string>
 #include <vector>
 #include <map>
-
-namespace WavetableParser
-{
-    /*************************************************************************//*!
-    *
-    *   @brief Reads a wavetable and returns a Wavetable object.
-    *
-    *   @param fname The name of the file to read from.
-    *
-    *  @param       id The wavetable's id, defaults to -1.
-    *
-    ****************************************************************************/
-    
-    Wavetable readWavetable(const std::string& fname, size_t id = -1);
-    
-    
-    /*************************************************************************//*!
-    *
-    *   @brief Writes Wavetable object to file.
-    *
-    *   @param fname The name of the file to write to.
-    *
-    *   @param wt The wavetable object to write to file. 
-    *
-    ****************************************************************************/
-    
-    void writeWavetable(const std::string& fname, const Wavetable& wt);
-};
-
 #include <stdexcept>
 
 struct FileOpenError : public std::runtime_error

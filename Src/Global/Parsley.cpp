@@ -11,50 +11,6 @@
 
 #include <fstream>
 
-Wavetable WavetableParser::readWavetable(const std::string &fname, size_t id)
-{
-    std::ifstream file(fname);
-    
-    if (! file.is_open())
-    { throw FileNotOpenError("Could not find wavetable file: " + fname); }
-    
-    if (! file.good())
-    { throw FileOpenError("Error opening wavetable: " + fname); }
-    
-    char signature[6];
-    
-    file.read(signature, 6);
-    
-    if (strncmp(signature, "ANTHEM", 6))
-    { throw ParseError("Invalid signature for Anthem file!"); }
-    
-    int len = Global::wtLen + 1;
-    int size = len * sizeof(double);
-    
-    double * wt = new double [len];
-    
-    file.read(reinterpret_cast<char*>(wt), size);
-    
-    return Wavetable(wt,Global::wtLen,id);
-}
-
-void WavetableParser::writeWavetable(const std::string &fname, const Wavetable& wt)
-{
-    std::ofstream file(fname);
-    
-    if (! file.is_open())
-    { throw FileNotOpenError(); }
-    
-    if (! file.good())
-    { throw FileOpenError(); }
-    
-    file.write("ANTHEM", 6);
-    
-    int size = (Global::wtLen + 1) * sizeof(double);
-    
-    file.write(reinterpret_cast<char*>(wt.get()), size);
-}
-
 std::string strip(Str_cItr begin, Str_cItr end)
 {
     while (begin != end && ::isspace(*begin)) ++begin;
