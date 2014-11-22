@@ -8,7 +8,7 @@ Mixer::Mixer(double amp)
 
 : Unit(2),
   masterAmp_(amp), recording_(false),
-  pan_(new CrossfadeUnit(CrossfadeTypes::SINE))
+  pan_(new CrossfadeUnit(PantableDatabase::SINE))
 
 {
     // Initialize ModDocks
@@ -98,7 +98,7 @@ double Mixer::getMasterAmp() const
     else return masterAmp_;
 }
 
-void Mixer::setPanValue(short pan)
+void Mixer::setPanValue(double pan)
 {
     // Set value to pan object and
     // do boundary checking there
@@ -107,7 +107,7 @@ void Mixer::setPanValue(short pan)
     mods_[PAN].setBaseValue(pan);
 }
 
-short Mixer::getPanValue() const
+double Mixer::getPanValue() const
 {
     if (mods_[PAN].inUse())
     {

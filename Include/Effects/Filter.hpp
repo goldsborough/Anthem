@@ -78,8 +78,8 @@ public:
     *
     ****************************************************************************/
     
-    Filter(unsigned short mode,
-           double cutoff,
+    Filter(unsigned short mode = LOW_PASS,
+           double cutoff = 0,
            double q = 1,
            double gain = 0);
     

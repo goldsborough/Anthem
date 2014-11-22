@@ -18,6 +18,7 @@
 #include "LookupTable.hpp"
 
 #include <string>
+#include <vector>
 
 /*****************************************************************************//*!
 *
@@ -241,5 +242,103 @@ private:
     /*! Generates a smoothed square wave directly/mathematically */
     double* smoothSquare_() const;
 };
+
+/*********************************************************************************************//*!
+*
+*  @brief       Stores Anthem's wavetables.
+*
+*  @details     The WavetableDatabase class manages all of Anthem's wavetables and is responsible for
+*               providing Oscillators with Wavetables.
+*
+*************************************************************************************************/
+
+class WavetableDatabase
+{
+    
+public:
+    
+    enum Wavetables
+    {
+        SINE,
+        SINE_2,
+        SINE_4, // The number is the number of bits, not partials
+        SINE_8,
+        
+        SQUARE, // with sigma
+        SQUARE_2,
+        SQUARE_4,
+        SQUARE_8,
+        SQUARE_16,
+        SQUARE_32,
+        SQUARE_64,
+        
+        SAW, // with sigma
+        SAW_2,
+        SAW_4,
+        SAW_8,
+        SAW_16,
+        SAW_32,
+        SAW_64,
+        
+        TRIANGLE,
+        RAMP,
+        
+        DIRECT_TRIANGLE,
+        DIRECT_SQUARE,
+        DIRECT_SAW,
+        
+        SMOOTH_SQUARE,
+        SMOOTH_SAW
+    };
+    
+    typedef unsigned long index_t;
+    
+    /*********************************************************************************************//*!
+    *
+    *  @brief       Initialzes the WavetableDatabase.
+    *
+    *  @details     The WavetableDatabase is initialized by reading all available wavetables from the
+    *               wavetable folder.
+    *
+    *************************************************************************************************/
+    
+    void init();
+    
+    Wavetable& operator[] (index_t wt);
+    
+    const Wavetable& operator[] (index_t wt) const;
+    
+    /*************************************************************************//*!
+    *
+    *   @brief Writes Wavetable object to file.
+    *
+    *   @param fname The name of the file to write to.
+    *
+    *   @param wt The wavetable object to write to file. 
+    *
+    ****************************************************************************/
+    
+    void writeWavetable(const std::string& fname, const Wavetable& wt) const;
+    
+    /*! Returns the number of wavetables stored. */
+    index_t size() const;
+    
+private:
+    
+    /*************************************************************************//*!
+    *
+    *   @brief Reads a wavetable and returns a double pointer.
+    *
+    *   @param fname The name of the file to read from.
+    *
+    ****************************************************************************/
+    
+    double* readWavetable(const std::string& fname) const;
+    
+    /*! Vector of Wavetable objects */
+    std::vector<Wavetable> tables_;
+};
+
+extern WavetableDatabase wavetableDatabase;
 
 #endif /* defined(__Anthem__Wavetable__) */

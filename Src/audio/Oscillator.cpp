@@ -1,8 +1,6 @@
 #include "Oscillator.hpp"
 #include "Global.hpp"
 #include "Util.hpp"
-#include "WavetableDatabase.hpp"
-#include "Tables.hpp"
 
 #include <stdexcept>
 

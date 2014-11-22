@@ -1,7 +1,9 @@
 #include "Wavetable.hpp"
 #include "Global.hpp"
 #include "Util.hpp"
+#include "Parsley.hpp"
 
+#include <fstream>
 #include <cmath>
 
 Wavetable::Wavetable(double * ptr,
@@ -347,4 +349,84 @@ double* Wavetable::directTriangle_() const
     wt[Global::wtLen] = wt[0];
     
     return wt;
+}
+
+void WavetableDatabase::init()
+{
+    // The wavetable configuration file
+    TextParsley textParser("/Users/petergoldsborough/Documents/Anthem/rsc/wavetables/wavetables.md");
+    
+    std::string fname;
+    
+    std::vector<std::string> names = textParser.getAllWords();
+    
+    tables_.resize(names.size());
+    
+    // Fetch all wavetable names and read their respective data files
+    for (index_t i = 0; i < names.size(); ++i)
+    {
+        fname = "/Users/petergoldsborough/Documents/Anthem/rsc/wavetables/" + names[i] + ".wavetable";
+        
+        // Read wavetables with i as their id and push them into the tables_ vector.
+        tables_[i] = Wavetable(readWavetable(fname), Global::wtLen, i, names[i]);
+    }
+}
+
+double* WavetableDatabase::readWavetable(const std::string &fname) const
+{
+    std::ifstream file(fname);
+    
+    if (! file.is_open())
+    { throw FileNotOpenError("Could not find wavetable file: " + fname); }
+    
+    if (! file.good())
+    { throw FileOpenError("Error opening wavetable: " + fname); }
+    
+    char signature[6];
+    
+    file.read(signature, 6);
+    
+    if (strncmp(signature, "ANTHEM", 6))
+    { throw ParseError("Invalid signature for Anthem file!"); }
+    
+    int len = Global::wtLen + 1;
+    int size = len * sizeof(double);
+    
+    double * wt = new double [len];
+    
+    file.read(reinterpret_cast<char*>(wt), size);
+    
+    return wt;
+}
+
+void WavetableDatabase::writeWavetable(const std::string &fname, const Wavetable& wt) const
+{
+    std::ofstream file(fname);
+    
+    if (! file.is_open())
+    { throw FileNotOpenError(); }
+    
+    if (! file.good())
+    { throw FileOpenError(); }
+    
+    file.write("ANTHEM", 6);
+    
+    int size = (Global::wtLen + 1) * sizeof(double);
+    
+    file.write(reinterpret_cast<char*>(wt.get()), size);
+}
+
+Wavetable::index_t WavetableDatabase::size() const
+{
+    return tables_.size();
+}
+
+Wavetable& WavetableDatabase::operator[](index_t wt)
+{
+    return tables_[wt];
+}
+
+const Wavetable& WavetableDatabase::operator[](index_t wt) const
+{
+    return tables_[wt];
 }

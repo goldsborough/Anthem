@@ -34,6 +34,92 @@ struct Sample
         }
     }
     
+    Sample& operator= (const Sample& other)
+    {
+        if (this != &other)
+        {
+            left = other.left;
+            right = other.right;
+        }
+        
+        return *this;
+    }
+    
+    Sample& operator*= (const Sample& other)
+    {
+        left *= other.left;
+        right *= other.right;
+        
+        return *this;
+    }
+    
+    Sample operator* (const Sample& other)
+    {
+        Sample ret(*this);
+        
+        ret.left *= other.left;
+        
+        ret.right *= other.right;
+        
+        return ret;
+    }
+    
+    Sample& operator/= (const Sample& other)
+    {
+        left /= other.left;
+        right /= other.right;
+        
+        return *this;
+    }
+    
+    Sample operator/ (const Sample& other)
+    {
+        Sample ret(*this);
+        
+        ret.left /= other.left;
+        
+        ret.right /= other.right;
+        
+        return ret;
+    }
+    
+    Sample& operator += (const Sample& other)
+    {
+        left += other.left;
+        right += other.right;
+        
+        return *this;
+    }
+    
+    Sample operator+ (const Sample& other)
+    {
+        Sample ret(*this);
+        
+        ret.left += other.left;
+        ret.right += other.right;
+        
+        return ret;
+    }
+    
+    Sample& operator -= (const Sample& other)
+    {
+        left -= other.left;
+        right -= other.right;
+        
+        return *this;
+    }
+    
+    Sample operator- (const Sample& other)
+    {
+        Sample ret(*this);
+        
+        ret.left -= other.left;
+        
+        ret.right -= other.right;
+        
+        return ret;
+    }
+    
     Sample& operator= (double value)
     {
         left = value;

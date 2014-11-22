@@ -1,7 +1,6 @@
 #include "Crossfader.hpp"
 #include "Global.hpp"
 #include "ModDock.hpp"
-#include "Sample.hpp"
 
 #include <stdexcept>
 #include <cmath>
@@ -9,66 +8,30 @@
 CrossfadeUnit::CrossfadeUnit(unsigned short type,
                              bool scalingEnabled,
                              unsigned short offset)
-: scalingEnabled_(scalingEnabled),
-  tables_(new std::unique_ptr<Sample[]> [3])
 {
-    for (unsigned short i = 0; i < 3; ++i)
-    {
-        tables_[i].reset(new Sample[201]);
-    }
-    
-    for (unsigned short j = 0; j <= 200; ++j)
-    {
-        double value = (j - 100) / 100.0;
-        
-        // Linear table
-        tables_[CrossfadeTypes::LINEAR][j].left = (1 - value) / 2.0;
-        
-        tables_[CrossfadeTypes::LINEAR][j].right = (1 + value) / 2.0;
-        
-        // Sine table
-        tables_[CrossfadeTypes::SINE][j].left = sin((1 -  value) / 2 * Global::pi/2);
-        
-        tables_[CrossfadeTypes::SINE][j].right = sin((1 +  value) / 2 * Global::pi/2);
-        
-        // Square root table
-        tables_[CrossfadeTypes::SQRT][j].left = sqrt((1 -  value) / 2);
-        
-        tables_[CrossfadeTypes::SQRT][j].right = sqrt((1 +  value) / 2);
-    }
-    
     setType(type);
+ 
+    enableScaling(scalingEnabled);
     
     setValue(offset);
 }
 
 CrossfadeUnit::CrossfadeUnit(const CrossfadeUnit& other)
-: scalingEnabled_(other.scalingEnabled_),
-  type_(other.type_), index_(other.index_),
-  tables_(new std::unique_ptr<Sample[]> [3])
-{
-    for (unsigned short i = 0; i < 3; ++i)
-    {
-        tables_[i].reset(new Sample[201]);
-        
-        for (unsigned short j = 0; j <= 200; ++j)
-        {
-            tables_[i][j] = other.tables_[i][j];
-        }
-    }
-}
+: type_(other.type_), scalingEnabled_(other.scalingEnabled_),
+  index_(other.index_), table_(other.table_)
+{ }
 
-CrossfadeUnit& CrossfadeUnit::operator= (const CrossfadeUnit& other)
+CrossfadeUnit& CrossfadeUnit::operator=(const CrossfadeUnit &other)
 {
     if (this != &other)
     {
-        scalingEnabled_ = other.scalingEnabled_;
-        
         type_ = other.type_;
+        
+        scalingEnabled_ = other.scalingEnabled_;
         
         index_ = other.index_;
         
-        // Table data is the same
+        table_ = other.table_;
     }
     
     return *this;
@@ -78,10 +41,20 @@ CrossfadeUnit::~CrossfadeUnit() { }
 
 void CrossfadeUnit::setType(unsigned short type)
 {
-    if (type > CrossfadeTypes::SQRT)
-    { throw std::invalid_argument("Type argument out of range!"); }
+    if (type > PantableDatabase::SQRT)
+    {
+        throw std::invalid_argument("Invalid type! If you tried setting a scaled type,\
+                                     use enableScaling() and a non-scaled type.");
+    }
     
     type_ = type;
+    
+    // Unscaled types are 0,1,2 and scaled
+    // types are 3,4 so + 2 is the scaled
+    // variant of an unscaled type
+    if (scalingEnabled_) type += 2;
+    
+    table_ = pantableDatabase[type];
 }
 
 unsigned short CrossfadeUnit::getType() const
@@ -89,22 +62,33 @@ unsigned short CrossfadeUnit::getType() const
     return type_;
 }
 
-void CrossfadeUnit::setValue(short value)
+void CrossfadeUnit::setValue(double value)
 {
     if (value < -100 || value > 100)
         throw std::invalid_argument("Crossfade value must be between -100 and 100");
     
-    index_ = 100 + value;
+    index_ = value + 100;
+    
+    curr_ = table_.interpolate(index_);
 }
 
-short CrossfadeUnit::getValue() const
+double CrossfadeUnit::getValue() const
 {
     // From index to value
     return index_ - 100;
 }
 
-void CrossfadeUnit::setScalingEnabled(bool scalingEnabled)
+void CrossfadeUnit::enableScaling(bool scalingEnabled)
 {
+    // Nothing to do if same state
+    if (scalingEnabled_ == scalingEnabled) return;
+    
+    // Unscaled types are 0,1,2 and scaled
+    // types are 3,4 so + 2 is the scaled
+    // variant type_ and to get the unscaled
+    // type we just use type_
+    table_ = (scalingEnabled) ? pantableDatabase[type_] : pantableDatabase[type_ + 2];
+    
     scalingEnabled_ = scalingEnabled;
 }
 
@@ -113,31 +97,15 @@ bool CrossfadeUnit::scalingEnabled() const
     return scalingEnabled_;
 }
 
-double CrossfadeUnit::scale_(const double& value) const
-{
-    // Scale values for sine and sqrt so that the
-    // values add up to 1
-    if (type_ == CrossfadeTypes::SINE ||
-        type_ == CrossfadeTypes::SQRT)
-    { return value * Global::sqrt2; }
-    
-    // Avoid passing parameter by valuem by passing
-    // as reference-to-const but have to do this
-    // return here if no scale
-    return value;
-}
-
 double CrossfadeUnit::left() const
 {
-    return scale_(tables_[type_][index_].left);
+    return curr_.left;
 }
 
 double CrossfadeUnit::right() const
 {
-    return scale_(tables_[type_][index_].right);
+    return curr_.right;
 }
-
-
 
 Crossfader::Crossfader(unsigned short type,
                        bool scalingEnabled,
@@ -155,14 +123,14 @@ Crossfader::Crossfader(unsigned short type,
     mods_[VALUE].setBaseValue(offset);
 }
 
-void Crossfader::setValue(short value)
+void Crossfader::setValue(double value)
 {
     CrossfadeUnit::setValue(value);
     
     mods_[VALUE].setBaseValue(value);
 }
 
-short Crossfader::getValue() const
+double Crossfader::getValue() const
 {
     if (mods_[VALUE].inUse())
     {

@@ -91,7 +91,7 @@ public:
         return *this;
     }
     
-    T& operator[] (index_t index)
+    T& operator[] (double index)
     {
         // Make this object's data unique as it might
         // have to be changed
@@ -116,17 +116,17 @@ public:
     *
     *****************************************************************************************************/
     
-    double interpolate(double index) const
+    T interpolate(double index) const
     {
         int indexBase = static_cast<int>(index);  // The truncated integer part
         double indexFract = index - indexBase;    // The remaining fractional part
         
         // grab the two items in-between which the actual value lies
-        double value1 = data_[indexBase];
-        double value2 = data_[indexBase+1];
+        T value1 = data_[indexBase];
+        T value2 = data_[indexBase+1];
         
         // interpolate: integer part + (fractional part * difference between value2 and value1)
-        double final = value1 + ((value2 - value1) * indexFract);
+        T final = value1 + ((value2 - value1) * indexFract);
         
         return final;
     }

@@ -14,23 +14,15 @@
 #define __Anthem__Crossfade__
 
 #include "Units.hpp"
-
-namespace CrossfadeTypes
-{
-    /*! Different types of crossfading*/
-    enum { LINEAR, SINE, SQRT };
-}
-
-class Sample;
+#include "Pantable.hpp"
 
 /*********************************************************************************************//*!
 *
 *  @brief       Basic crossfading unit.
 *
-*  @details     This class stores retrievable crossfade values. There are three different tables
-*               one for linear crossfading (values add up to 1), one for crossfading with the
-*               sine function and one using the sqrt function. The last two don't add up to 1
-*               so there is an option to scale them.
+*  @details     This class stores retrievable crossfade values with a left() and a right()
+*               method to retrieve the respective channel values and a setValue() method to
+*               to adjust the crossfading/panning value from -100 (all left) to 100 (all right).
 *
 *************************************************************************************************/
 
@@ -69,7 +61,7 @@ public:
     *
     *************************************************************************************************/
     
-    virtual void setScalingEnabled(bool scalingEnabled);
+    virtual void enableScaling(bool scalingEnabled);
     
     /*********************************************************************************************//*!
     *
@@ -85,7 +77,7 @@ public:
     *
     *  @brief       Sets the CrossfadeUnit's type.
     *
-    *  @param       type The new crossfading type, usually a member of the CrossfadeTypes enum.
+    *  @param       type The new crossfading type, usually a member of the Types enum.
     *
     *************************************************************************************************/
     
@@ -109,7 +101,7 @@ public:
     *
     *************************************************************************************************/
     
-    virtual void setValue(short value);
+    virtual void setValue(double value);
     
     /*********************************************************************************************//*!
     *
@@ -119,7 +111,7 @@ public:
     *
     *************************************************************************************************/
     
-    virtual short getValue() const;
+    virtual double getValue() const;
     
     /*********************************************************************************************//*!
     *
@@ -139,21 +131,20 @@ public:
     
 protected:
     
-    /*! Checks if scaling is necessary and returns scaled value if appropriate. 
-        Scaling is appropriate if scalign is enabled and if the type is either SQRT or SINE. */
-    double scale_(const double& value) const;
-    
-    /*! Current index in the lookup table */
-    unsigned short index_;
+    /*! Current index in the lookup table. Double because of interpolation. */
+    double index_;
     
     /*! The crossfading type */
     unsigned short type_;
     
-    /*! Boolean whether or not scaling is enabled*/
+    /*! Whether or not a scaled table is used */
     bool scalingEnabled_;
     
+    /*! The current Sample from the Pantable */
+    Sample curr_;
+    
     /*! Array of Sample tables for crossfading values */
-    std::unique_ptr<std::unique_ptr<Sample[]>[]> tables_;
+    Pantable table_;
 };
 
 /*********************************************************************************************//*!
@@ -197,10 +188,10 @@ public:
                ModUnit* right = 0);
     
     /*! @copydoc CrossfadeUnit::setValue() */
-    void setValue(short value);
+    void setValue(double value);
     
     /*! @copydoc CrossfadeUnit::getValue() */
-    short getValue() const;
+    double getValue() const;
     
     /*! @copydoc ModUnit::modulate() */
     double modulate(double sample, double depth, double maximum);

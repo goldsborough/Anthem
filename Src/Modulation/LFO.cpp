@@ -16,12 +16,12 @@
 
 #include <stdexcept>
 
-LFO::LFO(short wt, double rate, double amp, double phaseOffset)
-: Oscillator(wt,rate,phaseOffset), ModUnit(3,amp)
+LFO::LFO(short wt, double freq, double amp, double phaseOffset)
+: Oscillator(wt,freq,phaseOffset), ModUnit(3,amp)
 {
     mods_[FREQ].setHigherBoundary(100);
     mods_[FREQ].setLowerBoundary(0);
-    mods_[FREQ].setBaseValue(rate);
+    mods_[FREQ].setBaseValue(freq);
     
     mods_[PHASE].setHigherBoundary(360);
     mods_[PHASE].setLowerBoundary(0);

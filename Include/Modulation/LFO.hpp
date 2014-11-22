@@ -51,7 +51,7 @@ public:
     *
     *****************************************************************************************************/
     
-    LFO(short wt = 0, double rate = 1, double amp = 1, double phaseOffset = 0);
+    LFO(short wt = 0, double freq = 1, double amp = 1, double phaseOffset = 0);
     
     /*! @copydoc ModUnit::modulate() */
     double modulate(double sample, double depth, double maximum);

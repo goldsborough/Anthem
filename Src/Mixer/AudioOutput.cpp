@@ -108,12 +108,12 @@ int AudioOutput::callback_(void *output,
 
     for (unsigned int n = 0; n < numberOfFrames; ++n)
     {
-        Sample sample = anthem_->tick_();
+        Sample sample = anthem_->tick();
         
         *outputBuffer++ = sample.left;
         *outputBuffer++ = sample.right;
         
-        anthem_->increment_();
+        anthem_->increment();
     }
     
     return 0;

@@ -1,7 +1,9 @@
 #include "Global.hpp"
-#include "WavetableDatabase.hpp"
+#include "Wavetable.hpp"
+#include "Pantable.hpp"
 
 WavetableDatabase wavetableDatabase;
+PantableDatabase pantableDatabase;
 
 /*******************************************************************************
  * Interestingly enough this is the only way I got it to work.
@@ -33,5 +35,7 @@ namespace Global
         tableIncr = static_cast<double>(wtLen) / smplr;
         
         wavetableDatabase.init();
+        
+        pantableDatabase.init();
     }
 }
