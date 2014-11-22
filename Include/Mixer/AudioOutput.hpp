@@ -18,11 +18,7 @@
 #include <deque>
 #include <memory>
 
-
-class Operator;
-
-
-
+class Anthem;
 class Sample;
 
 class AudioOutput
@@ -35,6 +31,8 @@ public:
     typedef RtAudio::DeviceInfo Device;
     
     AudioOutput();
+    
+    static void init(Anthem* anthem);
     
     static void process(const Sample& sample);
     
@@ -60,8 +58,6 @@ public:
     
     std::string getApi() const;
     
-    static Operator* osc;
-    
 private:
     
     static int callback_(void* output,
@@ -76,6 +72,8 @@ private:
     std::string getApiName(const RtAudio::Api& api);
     
     static std::deque<std::unique_ptr<Sample>> buffer_;
+    
+    static Anthem* anthem_;
     
     Device device_;
     

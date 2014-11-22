@@ -13,11 +13,12 @@
 #ifndef __Anthem__Midi__
 #define __Anthem__Midi__
 
+#include <RtMidi.h>
 #include <memory>
 #include <vector>
 #include <string>
 
-class RtMidiIn;
+class Anthem;
 
 class Midi
 {
@@ -34,6 +35,8 @@ public:
     
     Midi();
     
+    void init(Anthem* anthem);
+    
     void openPort(byte_t portID);
     
     void closePort();
@@ -44,13 +47,13 @@ public:
     
     std::string getCurrentPortName() const;
     
-    std::string getAnyPortName(byte_t id) const;
+    std::string getAnyPortName(byte_t id);
     
-    byte_t getNumberOfPorts() const;
+    byte_t getNumberOfPorts();
     
     bool hasMessage();
     
-    Message getLastMessage() const;
+    Message getLastMessage();
     
 private:
     
@@ -62,11 +65,19 @@ private:
         
     } port_;
     
-    Message lastMessage_;
+    static void callback_(double timestamp,
+                          std::vector<byte_t>*,
+                          void* userData);
     
-    std::vector<unsigned char> rawMessage_;
+    static Anthem* anthem_;
     
-    std::unique_ptr<RtMidiIn> midi_;
+    static void readRawMessage_(const std::vector<byte_t>& message);
+    
+    static Message lastMessage_;
+    
+    static std::vector<byte_t> rawMessage_;
+    
+    static RtMidiIn midi_;
 };
 
 #endif /* defined(__Anthem__Midi__) */

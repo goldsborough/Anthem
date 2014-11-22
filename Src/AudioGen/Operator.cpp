@@ -8,9 +8,8 @@ Operator::Operator(short wt, double freqOffset,
                    double level, bool mode,
                    short phaseOffset, double ratio)
 : Oscillator(wt,0,phaseOffset), ratio_(ratio),
-  GenUnit(1), level_(level), noteFreq_(0), note_(0),
-  semitoneOffset_(0), freqOffset_(0), realFreq_(0),
-  modOffset_(0)
+  GenUnit(1), noteFreq_(0), note_(0), modOffset_(0),
+  semitoneOffset_(0), freqOffset_(0), realFreq_(0)
 {
     setFrequencyOffset(freqOffset);
     
@@ -18,6 +17,8 @@ Operator::Operator(short wt, double freqOffset,
     
     mods_[LEVEL].setLowerBoundary(0);
     mods_[LEVEL].setBaseValue(level);
+    
+    setLevel(level);
 }
 
 void Operator::setMode(bool mode)

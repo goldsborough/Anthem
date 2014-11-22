@@ -1,34 +1,25 @@
 #include "Midi.hpp"
-
-#include <RtMidi.h>
+#include "Anthem.hpp"
 
 #include <chrono>
 #include <thread>
 
+Anthem* Midi::anthem_ = 0;
+
+Midi::Message Midi::lastMessage_ = Midi::Message();
+
+std::vector<Midi::byte_t> Midi::rawMessage_ = std::vector<Midi::byte_t>(3);
+
+RtMidiIn Midi::midi_ = RtMidiIn();
+
 Midi::Midi()
 {
-    RtMidiIn* temp;
-    
-    // Allocate midi object
-    try
-    {
-        temp = new RtMidiIn;
-    }
-    
-    catch(RtMidiError& error)
-    {
-        error.printMessage();
-    }
-    
-    // midi_ now owns the allocated RtMidiIn object
-    midi_.reset(temp);
-    
     // Try to open default midi port if any
-    if (midi_->getPortCount())
+    if (midi_.getPortCount())
     {
         try
         {
-            midi_->openPort();
+            midi_.openPort();
         }
         
         catch(RtMidiError& error)
@@ -36,6 +27,22 @@ Midi::Midi()
             error.printMessage();
         }
     }
+}
+
+void Midi::init(Anthem *anthem)
+{
+    anthem_ = anthem;
+    
+    midi_.setCallback(&callback_);
+}
+
+void Midi::callback_(double timestamp,
+                     std::vector<byte_t>* message,
+                     void* userData)
+{
+    readRawMessage_(*message);
+    
+    anthem_->A.setNote(lastMessage_.note);
 }
 
 void Midi::openPort(byte_t portID)
@@ -46,11 +53,11 @@ void Midi::openPort(byte_t portID)
     
     try
     {
-        midi_->openPort(portID);
+        midi_.openPort(portID);
         
         port_.id = portID;
         
-        port_.name = midi_->getPortName();
+        port_.name = midi_.getPortName();
     }
     
     catch(RtMidiError& error)
@@ -63,7 +70,7 @@ void Midi::closePort()
 {
     try
     {
-        midi_->closePort();
+        midi_.closePort();
     }
     
     catch(RtMidiError& error)
@@ -78,7 +85,7 @@ bool Midi::hasOpenPort() const
     
     try
     {
-        isOpen = midi_->isPortOpen();
+        isOpen = midi_.isPortOpen();
     }
     
     catch(RtMidiError& error)
@@ -89,11 +96,11 @@ bool Midi::hasOpenPort() const
     return isOpen;
 }
 
-Midi::byte_t Midi::getNumberOfPorts() const
+Midi::byte_t Midi::getNumberOfPorts()
 {
     try
     {
-        return midi_->getPortCount();
+        return midi_.getPortCount();
     }
     
     catch(RtMidiError& error)
@@ -115,11 +122,11 @@ std::string Midi::getCurrentPortName() const
     return port_.name;
 }
 
-std::string Midi::getAnyPortName(byte_t id) const
+std::string Midi::getAnyPortName(byte_t id)
 {
     try
     {
-        return midi_->getPortName(id);
+        return midi_.getPortName(id);
     }
     
     catch(RtMidiError& error)
@@ -138,7 +145,7 @@ bool Midi::hasMessage()
     // DATA BYTE 2 -- 8 bits for velocity
     try
     {
-        midi_->getMessage(&rawMessage_);
+        midi_.getMessage(&rawMessage_);
     }
     
     catch(RtMidiError& error)
@@ -151,20 +158,24 @@ bool Midi::hasMessage()
     if (rawMessage_.empty()) return false;
     
     // If we did receive a message
-    
-    // Set to lastMessage_ member
-    lastMessage_.status = rawMessage_[0];
-    lastMessage_.note = rawMessage_[1];
-    lastMessage_.velocity = rawMessage_[2];
-    
-    // Necessary sleep for 10 milliseconds
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    
     // Return true -- data is now available
     return true;
 }
 
-Midi::Message Midi::getLastMessage() const
+void Midi::readRawMessage_(const std::vector<byte_t>& message)
 {
+    // Set to lastMessage_ member
+    lastMessage_.status = message[0];
+    lastMessage_.note = message[1];
+    lastMessage_.velocity = message[2];
+    
+    // Necessary sleep for 10 milliseconds
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+}
+
+Midi::Message Midi::getLastMessage()
+{
+    readRawMessage_(rawMessage_);
+    
     return lastMessage_;
 }

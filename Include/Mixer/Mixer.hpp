@@ -14,19 +14,19 @@
 #define __Anthem__Mixer__
 
 #include "Units.hpp"
+#include "Wavefile.hpp"
 
 class CrossfadeUnit;
-class AudioOutput;
-class Wavefile;
 class Sample;
 
 /*********************************************************************************************//*!
 *
-*  @brief       Mixing unit for final audio/wavefile output.
+*  @brief       Mixing unit for final mastering and recording.
 *
-*  @details     The Mixer class is the last station for any sample before direct audio output
-*               or wavefile storage.
-*
+*  @details     The Mixer class is the last unit samples go to before audio output. Samples
+*               are attenuated with a master amplitude as well as panning values. Additionally
+*               the mixer can record samples for wavefile output.
+*                                                                                                
 *************************************************************************************************/
 
 class Mixer : public Unit
@@ -45,50 +45,59 @@ public:
     *
     *  @brief       Constructs a Mixer object.
     *
-    *  @param       audioOut Boolean, whether or not to enable direct audio output (to sound card).
-    *
-    *  @param       waveOut Boolean, whether or not to enable wavefile storage of samples when stop() called.
-    *
     *  @param        amp An initial amplitude value between 0 and 1.
     *
     ************************************************************************************************************/
     
-    Mixer(bool audioOut = true,
-          bool waveOut = false,
-          double amp = 0.5);
+    Mixer(double amp = 0.5);
     
     Mixer(const Mixer& other);
     
     Mixer& operator= (const Mixer& other);
     
-    // Prevents some error .. ?
-    ~Mixer();
-    
     /*********************************************************************************************//*!
     *
     *  @brief       Processes a sample.
     *
-    *  @param       sample A Sample object with left and right values.
+    *  @param       sample A sample of type double.
+    *
+    *  @return      A Sample object ready for audio output.
     *
     *************************************************************************************************/
     
-    void process(Sample sample);
+    Sample process(double sample);
     
     /*********************************************************************************************//*!
     *
-    *  @brief       Starts the audio output and begins sample storage for wavefile output.
+    *  @brief       Begins audio sample storage for wavefile output.
     *
     *************************************************************************************************/
     
-    void start();
+    void startRecording();
+    
+    /************************************************************************************************//*!
+    *
+    *  @brief       Stops recording and flushes the samples stored so far by the wavefile object.
+    *
+    ****************************************************************************************************/
+    
+    void stopRecording();
+    
+    /************************************************************************************************//*!
+    *
+    *  @brief       Stops recording and writes the audio samples stored in the Wavefile object to disk.
+    *
+    ****************************************************************************************************/
+    
+    void saveRecording();
     
     /*********************************************************************************************//*!
     *
-    *  @brief       Stops the audio output and stores samples to wave file, if enabled.
+    *  @brief       Whether or not the mixer is currently recording samples.
     *
     *************************************************************************************************/
     
-    void stop();
+    bool isRecording() const;
     
     /*********************************************************************************************//*!
     *
@@ -150,68 +159,19 @@ public:
     
     unsigned short getPanType() const;
     
-    /*********************************************************************************************//*!
-    *
-    *  @brief       Method for enabling/disabling wavefile output.
-    *
-    *  @param       state Boolean, whether or not to enable wavefile output.
-    *
-    *************************************************************************************************/
-    
-    void setWavefileEnabled(bool state);
-    
-    /*********************************************************************************************//*!
-    *
-    *  @brief       Returns whether or not wavefile output mode is enabled.
-    *
-    *  @return      Boolean, whether or not wavfile output enabled.
-    *
-    *************************************************************************************************/
-    
-    bool wavefileEnabled() const;
-    
-    /*********************************************************************************************//*!
-    *
-    *  @brief       Enables/disables direct audio output.
-    *
-    *  @param       state The new state (enabled/disabled), boolean.
-    *
-    *************************************************************************************************/
-    
-    void setAudioOutputEnabled(bool state);
-    
-    /*********************************************************************************************//*!
-    *
-    *  @brief       Returns whether or not audio output is enabled.
-    *
-    *  @return      Boolean, true if enabled, false if not.
-    *
-    *************************************************************************************************/
-    
-    bool isAudioOutputEnabled() const;
-    
 private:
     
     /*! The current master amplitude value */
     double masterAmp_;
     
-    /*! Whether or not audio output is stopped */
-    bool stopped_;
-    
-    /*! Whether or not to send samples to wavefile after stop() ist called */
-    bool wavefileEnabled_;
-    
-    /*! Whether or not to send samples to direct output */
-    bool audioOutputEnabled_;
+    /*! Whether or not the mixer is currently recording */
+    bool recording_;
     
     /*! CrossfadeUnit for panning */
     std::unique_ptr<CrossfadeUnit> pan_;
     
-    /*! Direct audio output object */
-    std::unique_ptr<AudioOutput> audioOutput_;
-    
     /*! Wavfile object */
-    std::unique_ptr<Wavefile> waveOutput_;
+    Wavefile wavefile_;
 };
 
 #endif /* defined(__Anthem__Mixer__) */

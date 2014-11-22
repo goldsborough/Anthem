@@ -1,70 +1,24 @@
-#include "Mixer.hpp"
-#include "Global.hpp"
-#include "Operator.hpp"
-#include "Oscillator.hpp"
-#include "Util.hpp"
-#include "Envelope.hpp"
-#include "LFO.hpp"
-#include "Wavetable.hpp"
-#include "Filter.hpp"
-#include "Delay.hpp"
-#include "Sample.hpp"
-#include "Effects.hpp"
-#include "Noise.hpp"
-#include "Crossfader.hpp"
-#include "Macro.hpp"
-#include "FM.hpp"
-#include "AudioOutput.hpp"
+#include "Anthem.hpp"
 
 #include <iostream>
 
 int main(int argc, const char * argv[])
 {
-    Global::init();
-    
-    const unsigned short seconds = 1;
-    
-    const unsigned long clocks = seconds * CLOCKS_PER_SEC;
-    
-    const unsigned long len = Global::samplerate * seconds;
-    
-    Operator op(WavetableDB::SINE);
-    
-    op.setMode(1);
-    
-    op.setLevel(1);
-    
-    op.setNote(48);
-    
-    //Mixer mixer(1,1);
-    
-    double tick;
-    
     clock_t t = clock();
     
-    AudioOutput audio;
+    const unsigned long end = t + 5 * CLOCKS_PER_SEC;
     
-    audio.osc = &op;
+    Global::init();
     
-    audio.start();
+    Anthem anthem;
     
-    /*
-    //mixer.start();
+    anthem.mixer.setMasterAmp(0.2);
     
-    for (int i = 0; i < len; ++i)
-    {
-        tick = op.tick();
-        
-        op.increment();
-        
-        //mixer.process(tick);
-    }*/
+    anthem.mixer.startRecording();
     
-    while (clock() != t + clocks);
+    while (clock() != end);
     
-    audio.stop();
-    
-    //mixer.stop();
+    anthem.mixer.saveRecording();
     
     std::cout << "Execution time: " << Util::getPassedTime(t) << "\n";
     

@@ -1,27 +1,14 @@
-//
-//  Mixer.cpp
-//  Anthem
-//
-//  Created by Peter Goldsborough on 28/03/14.
-//  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
-//
-
 #include "Mixer.hpp"
 #include "Global.hpp"
 #include "Crossfader.hpp"
-#include "AudioOutput.hpp"
-#include "Wavefile.hpp"
 #include "Sample.hpp"
 #include "ModDock.hpp"
 
-Mixer::Mixer(bool audioOut, bool waveOut, double amp)
+Mixer::Mixer(double amp)
 
-: Unit(2), audioOutputEnabled_(audioOut),
-  wavefileEnabled_(waveOut),
-  masterAmp_(amp), stopped_(true),
-  pan_(new CrossfadeUnit(CrossfadeTypes::SINE)),
-  audioOutput_(new AudioOutput),
-  waveOutput_(new Wavefile)
+: Unit(2),
+  masterAmp_(amp), recording_(false),
+  pan_(new CrossfadeUnit(CrossfadeTypes::SINE))
 
 {
     // Initialize ModDocks
@@ -36,13 +23,10 @@ Mixer::Mixer(bool audioOut, bool waveOut, double amp)
 
 Mixer::Mixer(const Mixer& other)
 : Unit(other),
-  audioOutputEnabled_(other.audioOutputEnabled_),
-  wavefileEnabled_(other.wavefileEnabled_),
   masterAmp_(other.masterAmp_),
-  stopped_(other.stopped_),
+  recording_(other.recording_),
   pan_(new CrossfadeUnit(*other.pan_)),
-  audioOutput_(new AudioOutput(*other.audioOutput_)),
-  waveOutput_(new Wavefile(*other.waveOutput_))
+  wavefile_(other.wavefile_)
 { }
 
 Mixer& Mixer::operator= (const Mixer& other)
@@ -51,25 +35,19 @@ Mixer& Mixer::operator= (const Mixer& other)
     {
         Unit::operator=(other);
         
-        audioOutputEnabled_ = other.audioOutputEnabled_;
-        
-        wavefileEnabled_ = other.wavefileEnabled_;
-        
         masterAmp_ = other.masterAmp_;
         
-        stopped_ = other.stopped_;
+        recording_ = other.recording_;
         
         *pan_ = *other.pan_;
         
-        *audioOutput_ = *other.audioOutput_;
-        
-        *waveOutput_ = *other.waveOutput_;
+        wavefile_ = other.wavefile_;
     }
     
     return *this;
 }
 
-void Mixer::process(Sample sample)
+Sample Mixer::process(double sample)
 {
     // Modulate panning value
     if (mods_[PAN].inUse())
@@ -82,19 +60,22 @@ void Mixer::process(Sample sample)
         masterAmp_ = mods_[MASTER_AMP].tick();
     }
     
+    Sample ret(sample);
+    
     // Attenuate samples with panning
-    sample.left *= pan_->left();
-    sample.right *= pan_->right();
+    ret.left *= pan_->left();
+    ret.right *= pan_->right();
     
-    sample *= masterAmp_;
+    // Apply master amplitude
+    ret *= masterAmp_;
     
-    // Store in wavefile storage buffer
-    if (wavefileEnabled_)
-    { waveOutput_->process(sample); }
+    // Send to wavefile if recording
+    if (recording_)
+    {
+        wavefile_.process(ret);
+    }
     
-    // Send to direct audio output
-    if (audioOutputEnabled_)
-    { audioOutput_->process(sample); }
+    return ret;
 }
 
 void Mixer::setMasterAmp(double amp)
@@ -146,50 +127,26 @@ unsigned short Mixer::getPanType() const
     return pan_->getType();
 }
 
-void Mixer::setWavefileEnabled(bool state)
+bool Mixer::isRecording() const
 {
-    wavefileEnabled_ = state;
+    return recording_;
 }
 
-bool Mixer::wavefileEnabled() const
+void Mixer::startRecording()
 {
-    return wavefileEnabled_;
+    recording_ = true;
 }
 
-void Mixer::setAudioOutputEnabled(bool state)
+void Mixer::stopRecording()
 {
-    audioOutputEnabled_ = state;
+    recording_ = false;
+    
+    wavefile_.flush();
 }
 
-bool Mixer::isAudioOutputEnabled() const
+void Mixer::saveRecording()
 {
-    return audioOutputEnabled_;
+    recording_ = false;
+    
+    wavefile_.write();
 }
-
-void Mixer::start()
-{
-    if (stopped_)
-    {
-        if (audioOutputEnabled_)
-        { audioOutput_->start(); }
-        
-        stopped_ = false;
-    }
-}
-
-void Mixer::stop()
-{
-    if (! stopped_)
-    {
-        stopped_ = true;
-        
-        if (audioOutputEnabled_)
-        { audioOutput_->stop(); }
-        
-        if (wavefileEnabled_)
-        { waveOutput_->write(); }
-    }
-}
-
-Mixer::~Mixer()
-{ }

@@ -1,17 +1,11 @@
 #include "AudioOutput.hpp"
 #include "Global.hpp"
 #include "Sample.hpp"
-
-
-
-#include "Operator.hpp"
-
+#include "Anthem.hpp"
 
 std::deque<std::unique_ptr<Sample>> AudioOutput::buffer_ = std::deque<std::unique_ptr<Sample>>();
 
-Operator* AudioOutput::osc = 0;
-
-
+Anthem* AudioOutput::anthem_ = 0;
 
 AudioOutput::AudioOutput()
 {
@@ -33,6 +27,11 @@ AudioOutput::AudioOutput()
     }
     
     apiName_ = getApiName(api_);
+}
+
+void AudioOutput::init(Anthem *anthem)
+{
+    anthem_ = anthem;
 }
 
 std::string AudioOutput::getApiName(const RtAudio::Api &api)
@@ -106,22 +105,15 @@ int AudioOutput::callback_(void *output,
                            void *userData)
 {
     double* outputBuffer = static_cast<double*>(output);
-    
-    //std::cout << streamTime << "\t" << count++ << "\t" << buffer_.size() << "\t" << std::endl;
-    
+
     for (unsigned int n = 0; n < numberOfFrames; ++n)
     {
-        //double left = buffer_.front()->left;
-        //double right = buffer_.front()->right;
+        Sample sample = anthem_->tick_();
         
-        double tick = osc->tick() / 2;
+        *outputBuffer++ = sample.left;
+        *outputBuffer++ = sample.right;
         
-        osc->increment();
-        
-        *outputBuffer++ = tick;
-        *outputBuffer++ = tick;
-        
-        //buffer_.pop_front();
+        anthem_->increment_();
     }
     
     return 0;
