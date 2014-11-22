@@ -12,6 +12,14 @@ int main(int argc, const char * argv[])
     
     Anthem anthem;
     
+    anthem.operators[Anthem::A].setWavetable(WavetableDB::SINE);
+    
+    anthem.operators[Anthem::A].setNote(48);
+    
+    anthem.operators[Anthem::A].setMode(1);
+    
+    anthem.operators[Anthem::A].setLevel(0.5);
+    
     anthem.mixer.setMasterAmp(0.2);
     
     anthem.mixer.startRecording();

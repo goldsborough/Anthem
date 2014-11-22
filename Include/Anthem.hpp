@@ -29,11 +29,21 @@ class Anthem
     
 public:
     
+    enum Units
+    {
+        A,
+        B,
+        C,
+        D
+    };
+    
     Anthem();
     
-    Mixer mixer;
+    Operator operators [4];
     
-    Operator A;
+    FM fm;
+    
+    Mixer mixer;
     
     Midi midi;
     

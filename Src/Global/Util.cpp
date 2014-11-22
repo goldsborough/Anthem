@@ -29,7 +29,7 @@ namespace Util
     {
         // Source: http://en.wikipedia.org/wiki/Piano_key_frequencies
         
-        double exp = (note - 48) / 12;
+        double exp = (note - 48) / 12.0;
         
         return pow(2, exp) * 440;
     }
@@ -41,7 +41,7 @@ namespace Util
 
     double semitonesToFreq(double baseFreq, double semitoneOffset)
     {
-        return pow(2, semitoneOffset / 12) * baseFreq;
+        return pow(2, semitoneOffset / 12.0) * baseFreq;
     }
     
     double freqToSemitones(double baseFreq, double newFreq)
@@ -57,7 +57,7 @@ namespace Util
     double dbToAmp(double baseAmp, double dB)
     {
         // 0 gain means no change
-        return (dB) ? baseAmp * pow(10, (dB/20)) : baseAmp;
+        return (dB) ? baseAmp * pow(10, (dB/20.0)) : baseAmp;
     }
     
     std::string checkFileName(std::string fname, const std::string& fileEnding)

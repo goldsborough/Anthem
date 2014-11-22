@@ -42,7 +42,7 @@ void Midi::callback_(double timestamp,
 {
     readRawMessage_(*message);
     
-    anthem_->A.setNote(lastMessage_.note);
+    anthem_->operators[Anthem::A].setNote(lastMessage_.note);
 }
 
 void Midi::openPort(byte_t portID)

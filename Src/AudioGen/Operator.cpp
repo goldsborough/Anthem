@@ -4,6 +4,11 @@
 #include "Util.hpp"
 #include "Global.hpp"
 
+
+#include <iostream>
+#include <iomanip>
+
+
 Operator::Operator(short wt, double freqOffset,
                    double level, bool mode,
                    short phaseOffset, double ratio)
@@ -79,13 +84,8 @@ void Operator::modulateFrequency(double value)
 
 void Operator::setNote(note_t note)
 {
-    double newFreq = Util::noteToFreq(note);
-    
-    // Check nyquist limit
-    if (newFreq > Global::nyquistLimit)
-    { throw std::invalid_argument("Note frequency cannot be higher than the nyquist limit!"); }
-    
-    noteFreq_ = newFreq;
+    // Convert note to frequency
+    noteFreq_ = Util::noteToFreq(note);
     
     freq_ = noteFreq_ * ratio_;
     

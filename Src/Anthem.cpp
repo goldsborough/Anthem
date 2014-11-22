@@ -1,7 +1,10 @@
 #include "Anthem.hpp"
 
 Anthem::Anthem()
-: A(WavetableDB::SINE,440,1,1)
+: fm(&operators[A],
+     &operators[B],
+     &operators[C],
+     &operators[D])
 {
     midi.init(this);
     
@@ -15,7 +18,7 @@ Sample Anthem::tick_()
     double tick;
     Sample sample;
     
-    tick = A.tick();
+    tick = operators[A].tick();
     
     sample = mixer.process(tick);
     
@@ -24,5 +27,5 @@ Sample Anthem::tick_()
 
 void Anthem::increment_()
 {
-    A.increment();
+    operators[A].increment();
 }
