@@ -83,7 +83,7 @@ namespace Util
             { fname.replace(n, 1, "_"); }
         }
         
-        fname.insert(0, "/Users/petergoldsborough/Documents/Anthem/Wavefiles/");
+        fname.insert(0, "/Users/petergoldsborough/Documents/Anthem/wavefiles/");
         
         return fname;
     }

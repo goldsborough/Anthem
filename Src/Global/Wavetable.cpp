@@ -271,7 +271,7 @@ Wavetable& Wavetable::makeUnique()
 void WavetableDB::init()
 {
     // The wavetable configuration file
-    TextParsley textParser("/Users/petergoldsborough/Documents/Anthem/Resources/Wavetables/wavetables.txt");
+    TextParsley textParser("/Users/petergoldsborough/Documents/Anthem/rsc/wavetables/wavetables.txt");
     
     std::string fname;
     
@@ -280,7 +280,7 @@ void WavetableDB::init()
     // Fetch all wavetable names and read their respective data files
     for (int i = 0; i < names.size(); ++i)
     {
-        fname = "/Users/petergoldsborough/Documents/Anthem/Resources/Wavetables/" + names[i] + ".wavetable";
+        fname = "/Users/petergoldsborough/Documents/Anthem/rsc/wavetables/" + names[i] + ".wavetable";
         
         // Read wavetables with i as their id and push them into the tables_ vector. 
         tables_.push_back(WavetableParser::readWavetable(fname,i));
