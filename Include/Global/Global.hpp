@@ -18,7 +18,7 @@
 // http://goo.gl/748HMW
 
 namespace Global
-{
+{    
     /*! π */
     const double pi = 3.14159265358979;
     

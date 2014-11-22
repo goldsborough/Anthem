@@ -34,7 +34,7 @@ public:
     *
     *  @brief       Constructs an Operator object.
     *
-    *  @param       wt The initial wavetable id, defaults to -1, or WavetableDB::NONE.
+    *  @param       wt The initial wavetable id, defaults to 0, or WavetableDatabase::SINE.
     *
     *  @param       frqOffset An initial frequency offset.
     *
@@ -46,7 +46,7 @@ public:
     *
     *****************************************************************************************************/
     
-    Operator(short wt = -1, double freqOffset = 0,
+    Operator(unsigned short wt = 0, double freqOffset = 0,
              double level = 0, bool mode = 0,
              short phaseOffset = 0, double ratio = 1);
     

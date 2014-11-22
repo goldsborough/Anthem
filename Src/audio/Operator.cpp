@@ -4,14 +4,10 @@
 #include "Util.hpp"
 #include "Global.hpp"
 
-
-#include <iostream>
-#include <iomanip>
-
-
-Operator::Operator(short wt, double freqOffset,
+Operator::Operator(unsigned short wt, double freqOffset,
                    double level, bool mode,
                    short phaseOffset, double ratio)
+
 : Oscillator(wt,0,phaseOffset), ratio_(ratio),
   GenUnit(1), noteFreq_(0), note_(0), modOffset_(0),
   semitoneOffset_(0), freqOffset_(0), realFreq_(0)

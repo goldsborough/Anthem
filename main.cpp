@@ -12,7 +12,7 @@ int main(int argc, const char * argv[])
     
     Anthem anthem;
     
-    anthem.operators[Anthem::A].setWavetable(WavetableDB::SINE);
+    anthem.operators[Anthem::A].setWavetable(WavetableDatabase::SINE);
     
     anthem.operators[Anthem::A].setNote(48);
     

@@ -1,16 +1,17 @@
 #include "Oscillator.hpp"
 #include "Global.hpp"
 #include "Util.hpp"
+#include "WavetableDatabase.hpp"
 #include "Tables.hpp"
 
 #include <stdexcept>
 
-Oscillator::Oscillator(short wt, double frq, short phaseOffset)
+Oscillator::Oscillator(unsigned short wt, double frq, short phaseOffset)
 
 : ind_(0), phaseOffset_(phaseOffset)
 
 {
-     wt_ = Tables::wavetables[wt];
+    wt_ = wavetableDatabase[wt];
     
     setPhaseOffset(phaseOffset);
     
@@ -19,7 +20,7 @@ Oscillator::Oscillator(short wt, double frq, short phaseOffset)
 
 void Oscillator::setWavetable(short wt)
 {
-    wt_ = Tables::wavetables[wt];
+    wt_ = wavetableDatabase[wt];
 }
 
 short Oscillator::getWavetableID() const
@@ -97,8 +98,6 @@ void Oscillator::increment()
 
 double Oscillator::tick()
 {
-    if (wt_.id() == -1) return 0;
-        
     // Grab a value through interpolation from the wavetable
     return wt_.interpolate(ind_);
 }

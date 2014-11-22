@@ -14,6 +14,7 @@
 #include "Sample.hpp"
 #include "Util.hpp"
 #include "Wavetable.hpp"
+#include "WavetableDatabase.hpp"
 
 #include "AudioOutput.hpp"
 #include "Midi.hpp"

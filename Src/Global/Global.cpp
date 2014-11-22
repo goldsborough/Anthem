@@ -1,7 +1,7 @@
 #include "Global.hpp"
-#include "Wavetable.hpp"
+#include "WavetableDatabase.hpp"
 
-WavetableDB wavetableDB;
+WavetableDatabase wavetableDatabase;
 
 /*******************************************************************************
  * Interestingly enough this is the only way I got it to work.
@@ -32,8 +32,6 @@ namespace Global
         
         tableIncr = static_cast<double>(wtLen) / smplr;
         
-        wavetableDB.init();
-        
-        //Tables::init();
+        wavetableDatabase.init();
     }
 }

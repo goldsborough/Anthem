@@ -43,7 +43,7 @@ public:
     *
     *  @brief       Constructs an LFO object.
     *
-    *  @param       wt The LFO's wavetable, typically a member of WavetableDB::Wavetables.
+    *  @param       wt The LFO's wavetable, typically a member of WavetableDatabase::Wavetables.
     *
     *  @param       rate The LFO's initial rate or frequency.
     *
@@ -51,7 +51,7 @@ public:
     *
     *****************************************************************************************************/
     
-    LFO(short wt = -1, double rate = 1, double amp = 1, double phaseOffset = 0);
+    LFO(short wt = 0, double rate = 1, double amp = 1, double phaseOffset = 0);
     
     /*! @copydoc ModUnit::modulate() */
     double modulate(double sample, double depth, double maximum);
@@ -310,13 +310,13 @@ public:
     *
     *  @param       seg The segment to set the lfo's wavetable for.
     *
-    *  @param       wt The new wavetable id, usually a member of WavetableDB::Wavetables.
+    *  @param       wt The new wavetable id, usually a member of WavetableDatabase::Wavetables.
     *
     *  @throws      std::invalid_argument if seg out of range.
     *
     *****************************************************************************************************/
     
-    void setModWavetable(seg_t seg, short wt);
+    void setModWavetable(seg_t seg, unsigned short wt);
     
     /*************************************************************************************************//*!
     *
@@ -330,7 +330,7 @@ public:
     *
     *****************************************************************************************************/
     
-    short getModWavetableID(seg_t seg) const;
+    unsigned short getModWavetableID(seg_t seg) const;
     
     /****************************************************************************************************//*!
     *

@@ -80,6 +80,7 @@ public:
             this->data_ = other.data_;
             this->size_ = other.size_;
             this->id_ = other.id_;
+            this->name_ = other.name_;
             
             this->refptr_ = other.refptr_;
             

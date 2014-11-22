@@ -2,7 +2,7 @@
 #include "Wavetable.hpp"
 
 
-
+/*
 namespace Tables
 {
     WavetableDB wavetables;
@@ -11,4 +11,4 @@ namespace Tables
     {
         wavetables.init();
     }
-};
+};*/

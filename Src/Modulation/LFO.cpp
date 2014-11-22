@@ -230,7 +230,7 @@ void LFOSeq::setSegRate(seg_t seg, double rate)
     segs_[seg].setRate(rate);
 }
 
-void LFOSeq::setModWavetable(seg_t seg, short wt)
+void LFOSeq::setModWavetable(seg_t seg, unsigned short wt)
 {
     if (seg >= segs_.size())
     { throw std::invalid_argument("Segment out of range for LFOSeq!"); }
@@ -238,7 +238,7 @@ void LFOSeq::setModWavetable(seg_t seg, short wt)
     lfos_[seg].lfo.setWavetable(wt);
 }
 
-short LFOSeq::getModWavetableID(seg_t seg) const
+unsigned short LFOSeq::getModWavetableID(seg_t seg) const
 {
     if (seg >= segs_.size())
     { throw std::invalid_argument("Segment out of range for LFOSeq!"); }

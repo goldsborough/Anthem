@@ -35,7 +35,7 @@ public:
     *
     *  @brief       Constructs an Oscillator object.
     *
-    *  @param       wt The initial wavetable id, defaults to -1, or WavetableDB::NONE.
+    *  @param       wt The initial wavetable id, defaults to 0, or WavetableDatabase::SINE.
     *
     *  @param       frq The Oscillator's initial frequency.
     *
@@ -43,7 +43,7 @@ public:
     *
     *****************************************************************************************************/
     
-    Oscillator(short wt = -1, double frq = 1, short phaseOffset = 0);
+    Oscillator(unsigned short wt = 0, double frq = 1, short phaseOffset = 0);
     
     virtual ~Oscillator() { }
     
