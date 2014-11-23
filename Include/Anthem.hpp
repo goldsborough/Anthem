@@ -21,9 +21,10 @@
 #include "LFO.hpp"
 #include "Macro.hpp"
 
+#include <vector>
+
 struct Anthem
 {
-
     enum Units
     {
         A,
@@ -32,11 +33,11 @@ struct Anthem
         D
     };
     
+    typedef unsigned char note_t;
+    
     Anthem();
     
-    Sample tick();
-    
-    void increment();
+    void setNote(note_t note, bool on);
     
     Operator operators [4];
     
@@ -65,6 +66,17 @@ struct Anthem
     Midi midi;
     
     AudioOutput audio;
+    
+private:
+    
+    friend class AudioOutput;
+    
+    Sample tick_();
+    
+    void increment_();
+    
+    std::vector<note_t> notes_;
+    
 };
 
 #endif

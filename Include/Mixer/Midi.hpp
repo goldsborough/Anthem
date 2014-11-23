@@ -26,6 +26,12 @@ public:
     
     typedef unsigned char byte_t;
     
+    enum Status
+    {
+        NOTE_ON = 0b1001,
+        NOTE_OFF = 0b1001
+    };
+    
     struct Message
     {
         byte_t status;
@@ -51,10 +57,6 @@ public:
     
     byte_t getNumberOfPorts();
     
-    bool hasMessage();
-    
-    Message getLastMessage();
-    
 private:
     
     struct
@@ -71,13 +73,7 @@ private:
     
     static Anthem* anthem_;
     
-    static void readRawMessage_(const std::vector<byte_t>& message);
-    
-    static Message lastMessage_;
-    
-    static std::vector<byte_t> rawMessage_;
-    
-    static RtMidiIn midi_;
+    RtMidiIn midi_;
 };
 
 #endif /* defined(__Anthem__Midi__) */

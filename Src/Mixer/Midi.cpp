@@ -1,16 +1,9 @@
 #include "Midi.hpp"
 #include "Anthem.hpp"
 
-#include <chrono>
-#include <thread>
+#include <iomanip>
 
 Anthem* Midi::anthem_ = 0;
-
-Midi::Message Midi::lastMessage_ = Midi::Message();
-
-std::vector<Midi::byte_t> Midi::rawMessage_ = std::vector<Midi::byte_t>(3);
-
-RtMidiIn Midi::midi_ = RtMidiIn();
 
 Midi::Midi()
 {
@@ -40,9 +33,7 @@ void Midi::callback_(double timestamp,
                      std::vector<byte_t>* message,
                      void* userData)
 {
-    readRawMessage_(*message);
-    
-    anthem_->operators[Anthem::A].setNote(lastMessage_.note);
+    anthem_->setNote((*message)[1], (*message)[2]);
 }
 
 void Midi::openPort(byte_t portID)
@@ -135,47 +126,4 @@ std::string Midi::getAnyPortName(byte_t id)
     }
     
     return std::string();
-}
-
-bool Midi::hasMessage()
-{
-    // First get a message .. Format:
-    // STATUS BYTE -- 4 status bits, 4 channel bits
-    // DATA BYTE 1 -- 8 bits for note
-    // DATA BYTE 2 -- 8 bits for velocity
-    try
-    {
-        midi_.getMessage(&rawMessage_);
-    }
-    
-    catch(RtMidiError& error)
-    {
-        error.printMessage();
-    }
-    
-    // We get an empty vector if no message is
-    // in the queue
-    if (rawMessage_.empty()) return false;
-    
-    // If we did receive a message
-    // Return true -- data is now available
-    return true;
-}
-
-void Midi::readRawMessage_(const std::vector<byte_t>& message)
-{
-    // Set to lastMessage_ member
-    lastMessage_.status = message[0];
-    lastMessage_.note = message[1];
-    lastMessage_.velocity = message[2];
-    
-    // Necessary sleep for 10 milliseconds
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
-}
-
-Midi::Message Midi::getLastMessage()
-{
-    readRawMessage_(rawMessage_);
-    
-    return lastMessage_;
 }

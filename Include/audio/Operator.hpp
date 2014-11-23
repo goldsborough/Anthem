@@ -82,13 +82,14 @@ public:
     
     void modulateFrequency(double value);
     
+    /*! @copydoc Oscillator::getFrequency() */
     double getFrequency() const;
     
     /*************************************************************************************************//*!
     *
     *  @brief       Sets the Operator's note.
     *
-    *  @param       note The note, between 0 and 120, A4 being at 48.
+    *  @param       note The note, between 0 and 127, A4 being at 48.
     *
     *  @see         Util::freqToNote()
     *
