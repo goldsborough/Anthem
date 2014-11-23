@@ -1,8 +1,9 @@
 #include "Operator.hpp"
 #include "Wavetable.hpp"
 #include "ModDock.hpp"
-#include "Util.hpp"
 #include "Global.hpp"
+#include "Notetable.hpp"
+#include "Util.hpp"
 
 Operator::Operator(unsigned short wt, double freqOffset,
                    double level, bool mode,
@@ -80,8 +81,11 @@ void Operator::modulateFrequency(double value)
 
 void Operator::setNote(note_t note)
 {
+    if (note > 127)
+    { throw std::invalid_argument("Invalid note supplied, must be between 0 and 127!"); }
+    
     // Convert note to frequency
-    noteFreq_ = Util::noteToFreq(note);
+    noteFreq_ = notetable[note];
     
     freq_ = noteFreq_ * ratio_;
     

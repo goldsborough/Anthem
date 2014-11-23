@@ -1,9 +1,11 @@
 #include "Global.hpp"
 #include "Wavetable.hpp"
 #include "Pantable.hpp"
+#include "Notetable.hpp"
 
 WavetableDatabase wavetableDatabase;
 PantableDatabase pantableDatabase;
+Notetable notetable;
 
 /*******************************************************************************
  * Interestingly enough this is the only way I got it to work.
@@ -37,5 +39,7 @@ namespace Global
         wavetableDatabase.init();
         
         pantableDatabase.init();
+        
+        notetable.init();
     }
 }

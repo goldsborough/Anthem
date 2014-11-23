@@ -33,8 +33,6 @@ public:
     
 private:
     
-    double* readPantable(const std::string& fname) const;
-    
     index_t size_ = 5;
     
     Pantable tables_ [5];

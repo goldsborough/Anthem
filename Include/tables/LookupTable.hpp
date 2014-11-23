@@ -91,7 +91,7 @@ public:
         return *this;
     }
     
-    T& operator[] (double index)
+    T& operator[] (index_t index)
     {
         // Make this object's data unique as it might
         // have to be changed
