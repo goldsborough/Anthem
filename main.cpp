@@ -38,6 +38,6 @@ int main(int argc, const char * argv[])
     
     anthem.mixer.saveRecording();
     
-    std::cout << "Execution time: " << Util::getPassedTime(t) << "\n";
+    //std::cout << "Execution time: " << Util::getPassedTime(t) << "\n";
     
 }
