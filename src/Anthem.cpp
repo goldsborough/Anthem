@@ -15,9 +15,15 @@ Anthem::Anthem()
 
 void Anthem::setNote(note_t note, bool on)
 {
-    if (on) notes_.push_back(note);
+    if (on)
+    {
+        notes_.push_back(note);
+    }
     
-    else notes_.erase(std::find(notes_.begin(), notes_.end(), note));
+    else if (! notes_.empty())
+    {
+       notes_.erase(std::find(notes_.begin(), notes_.end(), note));
+    }
 }
 
 Sample Anthem::tick_()

@@ -4,9 +4,9 @@
 *
 *  @author      Peter Goldsborough
 *
-*  @date        27/09/2014
+*  @date        29/11/2014
 *
-*  @brief       Holds the DirectOutput class for real-time audio output.
+*  @brief       Holds the AudioOutput class for real-time audio output.
 *
 *************************************************************************************************/
 
@@ -21,6 +21,15 @@
 class Anthem;
 class Sample;
 
+/*********************************************************************************************//*!
+*
+*  @brief       Direct, real-time audio output class.
+*
+*  @details     The AudioOutput class uses the RtAudio library to direct samples computed by
+*               Anthem to the OS' audio output (DAC) to output sound in real-time.
+*                                                                                                
+*************************************************************************************************/
+
 class AudioOutput
 {
     
@@ -28,61 +37,114 @@ public:
     
     typedef unsigned int id_t;
     
+    /*! Struct storing information about a DAC. */
     typedef RtAudio::DeviceInfo Device;
     
+    /*! Constructs an AudioOutput object and attempts to open the default device. */
     AudioOutput();
+    
+    /*********************************************************************************************//*!
+    *
+    *  @brief       Initializes the AudioOutput object with a pointer to an Anthem object.
+    *
+    *  @details     The AudioOutput class will call Anthem's tick() method whenever it needs
+    *               samples to output to the sound card.
+    *
+    *  @param       anthem A pointer to an Anthem object.
+    *
+    *************************************************************************************************/
     
     static void init(Anthem* anthem);
     
-    static void process(const Sample& sample);
+    /****************************************************************************************************************************//*!
+    *
+    *  @brief       Opens a device for audio output.
+    *
+    *  @details     Note that at initialization the default device is opened so you can output
+    *               sound without calling the open() method explicitly. Use this method if you
+    *               want to change the output device to something other than the default.
+    *
+    *  @param       id The device ID.
+    *
+    *  @param       channels The number of channels to output to (1 = mono, 2 = stereo). Defaults to and should probably stay 2.
+    *
+    *  @param       frames The number of frames/samples to fetch at each callback.
+    *
+    *  @see         getNumberOfDevices()
+    *
+    *  @see         getDevice()
+    *
+    ********************************************************************************************************************************/
     
     void open(id_t id, id_t channels = 2, id_t frames = 256);
     
+    /*! Closes the current device. Close before re-opening. */
     void close();
     
+    /*! Starts the output stream. */
     void start();
     
-    void stop();
+    /*! Stops the output stream. */
+     void stop();
     
-    bool isStreaming();
+    /*! Whether or not the stream is currently started. */
+     bool isStreaming();
     
-    bool isOpen();
+    /*! Whether or not there is currently an open device. */
+     bool isOpen();
     
-    id_t getCurrentID() const;
+    /*! Returns the id of the current device. */
+     id_t getCurrentID() const;
     
-    Device getCurrentDevice() const;
+    /*! Returns a Device struct for the current in-use device. */
+     Device getCurrentDevice() const;
     
-    id_t getNumberOfDevices();
+    /*! Returns the number of available devices to output to. */
+     id_t getNumberOfDevices();
     
-    Device getDevice(id_t id);
+    /*********************************************************************************************//*!
+    *
+    *  @brief       Returns a Device struct for a device, given an ID.
+    *
+    *  @param       id The device ID.
+    *
+    *  @return      A Device struct holding information for the given ID of the device.
+    *
+    *************************************************************************************************/
     
-    std::string getApi() const;
+     Device getDevice(id_t id);
+    
+    /*! Returns the current API/interface used for audio output. */
+     std::string getApi() const;
     
 private:
     
+    /*! Callback function that fetches samples from Anthem. */
     static int callback_(void* output,
-                         void* input,
-                         unsigned int numberOfFrames,
-                         double streamTime,
-                         RtAudioStreamStatus status,
-                         void* userData);
-    
-    Sample getSample_();
-    
+                     void* input,
+                     unsigned int numberOfFrames,
+                     double streamTime,
+                     RtAudioStreamStatus status,
+                     void* userData);
+
+    /*! Returns the name of an audio output API as string, given the enum member. */
     std::string getApiName(const RtAudio::Api& api);
-    
-    static std::deque<std::unique_ptr<Sample>> buffer_;
-    
+
+    /*! Pointer to the Anthem object to retrieve samples from. */
     static Anthem* anthem_;
-    
+
+    /*! The Device struct for the current device in use. */
     Device device_;
-    
+
+    /*! The id of the current device. */
     id_t id_;
-    
+
+    /*! The audio output api currently in use. */
     RtAudio::Api api_;
-    
+
+    /*! The name of the current api as string. */
     std::string apiName_;
-    
+
     RtAudio audio_;
 };
 

@@ -4,10 +4,6 @@
 
 int main(int argc, const char * argv[])
 {
-    clock_t t = clock();
-    
-    const unsigned long end = t + 10 * CLOCKS_PER_SEC;
-    
     Global::init();
     
     Anthem anthem;
@@ -18,23 +14,23 @@ int main(int argc, const char * argv[])
     
     anthem.operators[Anthem::A].setMode(1);
     
-    anthem.operators[Anthem::A].setLevel(1);
-    
-    anthem.operators[Anthem::A].attachMod(Operator::LEVEL, &anthem.lfos[Anthem::A]);
-    
     anthem.operators[Anthem::A].setLevel(0.5);
+    
+    anthem.operators[Anthem::A].attachMod(Operator::LEVEL, &anthem.lfos[Anthem::A].lfos(0));
+    
+    anthem.lfos[Anthem::A].lfos(Anthem::A).setFrequency(2);
     
     anthem.operators[Anthem::A].setModUnitDepth(Operator::LEVEL, 0, 0.5);
     
-    anthem.lfos[Anthem::A].lfos(LFOUnit::A).setFrequency(4);
-    
-    anthem.mixer.setMasterAmp(0.5);
+    anthem.mixer.setMasterAmp(0.8);
     
     anthem.mixer.startRecording();
     
     anthem.audio.start();
     
-    while (clock() != end);
+    clock_t t = clock();
+    
+    while(clock() < t + (10 * CLOCKS_PER_SEC));
     
     anthem.mixer.saveRecording();
     

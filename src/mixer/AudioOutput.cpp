@@ -3,8 +3,6 @@
 #include "Sample.hpp"
 #include "Anthem.hpp"
 
-std::deque<std::unique_ptr<Sample>> AudioOutput::buffer_ = std::deque<std::unique_ptr<Sample>>();
-
 Anthem* AudioOutput::anthem_ = 0;
 
 AudioOutput::AudioOutput()
@@ -14,7 +12,7 @@ AudioOutput::AudioOutput()
         if (getNumberOfDevices())
         {
             id_ = audio_.getDefaultOutputDevice();
-        
+            
             open(id_);
         }
         
@@ -105,7 +103,7 @@ int AudioOutput::callback_(void *output,
                            void *userData)
 {
     double* outputBuffer = static_cast<double*>(output);
-
+    
     for (unsigned int n = 0; n < numberOfFrames; ++n)
     {
         Sample sample = anthem_->tick_();
@@ -122,11 +120,6 @@ int AudioOutput::callback_(void *output,
 std::string AudioOutput::getApi() const
 {
     return apiName_;
-}
-
-void AudioOutput::process(const Sample& sample)
-{
-    buffer_.push_back(std::unique_ptr<Sample>(new Sample(sample)));
 }
 
 void AudioOutput::open(id_t id, id_t channels, id_t frames)
