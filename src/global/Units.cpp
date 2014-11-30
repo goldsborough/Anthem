@@ -139,6 +139,16 @@ unsigned long Unit::dockSize(index_t dockNum) const
     return mods_[dockNum].size();
 }
 
+void Unit::setActive(bool state)
+{
+    active_ = state;
+}
+
+bool Unit::isActive() const
+{
+    return active_;
+}
+
 EffectUnit::EffectUnit(unsigned short numDocks, double dryWet)
 : dw_(dryWet), Unit(numDocks)
 { }

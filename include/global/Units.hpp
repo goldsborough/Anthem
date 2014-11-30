@@ -241,8 +241,32 @@ public:
     
     virtual unsigned long dockSize(index_t dockNum) const;
     
+    /*********************************************************************************************//*!
+    *
+    *  @brief       Sets the active property of a Unit.
+    *
+    *  @param       state The new boolean state.
+    *
+    *************************************************************************************************/
+    
+    virtual void setActive(bool state);
+    
+    /*********************************************************************************************//*!
+    *
+    *  @brief       Whether or not the Unit is currently active.
+    *
+    *  @return      Boolean, true if active else false.
+    *
+    *************************************************************************************************/
+    
+    virtual bool isActive() const;
+    
 protected:
     
+    /*! Whether or not the Unit is active. */
+    bool active_;
+    
+    /*! The number of docks used. */
     index_t numDocks_;
     
     /*! The array of modulation docks. */

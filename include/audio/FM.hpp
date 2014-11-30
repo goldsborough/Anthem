@@ -59,17 +59,23 @@ public:
        Operator* d,
        index_t alg = 0);
     
-    
-    
+    /*! Returns a synthesized sample. */
     double tick();
+    
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Sets the currently used FM algorithm.
+    *
+    *  @param       alg The algorithm number (0-11).
+    *
+    *  @throws      std::invalid_argument if the algorithm number is invalid.
+    *
+    *****************************************************************************************************/
     
     void setAlgorithm(index_t alg);
     
+    /*! Returns the currently used algorithm. */
     unsigned short getAlgorithm() const;
-    
-    void setActive(index_t index, bool state);
-    
-    bool isActive(index_t index) const;
     
 private:
     
@@ -77,13 +83,7 @@ private:
     
     void setModes_(bool a, bool b, bool c, bool d);
     
-    struct
-    {
-        Operator* op = 0;
-        
-        bool active = true;
-        
-    } ops_ [4];
+    Operator* ops_ [4];
     
     double modulate_(index_t carrier, double value);
     

@@ -19,20 +19,20 @@ FM::FM(Operator* a,
        Operator* d,
        index_t alg)
 {
-    ops_[A].op = a;
-    ops_[B].op = b;
-    ops_[C].op = c;
-    ops_[D].op = d;
+    ops_[A] = a;
+    ops_[B] = b;
+    ops_[C] = c;
+    ops_[D] = d;
     
     setAlgorithm(alg);
 }
 
 void FM::setModes_(bool a, bool b, bool c, bool d)
 {
-    ops_[A].op->setMode(a);
-    ops_[B].op->setMode(b);
-    ops_[C].op->setMode(c);
-    ops_[D].op->setMode(d);
+    ops_[A]->setMode(a);
+    ops_[B]->setMode(b);
+    ops_[C]->setMode(c);
+    ops_[D]->setMode(d);
 }
 
 void FM::setAlgorithm(unsigned short alg)
@@ -74,41 +74,25 @@ unsigned short FM::getAlgorithm() const
     return alg_;
 }
 
-void FM::setActive(index_t index, bool state)
-{
-    if (index > 3)
-    { throw std::invalid_argument("Invalid index supplied! Must be between A (0) and B (3); "); }
-    
-    ops_[index].active = state;
-}
-
-bool  FM::isActive(index_t index) const
-{
-    if (index > 3)
-    { throw std::invalid_argument("Invalid index supplied! Must be between A (0) and B (3); "); }
-    
-    return ops_[index].active;
-}
-
 double FM::tickIfActive_(index_t index)
 {
-    return (ops_[index].active) ? ops_[index].op->tick() : 0;
+    return (ops_[index]->isActive()) ? ops_[index]->tick() : 0;
 }
 
 double FM::modulate_(index_t carrier, double value)
 {
-    if (! ops_[carrier].active) return 0;
+    if (! ops_[carrier]->isActive()) return 0;
     
-    ops_[carrier].op->modulateFrequency(value);
+    ops_[carrier]->modulateFrequency(value);
     
-    return ops_[carrier].op->tick();
+    return ops_[carrier]->tick();
 }
 
 double FM::add_(index_t carrier, double value)
 {
-    if (! ops_[carrier].active) return 0;
+    if (! ops_[carrier]->isActive()) return 0;
     
-    return ops_[carrier].op->tick() + value;
+    return ops_[carrier]->tick() + value;
 }
 
 double FM::tick()
