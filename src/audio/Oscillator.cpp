@@ -99,7 +99,7 @@ void Oscillator::increment_(double value)
     { ind_ += Global::wtLen; }
 }
 
-void Oscillator::increment()
+void Oscillator::update()
 {
     increment_(indIncr_);
 }

@@ -57,12 +57,12 @@ Sample Anthem::tick_()
     return sample;
 }
 
-void Anthem::increment_()
+void Anthem::update_()
 {
     for(unsigned short unit = A; unit < D; ++unit)
     {
-        operators[unit].increment();
-        lfos[unit].increment();
-        envelopes[unit].increment();
+        operators[unit].update();
+        lfos[unit].update();
+        envelopes[unit].update();
     }
 }

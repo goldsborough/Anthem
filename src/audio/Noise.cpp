@@ -144,7 +144,7 @@ unsigned short Noise::getColor() const
     return color_;
 }
 
-void Noise::increment()
+void Noise::update()
 {
     // Get random value
     rval_ = dist_(rgen_);

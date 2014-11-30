@@ -191,7 +191,7 @@ protected:
     void calcDecay_();
     
     /*! Increments and boundary checks the write pointer */
-    inline void increment_();
+    inline void update_();
     
     /*! Integral part of the read position */
     int readInt_;

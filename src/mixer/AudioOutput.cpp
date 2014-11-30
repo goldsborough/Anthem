@@ -121,7 +121,7 @@ int AudioOutput::callback_(void *output,
         *outputBuffer++ = sample.left;
         *outputBuffer++ = sample.right;
         
-        anthem_->increment_();
+        anthem_->update_();
     }
     
     return 0;

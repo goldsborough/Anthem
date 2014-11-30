@@ -56,7 +56,7 @@ void EnvSeg::calcIncr_()
     incr_ = (len_) ? 1.0/len_ : 0;
 }
 
-void EnvSeg::increment()
+void EnvSeg::update()
 {
     // Increment curr_
     curr_ += incr_;
@@ -364,10 +364,10 @@ void EnvSegSeq::resetLoop_()
     ++loopCount_;
 }
 
-void EnvSegSeq::increment()
+void EnvSegSeq::update()
 {
     currSample_++;
-    currSeg_->increment();
+    currSeg_->update();
 }
 
 double EnvSegSeq::tick()

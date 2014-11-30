@@ -216,7 +216,7 @@ void Delay::calcDecay_()
     decayValue_ = pow(decayRate_, decayExponent);
 }
 
-void Delay::increment_()
+void Delay::update_()
 {
     if (++write_ == buffer_.end())
     {
@@ -280,7 +280,7 @@ double Delay::process(double sample)
     {
         *write_ = sample;
         
-        increment_();
+        update_();
     }
     
     // First add integer part
@@ -306,7 +306,7 @@ double Delay::process(double sample)
     {
         *write_ = sample + (output * feedback_);
         
-        increment_();
+        update_();
     }
     
     return dryWet_(sample, output);
@@ -328,7 +328,7 @@ double AllPassDelay::process(double sample)
     {
         *write_ = sample;
         
-        increment_();
+        update_();
     }
     
     // First add integer part
@@ -353,7 +353,7 @@ double AllPassDelay::process(double sample)
     {
         *write_ = outputB;
         
-        increment_();
+        update_();
     }
     
     return outputA + (outputB * decayValue_);

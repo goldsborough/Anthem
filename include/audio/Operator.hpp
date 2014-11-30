@@ -16,6 +16,14 @@
 #include "Oscillator.hpp"
 #include "Units.hpp"
 
+/*************************************************************************************************//*!
+*
+*  @brief       The Operator class.
+*
+*  @details     Operators are advanced Oscillators used for FM synthesis. They are the interface
+*               users ultimately interact with when producing and synthesizing music.
+*
+*****************************************************************************************************/
 
 class Operator : public Oscillator, public GenUnit
 {
@@ -64,11 +72,11 @@ public:
     *
     *  @brief       Increment's the Operator's wavetable index.
     *
-    *  @see         Oscillator::increment()
+    *  @see         Oscillator::update()
     *
     *****************************************************************************************************/
     
-    void increment();
+    void update();
     
     /*************************************************************************************************//*!
     *

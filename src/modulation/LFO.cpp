@@ -557,15 +557,15 @@ unsigned long LFOSeq::dockSize_Seg(seg_t segNum, index_t dockNum) const
     else return lfos_[segNum].lfo.dockSize(dockNum);
 }
 
-void LFOSeq::increment()
+void LFOSeq::update()
 {
-    ModEnvSegSeq::increment();
+    ModEnvSegSeq::update();
     
     for (std::vector<LFOSeq_LFO>::iterator itr = lfos_.begin(), end = lfos_.end();
          itr != end;
          ++itr)
     {
-        itr->lfo.increment();
+        itr->lfo.update();
     }
 }
 
@@ -689,18 +689,18 @@ bool LFOUnit::getMode() const
     return mode_;
 }
 
-void LFOUnit::increment()
+void LFOUnit::update()
 {
     if (mode_)
     {
-        lfoSeqs_[0].increment();
-        lfoSeqs_[1].increment();
+        lfoSeqs_[0].update();
+        lfoSeqs_[1].update();
     }
     
     else
     {
-        lfos_[0].increment();
-        lfos_[1].increment();
+        lfos_[0].update();
+        lfos_[1].update();
     }
     
 }

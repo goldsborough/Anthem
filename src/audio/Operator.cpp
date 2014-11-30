@@ -165,7 +165,7 @@ double Operator::getRatio() const
     return ratio_;
 }
 
-void Operator::increment()
+void Operator::update()
 {
     // Normal frequency index increment     +
     // Index increment for frequency offset +

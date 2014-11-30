@@ -412,8 +412,8 @@ public:
     
     double getScaledModFreqValue(double freq) const;
     
-    /*! @copydoc EnvSegSeq::increment() */
-    void increment();
+    /*! @copydoc EnvSegSeq::update() */
+    void update();
     
     /*! @copydoc ModUnit::modulate() */
     double modulate(double sample, double depth, double maximum);
@@ -593,8 +593,8 @@ public:
     
     Crossfader& fader();
     
-    /*! @copydoc GenUnit::increment() */
-    void increment();
+    /*! @copydoc GenUnit::update() */
+    void update();
     
     /*! @copydoc ModUnit::modulate() */
     double modulate(double sample, double depth, double maximum);

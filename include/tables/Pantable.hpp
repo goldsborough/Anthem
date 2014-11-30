@@ -30,11 +30,11 @@ typedef LookupTable<Sample> Pantable;
 *               from the CrossfadeUnit/Crossfader classes (or elsewhere )to lookup or
 *               or interpolate between Sample values. The tables provided are:
 *
-*               + Linear panning:       left,right
-*               + Sine panning:         sin(left * pi/2), sin(right * pi/2)
-*               + Sqrt panning:         sqrt(left), sqrt(right)
-*               + Scaled sine panning:  like sine, but multiplied with sqrt(2)/2
-*               + Scaled sqrt panning:  like sqrt, but multiplied with sqrt(2)/2
+*               + __Linear__ panning:       left,right
+*               + __Sine__ panning:         sin(left * pi/2), sin(right * pi/2)
+*               + __Sqrt panning:           sqrt(left), sqrt(right)
+*               + ___Scaled sine__ panning: like sine, but multiplied with sqrt(2)/2
+*               + ___Scaled sqrt__ panning  like sqrt, but multiplied with sqrt(2)/2
 *
 *               Scaled tables have left and right at 0.5 in the middle.
 *

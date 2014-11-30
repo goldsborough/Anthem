@@ -25,13 +25,7 @@
 
 struct Anthem
 {
-    enum Units
-    {
-        A,
-        B,
-        C,
-        D
-    };
+    enum Units { A, B, C, D };
     
     typedef unsigned char note_t;
     
@@ -73,7 +67,7 @@ private:
     
     Sample tick_();
     
-    void increment_();
+    void update_();
     
     std::vector<note_t> notes_;
     
