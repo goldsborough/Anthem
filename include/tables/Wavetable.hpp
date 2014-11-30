@@ -247,8 +247,8 @@ private:
 *
 *  @brief       Stores Anthem's wavetables.
 *
-*  @details     The WavetableDatabase class manages all of Anthem's wavetables and is responsible for
-*               providing Oscillators with Wavetables.
+*  @details     The WavetableDatabase class manages all of Anthem's wavetables
+*               and is responsible for providing Oscillators with Wavetables.
 *
 *************************************************************************************************/
 

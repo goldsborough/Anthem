@@ -1,3 +1,15 @@
+/*********************************************************************************************//*!
+*
+*  @file        LookupTable.hpp
+*
+*  @author      Peter Goldsborough
+*
+*  @date        27/09/2014
+*
+*  @brief       The LookupTable template class declaration and definition.
+*
+*************************************************************************************************/
+
 #ifndef Anthem_LookupTable_hpp
 #define Anthem_LookupTable_hpp
 
