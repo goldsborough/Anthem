@@ -1,23 +1,22 @@
+/********************************************************************************************//*!
+*
+*  @file        Global.cpp
+*
+*  @author      Peter Goldsborough
+*
+*  @date        29/11/2014
+*
+************************************************************************************************/
+
 #include "Global.hpp"
 #include "Wavetable.hpp"
 #include "Pantable.hpp"
 #include "Notetable.hpp"
 
+// Definition of variables declared 'extern' in their header files
 WavetableDatabase wavetableDatabase;
 PantableDatabase pantableDatabase;
 Notetable notetable;
-
-/*******************************************************************************
- * Interestingly enough this is the only way I got it to work.
- * I want to use a namespace instead of an object for the global
- * variables as it is a lot nicer and more C++y, however the variables
- * in the namespace must either be const or extern, in this case extern
- * because samplereate,nyquistLimit etc. are user-defined. Because they
- * are extern, they need to be defined 'externally', in a .cpp file (this
- * one), however, this doesn't work if they are defined in a function (init)
- * which is why I define them all to 0 here and then when the init function
- * is called they get their actual values.
- *******************************************************************************/
 
 namespace Global
 {

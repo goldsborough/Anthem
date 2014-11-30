@@ -1,10 +1,12 @@
-//
-//  Filter.cpp
-//  Anthem
-//
-//  Created by Peter Goldsborough on 13/04/14.
-//  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
-//
+/********************************************************************************************//*!
+*
+*  @file        Filter.cpp
+*
+*  @author      Peter Goldsborough
+*
+*  @date        29/11/2014
+*
+************************************************************************************************/
 
 #include "Filter.hpp"
 #include "Global.hpp"

@@ -1,10 +1,12 @@
-//
-//  Delay.cpp
-//  Anthem
-//
-//  Created by Peter Goldsborough on 26/07/14.
-//  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
-//
+/********************************************************************************************//*!
+*
+*  @file        Delay.cpp
+*
+*  @author      Peter Goldsborough
+*
+*  @date        29/11/2014
+*
+************************************************************************************************/
 
 #include "Delay.hpp"
 #include "Global.hpp"

@@ -1,7 +1,17 @@
+/********************************************************************************************//*!
+*
+*  @file        Midi.cpp
+*
+*  @author      Peter Goldsborough
+*
+*  @date        29/11/2014
+*
+************************************************************************************************/
+
 #include "Midi.hpp"
 #include "Anthem.hpp"
 
-#include <iomanip>
+#include <stdexcept>
 
 Anthem* Midi::anthem_ = 0;
 
@@ -72,7 +82,7 @@ void Midi::closePort()
 
 bool Midi::hasOpenPort() const
 {
-    bool isOpen;
+    bool isOpen = false;
     
     try
     {
@@ -104,11 +114,17 @@ Midi::byte_t Midi::getNumberOfPorts()
 
 Midi::byte_t Midi::getCurrentPortID() const
 {
+    if (! hasOpenPort())
+    { throw std::runtime_error("No port currently open!"); }
+    
     return port_.id;
 }
 
 std::string Midi::getCurrentPortName() const
 {
+    if (! hasOpenPort())
+    { throw std::runtime_error("No port currently open!"); }
+    
     // Faster than calling getPortName() again
     return port_.name;
 }

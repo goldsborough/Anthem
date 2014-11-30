@@ -1,10 +1,12 @@
-//
-//  Parser.cpp
-//  Exercises
-//
-//  Created by Peter Goldsborough on 07/07/14.
-//  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
-//
+/********************************************************************************************//*!
+*
+*  @file        Parsley.cpp
+*
+*  @author      Peter Goldsborough
+*
+*  @date        29/11/2014
+*
+************************************************************************************************/
 
 #include "Global.hpp"
 #include "Parsley.hpp"

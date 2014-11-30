@@ -1,10 +1,12 @@
-//
-//  GenUnits.cpp
-//  Anthem
-//
-//  Created by Peter Goldsborough on 19/04/14.
-//  Copyright (c) 2014 Peter Goldsborough. All rights reserved.
-//
+/********************************************************************************************//*!
+*
+*  @file        Units.cpp
+*
+*  @author      Peter Goldsborough
+*
+*  @date        29/11/2014
+*
+************************************************************************************************/
 
 #include "Units.hpp"
 #include "ModDock.hpp"
