@@ -30,6 +30,8 @@ class Operator : public Oscillator, public GenUnit
     
 public:
     
+    friend class FM;
+    
     typedef unsigned short note_t;
     
     /*! Available ModDocks for modulation */
@@ -44,7 +46,7 @@ public:
     *
     *  @param       wt The initial wavetable id, defaults to 0, or WavetableDatabase::SINE.
     *
-    *  @param       frqOffset An initial frequency offset.
+    *  @param       freqOffset An initial frequency offset.
     *
     *  @param       level The modulation amount.
     *
@@ -177,9 +179,37 @@ public:
     
     double getRatio() const;
     
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Sets the Operator's mode, either for FM synthesis (0) or additive synthesis (1).
+    *
+    *  @details     The mode determines the meaning of the level parameter. For FM synthesis, the
+    *               level is the index of modulation and ranges from 0 to 10. For additive synthesis
+    *               the level is simply the amplitude, and ranges from 0 to 1.
+    *
+    *  @param       mode The new mode, 0 = FM synthesis, 1 = Additive synthesis.
+    *
+    *****************************************************************************************************/
+    
     void setMode(bool mode);
     
+    /*! Returns the current mode. */
     bool getMode() const;
+    
+    /*************************************************************************************************//*!
+    *
+    *  @brief       Sets the Operator's level, depends on the current mode.
+    *
+    *  @details     In FM mode, the level controls the index of modulation and ranges from 0 to 10
+    *               (the index of modulation, beta, is equal to the frequency deviation of the carrier
+    *               of an FM signal divided by the frequency of the modulator). In Additive mode, the
+    *               level is equal to the amplitude and ranges from 0 to 1.
+    *
+    *  @param       mode The new mode, 0 = FM synthesis, 1 = Additive synthesis.
+    *
+    *  @throws      std::invalid_argument if the level is out of range for the current mode.
+    *
+    *****************************************************************************************************/
     
     void setLevel(double level);
     

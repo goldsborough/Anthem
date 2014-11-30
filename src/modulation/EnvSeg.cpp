@@ -15,12 +15,12 @@
 
 #include <cmath>
 
-EnvSeg::EnvSeg(double startAmp,
-               double endAmp,
+EnvSeg::EnvSeg(double startLevel,
+               double endLevel,
                len_t len,
                double rate)
 
-: startAmp_(startAmp), endAmp_(endAmp), rate_(rate),
+: startLevel_(startLevel), endLevel_(endLevel), rate_(rate),
   curr_(0),len_(len), GenUnit(3) // three ModDocks
 
 {
@@ -30,11 +30,11 @@ EnvSeg::EnvSeg(double startAmp,
     
     mods_[START_LEVEL].setHigherBoundary(1);
     mods_[START_LEVEL].setLowerBoundary(0);
-    mods_[START_LEVEL].setBaseValue(startAmp);
+    mods_[START_LEVEL].setBaseValue(startLevel);
     
     mods_[END_LEVEL].setHigherBoundary(1);
     mods_[END_LEVEL].setLowerBoundary(0);
-    mods_[END_LEVEL].setBaseValue(endAmp);
+    mods_[END_LEVEL].setBaseValue(endLevel);
     
     calcRange_();
     calcIncr_();
@@ -48,7 +48,7 @@ void EnvSeg::reset()
 void EnvSeg::calcRange_()
 {
     // The range between start and end
-    range_ = endAmp_ - startAmp_;
+    range_ = endLevel_ - startLevel_;
 }
 
 void EnvSeg::calcIncr_()
@@ -68,7 +68,7 @@ double EnvSeg::tick()
     // tick after reaching the end amplitude
     // just return the end amplitude
     
-    if (curr_ >= 1 || ! len_) return endAmp_;
+    if (curr_ >= 1 || ! len_) return endLevel_;
     
     // Modulate members
     // All together so we only call calcRange_ once
@@ -83,18 +83,18 @@ double EnvSeg::tick()
         
         if (mods_[START_LEVEL].inUse())
         {
-            startAmp_ = mods_[START_LEVEL].tick();
+            startLevel_ = mods_[START_LEVEL].tick();
         }
         
         if (mods_[END_LEVEL].inUse())
         {
-            endAmp_ = mods_[END_LEVEL].tick();
+            endLevel_ = mods_[END_LEVEL].tick();
         }
         
         calcRange_();
     }
     
-    return range_ * pow(curr_,rate_) + startAmp_;
+    return range_ * pow(curr_,rate_) + startLevel_;
 }
 
 void EnvSeg::setLen(EnvSeg::len_t sampleLen)
@@ -114,9 +114,9 @@ void EnvSeg::setStartLevel(double lv)
     if (lv > 1 || lv < 0)
     { throw std::invalid_argument("Level must be between 0 and 1"); }
     
-    startAmp_ = lv;
+    startLevel_ = lv;
     
-    mods_[START_LEVEL].setBaseValue(startAmp_);
+    mods_[START_LEVEL].setBaseValue(startLevel_);
     
     calcRange_();
 }
@@ -128,7 +128,7 @@ double EnvSeg::getStartLevel() const
         return mods_[START_LEVEL].getBaseValue();
     }
     
-    else return startAmp_;
+    else return startLevel_;
 }
 
 void EnvSeg::setEndLevel(double lv)
@@ -136,9 +136,9 @@ void EnvSeg::setEndLevel(double lv)
     if (lv > 1 || lv < 0)
     { throw std::invalid_argument("Level must be between 0 and 1"); }
     
-    endAmp_ = lv;
+    endLevel_ = lv;
     
-    mods_[END_LEVEL].setBaseValue(endAmp_);
+    mods_[END_LEVEL].setBaseValue(endLevel_);
     
     calcRange_();
 }
@@ -150,7 +150,7 @@ double EnvSeg::getEndLevel() const
         return mods_[END_LEVEL].getBaseValue();
     }
     
-    else return endAmp_;
+    else return endLevel_;
 }
 
 void EnvSeg::setBothLevels(double lv)

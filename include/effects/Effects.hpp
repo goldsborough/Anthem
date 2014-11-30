@@ -142,6 +142,7 @@ private:
 
 class LFO;
 
+/*! Doesn't work yet. */
 class Flanger : public EffectUnit
 {
 public:

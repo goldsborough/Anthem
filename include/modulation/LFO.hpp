@@ -45,7 +45,9 @@ public:
     *
     *  @param       wt The LFO's wavetable, typically a member of WavetableDatabase::Wavetables.
     *
-    *  @param       rate The LFO's initial rate or frequency.
+    *  @param       freq The LFO's initial rate or frequency.
+    *
+    *  @param       amp An initial amplitude value, between 0 and 1.
     *
     *  @param       phaseOffset An initial phase offset, in degrees (0-360).
     *
@@ -404,7 +406,7 @@ public:
     *               has to be converted to cycles per second for the modulating LFO/Oscillator. That's
     *               what this function is for.
     *
-    *  @param       The cycles per second value, in Hertz.
+    *  @param       freq The cycles per second value, in Hertz.
     *
     *  @return      The cycles per segment value.
     *
@@ -456,8 +458,10 @@ private:
         : freq(f)
         { }
         
+        /*! The LFO for a segment. */
         LFO lfo;
         
+        /*! The unscaled frequency. */
         double freq;
     };
     

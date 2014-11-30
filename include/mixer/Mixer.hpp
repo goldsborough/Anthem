@@ -59,13 +59,13 @@ public:
     *
     *  @brief       Processes a sample.
     *
-    *  @param       sample A sample of type double.
+    *  @param       sample The sample to process. You can pass a double (converted implicitly).
     *
     *  @return      A Sample object ready for audio output.
     *
     *************************************************************************************************/
     
-    Sample process(double sample);
+    Sample process(Sample sample);
     
     /*********************************************************************************************//*!
     *

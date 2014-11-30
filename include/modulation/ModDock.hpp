@@ -52,8 +52,6 @@ public:
     *
     *  @param       baseValue The initial base value to modulate.
     *
-    *  @param       masterDepth The inital master depth, defaults to 1.
-    *
     *************************************************************************************************/
     
     ModDock(double lowerBoundary,
@@ -161,6 +159,8 @@ public:
     /*********************************************************************************************//*!
     *
     *  @brief       Sets a ModUnit's depth.
+    *
+    *  @param       index The index of the ModUnit to set the depth value for.
     *
     *  @param       depth The new depth value, between 0 and 1.
     *
@@ -304,8 +304,10 @@ private:
         : mod(modUnit), depth(dpth), baseDepth(dpth)
         { }
     
+        /*! The actual ModUnit pointer. */
         ModUnit* mod;
         
+        /*! The current modulation depth. */
         double depth;
         
         /*! For sidechaining */

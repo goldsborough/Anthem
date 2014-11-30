@@ -15,6 +15,14 @@
 #ifndef __Anthem__Sample__
 #define __Anthem__Sample__
 
+/*************************************************************************************************//*!
+*
+*  @brief       Struct holding two double values for stereo audio.
+*
+*  @details     Multiplication, dvision, additon and subtraction between Samples all possible.
+*
+*****************************************************************************************************/
+
 struct Sample
 {
     Sample(double val = 0)
@@ -118,74 +126,6 @@ struct Sample
         ret.right -= other.right;
         
         return ret;
-    }
-    
-    Sample& operator= (double value)
-    {
-        left = value;
-        right = value;
-        
-        return *this;
-    }
-    
-    Sample& operator*= (double value)
-    {
-        left *= value;
-        right *= value;
-        
-        return *this;
-    }
-    
-    Sample operator* (double value)
-    {
-        Sample ret(*this);
-        
-        return (ret *= value);
-    }
-    
-    Sample& operator/= (double value)
-    {
-        left /= value;
-        right /= value;
-        
-        return *this;
-    }
-    
-    Sample operator/ (double value)
-    {
-        Sample ret(*this);
-        
-        return (ret /= value);
-    }
-    
-    Sample& operator += (double value)
-    {
-        left += value;
-        right += value;
-        
-        return *this;
-    }
-    
-    Sample operator+ (double value)
-    {
-        Sample ret(*this);
-        
-        return (ret += value);
-    }
-    
-    Sample& operator -= (double value)
-    {
-        left -= value;
-        right -= value;
-        
-        return *this;
-    }
-    
-    Sample operator- (double value)
-    {
-        Sample ret(*this);
-        
-        return (ret -= value);
     }
     
     double left;

@@ -329,9 +329,7 @@ public:
     
     /*************************************************************************************************//*!
     *
-    *  @brief       Sets the dry/wet parameter for the EffectUnit.
-    *
-    *  @param       dw The new dry/wet value, between 0 and 1.
+    *  @brief       Returns the dry/wet parameter for the EffectUnit.
     *
     *****************************************************************************************************/
     

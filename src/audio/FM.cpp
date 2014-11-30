@@ -27,7 +27,7 @@ FM::FM(Operator* a,
     setAlgorithm(alg);
 }
 
-void FM::setModes_(bool a, bool b, bool c, bool d)
+void FM::setOperatorModes_(bool a, bool b, bool c, bool d)
 {
     ops_[A]->setMode(a);
     ops_[B]->setMode(b);
@@ -49,23 +49,23 @@ void FM::setAlgorithm(unsigned short alg)
         case 2:
         case 3:
         case 6:
-            setModes_(0,0,0,1);
+            setOperatorModes_(0,0,0,1);
             break;
             
         case 4:
         case 5:
         case 7:
-            setModes_(0, 0, 1,1);
+            setOperatorModes_(0, 0, 1,1);
             break;
             
         case 8:
         case 9:
         case 10:
-            setModes_(0, 1, 1, 1);
+            setOperatorModes_(0, 1, 1, 1);
             break;
             
         case 11:
-            setModes_(1, 1, 1, 1);
+            setOperatorModes_(1, 1, 1, 1);
     }
 }
 

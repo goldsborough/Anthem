@@ -170,7 +170,7 @@ public:
     *
     *  @param       end An iterator to the end of a sequence of Partial objects.
     *
-    *  @param       wtLen The length of the wavetable to construct, 4095 is used throughout Anthem.
+    *  @param       wtLength The length of the wavetable to construct, 4095 is used throughout Anthem.
     *
     *  @param       masterAmp Attenuation value for all values in the table.
     *
@@ -179,6 +179,8 @@ public:
     *  @param       bitWidth Number of bits to scale to, defaults to 16 (bits).
     *
     *  @param       id The wavetable's id, defaults to -1.
+    *
+    *  @param       name An optional name for the Wavetable, as std::string.
     *
     *****************************************************************************************************/
     
@@ -201,6 +203,8 @@ public:
     *
     *  @param       id The wavetable's id, defaults to -1.
     *
+    *  @param       name An optional name for the Wavetable, as std::string.
+    *
     *****************************************************************************************************/
     
     Wavetable(double * ptr = 0,
@@ -217,6 +221,8 @@ public:
     *  @param       wtLength The length of the wavetable (and the array of values pointed to by ptr).
     *
     *  @param       id The wavetable's id, defaults to -1.
+    *
+    *  @param       name An optional name for the Wavetable, as std::string.
     *
     *****************************************************************************************************/
     

@@ -79,16 +79,22 @@ public:
     
 private:
     
+    /*! Returns an Operator's tick if active, else 0. */
     double tickIfActive_(index_t index);
     
-    void setModes_(bool a, bool b, bool c, bool d);
+    /*! Sets the Operators' modes. @see setAlgorithm() */
+    void setOperatorModes_(bool a, bool b, bool c, bool d);
     
+    /*! The four Operators used for synthesis. */
     Operator* ops_ [4];
     
+    /*! Frequency modulates an Operator with a value. */
     double modulate_(index_t carrier, double value);
     
+    /*! Performs additive synthesis for a carrier Operator and a value. */
     double add_(index_t carrier, double value);
     
+    /*! The current algorithm in use.  */
     index_t alg_;
     
 };

@@ -145,6 +145,7 @@ private:
     /*! The name of the current api as string. */
     std::string apiName_;
 
+    /*! The wrapped around audio api object from RtAudio. */
     RtAudio audio_;
 };
 

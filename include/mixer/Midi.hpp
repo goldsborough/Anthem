@@ -127,6 +127,7 @@ private:
     /*! The pointer to an Anthem object to send note-on/off signals to. */
     static Anthem* anthem_;
     
+    /*! The wrapped around midi api object from RtMidi. */
     RtMidiIn midi_;
 };
 

@@ -137,6 +137,7 @@ public:
     
 protected:
     
+    /*! Increments the oscillator's index with value. */
     void increment_(double value);
     
     /*! The current frequency */

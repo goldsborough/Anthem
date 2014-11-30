@@ -262,7 +262,9 @@ struct Echo : public Delay
     *  @param       decayRate The rate of decay/fade-out.
     *
     *  @param       feedbackLevel How much of the output to feed back into the delay line.
-    *                                                                                                   
+    *
+    *  @param       capacity The total capacity of the delay line, in seconds (must exceed length).
+    *
     *************************************************************************************************/
     
     Echo(double delayLen = 1,

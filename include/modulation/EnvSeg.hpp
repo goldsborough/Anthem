@@ -49,7 +49,7 @@ public:
      *
      *  @param      startLevel The starting level of the segment.
      *
-     *  @param      endAmp The ending level of the segment.
+     *  @param      endLevel The ending level of the segment.
      *
      *  @param      len The length of the segment in samples.
      *
@@ -57,8 +57,8 @@ public:
      *
      **************************************************************************************************/
     
-    EnvSeg(double startAmp = 0,
-           double endAmp = 0,
+    EnvSeg(double startLevel = 0,
+           double endLevel = 0,
            len_t len = 0,
            double rate = 1);
     
@@ -205,7 +205,7 @@ public:
     *
     *  @details     Calls setStartLevel and setEndLevel with the parameter.
     *
-    *  @param       The level.
+    *  @param       lv The new level.
     *
     *  @see         setStartLevel()
     *
@@ -243,10 +243,10 @@ private:
     double rate_;
     
     /*! Starting amplitude */
-    double startAmp_;
+    double startLevel_;
     
     /*! End amplitude */
-    double endAmp_;
+    double endLevel_;
     
     /*! Difference between end and start amplitude */
     double range_;
@@ -774,8 +774,10 @@ public:
     
 protected:
     
+    /*! Sets the ModDock base value for a segment. */
     void setSegModDockBaseValue(seg_t segNum, index_t dockNum, double value);
     
+    /*! Returns the ModDock base value for a segment. */
     double getSegModDockBaseValue(seg_t segNum, index_t dockNum) const;
 };
 

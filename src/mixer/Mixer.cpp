@@ -57,7 +57,7 @@ Mixer& Mixer::operator= (const Mixer& other)
     return *this;
 }
 
-Sample Mixer::process(double sample)
+Sample Mixer::process(Sample sample)
 {
     // Modulate panning value
     if (mods_[PAN].inUse())
@@ -70,22 +70,20 @@ Sample Mixer::process(double sample)
         masterAmp_ = mods_[MASTER_AMP].tick();
     }
     
-    Sample ret(sample);
-    
     // Attenuate samples with panning
-    ret.left *= pan_->left();
-    ret.right *= pan_->right();
+    sample.left *= pan_->left();
+    sample.right *= pan_->right();
     
     // Apply master amplitude
-    ret *= masterAmp_;
+    sample *= masterAmp_;
     
     // Send to wavefile if recording
     if (recording_)
     {
-        wavefile_.process(ret);
+        wavefile_.process(sample);
     }
     
-    return ret;
+    return sample;
 }
 
 void Mixer::setMasterAmp(double amp)

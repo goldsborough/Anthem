@@ -103,6 +103,7 @@ public:
         return *this;
     }
     
+    /*! Returns an item from the lookup table. */
     T& operator[] (index_t index)
     {
         // Make this object's data unique as it might
@@ -112,6 +113,7 @@ public:
         return data_[index];
     }
     
+    /*! Returns a const item from the lookup table. */
     const T& operator[] (index_t index) const
     {
         return data_[index];
@@ -124,7 +126,7 @@ public:
     *  @details     This function returns a proportionate value from a fractional index. For example,
     *               passing it an index of 1.5 will return [1] + (([2] - [1]) * 0.5).
     *
-    *  @param       ind The fractional index.
+    *  @param       index The fractional index.
     *
     *****************************************************************************************************/
     
