@@ -8,8 +8,10 @@
 #include "Noise.hpp"
 #include "Operator.hpp"
 
+#include "Reverb.hpp"
 #include "Delay.hpp"
-#include "Effects.hpp"
+#include "EffectBlock.hpp"
+#include "Delay.hpp"
 #include "Filter.hpp"
 
 #include "AudioOutput.hpp"
@@ -39,11 +41,7 @@ struct Anthem
     
     Filter filters [2];
     
-    Delay delays [2];
-    
-    Echo echos [2];
-    
-    Reverb reverbs [2];
+    EffectBlock effects [2];
     
     Noise noise;
     
@@ -69,7 +67,9 @@ private:
     
     void update_();
     
-    std::vector<note_t> notes_;
+    note_t note_;
+    
+    bool active_;
     
 };
 

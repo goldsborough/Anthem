@@ -45,7 +45,7 @@ public:
     
     Oscillator(unsigned short wt = 0, double frq = 1, short phaseOffset = 0);
     
-    virtual ~Oscillator() { }
+    virtual ~Oscillator();
     
     /*************************************************************************************************//*!
     *
@@ -57,7 +57,7 @@ public:
     
     /*************************************************************************************************//*!
     *
-    *  @brief       Increments the oscillator in the wavetable. 
+    *  @brief       Updates the oscillator's index in the wavetable. 
     *
     *****************************************************************************************************/
     

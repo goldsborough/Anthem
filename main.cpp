@@ -16,13 +16,16 @@ int main(int argc, const char * argv[])
     
     anthem.operators[Anthem::A].setLevel(0.5);
     
-    anthem.operators[Anthem::A].attachMod(Operator::LEVEL, &anthem.lfos[Anthem::A].lfos(0));
     
-    anthem.lfos[Anthem::A].lfos(Anthem::A).setFrequency(2);
+    anthem.effects[Anthem::A].setActive(true);
     
-    anthem.operators[Anthem::A].setModUnitDepth(Operator::LEVEL, 0, 0.5);
+    anthem.effects[Anthem::A].setEffectType(EffectBlock::REVERB);
     
-    anthem.mixer.setMasterAmp(0.8);
+    anthem.effects[Anthem::A].reverb().setDryWet(0.1);
+    
+    anthem.effects[Anthem::A].reverb().setReverbRate(0.5);
+    
+    anthem.effects[Anthem::A].reverb().setReverbTime(5);
     
     anthem.mixer.startRecording();
     
@@ -30,7 +33,7 @@ int main(int argc, const char * argv[])
     
     clock_t t = clock();
     
-    while(clock() < t + (10 * CLOCKS_PER_SEC));
+    while(1);//(clock() < t + (10 * CLOCKS_PER_SEC));
     
     anthem.mixer.saveRecording();
     

@@ -26,6 +26,11 @@ Oscillator::Oscillator(unsigned short wt, double frq, short phaseOffset)
     setFrequency(frq);
 }
 
+Oscillator::~Oscillator()
+{
+    
+}
+
 void Oscillator::setWavetable(short wt)
 {
     wt_ = wavetableDatabase[wt];

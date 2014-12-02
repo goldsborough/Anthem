@@ -234,6 +234,18 @@ EnvSegSeq& EnvSegSeq::operator= (const EnvSegSeq& other)
     return *this;
 }
 
+void EnvSegSeq::reset()
+{
+    for(segItr itr = segs_.begin(), end = segs_.end();
+        itr != end;
+        ++itr)
+    {
+        itr->reset();
+    }
+    
+    changeSeg_(segs_.begin());
+}
+
 void EnvSegSeq::setSegRate(seg_t seg, double rate)
 {
     segs_[seg].setRate(rate);

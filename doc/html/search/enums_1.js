@@ -1,0 +1,4 @@
+var searchData=
+[
+  ['docks',['Docks',['../class_noise.html#ad0f81661c9ef81cc09673a25d0b49a73',1,'Noise::Docks()'],['../class_operator.html#abe4218747c56b61f437e9dfb12cbd5cd',1,'Operator::Docks()'],['../class_delay.html#ae1296fa425fa65288c09dcd3a4527ed0',1,'Delay::Docks()'],['../class_filter.html#a3907713af9b5285cbd9bbfc68b28efa7',1,'Filter::Docks()'],['../class_mixer.html#ab283cab5bad068f87e9b0b7d9ed14477',1,'Mixer::Docks()'],['../class_crossfader.html#acb7aed396e73fdccf7da54684f1cc83f',1,'Crossfader::Docks()'],['../class_envelope.html#a3caa6c81be004db9023dcd220a6d7ba5',1,'Envelope::Docks()'],['../class_l_f_o.html#a4a0add6040d322a9357cbe80cc83ea5c',1,'LFO::Docks()'],['../class_l_f_o_seq.html#a77188420b87a10ccd2dac1b648020f67',1,'LFOSeq::Docks()'],['../class_l_f_o_unit.html#a6f453422e63a45125e4d67bc4132c9d8',1,'LFOUnit::Docks()'],['../class_macro.html#ad5c5dc63d595792cd517a369850de554',1,'Macro::Docks()']]]
+];

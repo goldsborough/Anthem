@@ -504,6 +504,14 @@ public:
 
     virtual std::vector<EnvSeg>::size_type size() const;
     
+    /******************************************************************************//*!
+    *
+    *  @brief      Resets the EnvSegSeq to its first sample.
+    *
+    *********************************************************************************/
+    
+    virtual void reset();
+    
 protected:
     
     typedef std::vector<EnvSeg>::iterator segItr;

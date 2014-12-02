@@ -14,47 +14,66 @@ Anthem::Anthem()
 : fm(&operators[A],
      &operators[B],
      &operators[C],
-     &operators[D])
+     &operators[D]),
+  active_(false)
 {
-    notes_.reserve(8);
+    operators[A].setActive(true);
     
     midi.init(this);
     
     audio.init(this);
 }
 
+
 void Anthem::setNote(note_t note, bool on)
 {
     if (on)
     {
-        notes_.push_back(note);
+        for (unsigned short i = A; i <= D; ++i)
+        {
+            operators[i].setNote(note);
+        }
+        
+        active_ = true;
     }
     
-    else if (! notes_.empty())
+    else
     {
-       notes_.erase(std::find(notes_.begin(), notes_.end(), note));
+        for (unsigned short i = A; i <= D; ++i)
+        {
+            if (envelopes[i].isActive())
+            {
+                envelopes[i].reset();
+            }
+        }
+        
+        active_ = false;
     }
 }
 
 Sample Anthem::tick_()
 {
     double tick = 0;
-    Sample sample;
     
-    for (std::vector<note_t>::const_iterator itr = notes_.begin(), end = notes_.end();
-         itr != end;
-         ++itr)
+    if (active_)
     {
-        operators[A].setNote(*itr);
-        
-        double temp = operators[A].tick();
-        
-        tick += temp;
+        tick = operators[A].tick();
     }
     
-    sample = mixer.process(tick);
+    for (unsigned short i = A; i <= B; ++i)
+    {
+        if (filters[i].isActive())
+        {
+            tick = filters[i].process(tick);
+        }
+        
+        if (effects[i].isActive())
+        {
+            tick = effects[i].process(tick);
+        }
+    }
     
-    return sample;
+    return mixer.process(tick);
 }
 
 void Anthem::update_()

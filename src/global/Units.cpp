@@ -16,11 +16,12 @@
 
 Unit::Unit(index_t numDocks)
 : mods_(new ModDock [numDocks]),
-  numDocks_(numDocks)
+  numDocks_(numDocks), active_(false)
 { }
 
 Unit::Unit(const Unit& other)
-: mods_(new ModDock [other.numDocks_])
+: mods_(new ModDock [other.numDocks_]),
+  active_(other.active_)
 {
     for (index_t i = 0; i < other.numDocks_; ++i)
     {
@@ -32,6 +33,8 @@ Unit& Unit::operator=(const Unit& other)
 {
     if (this != &other)
     {
+        active_ = true;
+        
         mods_.reset(new ModDock [other.numDocks_]);
         
         for (index_t i = 0; i < other.numDocks_; ++i)
