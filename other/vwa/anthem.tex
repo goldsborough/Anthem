@@ -1,0 +1,109 @@
+% Developing a digital synthesizer in C++
+
+\documentclass{report}
+
+\usepackage{listings}
+
+\usepackage{color}
+
+\usepackage{url}
+
+\begin{document}
+
+  \definecolor{custommagenta}{RGB}{230,70,165}
+  \definecolor{customgreen}{RGB}{30,210,100}
+  \definecolor{customgray}{gray}{0.5}
+
+  \lstset{
+  % Format settings
+  language=C++,
+  tabsize=4,
+  breakatwhitespace=true,
+  breaklines=true,
+  frame=leftline,
+  rulecolor=\color{green},
+  captionpos=b,
+  keepspaces=true,
+  showstringspaces=false,
+  numbers=left,
+  numberstyle=\small,
+  % Style settings
+  basicstyle=\ttfamily,
+  keywordstyle=\color{custommagenta}\ttfamily,
+  stringstyle=\color{customgreen}\ttfamily,
+  commentstyle=\color{customgray}\ttfamily,
+  morecomment=[l][\color{red}]{\#}
+  }
+
+  % Macro for source code inclusion. Moves to main
+  % directory then takes the further path as argument
+  \newcommand{\code}[1]{\lstinputlisting{../../#1}}
+
+  \title{Developing a digital synthesizer in C++}
+
+  \author{
+    Peter Goldsborough\\
+    \texttt{petergoldsborough@hotmail.com}
+  }
+
+  \date{\today}
+
+  \maketitle
+
+  \chapter{Modulating sound}
+
+  A variable: $A$
+
+    \section{Envelopes}
+
+    $$ \sqrt{4} = 2 $$
+
+      \subsection{Single segments}
+
+      Creating a digital synthesizer is simple \cite{bsynth}.
+
+        \subsubsection{The EnvSeg class}
+        \pagebreak
+        \code{src/effects/reverb.cpp}
+
+  \begin{thebibliography}{99}
+
+    \bibitem{bsynth}
+
+      Daniel R. Mitchell,
+
+      \emph{BasicSynth: Creating a Music Synthesizer in Software}.
+
+      Publisher: Author.
+
+      1st Edition,
+
+      2008.
+
+    \bibitem{dspguide}
+
+      Steven W. Smith
+
+      \emph{The Scientist and Engineer's Guide to Digital Signal Processing}.
+
+      California Technical Publishing,
+
+      San Diego, California,
+
+      2nd Edition,
+
+      1999.
+
+    \bibitem{sosfm}
+
+      Gordon Reid.
+
+      \emph{Synth Secrets, Part 12: An Introduction To Frequency Modulation}.
+
+      \url{http://www.soundonsound.com/sos/apr00/articles/synthsecrets.htm}
+
+      Accessed: 8 October 2014.
+
+  \end{thebibliography}
+
+\end{document}

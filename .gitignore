@@ -23,6 +23,13 @@
 # Other files
 *.xcodeproj
 *~
+*.pdf
+*.synctex.gz
+*.fls
+*.log
+*.aux
+*.dvi
+*.fdb_latexmk
 
 # Folders
 build*
