@@ -18,6 +18,8 @@ public:
     
     Flanger(const Flanger& other);
     
+    ~Flanger();
+    
     Flanger& operator= (const Flanger& other);
     
     double process(double sample);

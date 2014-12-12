@@ -13,7 +13,9 @@
 #ifndef __Anthem__Oscillator__
 #define __Anthem__Oscillator__
 
-#include "Wavetable.hpp"
+#include <memory>
+
+class Wavetable;
 
 /*************************************************************************************************//*!
 *
@@ -44,6 +46,10 @@ public:
     *****************************************************************************************************/
     
     Oscillator(unsigned short wt = 0, double frq = 1, short phaseOffset = 0);
+    
+    Oscillator(const Oscillator& other);
+    
+    Oscillator& operator= (const Oscillator& other);
     
     virtual ~Oscillator();
     
@@ -153,7 +159,7 @@ protected:
     double phaseOffset_;
     
     /*! The wavetable member currently in use */
-    Wavetable wt_;
+    std::unique_ptr<Wavetable> wt_;
 };
 
 #endif /* defined(__Anthem__Oscillator__) */

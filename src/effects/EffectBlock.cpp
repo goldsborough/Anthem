@@ -3,6 +3,8 @@
 #include "Reverb.hpp"
 #include "Delay.hpp"
 
+#include <stdexcept>
+
 EffectBlock::EffectBlock(unsigned short effect)
 : reverb_(new Reverb),
   delay_(new Delay),
@@ -15,6 +17,11 @@ EffectBlock::~EffectBlock()
 
 double EffectBlock::process(double sample)
 {
+    if (! active_) return sample;
+    
+    if (! curr_)
+    { throw std::invalid_argument("Effect is currently NONE!"); }
+    
     return curr_->process(sample);
 }
 

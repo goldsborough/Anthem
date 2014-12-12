@@ -22,6 +22,11 @@ lfo_(new LFO(*other.lfo_)),
 delay_(new Delay(*other.delay_))
 { }
 
+Flanger::~Flanger()
+{
+    
+}
+
 Flanger& Flanger::operator= (const Flanger& other)
 {
     if (this != &other)

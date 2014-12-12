@@ -11,19 +11,41 @@
 #include "Oscillator.hpp"
 #include "Global.hpp"
 #include "Util.hpp"
+#include "Wavetable.hpp"
 
 #include <stdexcept>
 
 Oscillator::Oscillator(unsigned short wt, double frq, short phaseOffset)
-
-: ind_(0), phaseOffset_(phaseOffset)
-
+: ind_(0), phaseOffset_(phaseOffset),
+  wt_(new Wavetable(wavetableDatabase[wt]))
 {
-    wt_ = wavetableDatabase[wt];
-    
     setPhaseOffset(phaseOffset);
     
     setFrequency(frq);
+}
+
+Oscillator::Oscillator(const Oscillator& other)
+: ind_(other.ind_), phaseOffset_(other.phaseOffset_),
+  freq_(other.freq_), indIncr_(other.indIncr_),
+  wt_(new Wavetable(*other.wt_))
+{ }
+
+Oscillator& Oscillator::operator=(const Oscillator &other)
+{
+    if (&other != this)
+    {
+        ind_ = other.ind_;
+        
+        indIncr_ = other.indIncr_;
+        
+        phaseOffset_ = other.phaseOffset_;
+        
+        freq_ = other.freq_;
+        
+        wt_.reset(new Wavetable(*other.wt_));
+    }
+    
+    return *this;
 }
 
 Oscillator::~Oscillator()
@@ -33,12 +55,12 @@ Oscillator::~Oscillator()
 
 void Oscillator::setWavetable(short wt)
 {
-    wt_ = wavetableDatabase[wt];
+    wt_.reset(new Wavetable(wavetableDatabase[wt]));
 }
 
 short Oscillator::getWavetableID() const
 {
-    return wt_.id();
+    return wt_->id();
 }
 
 void Oscillator::setFrequency(double Hz)
@@ -112,5 +134,5 @@ void Oscillator::update()
 double Oscillator::tick()
 {
     // Grab a value through interpolation from the wavetable
-    return wt_.interpolate(ind_);
+    return wt_->interpolate(ind_);
 }
