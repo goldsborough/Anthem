@@ -5,7 +5,7 @@ int main(int argc, char * argv[])
   // The sample rate, 48 kHz.
   const unsigned short samplerate = 48000;
 
-  //\ The duration of the generated sine wave, in seconds.
+  // The duration of the generated sine wave, in seconds.
   const unsigned long duration = 1;
 
   // The number of samples that will be generated, derived

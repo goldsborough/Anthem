@@ -18,20 +18,12 @@ int main(int argc, const char * argv[])
     
     anthem.audio.start();
     
-    anthem.mixer.startRecording();
-    
-    anthem.operators[Anthem::A].setFrequencyOffset(1);
-    
-    anthem.operators[Anthem::A].setLevel(2.8);
-    
-    anthem.mixer.setPanType(PantableDatabase::LINEAR);
-    
-    anthem.mixer.setMasterAmp(1);
+    //anthem.mixer.startRecording();
     
     clock_t t = clock();
     
-    while(clock() < t + (1 * CLOCKS_PER_SEC));
+    while(1);//(clock() < t + (1 * CLOCKS_PER_SEC));
     
-    anthem.mixer.saveRecording();
+    //anthem.mixer.saveRecording();
     
 }

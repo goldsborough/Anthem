@@ -1,6 +1,6 @@
 % Developing a digital synthesizer in C++
 
-\documentclass[12pt]{report}
+\documentclass[12pt,twoside]{report}
 
 \usepackage{listings}
 
@@ -10,7 +10,7 @@
 
 \usepackage{graphicx}
 
-\usepackage{newtxtext,newtxmath}
+\usepackage{newtxtext}
 
 \usepackage[a4paper,margin=1in]{geometry}
 
@@ -20,16 +20,19 @@
 
 \usepackage{gensymb}
 
+\usepackage{multicol}
+
 \begin{document}
 
 \everymath{\displaystyle}
 
-\pagestyle{fancy}
 \fancyhf{}
 %\renewcommand{\headrulewidth}{0pt}
-\lhead{\leftmark}
-\rhead{\rightmark}
-\cfoot{\thepage}
+\fancyhead[RO]{\leftmark}
+\fancyhead[RE]{SECTION \rightmark}
+\fancyhead[LO,LE]{\thepage}
+
+\pagestyle{fancy}
 
 \definecolor{custommagenta}{RGB}{230,70,165}
 \definecolor{customgreen}{RGB}{30,210,100}
@@ -57,7 +60,7 @@ morecomment=[l][\color{red}]{\#}
 
 % Macro for source code inclusion. Moves to main
 % directory then takes the further path as argument
-\newcommand{\code}[1]{\lstinputlisting{../#1}}
+\newcommand{\code}[1]{\lstinputlisting{#1}}
 
 \newcommand{\citebs}[1]{(Mitchell, 2008, p. #1)}
 
@@ -209,18 +212,16 @@ The following sections will outline how digital sound can be generated in theory
 The simplest possible waveform is the sine wave. As a function of time, it can be mathematically represented by equation \ref{eq:sine}, where $A$ is the maximum amplitude of the signal, $f$ the frequency in Hertz and $\phi$ an initial phase offset in radians:
 
 \begin{equation}
-  y_{s}(t) = A \sin(2 \pi  f t + \phi)
+  f_{s}(t) = A \sin(2 \pi  f t + \phi)
   \label{eq:sine}
 \end{equation}
 
-A computer program to compute the values of a sine wave with a variable duration, implemented in C++, is shown in Table \ref{code:sine}. Another waveform similar to the sine wave is the cosine wave, which differs only in a phase offset of 90\degree or $\frac{\pi}{2}$ radians:
-
+A computer program to compute the values of a sine wave with a variable duration, implemented in C++, is shown in Table \ref{code:sine}. Another waveform similar to the sine wave is the cosine wave, which differs only in a phase offset of 90\degree or $\frac{\pi}{2}$ radians:\\
 \begin{equation}
-  y_{c}(t) = A \cos(2 \pi  f t + \phi) = A \sin(2 \pi f t + \phi + 90)
+  f_{c}(t) = A \cos(2 \pi  f t + \phi) = A \sin(2 \pi f t + \phi + 90)
   \label{eq:cosine}
-\end{equation}
-
-Therefore, the sine-wave-generating program from Table \ref{code:sine} could be modified to compute a cosine wave by changing line 22 from:\\
+\end{equation}\\
+Therefore, the program from Table \ref{code:sine} could be modified to compute a cosine wave by changing line 22 from:\\
 
 \begin{lstlisting}[firstnumber=22]
   double phase = 0;
@@ -230,13 +231,65 @@ to
   double phase = pi/2.0;
 \end{lstlisting}
 
-\begin{table}
-  \lstinputlisting{code/sine.cpp}
+\begin{table}[h!]
+  \code{code/sine.cpp}
   \label{code:sine}
   \caption{C++ implementation of a sine wave generator.}
 \end{table}
 
+\section{Complex Waveforms}
+
+Now that the process of creating simple sine and cosine waves has been discussed, the generation of more complex waveforms can be examined. Generally, there are two methods by which complex waveforms can be created in a digital synthesis system: mathematical calculation or additive synthesis.
+
+\subsection{Mathematical Calculation of Complex Waveforms}
+
+In the first case --- mathematical calculation, waveforms are computed according to certain mathematical formulae and thus yield \emph{perfect} or \emph{exact} waveforms, such as a square wave that is equal to the maximum amplitude exactly one half of a period and equal to the minimum amplitude for the rest of the period. While these waveforms produce a very crisp and clear sound, they are rarely found in nature due to their degree of perfection and are consequently rather undesirable for a music synthesizer. Nevertheless, they are considerably useful for modulating other signals, as tiny acoustical imperfections such as those found in additively synthesized waveforms can result in unwanted distortion which is not encountered when using mathematically calculated waveforms. Therefore, exact waveforms are the best choice for modulation sources such as Low Frequency Oscillators (LFOs), which are discussed in later chapters. \citebs{71}\\\\
+The following paragraphs will analyze how four of the most common waveforms found in digital synthesizers, the square, the sawtooth, the ramp and the triangle wave, can be generated via mathematical calculation.\\\\
+\emph{Note: There have found to be disparities in literature over which waveform is a sawtooth and which a ramp wave. This thesis will consider a sawtooth wave as descending from maximum to minimum amplitude with time and a ramp wave as ascending from minimum to maximum amplitude with time.}
+
+\subsubsection{Square Waves}
+
+Ideally, a square wave is equal to its maximum amplitude for exactly one half of a period and equal to its minimum amplitude for the other half of the same period. A single period of a square wave can be calculated as shown in Equation \ref{eq:dsquare1}. A mathematical equation for a full, periodic square wave function is given by Equation \ref{eq:dsquare2} and an equivalent computer program is shown in Table \ref{code:dsquare}.
+
+\begin{multicols}{2}
+
+  \begin{equation}
+    f(t) =
+    \begin{cases}
+      1,& \text{if } t < \frac{T}{2}\\
+      -1,& \text{otherwise}
+    \end{cases}
+    \label{eq:dsquare1}
+  \end{equation}
+
+  \begin{equation}
+    f(t) =
+    \begin{cases}
+      1,& \text{if } \sin(t) > 0\\
+      -1,& \text{otherwise}
+    \end{cases}
+    \label{eq:dsquare2}
+  \end{equation}
+
+\end{multicols}
+
+\begin{table}[t!]
+  \code{code/dsquare.cpp}
+  \caption{C++ code to generate and return one period of a square wave, where \texttt{length} is the period duration in samples. }
+  \label{code:dsquare}
+\end{table}
+
+\subsubsection{Sawtooth Waves}
+
+
+
+\subsection{Additive Synthesis}
+
+The second method, Additive Synthesis, produces waveforms that, despite not being mathematically perfect, are closer to the waveforms found naturally. This method involves the summation of a finite set of sine waves with varying parameters and is often called Fourier Synthesis, after the 18th century French scientist, Joseph Fourier, who first described the process and associated phenomena of summing sine and cosine waves to produce complex waveforms.
+
 \section{Real-time calculation versus Wavetable lookup}
+
+Before the generation of more complex waveforms than the sine and cosine waves from section 2.1 can be discussed, the two options for playing back waveforms in a digital synthesis system must be examined: continuous real-time calculation of waveform samples or lookup from a table that has been calculated once and then written to disk.
 
 \begin{thebibliography}{99}
 

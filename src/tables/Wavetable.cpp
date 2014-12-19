@@ -269,8 +269,7 @@ double* Wavetable::smoothSquare_() const
         
         wt[n] = val;
         
-        if ( (ind += incr) >= Global::wtLen)
-        { ind -= Global::wtLen; }
+        ind += incr;
     }
     
     wt[Global::wtLen] = wt[0];
@@ -296,8 +295,7 @@ double* Wavetable::directSquare_() const
     {
         wt[n] = (ind < mid) ? -1 : 1;
         
-        if ( (ind += sampleTime) >= Global::wtLen)
-        { ind -= Global::wtLen; }
+        ind += sampleTime;
     }
     
     wt[Global::wtLen] = wt[0];
@@ -321,8 +319,7 @@ double* Wavetable::directSaw_() const
     {
         wt[n] = ind;
         
-        if ( (ind -= incr) <= -1)
-            ind = 1;
+        ind -= incr;
     }
     
     wt[Global::wtLen] = wt[0];
@@ -353,7 +350,7 @@ double* Wavetable::directTriangle_() const
         wt[n] = triValue;
         
         if ( (phase += phaseIncr) >= Global::pi)
-            phase -= Global::twoPi;
+        { phase -= Global::twoPi;}
     }
     
     wt[Global::wtLen] = wt[0];
