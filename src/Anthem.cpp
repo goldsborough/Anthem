@@ -41,6 +41,11 @@ void Anthem::setNote(note_t note, bool on)
     {
         for (unsigned short i = A; i <= D; ++i)
         {
+            operators[i].setSilent();
+        }
+        
+        for (unsigned short i = A; i <= D; ++i)
+        {
             if (envelopes[i].isActive())
             {
                 envelopes[i].reset();
@@ -55,10 +60,7 @@ Sample Anthem::tick_()
 {
     double tick = 0;
     
-    if (active_)
-    {
-        tick = operators[A].tick();
-    }
+    tick = operators[A].tick();
     
     for (unsigned short i = A; i <= B; ++i)
     {

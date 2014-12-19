@@ -64,10 +64,16 @@ bool Operator::getMode() const
     return mode_;
 }
 
+void Operator::setSilent()
+{
+    // 0 frequency means no increment and thus silence
+    noteFreq_ = freq_ = indIncr_ = note_ = 0;
+}
+
 void Operator::setLevel(double level)
 {
-    if (level < 0 || (mode_ && level > 1) || (! mode_ && level > 10))
-    { throw std::invalid_argument("Level out of range!"); }
+    //if (level < 0 || (mode_ && level > 1) || (! mode_ && level > 10))
+    //{ throw std::invalid_argument("Level out of range!"); }
     
     level_ = (mode_) ? level : level * realFreq_;
     
