@@ -23,7 +23,7 @@
 # Other files
 *.xcodeproj
 *~
-*.pdf
+*.toc
 *.synctex.gz
 *.fls
 *.log

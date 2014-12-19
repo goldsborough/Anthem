@@ -1,9 +1,0 @@
-\contentsline {chapter}{\numberline {1}Sound in the Digital Realm}{2}
-\contentsline {section}{\numberline {1.1}What is a Music Synthesizer?}{2}
-\contentsline {section}{\numberline {1.2}From Analog to Digital}{2}
-\contentsline {section}{\numberline {1.3}Sample Rate}{3}
-\contentsline {section}{\numberline {1.4}Nyquist limit}{3}
-\contentsline {section}{\numberline {1.5}Aliasing}{4}
-\contentsline {section}{\numberline {1.6}Overflow}{6}
-\contentsline {chapter}{\numberline {2}Generating Sound}{8}
-\contentsline {section}{\numberline {2.1}Simple Waveforms}{8}
