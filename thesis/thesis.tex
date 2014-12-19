@@ -12,6 +12,8 @@
 
 \usepackage{newtxtext}
 
+\usepackage[labelfont=bf]{caption}
+
 \usepackage[a4paper,margin=1in]{geometry}
 
 \usepackage{fancyhdr}
@@ -21,6 +23,10 @@
 \usepackage{gensymb}
 
 \usepackage{multicol}
+
+\usepackage{multirow}
+
+\usepackage{floatrow}
 
 \begin{document}
 
@@ -66,6 +72,8 @@ morecomment=[l][\color{red}]{\#}
 
 \newcommand{\citedsp}[1]{(Smith, 1999, p. #1)}
 
+\newcommand{\sidecap}[3]{\floatbox[{\capbeside\thisfloatsetup{capbesideposition={right,center}}}]{table}[\FBwidth]{\caption{#1} \label{#2}}{#3}}
+
 \title{Developing a Digital Synthesizer in C++}
 
 \author{
@@ -87,7 +95,7 @@ Peter Goldsborough\\
 
 \section{From Analog to Digital}
 
-Our everyday experience of sound is an entirely analog one. When a physical     object emits or reflects a sound wave into space and towards our ears, the signal produced consists of an infinite set of values, spaced apart in infinitesimal intervals. Due to the fact that such a signal has an amplitude value at every single point in time, it is called a continuous signal. \citedsp{11} Figure \ref{fig:cont} displays the continuous representation of a sine wave.
+Our everyday experience of sound is an entirely analog one. When a physical     object emits or reflects a sound wave into space and towards our ears, the signal produced consists of an infinite set of values, spaced apart in infinitesimal intervals. Due to the fact that such a signal has an amplitude value at every single point in time, it is called a continuous signal. \citedsp{11} figure \ref{fig:cont} displays the continuous representation of a sine wave.
 
 \begin{figure}[h!]
 
@@ -103,7 +111,7 @@ Our everyday experience of sound is an entirely analog one. When a physical     
 
 \pagebreak
 
-While continuous signals and the idea of an infinite, uncountable set of values are easy to model in mathematics and physics --- the analog world, computers --- in the digital world --- effectively have no means by which to represent something that is infinite, since computer memory is a finite resource. Therefore, signals in the digital domain are discrete, meaning they are composed of periodic \emph{samples}. A sample is a discrete recording of a continuous signal's amplitude, taken in a constant time interval \citebs{16}. The process by which a continuous signal is converted to a discrete signal is called \emph{quantization}, \emph{digitization} or simply \emph{analog-to-digital-conversion} \citedsp{35-36} \citebs{16}. The reverse process of converting discrete samples to a continuous signal is called \emph{digital-to-analog-conversion} \citebs{17}. Figure \ref{fig:disc} shows the discrete representation of a sine wave, the same signal that was previously shown as a continuous signal in Figure \ref{fig:cont}.
+While continuous signals and the idea of an infinite, uncountable set of values are easy to model in mathematics and physics --- the analog world, computers --- in the digital world --- effectively have no means by which to represent something that is infinite, since computer memory is a finite resource. Therefore, signals in the digital domain are discrete, meaning they are composed of periodic \emph{samples}. A sample is a discrete recording of a continuous signal's amplitude, taken in a constant time interval \citebs{16}. The process by which a continuous signal is converted to a discrete signal is called \emph{quantization}, \emph{digitization} or simply \emph{analog-to-digital-conversion} \citedsp{35-36} \citebs{16}. The reverse process of converting discrete samples to a continuous signal is called \emph{digital-to-analog-conversion} \citebs{17}. figure \ref{fig:disc} shows the discrete representation of a sine wave, the same signal that was previously shown as a continuous signal in figure \ref{fig:cont}.
 
 \begin{figure}[h!]
 
@@ -129,7 +137,7 @@ Given the definition of the Nyquist limit and considering the fact that the limi
 
 \section{Aliasing}
 
-When a signal's frequency exceeds the Nyquist limit, it is said to produce an \emph{alias}, a new signal with a different frequency that is indistinguishable from the original signal when sampled. This is due to the fact that a signal with a frequency component above the Nyquist limit no longer has one sample taken above and one below the zero level for each cycle, but at arbitrary points of the original signal, which, when reconstructed, yield an entirely different signal. For example, if the sinusoid depicted in Figure \ref{fig:orig}, with a frequency of 4 Hz, is sampled at a sample rate of 5 samples per second, shown in Figure \ref{fig:sampled} meaning the frequency of the continuous signal is higher than the Nyquist limit (here 2.5 Hz), the reconstructed signal, approximated in Figure \ref{fig:approx}, will look completely different from the original sinusoid. "This phenomenon of [signals] changing frequency during sampling is called aliasing, [...] an example of improper sampling" \citedsp{40}.
+When a signal's frequency exceeds the Nyquist limit, it is said to produce an \emph{alias}, a new signal with a different frequency that is indistinguishable from the original signal when sampled. This is due to the fact that a signal with a frequency component above the Nyquist limit no longer has one sample taken above and one below the zero level for each cycle, but at arbitrary points of the original signal, which, when reconstructed, yield an entirely different signal. For example, if the sinusoid depicted in figure \ref{fig:orig}, with a frequency of 4 Hz, is sampled at a sample rate of 5 samples per second, shown in figure \ref{fig:sampled} meaning the frequency of the continuous signal is higher than the Nyquist limit (here 2.5 Hz), the reconstructed signal, approximated in figure \ref{fig:approx}, will look completely different from the original sinusoid. "This phenomenon of [signals] changing frequency during sampling is called aliasing, [...] an example of improper sampling" \citedsp{40}.
 
 \begin{figure}[b!]
 
@@ -161,7 +169,7 @@ When a signal's frequency exceeds the Nyquist limit, it is said to produce an \e
 
   \includegraphics[scale=0.5]{img/approx}
 
-  \caption{An approximated representation of the signal created from the sampling process shown in Figure \ref{fig:sampled}. Visually as well as acoustically, the new signal is completely different from the original signal. However, in terms of sampling, they are indistinguishable from each other due to improper sampling. These signals are said to be \emph{aliases} of each other.}
+  \caption{An approximated representation of the signal created from the sampling process shown in figure \ref{fig:sampled}. Visually as well as acoustically, the new signal is completely different from the original signal. However, in terms of sampling, they are indistinguishable from each other due to improper sampling. These signals are said to be \emph{aliases} of each other.}
 
   \label{fig:approx}
 
@@ -177,7 +185,7 @@ $$0111111111111111_{2} + 1 = 1000000000000000_{2} = -32768_{10}$$
 
 $$1000000000000000_{2} - 1 = 0111111111111111_{2} = 32767_{10}$$
 
-A visualization of the result of increasing the amplitude of a signal with a saturated value (an amplitude of 1), shown in Figure \ref{fig:no-over}, is given in Figure \ref{fig:over}.
+A visualization of the result of increasing the amplitude of a signal with a saturated value (an amplitude of 1), shown in figure \ref{fig:no-over}, is given in figure \ref{fig:over}.
 
 \begin{figure}[p]
 
@@ -197,7 +205,7 @@ A visualization of the result of increasing the amplitude of a signal with a sat
 
   \includegraphics[scale=0.5]{img/over}
 
-  \caption{What happens when the amplitude of the signal from Figure \ref{fig:no-over} is increased by a factor of 2. Because the top-most sample had a saturated value, increasing it results in overflow into the negative range. Also other samples have overflowed and thus changed their sign. Because of the way two's-complement representation is implemented, the signal continues it's path as if no overflow had ever occurred. The only difference being, of course, that the sign has changed mid-way.}
+  \caption{What happens when the amplitude of the signal from figure \ref{fig:no-over} is increased by a factor of 2. Because the top-most sample had a saturated value, increasing it results in overflow into the negative range. Also other samples have overflowed and thus changed their sign. Because of the way two's-complement representation is implemented, the signal continues it's path as if no overflow had ever occurred. The only difference being, of course, that the sign has changed mid-way.}
 
   \label{fig:over}
 
@@ -216,12 +224,12 @@ The simplest possible waveform is the sine wave. As a function of time, it can b
   \label{eq:sine}
 \end{equation}
 
-A computer program to compute the values of a sine wave with a variable duration, implemented in C++, is shown in Table \ref{code:sine}. Another waveform similar to the sine wave is the cosine wave, which differs only in a phase offset of 90\degree or $\frac{\pi}{2}$ radians:\\
+A computer program to compute the values of a sine wave with a variable duration, implemented in C++, is shown in table \ref{code:sine}. Another waveform similar to the sine wave is the cosine wave, which differs only in a phase offset of 90\degree or $\frac{\pi}{2}$ radians:\\
 \begin{equation}
   f_{c}(t) = A \cos(2 \pi  f t + \phi) = A \sin(2 \pi f t + \phi + 90)
   \label{eq:cosine}
 \end{equation}\\
-Therefore, the program from Table \ref{code:sine} could be modified to compute a cosine wave by changing line 22 from:\\
+Therefore, the program from table \ref{code:sine} could be modified to compute a cosine wave by changing line 22 from:\\
 
 \begin{lstlisting}[firstnumber=22]
   double phase = 0;
@@ -234,7 +242,7 @@ to
 \begin{table}[h!]
   \code{code/sine.cpp}
   \label{code:sine}
-  \caption{C++ implementation of a sine wave generator.}
+  \caption{C++ implementation of a complete sine wave generator.}
 \end{table}
 
 \section{Complex Waveforms}
@@ -249,15 +257,15 @@ The following paragraphs will analyze how four of the most common waveforms foun
 
 \subsubsection{Square Waves}
 
-Ideally, a square wave is equal to its maximum amplitude for exactly one half of a period and equal to its minimum amplitude for the other half of the same period. A single period of a square wave can be calculated as shown in Equation \ref{eq:dsquare1}. A mathematical equation for a full, periodic square wave function is given by Equation \ref{eq:dsquare2} and an equivalent computer program is shown in Table \ref{code:dsquare}.
+Ideally, a square wave is equal to its maximum amplitude for exactly one half of a period and equal to its minimum amplitude for the other half of the same period. A single period of a square wave can be calculated as shown in equation \ref{eq:dsquare1}, where the independent variable $t$ as well as the period $T$ can be either in samples or in seconds. A mathematical equation for a full, periodic square wave function is given by equation \ref{eq:dsquare2}, where $t$ is time in seconds and the frequency $f$ in Hertz. An equivalent C++ computer program is shown in table \ref{code:dsquare}.
 
 \begin{multicols}{2}
 
   \begin{equation}
     f(t) =
     \begin{cases}
-      1,& \text{if } t < \frac{T}{2}\\
-      -1,& \text{otherwise}
+      1,& \text{if } 0 < t < \frac{T}{2}\\
+      -1,& \text{if } t < T
     \end{cases}
     \label{eq:dsquare1}
   \end{equation}
@@ -265,7 +273,7 @@ Ideally, a square wave is equal to its maximum amplitude for exactly one half of
   \begin{equation}
     f(t) =
     \begin{cases}
-      1,& \text{if } \sin(t) > 0\\
+      1,& \text{if } \sin(2 \pi f t) > 0\\
       -1,& \text{otherwise}
     \end{cases}
     \label{eq:dsquare2}
@@ -273,15 +281,69 @@ Ideally, a square wave is equal to its maximum amplitude for exactly one half of
 
 \end{multicols}
 
-\begin{table}[t!]
-  \code{code/dsquare.cpp}
-  \caption{C++ code to generate and return one period of a square wave, where \texttt{length} is the period duration in samples. }
-  \label{code:dsquare}
+\begin{table}
+  \sidecap{C++ code to generate and return one period of a square wave, where \texttt{period} is the period duration in samples. Note that this function increments in sample time, measured in seconds, rather than actual samples. This prevents a one-sample quantization error at the mid-point, since time can always be halved whereas a sample is a fixed entity and cannot be broken down any further.}{code:dsquare}{\code{code/dsquare.cpp}}
 \end{table}
 
 \subsubsection{Sawtooth Waves}
 
+An ideal sawtooth wave descends from its maximum amplitude to its minimum amplitude linearly before jumping back to the maximum amplitude at the beginning of the next period. A mathematical equation for a single period of such a sawtooth wave function, calculated directly from the phase, is given by equation \ref{eq:dsaw1} \citebs{68}. Alternatively, the function can depend on time or on samples, as shown by equation \ref{eq:dsaw2}, where $T$ is the period. A computer program to compute one period of a sawtooth wave is given in table \ref{code:dsaw}.
 
+\begin{multicols}{2}
+
+    \begin{equation}
+      f(\phi) =
+      \begin{cases}
+        -\frac{\phi}{\pi} + 1,& \text{if } 0 < \phi < 2 \pi
+      \end{cases}
+      \label{eq:dsaw1}
+    \end{equation}
+
+    \begin{equation}
+      f(t) =
+      \begin{cases}
+        -\frac{2t}{T} + 1,& \text{if } 0 < t < 1
+      \end{cases}
+      \label{eq:dsaw2}
+    \end{equation}
+
+\end{multicols}
+
+\begin{table}[h!]
+  \sidecap{C++ code to generate one period of a sawtooth wave function, where \texttt{period} is the period duration in samples.}{code:dsaw}{\code{code/dsaw.cpp}}
+\end{table}
+
+\subsubsection{Ramp Waves}
+
+A ramp wave is, quite simply, an inverted sawtooth wave. It ascends from its minimum amplitude to its maximum amplitude linearly, after which it jumps back down to the minimum amplitude. Consequently, equations \ref{eq:dramp1} and \ref{eq:dramp2} differ from sawtooth equations \ref{eq:dsaw1} and \ref{eq:dsaw2} only in their sign and offset. The equivalent C++ implementation shown in table \ref{code:dramp} also reflects these differences.
+
+\begin{multicols}{2}
+
+  \begin{equation}
+    f(\phi) =
+    \begin{cases}
+      \frac{\phi}{\pi} - 1,& \text{if } 0 < \phi < 2 \pi
+    \end{cases}
+    \label{eq:dramp1}
+  \end{equation}
+
+  \begin{equation}
+    f(t) =
+    \begin{cases}
+      \frac{2t}{T} - 1,& \text{if } 0 < t < 1
+    \end{cases}
+    \label{eq:dramp2}
+  \end{equation}
+
+\end{multicols}
+
+\begin{table}
+  \sidecap{C++ ramp wave generator. This code differs from the program shown in table \ref{code:dsaw} solely in the amplitude offset (-1 instead of 1) and the increment, which is now positive. }{code:dramp}{\code{code/dramp.cpp}}
+\end{table}
+
+\subsubsection{Triangle waves}
+
+A triangle wave can be seen as the combination of a ramp and sawtooth wave or as a linear, "edgy", sine wave. It increments from its minimum amplitude to its maximum amplitude linearly one half of a period and decrements back to the minimum during the other half. Simply put, "[a] triangle wave is a linear increment or decrement that switches direction every $\pi$ radians" \citebs{69}. A mathematical definition for one period of a triangle wave is given by equation \ref{eq:tri1}, where phi is in radians. If \phi is kept in the range of $[-\pi;\pi]$ rather than the usual range of $[0;2 \pi]$, the subtraction by $\pi$ can be eliminated, yielding equation \ref{eq:tri2}. If the dependent variable is time, in seconds, or samples, equation \ref{eq:tri3} can be used for a range of $[0;T]$, where $T$ is the period, and equation \ref{eq:tri4} for a range of $[-\frac{T}{2};\frac{T}{2}]$.  
 
 \subsection{Additive Synthesis}
 

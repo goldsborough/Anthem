@@ -183,7 +183,7 @@ double* Wavetable::smoothSaw_() const
     // The second part is measured in time, going from 0.9
     // to 1 (of the Wavetable period)
     
-    double ind = 0.9;
+    double value = 0.9;
     
     // Increment value from -1 to 1
     double ampIncr = 2.0/(Global::wtLen * 0.9);
@@ -219,13 +219,13 @@ double* Wavetable::smoothSaw_() const
              *
              * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
             
-            if (ind < 0.95)
-            { wt[n] = 400 * pow(ind - 0.9,2) - 1; }
+            if (value < 0.95)
+            { wt[n] = 400 * pow(value - 0.9,2) - 1; }
             
             else
-            { wt[n] = -400 * pow(ind - 1,2) + 1; }
+            { wt[n] = -400 * pow(value - 1,2) + 1; }
             
-            ind += indIncr;
+            value += indIncr;
         }
     }
     
@@ -238,7 +238,7 @@ double* Wavetable::smoothSquare_() const
 {
     double* wt = new double[Global::wtLen + 1];
     
-    double ind = 0;
+    double value = 0;
     
     double incr = 1.0 / Global::wtLen;
     
@@ -255,21 +255,21 @@ double* Wavetable::smoothSquare_() const
         // like this, there are no sharp transitions
         // any longer!
         
-        if (ind < 0.25)
-        { val = pow(ind - 1, exp) - 1; }
+        if (value < 0.25)
+        { val = pow(value - 1, exp) - 1; }
         
-        else if (ind < 0.5)
-        { val = pow(ind + 0.5, exp) - 1; }
+        else if (value < 0.5)
+        { val = pow(value + 0.5, exp) - 1; }
         
-        else if (ind < 0.75)
-        { val = -pow(ind - 1.5, exp) + 1; }
+        else if (value < 0.75)
+        { val = -pow(value - 1.5, exp) + 1; }
         
         else
-        { val = -pow(ind, exp) + 1; }
+        { val = -pow(value, exp) + 1; }
         
         wt[n] = val;
         
-        ind += incr;
+        value += incr;
     }
     
     wt[Global::wtLen] = wt[0];
@@ -288,14 +288,14 @@ double* Wavetable::directSquare_() const
     // the midpoint of the period
     double mid = 0.5;
     
-    double ind = 0;
+    double value = 0;
     
     // fill the sample buffer
     for (int n = 0; n < Global::wtLen; n++)
     {
-        wt[n] = (ind < mid) ? -1 : 1;
+        wt[n] = (value < mid) ? -1 : 1;
         
-        ind += sampleTime;
+        value += sampleTime;
     }
     
     wt[Global::wtLen] = wt[0];
@@ -313,13 +313,13 @@ double* Wavetable::directSaw_() const
     // 2.0 because the range is from 1 to -1
     double incr = 2.0 / Global::wtLen;
     
-    double ind = 1;
+    double value = 1;
     
     for (int n = 0; n < Global::wtLen; n++)
     {
-        wt[n] = ind;
+        wt[n] = value;
         
-        ind -= incr;
+        value -= incr;
     }
     
     wt[Global::wtLen] = wt[0];
@@ -331,26 +331,28 @@ double* Wavetable::directTriangle_() const
 {
     double* wt = new double[Global::wtLen + 1];
     
-    double phase = 0;
-    double phaseIncr = Global::twoPi / Global::wtLen;
+    double value = -1;
     
-    // Basierend auf Pseudocode (vgl. Mitchell, 2008)
+    // 4.0 because we're incrementing/decrementing
+    // half the period and the range is 2, so it's
+    // actually 2 / wtLen / 2.
+    double incr = 4.0 / Global::wtLen;
     
-    double triValue;
-    double twoDivPi = 2.0/Global::pi;
+    // Boolean to indicate direction
+    bool reachedMid = false;
     
     for (unsigned int n = 0; n < Global::wtLen; n++)
     {
-        triValue = (phase * twoDivPi);
+        wt[n] = value;
         
-        if (phase < 0) triValue = 1.0 + triValue;
+        // Increment or decrement depending
+        // on the current direction
+        value += (reachedMid) ? -incr : incr;
         
-        else triValue = 1.0 - triValue;
-        
-        wt[n] = triValue;
-        
-        if ( (phase += phaseIncr) >= Global::pi)
-        { phase -= Global::twoPi;}
+        // Change direction every time
+        // the value hits a maximum
+        if (value >= 1 || value <= -1)
+        { reachedMid = !reachedMid; }
     }
     
     wt[Global::wtLen] = wt[0];
