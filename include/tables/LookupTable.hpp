@@ -130,17 +130,17 @@ public:
     *
     *****************************************************************************************************/
     
-    T interpolate(double index) const
+    double interpolate(double index) const
     {
-        int indexBase = static_cast<int>(index);  // The truncated integer part
-        double indexFract = index - indexBase;    // The remaining fractional part
+        long integral = static_cast<long>(index);  // The truncated integral part
+        double fractional = index - integral;    // The remaining fractional part
         
         // grab the two items in-between which the actual value lies
-        T value1 = data_[indexBase];
-        T value2 = data_[indexBase+1];
+        T value1 = data_[integral];
+        T value2 = data_[integral+1];
         
         // interpolate: integer part + (fractional part * difference between value2 and value1)
-        T final = value1 + ((value2 - value1) * indexFract);
+        double final = value1 + ((value2 - value1) * fractional);
         
         return final;
     }

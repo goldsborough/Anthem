@@ -242,8 +242,6 @@ double* Wavetable::smoothSquare_() const
     
     double incr = 1.0 / Global::wtLen;
     
-    float exp = 50;
-    
     for (unsigned int n = 0; n < Global::wtLen; n++)
     {
         double val;
@@ -256,16 +254,16 @@ double* Wavetable::smoothSquare_() const
         // any longer!
         
         if (value < 0.25)
-        { val = pow(value - 1, exp) - 1; }
+        { val = pow(value - 1, 50) - 1; }
         
         else if (value < 0.5)
-        { val = pow(value + 0.5, exp) - 1; }
+        { val = pow(value + 0.5, 50) - 1; }
         
         else if (value < 0.75)
-        { val = -pow(value - 1.5, exp) + 1; }
+        { val = -pow(value - 1.5, 50) + 1; }
         
         else
-        { val = -pow(value, exp) + 1; }
+        { val = -pow(value, 50) + 1; }
         
         wt[n] = val;
         
