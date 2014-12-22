@@ -29,7 +29,10 @@ namespace Util
     
     void round(double& val, unsigned int bitWidth)
     {
-        // mind = blown
+        if (val < -0.9)
+        {
+            
+        }
         
         // the rounding factor
         double factor = 1.0 / bitWidth;
@@ -38,17 +41,25 @@ namespace Util
         
         int nFloor = static_cast<int>(n);
         
-        // if the division is greater 0.5, round to the next whole factor
-        // else take the floor value
+        // If the absolute difference between the division
+        // and the floored value is greater than 0.5, round
+        // to the next whole factor else to the factor times
+        // the floored value
         
-        if (n > 0)
+        double fractional = n - nFloor;
+        
+        // Absolute value
+        if (fractional < 0) fractional = -fractional;
+        
+        if (fractional >= 0.5)
         {
-            if (n - nFloor >= 0.5)
-            { val = (nFloor + 1) * factor; }
+            // Next value depends on sign
+            double add = (n > 0) ? 1 : -1;
+            
+            val = (nFloor + add) * factor;
         }
         
-        else if (n + nFloor <= -0.5)
-        { val = (nFloor - 1) * factor; }
+        else val = nFloor * factor;
     }
 
     double noteToFreq(unsigned short note)

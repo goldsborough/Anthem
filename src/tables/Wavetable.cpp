@@ -9,8 +9,6 @@
 ************************************************************************************************/
 
 #include "Wavetable.hpp"
-#include "Global.hpp"
-#include "Util.hpp"
 #include "Parsley.hpp"
 
 #include <fstream>
@@ -22,118 +20,6 @@ Wavetable::Wavetable(double * ptr,
                      const std::string& name)
 : LookupTable<double>(ptr, wtLength, id, name)
 { }
-
-template <class PartItr>
-Wavetable::Wavetable(PartItr start,
-                     PartItr end,
-                     index_t wtLength,
-                     double masterAmp,
-                     bool sigmaAprox,
-                     unsigned int bitWidth,
-                     index_t id,
-                     const std::string& name)
-
-: LookupTable<double>(0, wtLength, id, name)
-
-{
-    // calculate number of partials
-    index_t partNum = end - start;
-    
-    data_ = new double [wtLength + 1];
-    
-    double * amp = new double [partNum];        // the amplitudes
-    double * phase = new double [partNum];      // the current phase
-    double * phaseIncr = new double [partNum];  // the phase increments
-    
-    /**********************************************************
-     *
-     *  The Lanczos sigma constant, aka sigma approximation,
-     *  is a method of minimizing the effect of the Gibbs
-     *  phenomenon, which leads to ripples and horns towards the
-     *  ends of additively synthesized waveforms. It is defined
-     *  as:
-     *
-     *  s = sin(x) / x
-     *
-     *  Where x is:
-     *
-     *  x = nπ / M
-     *
-     *  M being the total number of partials and n the current
-     *  partial number (the fundamental frequency is seen as
-     *  the first partial). π / M can be calculated
-     *  loop-invariantly and is then mulitplied by each partial
-     *  number, respectively.
-     *
-     **********************************************************/
-    
-    // constant sigma constant part
-    double sigmaK = Global::pi / partNum;
-    
-    // variable part
-    double sigmaV;
-    
-    // convert the bit number to decimal
-    bitWidth = pow(2, bitWidth);
-    
-    // the fundamental increment of one period
-    // in radians
-    static double fundIncr = Global::twoPi / wtLength;
-    
-    // fill the arrays with the respective partial values
-    for (index_t p = 0; start != end; ++p, ++start)
-    {
-        // initial phase
-        phase[p] = start->phaseOffs;
-        
-        // fundIncr is two π / tablelength
-        phaseIncr[p] = fundIncr * start->num;
-        
-        // reduce amplitude if necessary
-        amp[p] = start->amp * masterAmp;
-        
-        // apply sigma approximation conditionally
-        if (sigmaAprox)
-        {
-            // following the formula
-            sigmaV = sigmaK * start->num;
-            
-            amp[p] *= sin(sigmaV) / sigmaV;
-        }
-    }
-    
-    // fill the wavetable
-    for (unsigned int n = 0; n < wtLength; n++)
-    {
-        double value = 0;
-        
-        // do additive magic
-        for (unsigned short p = 0; p < partNum; p++)
-        {
-            value += sin(phase[p]) * amp[p];
-            
-            phase[p] += phaseIncr[p];
-            
-            if (phase[p] >= Global::twoPi)
-                phase[p] -= Global::twoPi;
-        }
-        
-        // round if necessary
-        if (bitWidth < 65536)
-        {
-            Util::round(value, bitWidth);
-        }
-        
-        data_[n] = value;
-    }
-    
-    // Append the last item for interpolation
-    data_[wtLength] = data_[0];
-    
-    delete [] phase;
-    delete [] phaseIncr;
-    delete [] amp;
-}
 
 Wavetable::Wavetable(MathematicalWaveform waveform,
                      index_t wtLength,

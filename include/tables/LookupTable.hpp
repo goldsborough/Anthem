@@ -130,7 +130,7 @@ public:
     *
     *****************************************************************************************************/
     
-    double interpolate(double index) const
+    T interpolate(double index) const
     {
         long integral = static_cast<long>(index);  // The truncated integral part
         double fractional = index - integral;    // The remaining fractional part
@@ -140,7 +140,7 @@ public:
         T value2 = data_[integral+1];
         
         // interpolate: integer part + (fractional part * difference between value2 and value1)
-        double final = value1 + ((value2 - value1) * fractional);
+        T final = value1 + ((value2 - value1) * fractional);
         
         return final;
     }
