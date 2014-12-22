@@ -47,6 +47,10 @@ Wavetable::Wavetable(MathematicalWaveform waveform,
             data_ = smoothSaw_();
             break;
             
+        case MathematicalWaveform::SMOOTH_RAMP:
+            data_ = smoothRamp_();
+            break;
+            
         case MathematicalWaveform::SMOOTH_SQUARE:
             data_ = smoothSquare_();
             break;
@@ -106,10 +110,60 @@ double* Wavetable::smoothSaw_() const
              * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
             
             if (value < 0.95)
-            { wt[n] = 400 * pow(value - 0.9,2) - 1; }
+            { wt[n] = 400 * pow(value - 1,2) - 1; }
             
             else
-            { wt[n] = -400 * pow(value - 1,2) + 1; }
+            { wt[n] = -400 * pow(value - 0.9,2) + 1; }
+            
+            value += indIncr;
+        }
+    }
+    
+    wt[Global::wtLen] = wt[0];
+    
+    return wt;
+}
+
+double* Wavetable::smoothRamp_() const
+{
+    double* wt = new double[Global::wtLen + 1];
+    
+    // First decrement from 1 to -1 in 9/10 of the cycle,
+    // then go back up smoothly the last 1/10 of the cycle
+    
+    // The first part is calculated linearly so that the
+    // amplitude simply decrements from 1 to -1. This is
+    // measured in amplitude
+    
+    double amp = -1;
+    
+    // The second part is measured in time, going from 0.9
+    // to 1 (of the Wavetable period)
+    
+    double value = 0.9;
+    
+    // Increment value from -1 to 1
+    double ampIncr = 2.0/(Global::wtLen * 0.9);
+    
+    // Increment value for the time
+    double indIncr = 0.1/(Global::wtLen * 0.1);
+    
+    for (unsigned int n = 0; n < Global::wtLen; n++)
+    {
+        if (amp < 1)
+        {
+            wt[n] = amp;
+            
+            amp += ampIncr;
+        }
+        
+        else
+        {
+            if (value < 0.95)
+            { wt[n] = -400 * pow(value - 0.9,2) + 1; }
+            
+            else
+            { wt[n] = 400 * pow(value - 1,2) - 1; }
             
             value += indIncr;
         }

@@ -17,7 +17,7 @@
 #################################################################  
 
 sine  
-sine_2  
+sine_3  
 sine_4  
 sine_8  
 
@@ -47,3 +47,4 @@ direct_saw
 
 smooth_square  
 smooth_saw  
+smooth_ramp  

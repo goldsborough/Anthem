@@ -158,7 +158,8 @@ public:
         DIRECT_SAW,
         
         SMOOTH_SQUARE,
-        SMOOTH_SAW
+        SMOOTH_SAW,
+        SMOOTH_RAMP
     };
     
     /*************************************************************************************************//*!
@@ -350,6 +351,9 @@ private:
     /*! Generates a smoothed sawtooth wave directly/mathematically */
     double* smoothSaw_() const;
     
+    /*! Generates a smoothed ramp wave directly/mathematically */
+    double* smoothRamp_() const;
+    
     /*! Generates a smoothed square wave directly/mathematically */
     double* smoothSquare_() const;
 };
@@ -371,7 +375,7 @@ public:
     enum Wavetables
     {
         SINE,
-        SINE_2,
+        SINE_3,
         SINE_4, // The number is the number of bits, not partials
         SINE_8,
         
@@ -399,7 +403,8 @@ public:
         DIRECT_SAW,
         
         SMOOTH_SQUARE,
-        SMOOTH_SAW
+        SMOOTH_SAW,
+        SMOOTH_RAMP
     };
     
     typedef unsigned long index_t;
