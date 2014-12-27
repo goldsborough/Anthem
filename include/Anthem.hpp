@@ -11,6 +11,7 @@
 #include "Reverb.hpp"
 #include "Delay.hpp"
 #include "EffectBlock.hpp"
+#include "Flanger.hpp"
 #include "Delay.hpp"
 #include "Filter.hpp"
 
@@ -58,6 +59,8 @@ struct Anthem
     Midi midi;
     
     AudioOutput audio;
+    
+    Flanger flanger;
     
 private:
     

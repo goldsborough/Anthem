@@ -185,8 +185,8 @@ GenUnit::GenUnit(unsigned short numDocks, double amp)
 
 void GenUnit::setAmp(double amp)
 {
-    if (amp < 0 || amp > 1)
-    { throw std::invalid_argument("Amplitude must be between 0 and 1!"); }
+    //if (amp < 0 || amp > 1)
+    //{ throw std::invalid_argument("Amplitude must be between 0 and 1!"); }
     
     amp_ = amp;
 }

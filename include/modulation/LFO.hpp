@@ -567,6 +567,9 @@ public:
     *
     *  @brief       Returns one of the LFOUnit's LFOSeqs.
     *
+    *  @details     This is a function so that LFOseqs must be accessed the same way as the crossfader,
+    *               which is returned through a function in order to hide the std::unique_ptr.
+    *
     *  @param       unit The unit number, LFOUnit::A or ::B.
     *
     *  @return      A reference to the LFOSeq.
@@ -579,6 +582,9 @@ public:
     *
     *  @brief       Returns one of the LFOUnit's LFOs.
     *
+    *  @details     This is a function so that LFOs must be accessed the same way as the crossfader,
+    *               which is returned through a function in order to hide the std::unique_ptr.
+    *                                                                                                       
     *  @param       unit The unit number, LFOUnit::A or ::B.
     *
     *  @return      A reference to the LFO.

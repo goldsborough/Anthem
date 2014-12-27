@@ -160,13 +160,13 @@ double ModDock::modulate(double sample)
         // If it isn't a slave, nothing to do
         if (! isSlave(*nonMasterItr)) continue;
         
-        ModItem& nonMaster = modItems_[*nonMasterItr];
+        ModItem& slave = modItems_[*nonMasterItr];
         
         // Set to zero initially
-        nonMaster.depth = 0;
+        slave.depth = 0;
         
         // Then sum up the depth from all masters
-        for (indexVecItr_const masterItr = nonMaster.masters.begin(), masterEnd = nonMaster.masters.end();
+        for (indexVecItr_const masterItr = slave.masters.begin(), masterEnd = slave.masters.end();
              masterItr != masterEnd;
              ++masterItr)
         {
@@ -174,11 +174,11 @@ double ModDock::modulate(double sample)
             
             // Using the baseDepth as the base value and the master's depth as
             // the depth for modulation and 1 as the maximum boundary
-            nonMaster.depth += master.mod->modulate(nonMaster.baseDepth, master.depth, 1);
+            slave.depth += master.mod->modulate(slave.baseDepth, master.depth, 1);
         }
         
-        // Set depth to average of itself
-        nonMaster.depth /= nonMaster.masters.size();
+        // Average the depth
+        slave.depth /= slave.masters.size();
     }
     
     // Modulation

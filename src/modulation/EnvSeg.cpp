@@ -24,7 +24,7 @@ EnvSeg::EnvSeg(double startLevel,
   curr_(0),len_(len), GenUnit(3) // three ModDocks
 
 {
-    mods_[RATE].setHigherBoundary(2);
+    mods_[RATE].setHigherBoundary(10);
     mods_[RATE].setLowerBoundary(0);
     mods_[RATE].setBaseValue(rate);
     

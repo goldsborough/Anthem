@@ -141,7 +141,7 @@ LFOSeq::LFOSeq(unsigned short seqLength, double rate)
 
 double LFOSeq::getScaledModFreqValue(double freq) const
 {
-    // Since the rate is the cycles per segment
+    // Since the rate is in cycles per segment
     // and not cycles per second, we get the
     // "period" of the segment and multiply that
     // by the rate, giving the mod wave's frequency.
@@ -711,6 +711,8 @@ double LFOUnit::modulate(double sample, double depth, double maximum)
     {
         amp_ =  mods_[AMP].tick();
     }
+    
+    if (! active_) return sample;
     
     // Tick the crossfaded value from the lfos and multiply by the envelope
     // value and the total amplitude value

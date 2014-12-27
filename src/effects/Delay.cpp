@@ -15,6 +15,12 @@
 #include <cmath>
 #include <stdexcept>
 
+
+#include <iostream>
+
+
+
+
 Delay::Delay(double delayLen,
              double decayTime,
              double decayRate,
@@ -24,7 +30,7 @@ Delay::Delay(double delayLen,
 {
     capacity *= Global::samplerate;
     
-    buffer_.reserve(capacity);
+    buffer_.resize(capacity,0);
     
     write_ = buffer_.begin();
     
@@ -142,8 +148,28 @@ void Delay::setDelayLen(double delayLen)
 {
     delayLen *= Global::samplerate;
     
-    if (delayLen < 0 || delayLen >= buffer_.capacity())
+    if (delayLen < 0 || delayLen >= buffer_.size())
     { throw std::invalid_argument("Delay line length cannot be less than 0 or greater/equal the delay line capacity!"); }
+    
+    // Resize the buffer to the new length
+    end_ = buffer_.begin() + delayLen;
+    
+    if (write_ >= end_)
+    {
+        write_ = buffer_.begin();
+    }
+    
+    else
+    {
+        //for(iterator itr = write_; itr != end_; ++itr)
+        //{
+          //  *itr = 0;
+        //}
+    }
+    
+    delayLen_ = delayLen;
+    
+    delayLen -= 1;
     
     // Convert to int
     readInt_ = delayLen;
@@ -151,9 +177,6 @@ void Delay::setDelayLen(double delayLen)
     // delayLen is double so get the fractional part
     // by subtracting the integer part
     readFract_ = delayLen - readInt_;
-    
-    // Resize the buffer to the new length
-    buffer_.resize(delayLen);
     
     calcDecay_();
 }
@@ -189,7 +212,7 @@ void Delay::setDecayTime(double decayTime)
     decayTime *= Global::samplerate;
     
     if (decayTime < 0)
-    { throw std::invalid_argument("Decay time must be greater 0!"); }
+    { throw std::invalid_argument("Decay time must be greater or equal 0!"); }
 
     mods_[DECAY_TIME].setBaseValue(decayTime);
     
@@ -211,14 +234,22 @@ double Delay::getDecayTime() const
 
 void Delay::calcDecay_()
 {
-    double decayExponent = static_cast<double>(buffer_.size()) / decayTime_;
+    if (! decayTime_)
+    {
+        decayValue_ = 1;
+    }
     
-    decayValue_ = pow(decayRate_, decayExponent);
+    else
+    {
+        double decayExponent = static_cast<double>(delayLen_) / decayTime_;
+    
+        decayValue_ = pow(decayRate_, decayExponent);
+    }
 }
 
 void Delay::update_()
 {
-    if (++write_ == buffer_.end())
+    if (++write_ >= end_)
     {
         write_ = buffer_.begin();
     }
@@ -229,7 +260,7 @@ double Delay::offset(unsigned int offset)
     iterator ret = write_ - offset;
     
     if (ret < buffer_.begin())
-    { ret += buffer_.size(); }
+    { ret += delayLen_; }
     
     return *ret;
 }
@@ -271,7 +302,7 @@ double Delay::process(double sample)
     // Check if we need to wrap around
     if (read < buffer_.begin())
     {
-        read += buffer_.size();
+        read += delayLen_;
     }
     
     // If the read index is equal to the write index
@@ -289,9 +320,9 @@ double Delay::process(double sample)
     // Check if the current read position is the beginning
     // of the buffer (in which case incrementing means going
     // to the last index), else the iterator is decremented
-    if (read-- == buffer_.begin())
+    if (--read < buffer_.begin())
     {
-        read = buffer_.end() - 1;
+        read += delayLen_;
     }
     
     // And finally add the fractional part of the

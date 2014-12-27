@@ -23,7 +23,7 @@
  *  @details    The EnvSeg class is a single segment of a EnvSegSeq. It can be
  *              be either an attack, decay or a sustain segment and increment or
  *              decrement either exponentially, logarithmically or linearly in
- *              case of being a decay or an attack segment.
+ *              case of being a decay, an attack or a release segment.
  *
  *********************************************************************************/
 
@@ -34,6 +34,7 @@ public:
     
     friend class ModEnvSegSeq;
     
+    /*! Parameters for modulation */
     enum Docks
     {
         RATE,
@@ -235,9 +236,6 @@ private:
     
     /*! Calculates the increment for curr_ and assigns it to incr_ */
     void calcIncr_();
-    
-    /*! Ticks a value (calculates it from data members) */
-    double calc_();
     
     /*! The rate determining the type (lin,log,exp) */
     double rate_;

@@ -3,20 +3,24 @@
 #include "Delay.hpp"
 #include "Global.hpp"
 
-Flanger::Flanger(const double& center,
-                 const double& depth,
-                 const double& rate,
-                 const double& feedback)
+Flanger::Flanger(double center,
+                 double depth,
+                 double rate,
+                 double feedback)
 : EffectUnit(),
-center_(center), depth_(depth/2),
+center_(center),
+depth_(depth/2),
 feedback_(feedback),
-lfo_(new LFO(0,rate)),
-delay_( new Delay(5,1,1,0) )
-{ }
+lfo_(new LFO(WavetableDatabase::SINE,rate)),
+delay_(new Delay(center,0,0,0,2))
+{
+    lfo_->setActive(true);
+}
 
 Flanger::Flanger(const Flanger& other)
 : EffectUnit(other),
-center_(other.center_), depth_(other.depth_),
+center_(other.center_),
+depth_(other.depth_),
 feedback_(other.feedback_),
 lfo_(new LFO(*other.lfo_)),
 delay_(new Delay(*other.delay_))
@@ -61,7 +65,7 @@ void Flanger::setCenter(const double& center)
 
 void Flanger::setDepth(const double& depth)
 {
-    depth_ = depth;
+    depth_ = depth/2;
 }
 
 void Flanger::setFeedback(const double& feedback)
@@ -74,16 +78,9 @@ void Flanger::setFeedback(const double& feedback)
 
 double Flanger::process(double sample)
 {
-    double output = sample;
+    delay_->setDelayLen(center_ + (depth_ * lfo_->tick()));
     
-    if (feedback_)
-    { output -= delay_->offset(center_ * Global::samplerate) * feedback_; }
+    lfo_->update();
     
-    double val = center_ + (depth_ * lfo_->tick());
-    
-    delay_->setDelayLen(val);
-    
-    output += delay_->process(output);
-    
-    return dryWet_(sample, output);
+    return sample + delay_->process(sample);
 }

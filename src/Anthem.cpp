@@ -60,7 +60,15 @@ Sample Anthem::tick_()
 {
     double tick = 0;
     
-    tick = operators[A].tick();
+    if (operators[A].isActive())
+    {
+        tick = operators[A].tick();
+    }
+    
+    if (noise.isActive())
+    {
+        tick += noise.tick();
+    }
     
     for (unsigned short i = A; i <= B; ++i)
     {
@@ -75,6 +83,8 @@ Sample Anthem::tick_()
         }
     }
     
+    tick = flanger.process(tick);
+    
     return mixer.process(tick);
 }
 
@@ -86,4 +96,6 @@ void Anthem::update_()
         lfos[unit].update();
         envelopes[unit].update();
     }
+    
+    noise.update();
 }

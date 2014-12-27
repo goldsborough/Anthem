@@ -34,7 +34,7 @@ class Filter;
 *
 *               -# __Pink noise__ is white noise filtered with a 3dB/octave low pass filter.
 *                  In contrast to white noise, which has equal energy *per frequency*,
-*                  ink noise has equal energy *per octave*. This is a significant
+*                  pink noise has equal energy *per octave*. This is a significant
 *                  difference as humans hear on the basis of octaves (logarithmically),
 *                  and not completely linearly, meaning that for the human ear the
 *                  difference between 400 and 800 Hertz (one octave) sounds the same as

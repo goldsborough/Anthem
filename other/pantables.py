@@ -12,11 +12,11 @@ q = math.sqrt(2) / 2
 
 for n in range(201):
 
-    val = (n - 100) / 100
+    val = n - 100
 
-    left = (1 - val) / 2
+    left = (100 - val) / 200
 
-    right = (1 + val) / 2
+    right = (100 + val) / 200
 
     lin.append((left,right))
 
@@ -28,7 +28,7 @@ for n in range(201):
 
     sqrtsc.append((sqrt[n][0] * q, sqrt[n][1] * q))
 
-    
+
 tables = [lin,sin,sqrt,sinsc,sqrtsc]
 
 names = ["linear", "sine", "sqrt", "sine_scaled", "sqrt_scaled"]

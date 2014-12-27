@@ -11,10 +11,10 @@ class Flanger : public EffectUnit
 {
 public:
     
-    Flanger(const double& center = 0.01,
-            const double& depth = 0.01,
-            const double& rate = 0.15,
-            const double& feedback = 0);
+    Flanger(double center = 0.01,
+            double depth = 0.01,
+            double rate = 0.1,
+            double feedback = 0);
     
     Flanger(const Flanger& other);
     

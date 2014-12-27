@@ -297,7 +297,7 @@ private:
     
     typedef indexVec::const_iterator indexVecItr_const;
     
-    /*! A ModItem contains a ModUnit* and a depth value */
+    /*! A ModItem contains a ModUnit*, its depth value as well as */
     struct ModItem
     {
         ModItem(ModUnit* modUnit, double dpth = 1)
@@ -313,14 +313,14 @@ private:
         /*! For sidechaining */
         double baseDepth;
         
-        /*! Vector of indexes of all the master's indexes in modItems_*/
+        /*! Vector of indices of all masters in modItems_*/
         indexVec masters;
         
-        /* Vector of all slaves */
+        /* Vector of indices of slaves of this ModItem in modItems_ */
         indexVec slaves;
     };
     
-    /*! Pointers to all ModItems that are masters for sidechaining
+    /*! Indices of all ModItems that are masters for sidechaining
         and thus don't contribute to the ModDocks modulation value */
     indexVec masterItems_;
     

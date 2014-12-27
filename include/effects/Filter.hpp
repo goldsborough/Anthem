@@ -218,10 +218,10 @@ private:
     /*! The amplitude value obtained from the gain value */
     double amp_;
     
-    /*! The first delay buffer */
+    /*! The first delay variable for x_{n-1}*/
     double delayA_;
     
-    /*! The second delay buffer */
+    /*! The second delay variable x_{n-2}*/
     double delayB_;
     
     /*! The first output coefficient */

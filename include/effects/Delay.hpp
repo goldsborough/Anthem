@@ -202,6 +202,12 @@ protected:
     /*! The pointer to the write index */
     iterator write_;
     
+    /*! The end of the current delay line */
+    iterator end_;
+
+    /*! The size of the current delay line (until end_) */
+    unsigned long delayLen_;
+    
     /*! The attenuation value with which to multiply the output */
     double decayValue_;
     
@@ -211,7 +217,7 @@ protected:
     /*! The total decay time */
     double decayTime_;
     
-    /*! The value determining how much of the output signal is fed back into the delay line*/
+    /*! The value determining how much of the output signal is fed back into the delay line */
     double feedback_;
     
     /*! The delay line */
