@@ -60,8 +60,6 @@ struct Anthem
     
     AudioOutput audio;
     
-    Flanger flanger;
-    
     unsigned long long count_;
     
 private:

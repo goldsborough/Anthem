@@ -1,6 +1,7 @@
 #include "EffectBlock.hpp"
 #include "Units.hpp"
 #include "Reverb.hpp"
+#include "Flanger.hpp"
 #include "Delay.hpp"
 
 #include <stdexcept>
@@ -9,11 +10,13 @@ EffectBlock::EffectBlock(unsigned short effect)
 : reverb_(new Reverb),
   delay_(new Delay),
   echo_(new Echo),
+  flanger_(new Flanger),
   active_(false)
 {
     delay_->setActive(true);
     echo_->setActive(true);
     reverb_->setActive(true);
+    flanger_->setActive(true);
 }
 
 EffectBlock::~EffectBlock()
@@ -44,6 +47,11 @@ Reverb& EffectBlock::reverb() const
     return *reverb_;
 }
 
+Flanger& EffectBlock::flanger() const
+{
+    return *flanger_;
+}
+
 void EffectBlock::setActive(bool state)
 {
     active_ = state;
@@ -72,6 +80,10 @@ void EffectBlock::setEffectType(unsigned short effectType)
             
         case REVERB:
             curr_ = &(*reverb_);
+            break;
+            
+        case FLANGER:
+            curr_ = &(*flanger_);
             break;
     }
     

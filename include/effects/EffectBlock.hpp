@@ -19,6 +19,7 @@ class EffectUnit;
 class Delay;
 class Echo;
 class Reverb;
+class Flanger;
 
 /************************************************************************************************//*!
 *
@@ -42,7 +43,8 @@ public:
         NONE,
         DELAY,
         ECHO,
-        REVERB
+        REVERB,
+        FLANGER
     };
     
     /*************************************************************************//*!
@@ -126,6 +128,9 @@ public:
     /*! Returns a reference to the Reverb object. */
     Reverb& reverb() const;
     
+    /*! Returns a reference to the Flanger object. */
+    Flanger& flanger() const;
+    
 private:
     
     /*! Whether or not the EffectBlock is active. */
@@ -145,6 +150,9 @@ private:
     
     /*! Smart pointer to Reverb object. */
     std::unique_ptr<Reverb> reverb_;
+    
+    /*! Smart pointer to Flanger object. */
+    std::unique_ptr<Flanger> flanger_;
 };
 
 #endif

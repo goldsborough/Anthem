@@ -12,8 +12,9 @@ class Flanger : public EffectUnit
 public:
     
     Flanger(double center = 0.01,
-            double depth = 0.01,
-            double rate = 0.1);
+            double depth = 0.005,
+            double rate = 0.1,
+            double feedback = 0);
     
     Flanger(const Flanger& other);
     
@@ -21,17 +22,34 @@ public:
     
     Flanger& operator= (const Flanger& other);
     
+    
     double process(double sample);
     
-    void setCenter(const double& center);
     
-    void setDepth(const double& depth);
+    void setCenter(double center);
     
-    void setRate(const double& rate);
+    double getCenter() const;
+    
+    
+    void setDepth(double depth);
+    
+    double getDepth() const;
+    
+    
+    void setRate(double rate);
+    
+    double getRate() const;
+    
+    
+    void setFeedback(double feedback);
+    
+    double getFeedback() const;
     
 private:
     
     double center_;
+    
+    double feedback_;
     
     std::unique_ptr<LFO> lfo_;
     std::unique_ptr<Delay> delay_;

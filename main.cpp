@@ -19,13 +19,9 @@ int main(int argc, const char * argv[])
     
     anthem.operators[Anthem::A].setActive(true);
     
-    anthem.flanger.setCenter(0.04);
+    anthem.effects[Anthem::A].setActive(true);
     
-    anthem.flanger.setDepth(0.04);
-    
-    anthem.flanger.setRate(.01);
-    
-    anthem.flanger.setActive(true);
+    anthem.effects[Anthem::A].setEffectType(EffectBlock::FLANGER);
     
     anthem.audio.start();
     

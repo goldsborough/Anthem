@@ -86,11 +86,6 @@ Sample Anthem::tick_()
         }
     }
     
-    if (flanger.isActive())
-    {
-        tick = flanger.process(tick);
-    }
-    
     return mixer.process(tick);
 }
 
