@@ -30,16 +30,16 @@ Reverb::Reverb(double reverbTime, double reverbRate, double dryWet)
         delays_[i].setDecayTime(reverbTime);
     }
     
-    delays_[0].setDelayLen(0.0437);
-    delays_[1].setDelayLen(0.0411);
-    delays_[2].setDelayLen(0.0371);
-    delays_[3].setDelayLen(0.0297);
+    delays_[0].setDelayTime(0.0437);
+    delays_[1].setDelayTime(0.0411);
+    delays_[2].setDelayTime(0.0371);
+    delays_[3].setDelayTime(0.0297);
     
     allPasses_[0].setDecayTime(0.0050);
-    allPasses_[0].setDelayLen(0.09638);
+    allPasses_[0].setDelayTime(0.09638);
     
     allPasses_[1].setDecayTime(0.0017);
-    allPasses_[1].setDelayLen(0.03292);
+    allPasses_[1].setDelayTime(0.03292);
     
     setReverbRate(reverbRate);
     setReverbTime(reverbTime);

@@ -3,6 +3,7 @@
 #include "Reverb.hpp"
 #include "Flanger.hpp"
 #include "Delay.hpp"
+#include "Echo.hpp"
 
 #include <stdexcept>
 

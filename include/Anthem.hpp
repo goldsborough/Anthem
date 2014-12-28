@@ -14,6 +14,7 @@
 #include "Flanger.hpp"
 #include "Delay.hpp"
 #include "Filter.hpp"
+#include "Echo.hpp"
 
 #include "AudioOutput.hpp"
 #include "Midi.hpp"

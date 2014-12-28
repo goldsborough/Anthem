@@ -33,7 +33,7 @@ Delay::Delay(double delayLen,
     
     setFeedback(feedbackLevel);
     setDecayRate(decayRate);
-    setDelayLen(delayLen);
+    setDelayTime(delayLen);
     setDecayTime(decayTime);
     
     // Initialize mod docks
@@ -141,24 +141,24 @@ double Delay::getDecayRate() const
     else return decayRate_;
 }
 
-void Delay::setDelayLen(double delayLen)
+void Delay::setDelayTime(double delayTime)
 {
-    delayLen *= Global::samplerate;
+    delayTime *= Global::samplerate;
     
-    if (delayLen < 0 || delayLen >= buffer_.size())
+    if (delayTime < 0 || delayTime >= buffer_.size())
     { throw std::invalid_argument("Delay line length cannot be less than 0 or greater the delay line capacity!"); }
     
     // Cast to int
-    readIntegral_ = delayLen;
+    readIntegral_ = delayTime;
     
     // delayLen is double so get the fractional part
     // by subtracting the integer part
-    readFractional_ = delayLen - readIntegral_;
+    readFractional_ = delayTime - readIntegral_;
     
     calcDecay_();
 }
 
-double Delay::getDelayLen() const
+double Delay::getDelayTime() const
 {
     // seconds not samples
     return buffer_.size() / (static_cast<double>(Global::samplerate));
@@ -361,17 +361,4 @@ double AllPassDelay::process(double sample)
     }
     
     return outputA + (outputB * decayValue_);
-}
-
-Echo::Echo(double delayLen,
-           double decayTime,
-           double decayRate,
-           double feedbackLevel,
-           double capacity)
-: Delay(delayLen,decayTime,decayRate,feedbackLevel,capacity)
-{ }
-
-double Echo::process(double sample)
-{
-    return sample + Delay::process(sample);
 }

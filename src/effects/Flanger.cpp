@@ -63,7 +63,7 @@ void Flanger::setCenter(double center)
 {
     center_ = center;
     
-    delay_->setDelayLen(center_);
+    delay_->setDelayTime(center_);
 }
 
 double Flanger::getCenter() const
@@ -108,7 +108,7 @@ double Flanger::process(double sample)
     lfo_->update();
     
     // Set the new length
-    delay_->setDelayLen(length);
+    delay_->setDelayTime(length);
     
     // Retrieve new sample
     output += delay_->process(output);
