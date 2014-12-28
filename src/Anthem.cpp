@@ -57,6 +57,16 @@ void Anthem::setNote(note_t note, bool on)
     }
 }
 
+Anthem::count_t Anthem::getSampleCount() const
+{
+    return count_;
+}
+
+double Anthem::getPassedTime() const
+{
+    return static_cast<double>(count_) / Global::samplerate;
+}
+
 Sample Anthem::tick_()
 {
     ++count_;

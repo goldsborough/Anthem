@@ -19,23 +19,11 @@ int main(int argc, const char * argv[])
     
     anthem.operators[Anthem::A].setActive(true);
     
-    anthem.effects[Anthem::A].setActive(true);
-    
-    anthem.effects[Anthem::A].setEffectType(EffectBlock::ECHO);
-    
-    //anthem.effects[Anthem::A].delay().setFeedback(1);
-    
-    anthem.effects[Anthem::A].echo().setDelayTime(0.5);
-    
-    //anthem.effects[Anthem::A].delay().setDecayTime(5);
-    
-    anthem.effects[Anthem::A].echo().setDryWet(0.8);
-    
     anthem.audio.start();
     
     anthem.mixer.startRecording();
     
-    while (anthem.count_ < Global::samplerate * 4);
+    while (anthem.getPassedTime() < 4);
     
     anthem.mixer.saveRecording();
 }

@@ -33,9 +33,15 @@ struct Anthem
     
     typedef unsigned char note_t;
     
+    typedef unsigned long long count_t;
+    
     Anthem();
     
     void setNote(note_t note, bool on);
+    
+    count_t getSampleCount() const;
+    
+    double getPassedTime() const;
     
     Operator operators [4];
     
@@ -61,8 +67,6 @@ struct Anthem
     
     AudioOutput audio;
     
-    unsigned long long count_;
-    
 private:
     
     friend class AudioOutput;
@@ -74,6 +78,8 @@ private:
     note_t note_;
     
     bool active_;
+    
+    count_t count_;
     
 };
 

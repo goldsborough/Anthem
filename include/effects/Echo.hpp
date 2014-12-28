@@ -54,7 +54,7 @@ struct Echo : public Delay
     *
     *  @brief       Processes a sample.
     *
-    *  @details     A sample is processed by running the Delay::process() function on it and summing
+    *  @details     A sample is processed by calling the Delay::process() function on it and summing
     *               it with the original sample.
     *
     *  @param       sample The sample to process.
