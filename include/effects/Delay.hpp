@@ -191,22 +191,16 @@ protected:
     void calcDecay_();
     
     /*! Increments and boundary checks the write pointer */
-    inline void update_();
+    inline void writeAndIncrement_(double sample);
     
     /*! Integral part of the read position */
-    int readInt_;
+    int readIntegral_;
     
     /*! Fractional part of the read position */
-    double readFract_;
+    double readFractional_;
     
     /*! The pointer to the write index */
     iterator write_;
-    
-    /*! The end of the current delay line */
-    iterator end_;
-
-    /*! The size of the current delay line (until end_) */
-    unsigned long delayLen_;
     
     /*! The attenuation value with which to multiply the output */
     double decayValue_;

@@ -15,7 +15,8 @@ Anthem::Anthem()
      &operators[B],
      &operators[C],
      &operators[D]),
-  active_(false)
+  active_(false),
+  count_(0)
 {
     operators[A].setActive(true);
     
@@ -58,6 +59,8 @@ void Anthem::setNote(note_t note, bool on)
 
 Sample Anthem::tick_()
 {
+    ++count_;
+    
     double tick = 0;
     
     if (operators[A].isActive())
@@ -83,7 +86,10 @@ Sample Anthem::tick_()
         }
     }
     
-    tick = flanger.process(tick);
+    if (flanger.isActive())
+    {
+        tick = flanger.process(tick);
+    }
     
     return mixer.process(tick);
 }

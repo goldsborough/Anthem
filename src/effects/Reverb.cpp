@@ -24,6 +24,9 @@ Reverb::Reverb(double reverbTime, double reverbRate, double dryWet)
 {
     for (unsigned short i = 0; i < 4; ++i)
     {
+        if (i < 2) allPasses_[i].setActive(true);
+        
+        delays_[i].setActive(true);
         delays_[i].setDecayTime(reverbTime);
     }
     

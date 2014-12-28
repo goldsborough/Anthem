@@ -19,19 +19,19 @@ int main(int argc, const char * argv[])
     
     anthem.operators[Anthem::A].setActive(true);
     
-    anthem.flanger.setCenter(0.001);//2.0/48000);
+    anthem.flanger.setCenter(0.04);
     
-    anthem.flanger.setDepth(0.001);
+    anthem.flanger.setDepth(0.04);
     
-    anthem.flanger.setRate(0.15);
+    anthem.flanger.setRate(.01);
+    
+    anthem.flanger.setActive(true);
     
     anthem.audio.start();
     
     anthem.mixer.startRecording();
     
-    clock_t t = clock();
-    
-    while(clock() < t + (10 * CLOCKS_PER_SEC));
+    while (anthem.count_ < Global::samplerate * 4);
     
     anthem.mixer.saveRecording();
 }

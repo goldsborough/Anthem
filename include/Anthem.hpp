@@ -62,6 +62,8 @@ struct Anthem
     
     Flanger flanger;
     
+    unsigned long long count_;
+    
 private:
     
     friend class AudioOutput;

@@ -10,7 +10,11 @@ EffectBlock::EffectBlock(unsigned short effect)
   delay_(new Delay),
   echo_(new Echo),
   active_(false)
-{ }
+{
+    delay_->setActive(true);
+    echo_->setActive(true);
+    reverb_->setActive(true);
+}
 
 EffectBlock::~EffectBlock()
 { }

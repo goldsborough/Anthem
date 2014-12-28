@@ -5,14 +5,11 @@
 
 Flanger::Flanger(double center,
                  double depth,
-                 double rate,
-                 double feedback)
+                 double rate)
 : EffectUnit(),
 center_(center),
-depth_(depth/2),
-feedback_(feedback),
-lfo_(new LFO(WavetableDatabase::SINE,rate)),
-delay_(new Delay(center,0,0,0,2))
+lfo_(new LFO(WavetableDatabase::SINE,rate,depth/2)),
+delay_(new Delay(center,0,0,0,1))
 {
     lfo_->setActive(true);
 }
@@ -20,8 +17,6 @@ delay_(new Delay(center,0,0,0,2))
 Flanger::Flanger(const Flanger& other)
 : EffectUnit(other),
 center_(other.center_),
-depth_(other.depth_),
-feedback_(other.feedback_),
 lfo_(new LFO(*other.lfo_)),
 delay_(new Delay(*other.delay_))
 { }
@@ -38,10 +33,6 @@ Flanger& Flanger::operator= (const Flanger& other)
         EffectUnit::operator=(other);
         
         center_ = other.center_;
-        
-        feedback_ = other.feedback_;
-        
-        depth_ = other.depth_;
         
         *lfo_ = *other.lfo_;
         
@@ -65,22 +56,16 @@ void Flanger::setCenter(const double& center)
 
 void Flanger::setDepth(const double& depth)
 {
-    depth_ = depth/2;
-}
-
-void Flanger::setFeedback(const double& feedback)
-{
-    if (feedback < 0 || feedback > 1)
-    { throw std::invalid_argument("Feedback must be > 0 and and <= 1!"); }
-    
-    feedback_ = feedback;
+    lfo_->setAmp(depth/2);
 }
 
 double Flanger::process(double sample)
 {
-    delay_->setDelayLen(center_ + (depth_ * lfo_->tick()));
+    double length = lfo_->modulate(center_, 1, 1);
     
     lfo_->update();
+    
+    delay_->setDelayLen(length);
     
     return sample + delay_->process(sample);
 }

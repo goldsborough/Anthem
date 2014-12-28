@@ -13,8 +13,7 @@ public:
     
     Flanger(double center = 0.01,
             double depth = 0.01,
-            double rate = 0.1,
-            double feedback = 0);
+            double rate = 0.1);
     
     Flanger(const Flanger& other);
     
@@ -23,8 +22,6 @@ public:
     Flanger& operator= (const Flanger& other);
     
     double process(double sample);
-    
-    void setFeedback(const double& feedback);
     
     void setCenter(const double& center);
     
@@ -35,8 +32,6 @@ public:
 private:
     
     double center_;
-    double depth_;
-    double feedback_;
     
     std::unique_ptr<LFO> lfo_;
     std::unique_ptr<Delay> delay_;
