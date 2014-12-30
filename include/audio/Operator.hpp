@@ -261,7 +261,7 @@ private:
     /*! The frequency of the original note, without any ratio */
     double noteFreq_;
     
-    /*! The note that was originally input, without any ratio */
+    /*! The MIDI note that was originally input, without any ratio */
     note_t note_;
 };
 

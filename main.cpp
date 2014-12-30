@@ -9,21 +9,32 @@ int main(int argc, const char * argv[])
     
     Anthem anthem;
     
-    anthem.operators[Anthem::A].setWavetable(WavetableDatabase::SINE);
+    anthem.operators[Anthem::D].setWavetable(WavetableDatabase::SINE);
     
-    anthem.operators[Anthem::A].setMode(1);
+    anthem.operators[Anthem::D].setActive(true);
     
-    anthem.operators[Anthem::A].setLevel(1);
     
-    anthem.operators[Anthem::A].setNote(48);
+    anthem.operators[Anthem::D].setFrequencyOffset(100);
     
-    anthem.operators[Anthem::A].setActive(true);
+    anthem.operators[Anthem::D].setLevel(1);
+    
+    
+    
+    anthem.operators[Anthem::C].setActive(true);
+    
+    anthem.operators[Anthem::C].setFrequencyOffset(200);
+    
+    anthem.operators[Anthem::C].setLevel(1);
+    
+    anthem.operators[Anthem::C].setMode(Operator::FM);
     
     anthem.audio.start();
     
     anthem.mixer.startRecording();
     
-    while (anthem.getPassedTime() < 4);
+    const unsigned long len = Global::samplerate * 1;
+    
+    while (anthem.getSampleCount() < len);
     
     anthem.mixer.saveRecording();
 }

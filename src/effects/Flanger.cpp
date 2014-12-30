@@ -104,7 +104,7 @@ double Flanger::process(double sample)
     // is the delay depth value
     double length = lfo_->modulate(center_, 1, 1);
     
-    // Increment LFO afterwards
+    // Increment LFO
     lfo_->update();
     
     // Set the new length

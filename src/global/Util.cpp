@@ -83,6 +83,8 @@ namespace Util
     
     double freqToSemitones(double baseFreq, double newFreq)
     {
+        if (! baseFreq) return 0;
+        
         return (12 * (log(newFreq/baseFreq))) / log(2);
     }
 

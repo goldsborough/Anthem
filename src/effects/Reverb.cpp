@@ -27,7 +27,6 @@ Reverb::Reverb(double reverbTime, double reverbRate, double dryWet)
         if (i < 2) allPasses_[i].setActive(true);
         
         delays_[i].setActive(true);
-        delays_[i].setDecayTime(reverbTime);
     }
     
     delays_[0].setDelayTime(0.0437);
@@ -41,8 +40,8 @@ Reverb::Reverb(double reverbTime, double reverbRate, double dryWet)
     allPasses_[1].setDecayTime(0.0017);
     allPasses_[1].setDelayTime(0.03292);
     
-    setReverbRate(reverbRate);
     setReverbTime(reverbTime);
+    setReverbRate(reverbRate);
     setDryWet(dryWet);
     
     // Initialize ModDocks

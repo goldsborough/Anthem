@@ -224,16 +224,6 @@ void Delay::calcDecay_()
     }
 }
 
-void Delay::writeAndIncrement_(double sample)
-{
-    *write_ = sample;
-    
-    if (++write_ >= buffer_.end())
-    {
-        write_ -= buffer_.size();
-    }
-}
-
 double Delay::offset(unsigned int offset)
 {
     iterator ret = write_ - offset;
@@ -244,6 +234,16 @@ double Delay::offset(unsigned int offset)
     }
     
     return *ret;
+}
+
+void Delay::writeAndIncrement_(double sample)
+{
+    *write_ = sample;
+    
+    if (++write_ >= buffer_.end())
+    {
+        write_ -= buffer_.size();
+    }
 }
 
 double Delay::process(double sample)
@@ -322,7 +322,7 @@ double Delay::process(double sample)
 
 double AllPassDelay::process(double sample)
 {
-    iterator read = write_ - readIntegral_;
+    const_iterator read = write_ - readIntegral_;
     
     // Check if we need to wrap around
     if (read < buffer_.begin())

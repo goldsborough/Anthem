@@ -57,7 +57,7 @@ public:
     Delay(double delayLen = 1,
           double decayTime = 4,
           double decayRate = 0.001,
-          double feedbackLevel = 1,
+          double feedbackLevel = 0,
           double capacity = 10);
     
     Delay(const Delay& other);

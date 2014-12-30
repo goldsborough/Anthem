@@ -18,8 +18,6 @@ Anthem::Anthem()
   active_(false),
   count_(0)
 {
-    operators[A].setActive(true);
-    
     midi.init(this);
     
     audio.init(this);
@@ -71,12 +69,7 @@ Sample Anthem::tick_()
 {
     ++count_;
     
-    double tick = 0;
-    
-    if (operators[A].isActive())
-    {
-        tick = operators[A].tick();
-    }
+    double tick = fm.tick();
     
     if (noise.isActive())
     {
@@ -101,7 +94,7 @@ Sample Anthem::tick_()
 
 void Anthem::update_()
 {
-    for(unsigned short unit = A; unit < D; ++unit)
+    for(unsigned short unit = A; unit <= D; ++unit)
     {
         operators[unit].update();
         lfos[unit].update();
