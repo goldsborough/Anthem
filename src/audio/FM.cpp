@@ -127,7 +127,7 @@ double FM::tick()
         {
             double bTick = tickIfActive_(B);
             
-            return modulate_(D, add_(B, aTick + bTick));
+            return modulate_(D, add_(C, aTick + bTick));
         }
             
         case 7:
@@ -146,6 +146,7 @@ double FM::tick()
         case 10:
             return add_(D, modulate_(C, aTick) + modulate_(B, aTick));
             
+        case 11:
         default:
             return add_(D, add_(C, add_(B, aTick)));
     }

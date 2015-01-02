@@ -102,7 +102,7 @@ public:
     
     /*********************************************************************************************//*!
     *
-    *  @brief       Flushes the contents of the Wavefile object's sample buffer.
+    *  @brief       Flushes/erases the contents of the Wavefile object's sample buffer.
     *
     *  @see         write()
     *

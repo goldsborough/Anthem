@@ -64,16 +64,16 @@ namespace Util
 
     double noteToFreq(unsigned short note)
     {
-        // Source: http://en.wikipedia.org/wiki/Piano_key_frequencies
+        // Source: http://en.wikipedia.org/wiki/MIDI_Tuning_Standard
         
-        double exp = (note - 48) / 12.0;
+        double exp = (note - 69) / 12.0;
         
         return pow(2, exp) * 440;
     }
 
     unsigned short freqToNote(double freq)
     {
-        return 12 * log2( (freq / 440) ) + 48;
+        return 12 * log2(freq / 440.0) + 69;
     }
 
     double semitonesToFreq(double baseFreq, double semitoneOffset)
