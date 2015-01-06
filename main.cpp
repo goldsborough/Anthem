@@ -16,12 +16,15 @@ int main(int argc, const char * argv[])
     anthem.operators[Anthem::D].setLevel(1);
     
     
+    anthem.envelopes[Anthem::A].setActive(true);
     
-    anthem.operators[Anthem::C].setActive(true);
+    anthem.operators[Anthem::D].attachMod(Operator::LEVEL, &anthem.envelopes[Anthem::A]);
     
-    anthem.operators[Anthem::C].setLevel(2);
+    anthem.envelopes[Anthem::A].setSegLen(Envelope::ATK, 1000);
     
-    anthem.operators[Anthem::C].setMode(Operator::FM);
+    anthem.envelopes[Anthem::A].setSegStartLevel(Envelope::ATK, 0);
+    
+    anthem.envelopes[Anthem::A].setSegEndLevel(Envelope::ATK, 1);
     
     
     anthem.audio.start();

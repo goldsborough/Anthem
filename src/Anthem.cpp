@@ -96,10 +96,27 @@ void Anthem::update_()
 {
     for(unsigned short unit = A; unit <= D; ++unit)
     {
-        operators[unit].update();
-        lfos[unit].update();
-        envelopes[unit].update();
+        if (operators[unit].isActive())
+        {
+            operators[unit].update();
+        }
+        
+        if (active_)
+        {
+            if (lfos[unit].isActive())
+            {
+                lfos[unit].update();
+            }
+            
+            if (envelopes[unit].isActive())
+            {
+                envelopes[unit].update();
+            }
+        }
     }
     
-    noise.update();
+    if (noise.isActive())
+    {
+        noise.update();
+    }
 }
