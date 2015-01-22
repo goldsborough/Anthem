@@ -1,0 +1,26 @@
+/* Main Window */
+QMainWindow {
+
+background-color: rgb(39,39,43);
+
+}
+
+/* Filebar */
+
+Filebar {
+
+background-color: #DC4850; /* Red */
+
+}
+
+QLabel#fileLabel {
+
+color: #27272B; /* Black */
+
+font-size: 40px;
+
+qproperty-alignment: AlignCenter;
+
+font-family: DIN, sans-serif;
+
+}

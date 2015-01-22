@@ -23,15 +23,14 @@
 # Other files
 *.xcodeproj
 *~
-*.toc
-*.synctex.gz
-*.fls
-*.log
-*.aux
-*.dvi
-*.fdb_latexmk
+
+#Qt files
+moc_*
+qrc_rsc.cpp
+*.pro*
 
 # Folders
 build*
 wavefiles
 html
+other/design

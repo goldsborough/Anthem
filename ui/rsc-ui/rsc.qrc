@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>style/style.qss</file>
+        <file>DIN.otf</file>
+        <file>icons/up.png</file>
+    </qresource>
+</RCC>
