@@ -2,6 +2,14 @@
     <qresource prefix="/">
         <file>style/style.qss</file>
         <file>DIN.otf</file>
-        <file>icons/up.png</file>
+        <file>icons/buttons/menu-active.png</file>
+        <file>icons/buttons/menu.png</file>
+        <file>icons/buttons/next-active.png</file>
+        <file>icons/buttons/next.png</file>
+        <file>icons/buttons/previous-active.png</file>
+        <file>icons/buttons/previous.png</file>
+        <file>icons/logo.png</file>
+        <file>icons/buttons/folder-active.png</file>
+        <file>icons/buttons/folder.png</file>
     </qresource>
 </RCC>

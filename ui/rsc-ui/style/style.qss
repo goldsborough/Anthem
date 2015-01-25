@@ -1,26 +1,133 @@
 /* Main Window */
-QMainWindow {
-
-background-color: rgb(39,39,43);
-
-}
-
-/* Filebar */
-
-Filebar {
-
-background-color: #DC4850; /* Red */
+QMainWindow
+{
+  background-color: #27272B; /* Black */
 
 }
 
-QLabel#fileLabel {
+QLabel
+{
+  qproperty-alignment: AlignCenter;
 
-color: #27272B; /* Black */
+  color: #FFFFFF;
+}
 
-font-size: 40px;
+QLabel#CustomMessageBoxMessage
+{
+  color: #27272B; /* Black */
 
-qproperty-alignment: AlignCenter;
+  font-family: "Proxima Nova";
 
-font-family: DIN, sans-serif;
+  font-size: 30px;
+}
 
+QLabel#projectLabel
+{
+  color: #27272B; /* Black */
+
+  font-size: 40px;
+
+  font-family: DIN;
+}
+
+QPushButton#CustomMessageBoxButton
+{
+  background-color: rgba(0,0,0,0);
+
+  color: #27272B;
+
+  font-size: 16px;
+
+  font-family: ProximaNova-Regular;
+
+  qproperty-flat: true;
+
+  outline: none;
+
+  border: 1px solid #27272B;
+
+  min-height: 50px;
+}
+
+QPushButton#CustomMessageBoxButton:hover
+{
+  background-color: #27272B;
+
+  border: 10px solid #27272B;
+
+  color: #DC4850;
+}
+
+Projectbar
+{
+  background-color: #DC4850; /* Red */
+}
+
+QMenu
+{
+  background-color: #DC4850; /* Red */
+
+  margin: 15px;
+}
+
+QMenu::item
+{
+  color: #27272B; /* Black */
+
+  padding: 15px;
+
+  font-size: 16px;
+}
+
+QMenu::item::selected
+{
+  background-color: #27272B; /* Black */
+
+  color: #DC4850; /* Red */
+}
+
+QMenu::separator
+{
+  background-color: transparent;
+}
+
+CustomMessageBox
+{
+  background-color: #DC4850; /* Red */
+}
+
+IconButton
+{
+  background-color: none;
+
+  outline: none;
+
+  border: none;
+}
+
+IconButton:hover
+{
+  background-color: none;
+
+  outline: none;
+
+  border: none;
+}
+
+PopupLine
+{
+  background-color: #DC4850; /* Red */
+}
+
+QLineEdit
+{
+  font-size: 30px;
+
+  border: none;
+
+  qproperty-frame: false;
+
+  background-color: #DC4850; /* Red */
+
+  color: #27272B; /* Black */
 }

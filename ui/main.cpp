@@ -3,8 +3,12 @@
 #include <QFile>
 #include <QString>
 
+extern void qt_set_sequence_auto_mnemonic(bool b);
+
 int main(int argc, char *argv[])
 {
+    qt_set_sequence_auto_mnemonic(true);
+
     QApplication app(argc, argv);
 
     QFile file(":/style/style.qss");
