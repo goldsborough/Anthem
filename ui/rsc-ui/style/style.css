@@ -1,0 +1,68 @@
+QMainWindow {
+  background-color: #27272B; }
+
+QLabel {
+  qproperty-alignment: AlignCenter;
+  color: #FFFFFF; }
+  QLabel#CustomMessageBoxMessage {
+    color: #27272B;
+    font-family: "Proxima Nova";
+    font-size: 30px; }
+  QLabel#projectLabel {
+    color: #27272B;
+    font-size: 40px;
+    font-family: DIN; }
+
+QPushButton#CustomMessageBoxButton {
+  background-color: transparent;
+  color: #27272B;
+  font-size: 16px;
+  font-family: ProximaNova-Regular;
+  qproperty-flat: true;
+  outline: none;
+  border: 1px solid #27272B;
+  min-height: 50px; }
+  QPushButton#CustomMessageBoxButton:hover {
+    background-color: #27272B;
+    border: 10px solid #27272B;
+    color: #DC4850; }
+
+Projectbar {
+  background-color: #DC4850; }
+
+QMenu {
+  background-color: #DC4850;
+  margin: 15px; }
+  QMenu::item {
+    color: #27272B;
+    padding: 15px;
+    font-size: 16px; }
+    QMenu::item::selected {
+      background-color: #27272B;
+      color: #DC4850; }
+  QMenu::separator {
+    background-color: transparent; }
+
+CustomMessageBox {
+  background-color: #DC4850; }
+
+IconButton {
+  background-color: none;
+  outline: none;
+  border: none; }
+  IconButton:hover {
+    background-color: none;
+    outline: none;
+    border: none; }
+
+PopupLine {
+  background-color: #DC4850; }
+
+QLineEdit {
+  font-size: 30px;
+  border: none;
+  qproperty-frame: false;
+  background-color: #DC4850;
+  color: #27272B; }
+
+/*# sourceMappingURL=style.css.map */

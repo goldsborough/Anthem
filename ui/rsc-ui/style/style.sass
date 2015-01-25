@@ -1,0 +1,77 @@
+$black: #27272B
+$white: #FFFFFF
+$red: #DC4850
+
+QMainWindow
+  background-color: $black
+
+QLabel
+  qproperty-alignment: AlignCenter
+  color: $white
+  &#CustomMessageBoxMessage
+    color: $black
+    font-family: "Proxima Nova"
+    font-size: 30px
+
+  &#projectLabel
+    color: $black
+    font-size: 40px
+    font-family: DIN
+
+
+QPushButton#CustomMessageBoxButton
+  background-color: rgba(0,0,0,0)
+  color: $black
+  font-size: 16px
+  font-family: ProximaNova-Regular
+  qproperty-flat: true
+  outline: none
+  border: 1px solid $black
+  min-height: 50px
+  &:hover
+    background-color: $black
+    border: 10px solid $black
+    color: $red
+
+
+Projectbar
+  background-color: $red
+
+QMenu
+  background-color: $red
+  margin: 15px
+  &::item
+    color: $black
+    padding: 15px
+    font-size: 16px
+    &::selected
+      background-color: $black
+      color: $red
+
+
+  &::separator
+    background-color: transparent
+
+
+CustomMessageBox
+  background-color: $red
+
+IconButton
+  background-color: none
+  outline: none
+  border: none
+  &:hover
+    background-color: none
+    outline: none
+    border: none
+
+
+PopupLine
+  background-color: $red
+
+QLineEdit
+  font-size: 30px
+  border: none
+  qproperty-frame: false
+  background-color: $red
+  color: $black

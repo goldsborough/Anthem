@@ -1,15 +1,15 @@
 <RCC>
     <qresource prefix="/">
-        <file>style/style.qss</file>
-        <file>DIN.otf</file>
-        <file>icons/buttons/menu-active.png</file>
-        <file>icons/buttons/menu.png</file>
-        <file>icons/buttons/next-active.png</file>
-        <file>icons/buttons/next.png</file>
-        <file>icons/buttons/previous-active.png</file>
-        <file>icons/buttons/previous.png</file>
-        <file>icons/logo.png</file>
-        <file>icons/buttons/folder-active.png</file>
-        <file>icons/buttons/folder.png</file>
+        <file>icons/menu-active.png</file>
+        <file>icons/menu.png</file>
+        <file>icons/next-active.png</file>
+        <file>icons/next.png</file>
+        <file>icons/previous-active.png</file>
+        <file>icons/previous.png</file>
+        <file>icons/folder-active.png</file>
+        <file>icons/folder.png</file>
+        <file>fonts/DIN.otf</file>
+        <file alias="logo">icons/logo.png</file>
+        <file>style/style.css</file>
     </qresource>
 </RCC>

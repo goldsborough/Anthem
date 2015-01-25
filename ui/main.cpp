@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
 
     QApplication app(argc, argv);
 
-    QFile file(":/style/style.qss");
+    QFile file("/Users/petergoldsborough/Documents/Anthem/ui/rsc-ui/style/style.css");
     file.open(QFile::ReadOnly);
 
     QString styleSheet = QString(file.readAll());

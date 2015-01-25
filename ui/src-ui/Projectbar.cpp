@@ -35,8 +35,8 @@ void Projectbar::setupUi()
     projectLabel_->setFixedSize(192,50);
     projectLabel_->move(95,15);
 
-    IconButton* nextButton = new IconButton(":/icons/buttons/next.png",
-                                            ":/icons/buttons/next-active.png",
+    IconButton* nextButton = new IconButton(":/icons/next.png",
+                                            ":/icons/next-active.png",
                                             new QSize(28,28),
                                             new QSize(32,32),
                                             this);
@@ -45,18 +45,18 @@ void Projectbar::setupUi()
     connect(nextButton, &QPushButton::clicked,
             this, &Projectbar::nextProject);
 
-    IconButton* previousButton = new IconButton(":/icons/buttons/previous.png",
-                                 ":/icons/buttons/previous-active.png",
-                                 new QSize(28,28),
-                                 new QSize(32,32),
-                                 this);
+    IconButton* previousButton = new IconButton(":/icons/previous.png",
+                                                ":/icons/previous-active.png",
+                                                new QSize(28,28),
+                                                new QSize(32,32),
+                                                this);
     previousButton->move(16,44);
 
     connect(previousButton, &QPushButton::clicked,
             this, &Projectbar::previousProject);
 
-    IconButton* menuButton = new IconButton(":/icons/buttons/menu.png",
-                                            ":/icons/buttons/menu-active.png",
+    IconButton* menuButton = new IconButton(":/icons/menu.png",
+                                            ":/icons/menu-active.png",
                                             new QSize(40,40),
                                             new QSize(44,44),
                                             this);
@@ -147,7 +147,7 @@ void Projectbar::setupUi()
 /*
     QLabel* l = new QLabel(this);
 
-    QIcon pix(":/icons/buttons/next.png");
+    QIcon pix(":/icons/next.png");
 
     l->setPixmap(pix.pixmap(60,60));
 
@@ -279,8 +279,8 @@ void Projectbar::openProject()
 
 void Projectbar::newProject()
 {
-    IconButton* icon = new IconButton(":/icons/buttons/folder.png",
-                                      ":/icons/buttons/folder-active.png",
+    IconButton* icon = new IconButton(":/icons/folder.png",
+                                      ":/icons/folder-active.png",
                                       new QSize(40,40),
                                       new QSize(44,44));
 
