@@ -28,7 +28,11 @@ public:
 
     void setIconButton(IconButton* icon);
 
+    IconButton* getIconButton() const;
+
 private:
+
+    IconButton* icon_;
 
     QLineEdit* line_;
 

@@ -10,7 +10,9 @@ PopupLine::PopupLine(QWidget* parent,
                      IconButton* icon,
                      const QString& placeholderText,
                      const QSize& size)
+
 : QDialog(parent), line_(new QLineEdit(this))
+
 {
     QDialog::setFixedSize(size);
 
@@ -57,10 +59,17 @@ void PopupLine::setIconButton(IconButton *icon)
 
     QDialog::setFixedWidth(size.width() * 1.1);
 
-    icon->move(size.width() * 0.97,
-               (size.height() - icon->getStandardSize()->height())/2);
+    icon_ = icon;
 
-    icon->show();
+    icon_->move(size.width() * 0.97,
+               (size.height() - icon_->getStandardSize()->height())/2);
+
+    icon_->show();
+}
+
+IconButton* PopupLine::getIconButton() const
+{
+    return icon_;
 }
 
 void PopupLine::paintEvent(QPaintEvent*)

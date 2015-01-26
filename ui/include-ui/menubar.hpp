@@ -15,7 +15,7 @@ public:
 
 private:
 
-    void initUI_();
+    void setupUi();
 
     Projectbar* projectBar_;
 };

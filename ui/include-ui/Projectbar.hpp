@@ -6,8 +6,8 @@
 
 class QLabel;
 class QPaintEvent;
-class QMenu;
 class QDir;
+class QMenu;
 
 class Projectbar : public QWidget
 {
@@ -47,9 +47,9 @@ private:
 
     bool modified_;
 
-    QLabel* projectLabel_;
-
     QMenu* menu_;
+
+    QLabel* projectLabel_;
 
     QDir* dir_;
 

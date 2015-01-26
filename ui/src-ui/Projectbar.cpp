@@ -2,6 +2,7 @@
 #include "IconButton.hpp"
 #include "CustomMessageBox.hpp"
 #include "PopupLine.hpp"
+#include "CustomMenu.hpp"
 
 #include <QtWidgets>
 #include <QtCore>
@@ -63,10 +64,7 @@ void Projectbar::setupUi()
 
     menuButton->move(328,20);
 
-    menu_ = new QMenu(this);
-
-    connect(menuButton, &IconButton::clicked,
-            menu_, [&] () { this->menu_->popup(mapToGlobal(QPoint(270,80)));} );
+    CustomMenu* menu = new CustomMenu(menuButton, this);
 
     /* --------- Refresh Action -------- */
 
@@ -77,7 +75,7 @@ void Projectbar::setupUi()
     connect(refreshAction, &QAction::triggered,
             this, &Projectbar::refreshDirectory);
 
-    menu_->addAction(refreshAction);
+    menu->addAction(refreshAction);
 
 
     /* --------- Change Action -------- */
@@ -89,7 +87,7 @@ void Projectbar::setupUi()
     connect(changeAction, &QAction::triggered,
             this, &Projectbar::changeDirectory);
 
-    menu_->addAction(changeAction);
+    menu->addAction(changeAction);
 
 
     /* --------- Open Action -------- */
@@ -101,7 +99,7 @@ void Projectbar::setupUi()
     connect(openAction, &QAction::triggered,
             this, &Projectbar::openProject);
 
-    menu_->addAction(openAction);
+    menu->addAction(openAction);
 
     /* --------- New Action -------- */
 
@@ -112,7 +110,7 @@ void Projectbar::setupUi()
     connect(newAction, &QAction::triggered,
             this, &Projectbar::newProject);
 
-    menu_->addAction(newAction);
+    menu->addAction(newAction);
 
 
     /* --------- Save Action -------- */
@@ -124,7 +122,7 @@ void Projectbar::setupUi()
     connect(saveAction, &QAction::triggered,
             this, &Projectbar::save);
 
-    menu_->addAction(saveAction);
+    menu->addAction(saveAction);
 
     /* --------- Save As Action -------- */
 
@@ -136,8 +134,7 @@ void Projectbar::setupUi()
     connect(saveAsAction, &QAction::triggered,
             this, &Projectbar::newProject);
 
-    menu_->addAction(saveAsAction);
-
+    menu->addAction(saveAsAction);
 
     // Sub class QMenu and add a red triangle
     // right above it, for every instance
@@ -289,7 +286,7 @@ void Projectbar::newProject()
 
     PopupLine* line = new PopupLine(this,icon);
 
-    line->exec();
+    line->show();
 
     QString fileName = line->getInput();
 
@@ -323,7 +320,7 @@ void Projectbar::newProject()
 
         msg->addButton(tryAgainButton);
 
-        msg->exec();
+        msg->show();
 
         //qDebug() << msg->lastButtonPressed()->text() << endl;
 
