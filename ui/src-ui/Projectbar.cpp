@@ -136,25 +136,6 @@ void Projectbar::setupUi()
 
     menu->addAction(saveAsAction);
 
-    // Sub class QMenu and add a red triangle
-    // right above it, for every instance
-    // Also change cursor for every widget
-    // in custom addWidget() method
-
-/*
-    QLabel* l = new QLabel(this);
-
-    QIcon pix(":/icons/next.png");
-
-    l->setPixmap(pix.pixmap(60,60));
-
-    l->move(320,55);*/
-
-
-
-
-
-
     this->setFixedSize(384,80);
 }
 

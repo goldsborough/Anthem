@@ -16,7 +16,7 @@ public:
 
     PopupLine(QWidget* parent,
               IconButton* icon = nullptr,
-              const QString& placeholderText = QString("Enter to input. Escape to cancel"),
+              const QString& placeholderText = QString(),
               const QSize& size = QSize(500,55));
 
 

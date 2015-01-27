@@ -1,60 +1,72 @@
-$black: #27272B
-$white: #FFFFFF
-$red: #DC4850
+$primary: #27272B
+$tertiary: #FFFFFF
+$secondary: #DC4850
 
 QMainWindow
-  background-color: $black
+  background-color: $primary
 
 QLabel
   qproperty-alignment: AlignCenter
-  color: $white
+  color: $tertiary
   &#CustomMessageBoxMessage
-    color: $black
+    color: $primary
     font-family: "Proxima Nova"
     font-size: 30px
 
   &#projectLabel
-    color: $black
+    color: $primary
     font-size: 40px
     font-family: DIN
+
+  &#CopyDock
+    background-color: $primary
+    border: 3px solid $secondary
+    padding-top: 13px
+    padding-bottom: 13px
+    padding-right: 26px
+    padding-left: 26px
+    font-size: 40px
+    font-family: DIN
+    color: $secondary
+
+  &#CopyDock:enabled
+    @extend #CopyDock
+    background-color: $secondary
+    color: $primary
 
 
 QPushButton#CustomMessageBoxButton
   background-color: rgba(0,0,0,0)
-  color: $black
+  color: $primary
   font-size: 16px
   font-family: ProximaNova-Regular
   qproperty-flat: true
   outline: none
-  border: 1px solid $black
+  border: 1px solid $primary
   min-height: 50px
   &:hover
-    background-color: $black
-    border: 10px solid $black
-    color: $red
+    background-color: $primary
+    border: 10px solid $primary
+    color: $secondary
 
 
 Projectbar
-  background-color: $red
+  background-color: $secondary
 
 QMenu
-  background-color: $red
+  background-color: $secondary
   margin: 15px
   &::item
-    color: $black
+    color: $primary
     padding: 15px
     font-size: 16px
     &::selected
-      background-color: $black
-      color: $red
-
-
-  &::separator
-    background-color: transparent
+      background-color: $primary
+      color: $secondary
 
 
 CustomMessageBox
-  background-color: $red
+  background-color: $secondary
 
 IconButton
   background-color: none
@@ -67,11 +79,11 @@ IconButton
 
 
 PopupLine
-  background-color: $red
+  background-color: $secondary
 
 QLineEdit
   font-size: 30px
   border: none
   qproperty-frame: false
-  background-color: $red
-  color: $black
+  background-color: $secondary
+  color: $primary

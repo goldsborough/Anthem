@@ -14,5 +14,7 @@
         <file>icons/menu-tri.png</file>
         <file>icons/dock-a.png</file>
         <file>icons/dock-b.png</file>
+        <file>icons/dock-a-active.png</file>
+        <file>icons/dock-b-active.png</file>
     </qresource>
 </RCC>

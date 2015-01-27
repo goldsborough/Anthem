@@ -12,6 +12,19 @@ QLabel {
     color: #27272B;
     font-size: 40px;
     font-family: DIN; }
+  QLabel#CopyDock, QLabel#CopyDock:enabled {
+    background-color: #27272B;
+    border: 3px solid #DC4850;
+    padding-top: 13px;
+    padding-bottom: 13px;
+    padding-right: 26px;
+    padding-left: 26px;
+    font-size: 40px;
+    font-family: DIN;
+    color: #DC4850; }
+  QLabel#CopyDock:enabled {
+    background-color: #DC4850;
+    color: #27272B; }
 
 QPushButton#CustomMessageBoxButton {
   background-color: transparent;
@@ -40,8 +53,6 @@ QMenu {
     QMenu::item::selected {
       background-color: #27272B;
       color: #DC4850; }
-  QMenu::separator {
-    background-color: transparent; }
 
 CustomMessageBox {
   background-color: #DC4850; }
