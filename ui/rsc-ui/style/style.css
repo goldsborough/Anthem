@@ -111,12 +111,8 @@ QComboBox {
     color: #27272B; }
 
 QTabWidget::pane {
-  border: none;
-  qproperty-enabled: 0;
-  outline: none;
-  background: none; }
-
-QTabBar::tab {
+  background-color: transparent; }
+QTabWidget QTabBar::tab {
   background-color: transparent;
   font-size: 40px;
   color: #FFFFFF;
@@ -129,8 +125,11 @@ QTabBar::tab {
   padding-top: 15px;
   text-align: center;
   qproperty-alignment: AlignCenter; }
-  QTabBar::tab:selected, QTabBar::tab:hover {
+  QTabWidget QTabBar::tab:selected, QTabWidget QTabBar::tab:hover {
     background-color: #DC4850;
     color: #27272B; }
+
+#ContainerPage {
+  background-color: #DC4850; }
 
 /*# sourceMappingURL=style.css.map */

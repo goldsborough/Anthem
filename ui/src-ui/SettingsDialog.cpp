@@ -23,7 +23,7 @@ void SettingsDialog::setupUi()
 
     CustomComboBox* samplerateComboBox = new CustomComboBox(this);
 
-    samplerateComboBox->addItems({"44100", "48000", "92000", "12345678"});
+    samplerateComboBox->addItems({"44100", "48000", "92000"});
 
     layout->addWidget(samplerateComboBox, 0, 1);
 
@@ -35,29 +35,24 @@ void SettingsDialog::setupUi()
 
     QPushButton* defaultDirectoryButton = new QPushButton("/Users/petergoldsborough/Documents", this);
 
+    defaultDirectoryButton->setCursor(Qt::PointingHandCursor);
+
     layout->addWidget(defaultDirectoryButton, 1, 1);
-
-    /* --------- Cancel PushButton -------- */
-
-    QPushButton* cancelButton = new QPushButton("Cancel", this);
-
-    layout->addWidget(cancelButton, 2, 0);
-
-    connect(cancelButton, &QPushButton::clicked,
-            this, &SettingsDialog::close);
 
     /* --------- OK PushButton -------- */
 
     QPushButton* okButton = new QPushButton("OK", this);
 
-    layout->addWidget(okButton, 2, 1);
+    okButton->setCursor(Qt::PointingHandCursor);
+
+    layout->addWidget(okButton, 2, 0, 1, 2);
 
     connect(okButton, &QPushButton::clicked,
             this, &SettingsDialog::saveSettings_);
 
     /* --------- This Window -------- */
 
-    QDialog::setFixedWidth(400);
+    QDialog::setFixedSize(QDialog::sizeHint());
 
     QDialog::setLayout(layout);
 }

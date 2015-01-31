@@ -1,4 +1,4 @@
-#include "mainwindow.hpp"
+#include "AnthemUi.hpp"
 #include <QApplication>
 #include <QFile>
 #include <QString>
@@ -13,13 +13,12 @@ int main(int argc, char *argv[])
 
     QFile file("/Users/petergoldsborough/Documents/Anthem/ui/rsc-ui/style/style.css");
     file.open(QFile::ReadOnly);
-
     QString styleSheet = QString(file.readAll());
     app.setStyleSheet(styleSheet);
 
-    MainWindow window;
+    AnthemUi anthemUi;
 
-    window.show();
+    anthemUi.show();
 
     return app.exec();
 }

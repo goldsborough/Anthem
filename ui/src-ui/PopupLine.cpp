@@ -72,6 +72,27 @@ IconButton* PopupLine::getIconButton() const
     return icon_;
 }
 
+void PopupLine::setText(const QString& text)
+{
+    line_->setText(text);
+}
+
+QString PopupLine::getText() const
+{
+    return line_->text();
+}
+
+void PopupLine::setPlaceholderText(const QString& text)
+{
+    line_->setPlaceholderText(text);
+}
+
+QString PopupLine::getPlaceholderText() const
+{
+    return line_->placeholderText();
+}
+
+
 void PopupLine::paintEvent(QPaintEvent*)
 {
     QStyleOption opt;

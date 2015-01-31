@@ -23,9 +23,17 @@ public:
 
     IconButton* getIconButton() const;
 
+    void setText(const QString& text);
+
+    QString getText() const;
+
+    void setPlaceholderText(const QString& text);
+
+    QString getPlaceholderText() const;
+
 signals:
 
-    void receivedInput(QString text);
+    void receivedInput(const QString& text);
 
 private:
 

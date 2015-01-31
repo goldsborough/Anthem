@@ -130,26 +130,28 @@ QComboBox
     background: $secondary
     color: $primary
 
-QTabWidget::pane
-  border: none /* 3px solid $secondary */
-  qproperty-enabled: 0
-  outline: none
-  background: none
+QTabWidget
 
-QTabBar::tab
-  background-color: transparent
-  font-size: 40px
-  color: $tertiary
-  font-family: "DIN Light"
-  border: none
-  outline: none
-  min-width: 205px
-  min-height: 50px
-  padding-bottom: 5px
-  padding-top: 15px
-  text-align: center
-  qproperty-alignment: AlignCenter
+  &::pane
+    background-color: transparent
 
-  &:selected, &:hover
-    background-color: $secondary
-    color: $primary
+  & QTabBar::tab
+    background-color: transparent
+    font-size: 40px
+    color: $tertiary
+    font-family: "DIN Light"
+    border: none
+    outline: none
+    min-width: 205px
+    min-height: 50px
+    padding-bottom: 5px
+    padding-top: 15px
+    text-align: center
+    qproperty-alignment: AlignCenter
+
+    &:selected, &:hover
+      background-color: $secondary
+      color: $primary
+
+#ContainerPage
+  background-color: $secondary

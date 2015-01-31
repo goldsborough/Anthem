@@ -1,3 +1,4 @@
+
 # Compiled Object files
 *.slo
 *.lo
@@ -23,8 +24,9 @@
 # Other files
 *.xcodeproj
 *~
+*.svg
 
-#Qt files
+# Qt files
 moc_*
 qrc_rsc.cpp
 *.pro*

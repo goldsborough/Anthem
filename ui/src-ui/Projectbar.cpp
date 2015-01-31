@@ -136,21 +136,6 @@ void Projectbar::setupUi()
 
     menu->addAction(saveAsAction);
 
-    /* --------- Popup Line -------- */
-
-    IconButton* icon = new IconButton(":/icons/folder.png",
-                                      ":/icons/folder-active.png",
-                                      new QSize(40,40),
-                                      new QSize(44,44));
-
-    connect(icon, &IconButton::clicked,
-            this, &Projectbar::changeDirectory);
-
-    newProjectPopupLine_ = new PopupLine(this, icon);
-
-    connect(newProjectPopupLine_, &PopupLine::receivedInput,
-            this, &Projectbar::createNewProject);
-
     /* --------- This Window -------- */
 
     this->setFixedSize(384,80);
@@ -211,32 +196,33 @@ void Projectbar::changeDirectory()
 
         if(dir_->entryInfoList().isEmpty())
         {
-            CustomMessageBox* msg = new CustomMessageBox("Invalid directory",
-                                                         "The directory you chose does not\n contain any Anthem project files!",
-                                                         this
-                                                         );
+            CustomMessageBox message("Invalid directory",
+                                     "The directory you chose does not\n contain any Anthem project files!",
+                                     this
+                                     );
 
-            QPushButton* createnewProjectButton = new QPushButton("Create new project in this directory",msg);
+            QPushButton* createnewProjectButton = new QPushButton("Create new project in this directory", &message);
 
-            msg->addButton(createnewProjectButton);
+            message.addButton(createnewProjectButton);
 
             connect(createnewProjectButton, &QPushButton::clicked,
                     this, &Projectbar::newProject);
 
-            QPushButton* chooseDifferentButton = new QPushButton("Choose different directory",msg);
+            QPushButton* chooseDifferentButton = new QPushButton("Choose different directory", &message);
 
-            msg->addButton(chooseDifferentButton);
+            message.addButton(chooseDifferentButton);
 
             connect(chooseDifferentButton, &QPushButton::clicked,
                     this, &Projectbar::changeDirectory);
 
-            QPushButton* stayInCurrentButton = new QPushButton("Stay in current directory",msg);
+            QPushButton* stayInCurrentButton = new QPushButton("Stay in current directory", &message);
 
-            stayInCurrentButton->setDefault(true);
+            message.addButton(stayInCurrentButton);
 
-            msg->addButton(stayInCurrentButton);
+            connect(chooseDifferentButton, &QPushButton::clicked,
+                    &message, &CustomMessageBox::close);
 
-            msg->show();
+            message.exec();
 
         }
 
@@ -274,11 +260,25 @@ void Projectbar::openProject()
 
 void Projectbar::newProject()
 {
-    newProjectPopupLine_->show();
-}
+    IconButton* icon = new IconButton(":/icons/folder.png",
+                                      ":/icons/folder-active.png",
+                                      new QSize(40,40),
+                                      new QSize(44,44));
 
-void Projectbar::createNewProject(QString fileName)
-{
+    connect(icon, &IconButton::clicked,
+            this, &Projectbar::changeDirectory);
+
+    PopupLine popup(this, icon);
+
+    QString fileName;
+
+    connect(&popup, &PopupLine::receivedInput,
+            [&] (const QString& text) { fileName = text; });
+
+    popup.exec();
+
+    if (fileName.isEmpty()) return;
+
     QStringList path = fileName.split(".");
 
     // If the user added the extension
@@ -294,28 +294,30 @@ void Projectbar::createNewProject(QString fileName)
 
     if (dir_->exists(fileName))
     {
-        CustomMessageBox* msg = new CustomMessageBox("Project already exists",
-                                                     "A project with that name already\n exists in the current directory!",
-                                                     this
-                                                     );
+        CustomMessageBox message("Project already exists",
+                                 "A project with that name already\n exists in the current directory!",
+                                 this
+                                 );
 
         QPushButton* overwriteButton = new QPushButton("Overwrite", this);
 
-        msg->addButton(overwriteButton);
+        message.addButton(overwriteButton);
+
+        connect(overwriteButton, &QPushButton::clicked,
+                &message, &CustomMessageBox::close);
 
         QPushButton* tryAgainButton = new QPushButton("Try again",this);
 
-        msg->addButton(tryAgainButton);
+        message.addButton(tryAgainButton);
 
-        connect(tryAgainButton, &QPushButton::clicked,
-                [=] ()
-                {
-                    msg->close();
-                    newProject();
-                    return;
-                });
+        message.exec();
 
-        msg->show();
+        if (message.lastButtonPressed() == tryAgainButton)
+        {
+            message.close();
+            newProject();
+            return;
+        }
     }
 
     projectLabel_->setText(path[0]);
