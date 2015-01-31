@@ -1,19 +1,19 @@
 #ifndef CONTAINER_H
 #define CONTAINER_H
 
-#include <QWidget>
+#include <QTabWidget>
 
-class Container : public QWidget
+class Container : public QTabWidget
 {
     Q_OBJECT
 
 public:
 
-    explicit Container(QWidget* parent);
+    Container(QWidget* parent);
 
 private:
 
-    void initUI_();
+    void setupUi();
 
 };
 

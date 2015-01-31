@@ -5,7 +5,7 @@
 
 #include <memory>
 
-class IconButton;
+class QPushButton;
 class QPoint;
 class QAction;
 
@@ -23,15 +23,15 @@ public:
         LEFT
     };
 
-    CustomMenu(IconButton* icon,
+    CustomMenu(QPushButton* button,
                QWidget* parent,
                const Position& pos = Position::BOTTOM);
 
     ~CustomMenu();
 
-    void setIconButton(IconButton* icon);
+    void setButton(QPushButton* icon);
 
-    IconButton* getIconButton() const;
+    QPushButton* getButton() const;
 
     void setPosition(const Position& pos);
 
@@ -45,7 +45,7 @@ private slots:
 
 private:
 
-    IconButton* icon_;
+    QPushButton* button_;
 
     Position pos_;
 

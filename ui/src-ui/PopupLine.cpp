@@ -37,17 +37,20 @@ void PopupLine::keyPressEvent(QKeyEvent* event)
 {
     if (event->key() == Qt::Key_Escape)
     {
-        text_ = QString();
-
         QDialog::close();
     }
 
     else if (event->key() == Qt::Key_Return ||
              event->key() == Qt::Key_Enter)
     {
-        text_ = line_->text();
+        QString text = line_->text();
 
-        if (! text_.isEmpty()) QDialog::close();
+        if (! text.isEmpty())
+        {
+            emit receivedInput(text);
+
+            QDialog::close();
+        }
     }
 
     else event->ignore();
@@ -61,10 +64,7 @@ void PopupLine::setIconButton(IconButton *icon)
 
     icon_ = icon;
 
-    icon_->move(size.width() * 0.97,
-               (size.height() - icon_->getStandardSize()->height())/2);
-
-    icon_->show();
+    icon_->move(size.width() * 0.97, 3);
 }
 
 IconButton* PopupLine::getIconButton() const
@@ -78,9 +78,4 @@ void PopupLine::paintEvent(QPaintEvent*)
     opt.init(this);
     QPainter p(this);
     style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
-}
-
-QString PopupLine::getInput() const
-{
-    return text_;
 }

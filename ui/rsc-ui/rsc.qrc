@@ -11,10 +11,7 @@
         <file>fonts/DIN.otf</file>
         <file alias="logo">icons/logo.png</file>
         <file>style/style.css</file>
-        <file>icons/menu-tri.png</file>
-        <file>icons/dock-a.png</file>
-        <file>icons/dock-b.png</file>
-        <file>icons/dock-a-active.png</file>
-        <file>icons/dock-b-active.png</file>
+        <file>icons/settings.png</file>
+        <file>icons/settings-active.png</file>
     </qresource>
 </RCC>

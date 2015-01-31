@@ -1,14 +1,26 @@
-#include "container.hpp"
+#include "Container.hpp"
 
-#include <QPushButton>
+#include <QTabBar>
 
 Container::Container(QWidget* parent)
-    : QWidget(parent)
+: QTabWidget(parent)
 {
-    initUI_();
+    setupUi();
 }
 
-void Container::initUI_()
+void Container::setupUi()
 {
-    this->setFixedSize(1024,650);
+    QTabWidget::addTab(new QWidget(), "LFO");
+
+    QTabWidget::addTab(new QWidget(), "Operator");
+
+    QTabWidget::addTab(new QWidget(), "Master");
+
+    QTabWidget::addTab(new QWidget(), "Effect");
+
+    QTabWidget::addTab(new QWidget(), "Envelope");
+
+    QTabWidget::tabBar()->setCursor(Qt::PointingHandCursor);
+
+    QTabWidget::setFixedSize(1024,640);
 }

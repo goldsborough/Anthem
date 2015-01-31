@@ -1,6 +1,7 @@
 $primary: #27272B
-$tertiary: #FFFFFF
 $secondary: #DC4850
+$tertiary: #FFFFFF
+$quaternary: #43D4B4
 
 QMainWindow
   background-color: $primary
@@ -8,10 +9,6 @@ QMainWindow
 QLabel
   qproperty-alignment: AlignCenter
   color: $tertiary
-  &#CustomMessageBoxMessage
-    color: $primary
-    font-family: "Proxima Nova"
-    font-size: 30px
 
   &#projectLabel
     color: $primary
@@ -29,26 +26,9 @@ QLabel
     font-family: DIN
     color: $secondary
 
-  &#CopyDock:enabled
-    @extend #CopyDock
-    background-color: $secondary
-    color: $primary
-
-
-QPushButton#CustomMessageBoxButton
-  background-color: rgba(0,0,0,0)
-  color: $primary
-  font-size: 16px
-  font-family: ProximaNova-Regular
-  qproperty-flat: true
-  outline: none
-  border: 1px solid $primary
-  min-height: 50px
-  &:hover
-    background-color: $primary
-    border: 10px solid $primary
-    color: $secondary
-
+    &:enabled
+      background-color: $secondary
+      color: $primary
 
 Projectbar
   background-color: $secondary
@@ -56,30 +36,72 @@ Projectbar
 QMenu
   background-color: $secondary
   margin: 15px
+
   &::item
     color: $primary
     padding: 15px
     font-size: 16px
+
     &::selected
       background-color: $primary
       color: $secondary
 
+CustomComboBox QMenu
+  margin: 0px
 
-CustomMessageBox
+  &::item
+    padding-right: 29px
+    padding-left: 29px
+    padding-top: 18px
+    padding-bottom: 18px
+
+QDialog
   background-color: $secondary
+
+  & QPushButton
+    background-color: transparent
+    color: $primary
+    font-size: 18px
+    font-family: "Proxima Nova"
+    qproperty-flat: true
+    outline: none
+    border: 1px solid $primary
+    min-height: 50px
+    &:hover
+      background-color: $primary
+      color: $secondary
+
+  & QLabel
+    color: $primary
+    font-family: "Proxima Nova"
+    font-size: 30px
+
+SettingsDialog
+  @extend QDialog
+  & QLabel
+    font-size: 20px
+
+PopupLine QPushButton
+  border: none
+  &:hover
+    background: none
 
 IconButton
   background-color: none
   outline: none
   border: none
+
   &:hover
     background-color: none
     outline: none
     border: none
 
-
-PopupLine
-  background-color: $secondary
+  &#SettingsButton
+    border: 3px solid $secondary
+    padding-left: 11px
+    padding-right: 11px
+    padding-bottom: 12px
+    padding-top: 12px
 
 QLineEdit
   font-size: 30px
@@ -87,3 +109,47 @@ QLineEdit
   qproperty-frame: false
   background-color: $secondary
   color: $primary
+
+QComboBox
+  background-color: transparent
+  color: $primary
+  font-size: 20px
+  font-family: "Proxima Nova"
+  border: 1px solid $primary
+  min-height: 50px
+  padding-left: 34px
+
+  &::drop-down
+    border: none
+
+  &:hover
+    background-color: $primary
+    color: $secondary
+
+  & QListView
+    background: $secondary
+    color: $primary
+
+QTabWidget::pane
+  border: none /* 3px solid $secondary */
+  qproperty-enabled: 0
+  outline: none
+  background: none
+
+QTabBar::tab
+  background-color: transparent
+  font-size: 40px
+  color: $tertiary
+  font-family: "DIN Light"
+  border: none
+  outline: none
+  min-width: 205px
+  min-height: 50px
+  padding-bottom: 5px
+  padding-top: 15px
+  text-align: center
+  qproperty-alignment: AlignCenter
+
+  &:selected, &:hover
+    background-color: $secondary
+    color: $primary

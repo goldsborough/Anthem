@@ -7,8 +7,6 @@
 #include <QPushButton>
 #include <QIcon>
 
-#include <QDebug>
-
 CustomMessageBox::CustomMessageBox(const QString& title,
                                    const QString& message,
                                    QWidget* parent,
@@ -33,14 +31,12 @@ CustomMessageBox::CustomMessageBox(const QString& title,
 
     QLabel* messageLabel = new QLabel(message,this);
 
-    messageLabel->setObjectName("CustomMessageBoxMessage");
-
     layout_->addWidget(messageLabel);
 
 
     QDialog::setLayout(layout_);
 
-    QDialog::setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+    QDialog::setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 }
 
 QPushButton* CustomMessageBox::lastButtonPressed() const
@@ -50,8 +46,6 @@ QPushButton* CustomMessageBox::lastButtonPressed() const
 
 void CustomMessageBox::addButton(QPushButton* button)
 {
-    button->setObjectName("CustomMessageBoxButton");
-
     button->setCursor(Qt::PointingHandCursor);
 
     // All button clicks end up in the current window being closed
@@ -75,8 +69,6 @@ void CustomMessageBox::addButton(QPushButton* button,
                                  int colStretch,
                                  QFlags<Qt::AlignmentFlag> align)
 {
-    button->setObjectName("CustomMessageBoxButton");
-
     button->setCursor(Qt::PointingHandCursor);
 
     // All button clicks end up in the current window being closed

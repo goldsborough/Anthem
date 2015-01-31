@@ -1,19 +1,19 @@
 #include "CustomMenu.hpp"
-#include "IconButton.hpp"
 
+#include <QPushButton>
 #include <QPoint>
 #include <QDebug>
 
-CustomMenu::CustomMenu(IconButton *icon,
+CustomMenu::CustomMenu(QPushButton *icon,
                        QWidget* parent,
                        const Position& pos)
-: QMenu(parent), icon_(icon),
+: QMenu(parent), button_(icon),
   pos_(pos), point_(new QPoint)
 {
 
     QWidget::setCursor(Qt::PointingHandCursor);
 
-    connect(icon, &IconButton::clicked,
+    connect(icon, &QPushButton::clicked,
             this, &CustomMenu::popup_);
 
    updatePoint();
@@ -24,13 +24,13 @@ CustomMenu::~CustomMenu()
 
 void CustomMenu::updatePoint()
 {
-    *point_ = icon_->pos();
+    *point_ = button_->pos();
 
     switch(pos_)
     {
         case Position::TOP:
         {
-             point_->rx() -= (QMenu::width() + icon_->width()) / 2;
+             //point_->rx() -= (QMenu::width() + button_->width()) / 2;
 
              point_->ry() -= QMenu::height() + 5;
 
@@ -39,19 +39,19 @@ void CustomMenu::updatePoint()
 
         case Position::BOTTOM:
         {
-            point_->rx() -= (QMenu::width() + icon_->width()) / 2;
+            //point_->rx() -= (QMenu::width() + button_->width()) / 2;
 
-            point_->ry() += icon_->height() + 5;
+            point_->ry() += button_->height() + 5;
 
             break;
         }
 
         case Position::LEFT:
-            point_->rx() -= icon_->width() + QMenu::width() + 50;
+            point_->rx() -= button_->width() + QMenu::width() + 50;
             break;
 
         case Position::RIGHT:
-            point_->rx() += icon_->width() + 10;
+            point_->rx() += button_->width() + 10;
             break;
     }
 }
@@ -66,14 +66,14 @@ CustomMenu::Position CustomMenu::getPosition() const
     return pos_;
 }
 
-void CustomMenu::setIconButton(IconButton* icon)
+void CustomMenu::setButton(QPushButton* icon)
 {
-    icon_ = icon;
+    button_ = icon;
 }
 
-IconButton* CustomMenu::getIconButton() const
+QPushButton* CustomMenu::getButton() const
 {
-    return icon_;
+    return button_;
 }
 
 

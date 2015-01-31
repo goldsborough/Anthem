@@ -59,7 +59,7 @@ void Projectbar::setupUi()
     IconButton* menuButton = new IconButton(":/icons/menu.png",
                                             ":/icons/menu-active.png",
                                             new QSize(40,40),
-                                            new QSize(44,44),
+                                            new QSize(45,45),
                                             this);
 
     menuButton->move(328,20);
@@ -103,7 +103,7 @@ void Projectbar::setupUi()
 
     /* --------- New Action -------- */
 
-    QAction* newAction = new QAction("New project", this);
+    QAction* newAction = new QAction("&New project", this);
 
     newAction->setShortcut(tr("Ctrl + N"));
 
@@ -132,9 +132,26 @@ void Projectbar::setupUi()
 
     // Does the same thing, as of now
     connect(saveAsAction, &QAction::triggered,
-            this, &Projectbar::newProject);
+            newAction, &QAction::trigger);
 
     menu->addAction(saveAsAction);
+
+    /* --------- Popup Line -------- */
+
+    IconButton* icon = new IconButton(":/icons/folder.png",
+                                      ":/icons/folder-active.png",
+                                      new QSize(40,40),
+                                      new QSize(44,44));
+
+    connect(icon, &IconButton::clicked,
+            this, &Projectbar::changeDirectory);
+
+    newProjectPopupLine_ = new PopupLine(this, icon);
+
+    connect(newProjectPopupLine_, &PopupLine::receivedInput,
+            this, &Projectbar::createNewProject);
+
+    /* --------- This Window -------- */
 
     this->setFixedSize(384,80);
 }
@@ -257,22 +274,11 @@ void Projectbar::openProject()
 
 void Projectbar::newProject()
 {
-    IconButton* icon = new IconButton(":/icons/folder.png",
-                                      ":/icons/folder-active.png",
-                                      new QSize(40,40),
-                                      new QSize(44,44));
+    newProjectPopupLine_->show();
+}
 
-    connect(icon, &QPushButton::clicked,
-            this, &Projectbar::changeDirectory);
-
-    PopupLine* line = new PopupLine(this,icon);
-
-    line->show();
-
-    QString fileName = line->getInput();
-
-    if (fileName.isEmpty()) return;
-
+void Projectbar::createNewProject(QString fileName)
+{
     QStringList path = fileName.split(".");
 
     // If the user added the extension
@@ -301,18 +307,15 @@ void Projectbar::newProject()
 
         msg->addButton(tryAgainButton);
 
+        connect(tryAgainButton, &QPushButton::clicked,
+                [=] ()
+                {
+                    msg->close();
+                    newProject();
+                    return;
+                });
+
         msg->show();
-
-        //qDebug() << msg->lastButtonPressed()->text() << endl;
-
-        if (msg->lastButtonPressed() == tryAgainButton)
-        {
-            msg->close();
-
-            newProject();
-
-            return;
-        }
     }
 
     projectLabel_->setText(path[0]);

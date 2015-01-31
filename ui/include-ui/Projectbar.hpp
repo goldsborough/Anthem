@@ -3,11 +3,12 @@
 
 #include <QWidget>
 #include <QFileInfoList>
+#include <QString>
 
 class QLabel;
 class QPaintEvent;
 class QDir;
-class QMenu;
+class PopupLine;
 
 class Projectbar : public QWidget
 {
@@ -19,11 +20,11 @@ public:
 
     ~Projectbar();
 
-    void paintEvent(QPaintEvent* event);
-
     void setModified(bool boolean = true);
 
     bool isModified() const;
+
+    void createNewProject(QString fileName);
 
 public slots:
 
@@ -43,11 +44,13 @@ public slots:
 
 private:
 
+    void paintEvent(QPaintEvent* event);
+
     void setupUi();
 
     bool modified_;
 
-    QMenu* menu_;
+    PopupLine* newProjectPopupLine_;
 
     QLabel* projectLabel_;
 

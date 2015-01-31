@@ -19,5 +19,5 @@ void MainWindow::initUI_()
     container->move(0,128);
 
     this->setFixedSize(1024,768);
-    this->setWindowTitle(tr("Anthem"));
+    this->setWindowTitle("Anthem");
 }

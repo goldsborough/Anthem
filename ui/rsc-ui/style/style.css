@@ -4,15 +4,11 @@ QMainWindow {
 QLabel {
   qproperty-alignment: AlignCenter;
   color: #FFFFFF; }
-  QLabel#CustomMessageBoxMessage {
-    color: #27272B;
-    font-family: "Proxima Nova";
-    font-size: 30px; }
   QLabel#projectLabel {
     color: #27272B;
     font-size: 40px;
     font-family: DIN; }
-  QLabel#CopyDock, QLabel#CopyDock:enabled {
+  QLabel#CopyDock {
     background-color: #27272B;
     border: 3px solid #DC4850;
     padding-top: 13px;
@@ -22,23 +18,9 @@ QLabel {
     font-size: 40px;
     font-family: DIN;
     color: #DC4850; }
-  QLabel#CopyDock:enabled {
-    background-color: #DC4850;
-    color: #27272B; }
-
-QPushButton#CustomMessageBoxButton {
-  background-color: transparent;
-  color: #27272B;
-  font-size: 16px;
-  font-family: ProximaNova-Regular;
-  qproperty-flat: true;
-  outline: none;
-  border: 1px solid #27272B;
-  min-height: 50px; }
-  QPushButton#CustomMessageBoxButton:hover {
-    background-color: #27272B;
-    border: 10px solid #27272B;
-    color: #DC4850; }
+    QLabel#CopyDock:enabled {
+      background-color: #DC4850;
+      color: #27272B; }
 
 Projectbar {
   background-color: #DC4850; }
@@ -54,8 +36,40 @@ QMenu {
       background-color: #27272B;
       color: #DC4850; }
 
-CustomMessageBox {
+CustomComboBox QMenu {
+  margin: 0px; }
+  CustomComboBox QMenu::item {
+    padding-right: 29px;
+    padding-left: 29px;
+    padding-top: 18px;
+    padding-bottom: 18px; }
+
+QDialog, SettingsDialog {
   background-color: #DC4850; }
+  QDialog QPushButton, SettingsDialog QPushButton {
+    background-color: transparent;
+    color: #27272B;
+    font-size: 18px;
+    font-family: "Proxima Nova";
+    qproperty-flat: true;
+    outline: none;
+    border: 1px solid #27272B;
+    min-height: 50px; }
+    QDialog QPushButton:hover, SettingsDialog QPushButton:hover {
+      background-color: #27272B;
+      color: #DC4850; }
+  QDialog QLabel, SettingsDialog QLabel {
+    color: #27272B;
+    font-family: "Proxima Nova";
+    font-size: 30px; }
+
+SettingsDialog QLabel {
+  font-size: 20px; }
+
+PopupLine QPushButton {
+  border: none; }
+  PopupLine QPushButton:hover {
+    background: none; }
 
 IconButton {
   background-color: none;
@@ -65,9 +79,12 @@ IconButton {
     background-color: none;
     outline: none;
     border: none; }
-
-PopupLine {
-  background-color: #DC4850; }
+  IconButton#SettingsButton {
+    border: 3px solid #DC4850;
+    padding-left: 11px;
+    padding-right: 11px;
+    padding-bottom: 12px;
+    padding-top: 12px; }
 
 QLineEdit {
   font-size: 30px;
@@ -75,5 +92,45 @@ QLineEdit {
   qproperty-frame: false;
   background-color: #DC4850;
   color: #27272B; }
+
+QComboBox {
+  background-color: transparent;
+  color: #27272B;
+  font-size: 20px;
+  font-family: "Proxima Nova";
+  border: 1px solid #27272B;
+  min-height: 50px;
+  padding-left: 34px; }
+  QComboBox::drop-down {
+    border: none; }
+  QComboBox:hover {
+    background-color: #27272B;
+    color: #DC4850; }
+  QComboBox QListView {
+    background: #DC4850;
+    color: #27272B; }
+
+QTabWidget::pane {
+  border: none;
+  qproperty-enabled: 0;
+  outline: none;
+  background: none; }
+
+QTabBar::tab {
+  background-color: transparent;
+  font-size: 40px;
+  color: #FFFFFF;
+  font-family: "DIN Light";
+  border: none;
+  outline: none;
+  min-width: 205px;
+  min-height: 50px;
+  padding-bottom: 5px;
+  padding-top: 15px;
+  text-align: center;
+  qproperty-alignment: AlignCenter; }
+  QTabBar::tab:selected, QTabBar::tab:hover {
+    background-color: #DC4850;
+    color: #27272B; }
 
 /*# sourceMappingURL=style.css.map */

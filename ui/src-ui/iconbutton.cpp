@@ -27,7 +27,7 @@ IconButton::IconButton(const QString& standardPath,
 
     QPushButton::setIconSize(*standardSize_);
 
-    QPushButton::setFixedSize(*standardSize);
+    QPushButton::setMinimumSize(*activeSize_);
 
     QPushButton::setCursor(Qt::PointingHandCursor);
 
