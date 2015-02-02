@@ -1,5 +1,6 @@
 #include "OperatorPage.hpp"
-#include "OperatorUi.hpp"
+#include "UnitPage.hpp"
+#include "AlgorithmPage.hpp"
 
 #include <QGridLayout>
 #include <QStyleOption>
@@ -18,9 +19,9 @@ namespace OperatorPage
 
     void ContainerPage::setupUi()
     {
-        QTabWidget::addTab(new QWidget(), "Units");
+        QTabWidget::addTab(new OperatorPage::UnitPage(), "Units");
 
-        QTabWidget::addTab(new QWidget(), "Algorithms");
+        QTabWidget::addTab(new OperatorPage::AlgorithmPage(), "Algorithms");
 
         QTabWidget::setTabPosition(QTabWidget::South);
 

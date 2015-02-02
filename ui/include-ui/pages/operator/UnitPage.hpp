@@ -2,6 +2,9 @@
 #define UNITPAGE_HPP
 
 #include <QWidget>
+#include <QList>
+
+namespace OperatorUi { class Container; }
 
 namespace OperatorPage
 {
@@ -11,12 +14,18 @@ namespace OperatorPage
 
     public:
 
-        UnitPage(QWidget* parent);
+        enum { A, B, C, D };
+
+        UnitPage(QWidget* parent = nullptr);
 
     private:
 
+        typedef QList<OperatorUi::Container*>::size_type size_t;
 
+        void setupUi();
+
+        QList<OperatorUi::Container*> operators_;
     };
-};
+}
 
 #endif // UNITPAGE_HPP

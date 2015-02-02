@@ -11,7 +11,7 @@ namespace OperatorPage
 
     public:
 
-        AlgorithmPage(QWidget* parent);
+        AlgorithmPage(QWidget* parent = nullptr);
 
     private:
 
