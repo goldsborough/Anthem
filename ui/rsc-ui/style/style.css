@@ -113,7 +113,7 @@ QComboBox {
 QTabWidget::pane {
   background-color: transparent; }
 QTabWidget QTabBar::tab {
-  background-color: transparent;
+  background-color: #27272B;
   font-size: 40px;
   color: #FFFFFF;
   font-family: "DIN Light";
@@ -131,5 +131,8 @@ QTabWidget QTabBar::tab {
 
 #ContainerPage {
   background-color: #DC4850; }
+  #ContainerPage QTabBar::tab {
+    min-width: 250px;
+    min-height: 50px; }
 
 /*# sourceMappingURL=style.css.map */

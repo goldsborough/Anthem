@@ -136,7 +136,7 @@ QTabWidget
     background-color: transparent
 
   & QTabBar::tab
-    background-color: transparent
+    background-color: $primary
     font-size: 40px
     color: $tertiary
     font-family: "DIN Light"
@@ -155,3 +155,7 @@ QTabWidget
 
 #ContainerPage
   background-color: $secondary
+
+  & QTabBar::tab
+    min-width: 250px
+    min-height: 50px

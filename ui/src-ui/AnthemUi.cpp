@@ -27,8 +27,7 @@ void AnthemUi::setupUi()
     container->addTab(lfoPage, "LFO");
 
 
-
-    container->addTab(new OperatorPage(), "Operator");
+    container->addTab(new OperatorPage::ContainerPage(), "Operator");
 
 
     QWidget* masterPage = new QWidget;
