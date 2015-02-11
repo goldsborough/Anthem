@@ -17,7 +17,9 @@ class CustomDial : public QDial
 
 public:
 
-    CustomDial(const QString& text, QWidget * parent = nullptr);
+    CustomDial(const QString& text,
+               double factor,
+               QWidget * parent = nullptr);
 
     ~CustomDial();
 
@@ -43,6 +45,14 @@ public:
 
     void setFixedSize(int w, int h);
 
+    void setFactor(double factor);
+
+    double getFactor() const;
+
+signals:
+
+    void scaledValueChanged(double value);
+
 private slots:
 
     void updateValue();
@@ -58,6 +68,8 @@ private:
     double arcWidth_;
 
     double angleSpan_;
+
+    double factor_;
 
     QString valueString_;
 

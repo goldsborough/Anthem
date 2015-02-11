@@ -8,11 +8,14 @@
 
 #include <QDebug>
 
-CustomDial::CustomDial(const QString& text, QWidget* parent)
+CustomDial::CustomDial(const QString& text,
+                       double factor,
+                       QWidget* parent)
 
-: QDial(parent), text_(text), arcRect_(new QRectF),
-  valueRect_(new QRectF), textRect_(new QRectF),
-  arcColor_(new QColor), arcPen_(new QPen)
+: QDial(parent), factor_(factor), text_(text),
+  arcRect_(new QRectF), valueRect_(new QRectF),
+  textRect_(new QRectF), arcColor_(new QColor),
+  arcPen_(new QPen)
 
 {
     QDial::setRange(0,999);
@@ -95,6 +98,8 @@ void CustomDial::updateValue()
     angleSpan_ = maximumAngle_ * ratio;
 
     valueString_ = QString::number(value);
+
+    emit scaledValueChanged(value * factor_);
 }
 
 void CustomDial::setArcWidth(double px)
@@ -107,6 +112,16 @@ void CustomDial::setArcWidth(double px)
                        QDial::height() - arcWidth_);
 
     arcPen_->setWidth(arcWidth_);
+}
+
+void CustomDial::setFactor(double factor)
+{
+    factor_ = factor;
+}
+
+double CustomDial::getFactor() const
+{
+    return factor_;
 }
 
 void CustomDial::setText(const QString& text)

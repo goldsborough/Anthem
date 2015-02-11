@@ -18,7 +18,18 @@ namespace OperatorUi
 
     void Control::setupUi()
     {
-        CustomDial* dial = new CustomDial(title_, this);
+        CustomDial* dial = new CustomDial(title_, 0.01, this);
+
+        QLabel* label = new QLabel(this);
+
+        label->setFixedSize(100,100);
+
+        label->move(0,100);
+
+        QWidget::setFixedSize(200, 300);
+
+        connect(dial, &CustomDial::scaledValueChanged,
+                [=] (double value) { label->setText(QString::number(value)); });
     }
 
     void Control::paintEvent(QPaintEvent *)
