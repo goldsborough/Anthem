@@ -1,50 +1,51 @@
-$primary: #27272B
-$secondary: #DC4850
-$tertiary: #FFFFFF
-$quaternary: #43D4B4
+$black: #27272B
+$red: #DC4850
+$white: #FFFFFF
+$turquoise: #43D4B4
+$gray: #56595C
 
 QMainWindow
-  background-color: $primary
+  background-color: $black
 
 QLabel
   qproperty-alignment: AlignCenter
-  color: $tertiary
+  color: $white
 
   &#projectLabel
-    color: $primary
+    color: $black
     font-size: 40px
     font-family: DIN
 
   &#CopyDock
-    background-color: $primary
-    border: 3px solid $secondary
+    background-color: $black
+    border: 3px solid $red
     padding-top: 13px
     padding-bottom: 13px
     padding-right: 26px
     padding-left: 26px
     font-size: 40px
     font-family: DIN
-    color: $secondary
+    color: $red
 
     &:enabled
-      background-color: $secondary
-      color: $primary
+      background-color: $red
+      color: $black
 
 Projectbar
-  background-color: $secondary
+  background-color: $red
 
 QMenu
-  background-color: $secondary
+  background-color: $red
   margin: 15px
 
   &::item
-    color: $primary
+    color: $black
     padding: 15px
     font-size: 16px
 
     &::selected
-      background-color: $primary
-      color: $secondary
+      background-color: $black
+      color: $red
 
 CustomComboBox QMenu
   margin: 0px
@@ -56,23 +57,23 @@ CustomComboBox QMenu
     padding-bottom: 18px
 
 QDialog
-  background-color: $secondary
+  background-color: $red
 
   & QPushButton
     background-color: transparent
-    color: $primary
+    color: $black
     font-size: 18px
     font-family: "Proxima Nova"
     qproperty-flat: true
     outline: none
-    border: 1px solid $primary
+    border: 1px solid $black
     min-height: 50px
     &:hover
-      background-color: $primary
-      color: $secondary
+      background-color: $black
+      color: $red
 
   & QLabel
-    color: $primary
+    color: $black
     font-family: "Proxima Nova"
     font-size: 30px
 
@@ -97,7 +98,7 @@ IconButton
     border: none
 
   &#SettingsButton
-    border: 3px solid $secondary
+    border: 3px solid $red
     padding-left: 11px
     padding-right: 11px
     padding-bottom: 12px
@@ -107,15 +108,15 @@ QLineEdit
   font-size: 30px
   border: none
   qproperty-frame: false
-  background-color: $secondary
-  color: $primary
+  background-color: $red
+  color: $black
 
 QComboBox
   background-color: transparent
-  color: $primary
+  color: $black
   font-size: 20px
   font-family: "Proxima Nova"
-  border: 1px solid $primary
+  border: 1px solid $black
   min-height: 50px
   padding-left: 34px
 
@@ -123,12 +124,12 @@ QComboBox
     border: none
 
   &:hover
-    background-color: $primary
-    color: $secondary
+    background-color: $black
+    color: $red
 
   & QListView
-    background: $secondary
-    color: $primary
+    background: $red
+    color: $black
 
 QTabWidget
 
@@ -136,9 +137,9 @@ QTabWidget
     background-color: transparent
 
   & QTabBar::tab
-    background-color: $primary
+    background-color: $black
     font-size: 40px
-    color: $tertiary
+    color: $white
     font-family: "DIN Light"
     border: none
     outline: none
@@ -150,12 +151,26 @@ QTabWidget
     qproperty-alignment: AlignCenter
 
     &:selected, &:hover
-      background-color: $secondary
-      color: $primary
+      background-color: $red
+      color: $black
 
 #ContainerPage
-  background-color: $secondary
+  background-color: $red
 
   & QTabBar::tab
     min-width: 250px
     min-height: 50px
+
+#OperatorUi
+
+  border: 2px solid $black
+  margin: 10px
+  padding: 10px
+
+CustomDial
+
+  background-color: $black
+  font-size: 18px
+  font-family: DIN
+  color: $white
+  qproperty-arc: $turquoise

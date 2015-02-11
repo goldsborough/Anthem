@@ -13,15 +13,25 @@ namespace OperatorUi
     : QWidget(parent)
     {
         setupUi();
+
+        setObjectName("OperatorUi");
     }
 
     void Container::setupUi()
     {
         QGridLayout* layout = new QGridLayout(this);
 
-        Control* control = new Control(this);
+        Control* level = new Control("Level", this);
 
-        layout->addWidget(control);
+        layout->addWidget(level);
+
+        Control* offset = new Control("Offset", this);
+
+        layout->addWidget(offset, 0, 1);
+
+        Control* ratio = new Control("Ratio", this);
+
+        layout->addWidget(ratio, 0, 2);
 
         QWidget::setLayout(layout);
     }

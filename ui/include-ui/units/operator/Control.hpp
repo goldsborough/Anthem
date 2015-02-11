@@ -2,6 +2,7 @@
 #define CONTROL_HPP
 
 #include <QWidget>
+#include <QString>
 
 namespace OperatorUi
 {
@@ -11,11 +12,15 @@ namespace OperatorUi
 
     public:
 
-        Control(QWidget* parent = nullptr);
+        Control(const QString& title, QWidget* parent = nullptr);
 
     private:
 
         void setupUi();
+
+        void paintEvent(QPaintEvent *);
+
+        QString title_;
     };
 }
 
