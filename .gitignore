@@ -25,6 +25,7 @@
 *.xcodeproj
 *~
 *.svg
+.sass-cache
 
 # Qt files
 moc_*
