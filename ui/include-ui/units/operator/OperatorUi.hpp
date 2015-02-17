@@ -3,25 +3,20 @@
 
 #include <QWidget>
 
-namespace OperatorUi
+class OperatorUi : public QWidget
 {
+    Q_OBJECT
 
-    class Container : public QWidget
-    {
-        Q_OBJECT
+public:
 
-    public:
+    OperatorUi(QWidget* parent = nullptr);
 
-        Container(QWidget* parent = nullptr);
+private:
 
-    private:
+    void setupUi();
 
-        void setupUi();
+    void paintEvent(QPaintEvent* paintEvent);
 
-        void paintEvent(QPaintEvent* paintEvent);
-
-    };
-
-}
+};
 
 #endif // OPERATORUI_HPP

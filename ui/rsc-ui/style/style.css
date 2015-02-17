@@ -137,14 +137,24 @@ QTabWidget QTabBar::tab {
 
 #OperatorUi {
   border: 2px solid #27272B;
-  margin: 10px;
-  padding: 10px; }
+  margin: 5px;
+  padding: 5px; }
 
 CustomDial {
-  background-color: #27272B;
-  font-size: 18px;
+  background-color: transparent;
+  font-size: 20px;
   font-family: DIN;
-  color: #FFFFFF;
-  qproperty-arc: #43D4B4; }
+  color: #27272B;
+  qproperty-arc: #27272B; }
+
+ModDockItem {
+  background-color: #DC4850;
+  qproperty-borderColor: #27272B;
+  qproperty-borderWidth: 4;
+  color: #27272B;
+  font-family: DIN;
+  font-size: 20px;
+  margin: 20px;
+  padding: 20px; }
 
 /*# sourceMappingURL=style.css.map */

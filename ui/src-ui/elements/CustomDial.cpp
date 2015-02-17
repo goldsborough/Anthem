@@ -31,7 +31,7 @@ CustomDial::CustomDial(const QString& text,
 
     setStartAngle(270);
 
-    setArcWidth(5);
+    setArcWidth(3);
 
     updateValue();
 }
@@ -61,7 +61,7 @@ void CustomDial::paintEvent(QPaintEvent*)
     painter.setPen(QPen(Qt::NoPen));
 
     // Draw background circle
-    painter.drawEllipse(0, 0, QDial::width(), QDial::height());
+    painter.drawEllipse(QDial::rect());
 
     painter.setPen(textPen);
 

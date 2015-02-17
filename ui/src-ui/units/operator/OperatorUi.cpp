@@ -1,5 +1,5 @@
 #include "OperatorUi.hpp"
-#include "Control.hpp"
+#include "ModControl.hpp"
 
 #include <QGridLayout>
 #include <QStyleOption>
@@ -7,40 +7,37 @@
 #include <QPushButton>
 #include <QDial>
 
-namespace OperatorUi
-{
-    Container::Container(QWidget* parent)
+OperatorUi::OperatorUi(QWidget* parent)
     : QWidget(parent)
-    {
-        setupUi();
+{
+    setupUi();
 
-        setObjectName("OperatorUi");
-    }
+    setObjectName("OperatorUi");
+}
 
-    void Container::setupUi()
-    {
-        QGridLayout* layout = new QGridLayout(this);
+void OperatorUi::setupUi()
+{
+    QGridLayout* layout = new QGridLayout(this);
 
-        Control* level = new Control("Level", this);
+    ModControl* level = new ModControl("Level", this);
 
-        layout->addWidget(level);
+    layout->addWidget(level);
 
-        Control* offset = new Control("Offset", this);
+    ModControl* offset = new ModControl("Offset", this);
 
-        layout->addWidget(offset, 0, 1);
+    layout->addWidget(offset, 0, 1);
 
-        Control* ratio = new Control("Ratio", this);
+    ModControl* ratio = new ModControl("Ratio", this);
 
-        layout->addWidget(ratio, 0, 2);
+    layout->addWidget(ratio, 0, 2);
 
-        QWidget::setLayout(layout);
-    }
+    QWidget::setLayout(layout);
+}
 
-    void Container::paintEvent(QPaintEvent*)
-    {
-        QStyleOption opt;
-        opt.init(this);
-        QPainter p(this);
-        style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
-    }
+void OperatorUi::paintEvent(QPaintEvent*)
+{
+    QStyleOption opt;
+    opt.init(this);
+    QPainter p(this);
+    style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
 }

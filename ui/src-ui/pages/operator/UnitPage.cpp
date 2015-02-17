@@ -16,7 +16,7 @@ namespace OperatorPage
         QGridLayout* layout = new QGridLayout(this);
 
         for (size_t i = A; i <= D; ++i)
-        { operators_.append(new OperatorUi::Container(this)); }
+        { operators_.append(new OperatorUi(this)); }
 
         layout->addWidget(operators_[A], 0, 0);
 
