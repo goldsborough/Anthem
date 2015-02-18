@@ -1,29 +1,50 @@
 QMainWindow {
-  background-color: #27272B; }
+  background-color: #27272B;
+  min-width: 1020px;
+  min-height: 680px; }
 
 QLabel {
   qproperty-alignment: AlignCenter;
   color: #FFFFFF; }
-  QLabel#projectLabel {
-    color: #27272B;
-    font-size: 40px;
-    font-family: DIN; }
-  QLabel#CopyDock {
-    background-color: #27272B;
+
+Menubar {
+  max-height: 100px; }
+  Menubar #CopyDock {
     border: 3px solid #DC4850;
-    padding-top: 13px;
-    padding-bottom: 13px;
-    padding-right: 26px;
-    padding-left: 26px;
+    min-width: 74px;
+    min-height: 74px;
+    max-width: 74px;
+    max-height: 74px;
+    background-color: #27272B;
     font-size: 40px;
     font-family: DIN;
     color: #DC4850; }
-    QLabel#CopyDock:enabled {
+    Menubar #CopyDock:enabled {
       background-color: #DC4850;
       color: #27272B; }
-
-Projectbar {
-  background-color: #DC4850; }
+  Menubar #SettingsButton {
+    border: 3px solid #DC4850;
+    min-width: 74px;
+    min-height: 74px;
+    max-width: 74px;
+    max-height: 74px; }
+  Menubar #VolumeLabel {
+    min-width: 80px;
+    min-height: 80px;
+    max-width: 80px;
+    max-height: 80px; }
+  Menubar #Spacer {
+    min-width: 100px;
+    min-height: 100px; }
+  Menubar Projectbar {
+    background-color: #DC4850;
+    max-width: 400px;
+    max-height: 80px; }
+    Menubar Projectbar QLabel {
+      color: #27272B;
+      font-family: DIN;
+      font-size: 40px;
+      min-width: 240px; }
 
 QMenu {
   background-color: #DC4850;
@@ -75,16 +96,6 @@ IconButton {
   background-color: none;
   outline: none;
   border: none; }
-  IconButton:hover {
-    background-color: none;
-    outline: none;
-    border: none; }
-  IconButton#SettingsButton {
-    border: 3px solid #DC4850;
-    padding-left: 11px;
-    padding-right: 11px;
-    padding-bottom: 12px;
-    padding-top: 12px; }
 
 QLineEdit {
   font-size: 30px;
@@ -111,7 +122,12 @@ QComboBox {
     color: #27272B; }
 
 QTabWidget::pane {
-  background-color: transparent; }
+  background-color: transparent;
+  margin: 0px;
+  padding: 0px;
+  max-height: 0px;
+  max-width: 0px;
+  border-width: 0px; }
 QTabWidget QTabBar::tab {
   background-color: #27272B;
   font-size: 40px;

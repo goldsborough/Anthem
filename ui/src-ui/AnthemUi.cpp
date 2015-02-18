@@ -4,6 +4,7 @@
 
 #include <QTabWidget>
 #include <QTabBar>
+#include <QVBoxLayout>
 
 AnthemUi::AnthemUi(QWidget *parent)
     : QMainWindow(parent)
@@ -13,51 +14,60 @@ AnthemUi::AnthemUi(QWidget *parent)
 
 void AnthemUi::setupUi()
 {
+    QVBoxLayout* layout = new QVBoxLayout(this);
+
+    layout->setMargin(0);
+
+
     Menubar* menubar = new Menubar(this);
 
-    menubar->move(0,0);
+    layout->addWidget(menubar);
 
-    QTabWidget* container = new QTabWidget(this);
+
+    QTabWidget* pages = new QTabWidget(this);
+
+    pages->tabBar()->setCursor(Qt::PointingHandCursor);
+
+    layout->addWidget(pages);
+
 
 
     QWidget* lfoPage = new QWidget;
 
     lfoPage->setObjectName("ContainerPage");
 
-    container->addTab(lfoPage, "LFO");
+    pages->addTab(lfoPage, "LFO");
 
 
-    container->addTab(new OperatorPage::ContainerPage(), "Operator");
+    pages->addTab(new OperatorPage::ContainerPage(), "Operator");
 
 
     QWidget* masterPage = new QWidget;
 
     masterPage->setObjectName("ContainerPage");
 
-    container->addTab(masterPage, "Master");
+    pages->addTab(masterPage, "Master");
 
 
     QWidget* effectPage = new QWidget;
 
     effectPage->setObjectName("ContainerPage");
 
-    container->addTab(effectPage, "Effect");
+    pages->addTab(effectPage, "Effect");
 
 
     QWidget* envelopePage = new QWidget;
 
     envelopePage->setObjectName("ContainerPage");
 
-    container->addTab(envelopePage, "Envelope");
+    pages->addTab(envelopePage, "Envelope");
+
+    QWidget* container = new QWidget(this);
+
+    container->setLayout(layout);
+
+    QMainWindow::setCentralWidget(container);
 
 
-    container->tabBar()->setCursor(Qt::PointingHandCursor);
-
-    container->setFixedSize(1024,640);
-
-    container->move(0,128);
-
-
-    QMainWindow::setFixedSize(1024,768);
     QMainWindow::setWindowTitle("Anthem");
 }

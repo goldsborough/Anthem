@@ -4,7 +4,7 @@
 #include "IconButton.hpp"
 #include "SettingsDialog.hpp"
 
-#include <QDebug>
+#include <QHBoxLayout>
 #include <QString>
 
 Menubar::Menubar(QWidget* parent)
@@ -17,40 +17,52 @@ Menubar::Menubar(QWidget* parent)
 
 void Menubar::setupUi()
 {
-    /* --------- Projectbar -------- */
+    QHBoxLayout* layout = new QHBoxLayout(this);
 
-    projectBar_ = new Projectbar(this);
-
-    projectBar_->move(312,16);
-
-    /* --------- CopyDocks-------- */
 
     CopyDock* dockA = new CopyDock("A", this);
 
-    dockA->move(16,16);
+    layout->addWidget(dockA);
+
 
     CopyDock* dockB = new CopyDock("B", this);
 
-    dockB->move(116,16);
+    layout->addWidget(dockB);
 
-    /* --------- Volume label -------- */
+
+    QWidget* leftSpacer = new QWidget(this);
+
+    leftSpacer->setObjectName("Spacer");
+
+    layout->addWidget(leftSpacer);
+
+
+    projectBar_ = new Projectbar(this);
+
+    layout->addWidget(projectBar_);
+
+
+    QWidget* rightSpacer = new QWidget(this);
+
+    rightSpacer->setObjectName("Spacer");
+
+    layout->addWidget(rightSpacer);
+
 
     volumeLabel_ = new QLabel(this);
 
     volumeLabel_->setObjectName("VolumeLabel");
 
-    volumeLabel_->setFixedSize(80, 80);
+    layout->addWidget(volumeLabel_);
 
-    volumeLabel_->move(825, 16);
 
-    /* --------- Settings button -------- */
 
     IconButton* settingsButton = new IconButton(":/icons/settings.png",
                                                 ":/icons/settings-active.png",
                                                 new QSize(50, 50),
                                                 new QSize(55, 55),
                                                 this);
-    settingsButton->move(925, 16);
+    layout->addWidget(settingsButton);
 
     settingsButton->setObjectName("SettingsButton");
 
@@ -60,9 +72,9 @@ void Menubar::setupUi()
             settings, &SettingsDialog::show);
 
 
-    /* --------- This Window -------- */
+    QWidget::setMinimumHeight(100);
 
-    this->setFixedSize(1024,128);
+    QWidget::setLayout(layout);
 }
 
 void Menubar::setVolume(double volume)

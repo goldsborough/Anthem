@@ -4,25 +4,33 @@ $white: #FFFFFF
 $turquoise: #43D4B4
 $gray: #56595C
 
+$windowWidth: 1020px
+$windowHeight: 680px
+
 QMainWindow
   background-color: $black
+  min-width: $windowWidth
+  min-height: $windowHeight
 
 QLabel
   qproperty-alignment: AlignCenter
   color: $white
 
-  &#projectLabel
-    color: $black
-    font-size: 40px
-    font-family: DIN
+Menubar
 
-  &#CopyDock
+  $menuHeight: 80px
+  $borderWidth: 3px
+  $fitted: $menuHeight - 2 * $borderWidth
+
+  max-height: 100px
+
+  & #CopyDock
+    border: $borderWidth solid $red
+    min-width: $fitted
+    min-height: $fitted
+    max-width: $fitted
+    max-height: $fitted
     background-color: $black
-    border: 3px solid $red
-    padding-top: 13px
-    padding-bottom: 13px
-    padding-right: 26px
-    padding-left: 26px
     font-size: 40px
     font-family: DIN
     color: $red
@@ -31,8 +39,35 @@ QLabel
       background-color: $red
       color: $black
 
-Projectbar
-  background-color: $red
+  & #SettingsButton
+    border: $borderWidth solid $red
+    min-width: $fitted
+    min-height: $fitted
+    max-width: $fitted
+    max-height: $fitted
+
+  & #VolumeLabel
+    min-width: $menuHeight
+    min-height: $menuHeight
+    max-width: $menuHeight
+    max-height: $menuHeight
+
+  & #Spacer
+    // Expanding
+    min-width: 100px
+    min-height: 100px
+
+  Projectbar
+    background-color: $red
+    // Constant
+    max-width: 400px
+    max-height: 80px
+
+    & QLabel
+      color: $black
+      font-family: DIN
+      font-size: 40px
+      min-width: 240px
 
 QMenu
   background-color: $red
@@ -92,18 +127,6 @@ IconButton
   outline: none
   border: none
 
-  &:hover
-    background-color: none
-    outline: none
-    border: none
-
-  &#SettingsButton
-    border: 3px solid $red
-    padding-left: 11px
-    padding-right: 11px
-    padding-bottom: 12px
-    padding-top: 12px
-
 QLineEdit
   font-size: 30px
   border: none
@@ -135,6 +158,11 @@ QTabWidget
 
   &::pane
     background-color: transparent
+    margin: 0px
+    padding: 0px
+    max-height: 0px
+    max-width: 0px
+    border-width: 0px
 
   & QTabBar::tab
     background-color: $black
@@ -153,6 +181,8 @@ QTabWidget
     &:selected, &:hover
       background-color: $red
       color: $black
+
+
 
 #ContainerPage
   background-color: $red
