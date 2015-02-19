@@ -5,8 +5,11 @@
 #include <QLabel>
 #include <QRectF>
 #include <QPen>
+#include <QResizeEvent>
 
-#include <QDebug>
+CustomDial::CustomDial(QWidget* parent)
+: QDial(parent)
+{ }
 
 CustomDial::CustomDial(const QString& text,
                        double factor,
@@ -75,9 +78,9 @@ void CustomDial::paintEvent(QPaintEvent*)
 
 }
 
-void CustomDial::setFixedSize(int w, int h)
+void CustomDial::resizeEvent(QResizeEvent* event)
 {
-    QDial::setFixedSize(w, h);
+    QDial::setFixedSize(event->size());
 
     double width = QDial::width() - 10;
 

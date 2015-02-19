@@ -17,49 +17,57 @@ class CustomDial : public QDial
 
 public:
 
+    explicit CustomDial(QWidget* parent = nullptr);
+
     CustomDial(const QString& text,
                double factor,
                QWidget * parent = nullptr);
 
     ~CustomDial();
 
-    void setArcColor(const QString& color);
+    virtual void setArcColor(const QString& color);
 
-    QString getArcColor() const;
+    virtual QString getArcColor() const;
 
-    void setStartAngle(double angle);
 
-    double getStartAngle() const;
+    virtual void setStartAngle(double angle);
 
-    void setMaximumAngle(double angle);
+    virtual double getStartAngle() const;
 
-    double getMaximumAngle() const;
 
-    void setArcWidth(double px);
+    virtual void setMaximumAngle(double angle);
 
-    double getArcWidth() const;
+    virtual double getMaximumAngle() const;
 
-    void setText(const QString& text);
 
-    QString getText() const;
+    virtual void setArcWidth(double px);
 
-    void setFixedSize(int w, int h);
+    virtual double getArcWidth() const;
 
-    void setFactor(double factor);
 
-    double getFactor() const;
+    virtual void setText(const QString& text);
+
+    virtual QString getText() const;
+
+
+    virtual void resizeEvent(QResizeEvent* event) override;
+
+
+    virtual void setFactor(double factor);
+
+    virtual double getFactor() const;
 
 signals:
 
-    void scaledValueChanged(double value);
+    virtual void scaledValueChanged(double value);
 
-private slots:
+protected slots:
 
-    void updateValue();
+    virtual void updateValue();
 
-private:
+protected:
 
-    void paintEvent(QPaintEvent*);
+    virtual void paintEvent(QPaintEvent*) override;
 
     double maximumAngle_;
 

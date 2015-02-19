@@ -8,7 +8,6 @@
 #include <QtCore>
 #include <QMenu>
 
-#include <QVBoxLayout>
 #include <QHBoxLayout>
 
 Projectbar::Projectbar(QWidget* parent)
@@ -36,54 +35,46 @@ void Projectbar::setupUi()
 
     layout->setMargin(0);
 
-    QVBoxLayout* buttonLayout = new QVBoxLayout(this);
+    layout->setSpacing(0);
 
-    // Cannot set through CSS
-    buttonLayout->setSpacing(10);
+    layout->setContentsMargins(0,0,0,0);
 
-    buttonLayout->setContentsMargins(0,0,0,5);
-
-    layout->addLayout(buttonLayout);
-
-    IconButton* nextButton = new IconButton(":/icons/next.png",
-                                            ":/icons/next-active.png",
-                                            new QSize(28,28),
-                                            new QSize(32,32),
-                                            this);
-    buttonLayout->addWidget(nextButton);
-
-    nextButton->setObjectName("ProjectNavigator");
-
-    connect(nextButton, &QPushButton::clicked,
-            this, &Projectbar::nextProject);
-
-    IconButton* previousButton = new IconButton(":/icons/previous.png",
-                                                ":/icons/previous-active.png",
-                                                new QSize(28,28),
-                                                new QSize(32,32),
+    IconButton* previousButton = new IconButton(QIcon(":/icons/previous.png"),
+                                                QIcon(":/icons/previous-active.png"),
                                                 this);
-    previousButton->setObjectName("ProjectNavigator");
 
-    buttonLayout->addWidget(previousButton);
+    previousButton->setObjectName("PreviousButton");
+
+    layout->addWidget(previousButton);
 
     connect(previousButton, &QPushButton::clicked,
             this, &Projectbar::previousProject);
 
+    IconButton* nextButton = new IconButton(QIcon(":/icons/next.png"),
+                                            QIcon(":/icons/next-active.png"),
+                                            this);
 
-    projectLabel_ = new QLabel(currProject_->baseName(),this);
+    nextButton->setObjectName("NextButton");
 
-    projectLabel_->setObjectName("ProjectLabel");
+    layout->addWidget(nextButton);
+
+    connect(nextButton, &QPushButton::clicked,
+            this, &Projectbar::nextProject);
+
+
+    projectLabel_ = new QLabel(currProject_->baseName(), this);
 
     layout->addWidget(projectLabel_);
 
 
-    IconButton* menuButton = new IconButton(":/icons/menu.png",
-                                            ":/icons/menu-active.png",
-                                            new QSize(40,40),
-                                            new QSize(45,45),
+    IconButton* menuButton = new IconButton(QIcon(":/icons/menu.png"),
+                                            QIcon(":/icons/menu-active.png"),
                                             this);
 
+    menuButton->setObjectName("MenuButton");
+
     layout->addWidget(menuButton);
+
 
 
     CustomMenu* menu = new CustomMenu(menuButton, this);
@@ -159,8 +150,6 @@ void Projectbar::setupUi()
     menu->addAction(saveAsAction);
 
     /* --------- This Window -------- */
-
-    QWidget::setMinimumSize(380,80);
 
     QWidget::setLayout(layout);
 }
@@ -284,10 +273,9 @@ void Projectbar::openProject()
 
 void Projectbar::newProject()
 {
-    IconButton* icon = new IconButton(":/icons/folder.png",
-                                      ":/icons/folder-active.png",
-                                      new QSize(40,40),
-                                      new QSize(44,44));
+    IconButton* icon = new IconButton(QIcon(":/icons/folder.png"),
+                                      QIcon(":/icons/folder-active.png"),
+                                      this);
 
     connect(icon, &IconButton::clicked,
             this, &Projectbar::changeDirectory);

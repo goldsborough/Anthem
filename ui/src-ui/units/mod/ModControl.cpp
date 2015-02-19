@@ -1,10 +1,11 @@
 #include "ModControl.hpp"
 #include "ModDockUi.hpp"
-#include "CustomDial.hpp"
+#include "ModDial.hpp"
 
 #include <QGridLayout>
 #include <QStyleOption>
 #include <QPainter>
+#include <QVBoxLayout>
 
 #include <QDebug>
 
@@ -21,11 +22,23 @@ ModControl::~ModControl()
 
 void ModControl::setupUi()
 {
-    CustomDial* dial = new CustomDial(title_, 0.01, this);
+    QVBoxLayout* layout = new QVBoxLayout(this);
+
+    layout->setSpacing(0);
+
+    layout->setMargin(0);
+
+    //layout->setContentsMargins(0,0,0,0);
+
+    ModDial* dial = new ModDial(title_, 0.01, this);
+
+    layout->addWidget(dial);
 
     ModDockUi* dock = new ModDockUi(4, 2, this);
 
-    dock->move(0, 100);
+    layout->addWidget(dock);
+
+    QWidget::setLayout(layout);
 }
 
 void ModControl::paintEvent(QPaintEvent *)

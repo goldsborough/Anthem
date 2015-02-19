@@ -1,17 +1,15 @@
 <RCC>
     <qresource prefix="/">
-        <file>icons/menu-active.png</file>
         <file>icons/menu.png</file>
-        <file>icons/next-active.png</file>
+        <file>icons/menu-active.png</file>
         <file>icons/next.png</file>
-        <file>icons/previous-active.png</file>
+        <file>icons/next-active.png</file>
         <file>icons/previous.png</file>
-        <file>icons/folder-active.png</file>
-        <file>icons/folder.png</file>
-        <file>fonts/DIN.otf</file>
-        <file alias="logo">icons/logo.png</file>
-        <file>style/style.css</file>
+        <file>icons/previous-active.png</file>
         <file>icons/settings.png</file>
         <file>icons/settings-active.png</file>
+        <file>icons/folder.png</file>
+        <file>icons/folder-active.png</file>
+        <file>fonts/DIN.otf</file>
     </qresource>
 </RCC>

@@ -30,11 +30,7 @@ void Menubar::setupUi()
     layout->addWidget(dockB);
 
 
-    QWidget* leftSpacer = new QWidget(this);
-
-    leftSpacer->setObjectName("Spacer");
-
-    layout->addWidget(leftSpacer);
+    layout->addWidget(new QWidget(this));
 
 
     projectBar_ = new Projectbar(this);
@@ -42,11 +38,7 @@ void Menubar::setupUi()
     layout->addWidget(projectBar_);
 
 
-    QWidget* rightSpacer = new QWidget(this);
-
-    rightSpacer->setObjectName("Spacer");
-
-    layout->addWidget(rightSpacer);
+    layout->addWidget(new QWidget(this));
 
 
     volumeLabel_ = new QLabel(this);
@@ -56,12 +48,10 @@ void Menubar::setupUi()
     layout->addWidget(volumeLabel_);
 
 
-
-    IconButton* settingsButton = new IconButton(":/icons/settings.png",
-                                                ":/icons/settings-active.png",
-                                                new QSize(50, 50),
-                                                new QSize(55, 55),
+    IconButton* settingsButton = new IconButton(QIcon(":/icons/settings.png"),
+                                                QIcon(":/icons/settings-active.png"),
                                                 this);
+
     layout->addWidget(settingsButton);
 
     settingsButton->setObjectName("SettingsButton");
@@ -71,8 +61,6 @@ void Menubar::setupUi()
     connect(settingsButton, &IconButton::clicked,
             settings, &SettingsDialog::show);
 
-
-    QWidget::setMinimumHeight(100);
 
     QWidget::setLayout(layout);
 }

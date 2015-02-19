@@ -8,43 +8,55 @@ QLabel {
   color: #FFFFFF; }
 
 Menubar {
-  max-height: 100px; }
+  max-height: 80px; }
   Menubar #CopyDock {
     border: 3px solid #DC4850;
-    min-width: 74px;
-    min-height: 74px;
-    max-width: 74px;
-    max-height: 74px;
+    min-width: 54px;
+    min-height: 54px;
+    max-width: 54px;
+    max-height: 54px;
     background-color: #27272B;
-    font-size: 40px;
+    font-size: 30px;
     font-family: DIN;
     color: #DC4850; }
     Menubar #CopyDock:enabled {
       background-color: #DC4850;
       color: #27272B; }
-  Menubar #SettingsButton {
+  Menubar IconButton {
     border: 3px solid #DC4850;
-    min-width: 74px;
-    min-height: 74px;
-    max-width: 74px;
-    max-height: 74px; }
+    min-width: 54px;
+    min-height: 54px;
+    max-width: 54px;
+    max-height: 54px;
+    qproperty-iconWidth: 35;
+    qproperty-iconHeight: 35; }
   Menubar #VolumeLabel {
-    min-width: 80px;
-    min-height: 80px;
-    max-width: 80px;
-    max-height: 80px; }
-  Menubar #Spacer {
-    min-width: 100px;
-    min-height: 100px; }
+    min-width: 60px;
+    min-height: 60px;
+    max-width: 60px;
+    max-height: 60px; }
   Menubar Projectbar {
     background-color: #DC4850;
-    max-width: 400px;
-    max-height: 80px; }
+    min-width: 500px;
+    max-width: 500px;
+    max-height: 60px; }
     Menubar Projectbar QLabel {
       color: #27272B;
       font-family: DIN;
-      font-size: 40px;
-      min-width: 240px; }
+      font-size: 30px;
+      min-width: 350px;
+      max-width: 350px;
+      padding-right: 15px; }
+
+#PreviousButton, #NextButton {
+  qproperty-iconWidth: 25;
+  qproperty-iconHeight: 25;
+  max-width: 30px;
+  min-width: 30px; }
+
+#MenuButton {
+  qproperty-iconWidth: 30;
+  qproperty-iconHeight: 30; }
 
 QMenu {
   background-color: #DC4850;
@@ -60,10 +72,7 @@ QMenu {
 CustomComboBox QMenu {
   margin: 0px; }
   CustomComboBox QMenu::item {
-    padding-right: 29px;
-    padding-left: 29px;
-    padding-top: 18px;
-    padding-bottom: 18px; }
+    padding: 0; }
 
 QDialog, SettingsDialog {
   background-color: #DC4850; }
@@ -130,15 +139,15 @@ QTabWidget::pane {
   border-width: 0px; }
 QTabWidget QTabBar::tab {
   background-color: #27272B;
-  font-size: 40px;
+  font-size: 30px;
   color: #FFFFFF;
   font-family: "DIN Light";
   border: none;
   outline: none;
   min-width: 205px;
   min-height: 50px;
-  padding-bottom: 5px;
-  padding-top: 15px;
+  padding-bottom: 0px;
+  padding-top: 5px;
   text-align: center;
   qproperty-alignment: AlignCenter; }
   QTabWidget QTabBar::tab:selected, QTabWidget QTabBar::tab:hover {
@@ -149,7 +158,8 @@ QTabWidget QTabBar::tab {
   background-color: #DC4850; }
   #ContainerPage QTabBar::tab {
     min-width: 250px;
-    min-height: 50px; }
+    min-height: 50px;
+    padding-top: 5px; }
 
 #OperatorUi {
   border: 2px solid #27272B;

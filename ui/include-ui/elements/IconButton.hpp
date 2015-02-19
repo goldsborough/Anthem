@@ -2,7 +2,7 @@
 #define ICONBUTTON_HPP
 
 #include <QPushButton>
-#include <QString>
+#include <QSharedPointer>
 
 class QIcon;
 class QSize;
@@ -12,44 +12,58 @@ class IconButton : public QPushButton
 
     Q_OBJECT
 
+    Q_PROPERTY(int iconWidth READ getIconWidth WRITE setIconWidth)
+
+    Q_PROPERTY(int iconHeight READ getIconHeight WRITE setIconHeight)
+
+    Q_PROPERTY(double iconFactor READ getIconFactor WRITE setIconFactor)
+
 public:
 
-    IconButton(const QString& path,
-               QSize* size,
+    IconButton(const QIcon& icon,
                QWidget* parent = nullptr);
 
-    IconButton(const QString& standardPath,
-               const QString& activePath,
-               QSize* standardSize,
-               QSize* activeSize,
+    IconButton(const QIcon& standard,
+               const QIcon& active,
                QWidget* parent = nullptr);
 
-    QIcon* getStandardIcon() const;
 
-    QIcon* getActiveIcon() const;
+    void setStandardIcon(const QIcon& icon);
 
-    QSize* getStandardSize() const;
+    QIcon getStandardIcon() const;
 
-    QSize* getActiveSize() const;
 
-    ~IconButton();
+    void setActiveIcon(const QIcon& icon);
 
- private slots:
+    QIcon getActiveIcon() const;
 
-    void setActiveIcon();
 
-    void setStandardIcon();
+    void setIconFactor(double factor);
+
+    double getIconFactor() const;
+
+
+    void setIconWidth(int width);
+
+    int getIconWidth() const;
+
+
+    void setIconHeight(int height);
+
+    int getIconHeight() const;
+
+
+    virtual void setIconSize(const QSize& size);
 
  private:
 
-    QIcon* standard_;
+    QSharedPointer<QIcon> standard_;
 
-    QIcon* active_;
+    QSharedPointer<QIcon> active_;
 
-    QSize* standardSize_;
+    QSharedPointer<QSize> size_;
 
-    QSize* activeSize_;
-
+    double factor_;
 };
 
 #endif // ICONBUTTON_HPP

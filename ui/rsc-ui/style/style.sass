@@ -18,11 +18,11 @@ QLabel
 
 Menubar
 
-  $menuHeight: 80px
+  $menuHeight: 60px
   $borderWidth: 3px
   $fitted: $menuHeight - 2 * $borderWidth
 
-  max-height: 100px
+  max-height: $menuHeight + 20
 
   & #CopyDock
     border: $borderWidth solid $red
@@ -31,7 +31,7 @@ Menubar
     max-width: $fitted
     max-height: $fitted
     background-color: $black
-    font-size: 40px
+    font-size: 30px
     font-family: DIN
     color: $red
 
@@ -39,12 +39,14 @@ Menubar
       background-color: $red
       color: $black
 
-  & #SettingsButton
+  & IconButton
     border: $borderWidth solid $red
     min-width: $fitted
     min-height: $fitted
     max-width: $fitted
     max-height: $fitted
+    qproperty-iconWidth: 35
+    qproperty-iconHeight: 35
 
   & #VolumeLabel
     min-width: $menuHeight
@@ -52,22 +54,29 @@ Menubar
     max-width: $menuHeight
     max-height: $menuHeight
 
-  & #Spacer
-    // Expanding
-    min-width: 100px
-    min-height: 100px
-
   Projectbar
     background-color: $red
-    // Constant
-    max-width: 400px
-    max-height: 80px
+    min-width: 500px
+    max-width: 500px
+    max-height: $menuHeight
 
     & QLabel
       color: $black
       font-family: DIN
-      font-size: 40px
-      min-width: 240px
+      font-size: 30px
+      min-width: 350px
+      max-width: 350px
+      padding-right: 15px
+
+#PreviousButton, #NextButton
+  qproperty-iconWidth: 25
+  qproperty-iconHeight: 25
+  max-width: 30px
+  min-width: 30px
+
+#MenuButton
+  qproperty-iconWidth: 30
+  qproperty-iconHeight: 30
 
 QMenu
   background-color: $red
@@ -86,10 +95,7 @@ CustomComboBox QMenu
   margin: 0px
 
   &::item
-    padding-right: 29px
-    padding-left: 29px
-    padding-top: 18px
-    padding-bottom: 18px
+    padding: 0
 
 QDialog
   background-color: $red
@@ -166,15 +172,15 @@ QTabWidget
 
   & QTabBar::tab
     background-color: $black
-    font-size: 40px
+    font-size: 30px
     color: $white
     font-family: "DIN Light"
     border: none
     outline: none
     min-width: 205px
     min-height: 50px
-    padding-bottom: 5px
-    padding-top: 15px
+    padding-bottom: 0px
+    padding-top: 5px
     text-align: center
     qproperty-alignment: AlignCenter
 
@@ -190,6 +196,7 @@ QTabWidget
   & QTabBar::tab
     min-width: 250px
     min-height: 50px
+    padding-top: 5px
 
 #OperatorUi
 

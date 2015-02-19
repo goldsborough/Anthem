@@ -1,4 +1,5 @@
 #include "AnthemUi.hpp"
+
 #include <QApplication>
 #include <QFile>
 #include <QString>

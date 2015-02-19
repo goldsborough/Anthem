@@ -1,81 +1,91 @@
-#include "iconbutton.hpp"
+#include "IconButton.hpp"
 
-#include <QImage>
-#include <QPixmap>
-#include <QPainter>
 #include <QString>
 #include <QSize>
 
-#include <QDebug>
-
-IconButton::IconButton(const QString& path,
-                       QSize* size,
+IconButton::IconButton(const QIcon& icon,
                        QWidget* parent)
-: IconButton(path,path,size,size,parent)
+: IconButton(icon, icon, parent)
 { }
 
-IconButton::IconButton(const QString& standardPath,
-                       const QString& activePath,
-                       QSize* standardSize,
-                       QSize* activeSize,
+IconButton::IconButton(const QIcon& standard,
+                       const QIcon& active,
                        QWidget *parent)
 : QPushButton(parent),
-  standard_(new QIcon(standardPath)), active_(new QIcon(activePath)),
-  standardSize_(standardSize), activeSize_(activeSize)
+  standard_(new QIcon(standard)),
+  active_(new QIcon(active)),
+  size_(new QSize), factor_(1.1)
 {
     QPushButton::setIcon(*standard_);
-
-    QPushButton::setIconSize(*standardSize_);
-
-    QPushButton::setMinimumSize(*activeSize_);
 
     QPushButton::setCursor(Qt::PointingHandCursor);
 
-    connect(this, SIGNAL(pressed()), this, SLOT(setActiveIcon()));
+    connect(this, &QPushButton::pressed,
+            [=] () { QPushButton::setIconSize(*size_ * factor_);
+                     QPushButton::setIcon(*active_); });
 
-    connect(this, SIGNAL(released()), this, SLOT(setStandardIcon()));
+    connect(this, &QPushButton::released,
+            [=] () { QPushButton::setIconSize(*size_);
+                     QPushButton::setIcon(*standard_); });
 }
 
-void IconButton::setActiveIcon()
+void IconButton::setIconFactor(double factor)
 {
-    QPushButton::setIcon(*active_);
-
-    QPushButton::setIconSize(*activeSize_);
-
+    factor_ = factor;
 }
 
-void IconButton::setStandardIcon()
+double IconButton::getIconFactor() const
 {
-    QPushButton::setIcon(*standard_);
-
-    QPushButton::setIconSize(*standardSize_);
+    return factor_;
 }
 
-QIcon* IconButton::getStandardIcon() const
+void IconButton::setIconSize(const QSize &size)
 {
-    return standard_;
+    *size_ = size;
+
+    QPushButton::setIconSize(*size_);
 }
 
-QIcon* IconButton::getActiveIcon() const
+void IconButton::setStandardIcon(const QIcon& icon)
 {
-    return active_;
+    *standard_ = icon;
 }
 
-QSize* IconButton::getStandardSize() const
+QIcon IconButton::getStandardIcon() const
 {
-    return standardSize_;
+    return *standard_;
 }
 
-QSize* IconButton::getActiveSize() const
+void IconButton::setActiveIcon(const QIcon& icon)
 {
-    return activeSize_;
+    *active_ = icon;
 }
 
-IconButton::~IconButton()
+QIcon IconButton::getActiveIcon() const
 {
-    delete standard_;
-    delete active_;
+    return *active_;
+}
 
-    delete standardSize_;
-    delete activeSize_;
+void IconButton::setIconWidth(int width)
+{
+    size_->setWidth(width);
+
+    QPushButton::setIconSize(*size_);
+}
+
+int IconButton::getIconWidth() const
+{
+    return size_->width();
+}
+
+void IconButton::setIconHeight(int height)
+{
+    size_->setHeight(height);
+
+    QPushButton::setIconSize(*size_);
+}
+
+int IconButton::getIconHeight() const
+{
+    return size_->height();
 }

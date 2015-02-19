@@ -3,8 +3,6 @@
 
 #include <QGridLayout>
 
-#include <QDebug>
-
 ModDockUi::ModDockUi(index_t dockSize,                   
                      index_t wrap,
                      QWidget* parent)
