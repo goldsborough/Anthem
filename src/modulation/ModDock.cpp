@@ -214,8 +214,8 @@ void ModDock::setDepth(index_t index, double depth)
     if (index >= modItems_.size())
     { throw std::invalid_argument("ModDock index out of bounds!"); }
     
-    if (depth < 0 || depth > 1)
-    { throw std::invalid_argument("Invalid depth value, must be between 0 and 1!"); }
+    if (depth < -1 || depth > 1)
+    { throw std::invalid_argument("Invalid depth value, must be between -1 and 1!"); }
     
     modItems_[index].depth = modItems_[index].baseDepth = depth;
 }

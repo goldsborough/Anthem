@@ -60,8 +60,8 @@ void Unit::setModUnitDepth(index_t dockNum,
     if (dockNum >= numDocks_)
     { throw std::invalid_argument("Dock index out of range!"); }
     
-    if (depth > 1 || depth < 0)
-    { throw std::invalid_argument("Depth value must be between 0 and 1!");}
+    if (depth > 1 || depth < -1)
+    { throw std::invalid_argument("Depth value must be between -1 and 1!");}
     
     mods_[dockNum].setDepth(modNum, depth);
 }

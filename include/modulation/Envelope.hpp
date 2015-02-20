@@ -84,11 +84,13 @@ public:
     *
     *  @param       depth The depth value to modulate with.
     *
+    *  @param       maximum The symmetric maximum boundary value (e.g. 1 for amplitude).
+    *
     *************************************************************************************************/
     
     double modulate(double sample,
                     double depth,
-                    double);
+                    double maximum);
     
     /*****************************************************************************************//*!
     *

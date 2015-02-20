@@ -3,10 +3,15 @@
 
 #include "CustomDial.hpp"
 
+#include <QString>
+#include <QVector>
+
 class ModDial : public CustomDial
 {
 
 public:
+
+    typedef unsigned short index_t;
 
     ModDial(QWidget* parent = nullptr);
 

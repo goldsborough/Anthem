@@ -2,14 +2,15 @@
 #define MODDOCKITEM_HPP
 
 #include <QAbstractSlider>
-#include <QString>
 #include <QSharedPointer>
+#include <QVector>
+#include <QString>
 
 class QColor;
 class QLineF;
 class QPen;
 
-class ModDockItem : public QAbstractSlider
+class ModItemUi : public QAbstractSlider
 {
     Q_OBJECT
 
@@ -21,33 +22,33 @@ public:
 
     enum Side { LEFT, RIGHT, TOP, BOTTOM };
 
-    ModDockItem(const QString& text = QString(),
-                QWidget* parent = nullptr);
+    ModItemUi(const QString& text = QString(),
+               QWidget* parent = nullptr);
+
 
     void setText(const QString& text);
 
     QString getText() const;
 
+
     void setBorderColor(const QColor& color);
 
     QColor getBorderColor() const;
+
 
     void setBorderWidth(double width);
 
     double getBorderWidth() const;
 
+
     void setBorderRatios(double left,
-                        double right,
-                        double top,
-                        double bottom);
+                         double right,
+                         double top,
+                         double bottom);
 
     void setBorderRatio(Side side, double ratio);
 
     double getBorderRatio(Side side) const;
-
-    void setFixedSize(int w, int h);
-
-    void setFixedSize(const QSize& size);
 
 signals:
 
@@ -55,7 +56,10 @@ signals:
 
 private:
 
-    void paintEvent(QPaintEvent* pe);
+    virtual void resizeEvent(QResizeEvent* event) override;
+
+    virtual void paintEvent(QPaintEvent*) override;
+
 
     QString text_;
 
@@ -63,7 +67,7 @@ private:
 
     QSharedPointer<QLineF> borders_;
 
-    double ratios_ [4];
+    QVector<double> ratios_;
 
     double borderWidth_;
 };

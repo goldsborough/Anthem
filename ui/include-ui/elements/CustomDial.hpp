@@ -23,7 +23,9 @@ public:
                double factor,
                QWidget * parent = nullptr);
 
-    ~CustomDial();
+
+    virtual ~CustomDial();
+
 
     virtual void setArcColor(const QString& color);
 

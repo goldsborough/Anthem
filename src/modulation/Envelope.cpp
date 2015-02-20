@@ -117,8 +117,8 @@ double Envelope::tick_()
     {
         if (currSegNum_ == REL) return 0;
         
-        // If this is the end of the connecting segment, change back to the
-        // loop start
+        // If this is the end of the connecting segment,
+        // change back to the loop start
         else if (currSegNum_ == CONNECTOR)
         {
             changeSeg_(loopStart_);
@@ -149,7 +149,7 @@ double Envelope::tick_()
     return lastTick_;
 }
 
-double Envelope::modulate(double sample, double depth, double)
+double Envelope::modulate(double sample, double depth, double maximum)
 {
     // Modulate
     if (mods_[AMP].inUse())
@@ -157,7 +157,7 @@ double Envelope::modulate(double sample, double depth, double)
         amp_ = mods_[AMP].tick();
     }
     
-    return sample * tick_() * depth * amp_;
+    return sample + (maximum * tick_() * depth * amp_);
 }
 
 void Envelope::setLoopStart(seg_t seg)
