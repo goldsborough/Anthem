@@ -3,6 +3,8 @@
 
 #include <QWidget>
 
+class Operator;
+
 class OperatorUi : public QWidget
 {
     Q_OBJECT

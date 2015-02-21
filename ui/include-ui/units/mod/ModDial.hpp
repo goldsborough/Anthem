@@ -5,6 +5,9 @@
 
 #include <QString>
 #include <QVector>
+#include <QSharedPointer>
+
+class QRectF;
 
 class ModDial : public CustomDial
 {
@@ -19,7 +22,34 @@ public:
             double factor,
             QWidget* parent = nullptr);
 
+    void showModValue(index_t index);
+
+    void showControlValue();
+
 private:
+
+    struct Mod
+    {
+        enum Direction
+        {
+            LEFT,
+            RIGHT,
+            BOTH
+
+        } direction;
+
+        QSharedPointer<QRectF> arcRect;
+
+        double displayedValue;
+
+        double value;
+
+        QString text;
+    };
+
+    virtual void mouseMoveEvent(QMouseEvent* event) override;
+
+    bool controlValueShown_;
 
 };
 

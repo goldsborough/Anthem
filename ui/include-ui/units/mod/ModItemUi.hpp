@@ -4,11 +4,11 @@
 #include <QAbstractSlider>
 #include <QSharedPointer>
 #include <QVector>
-#include <QString>
 
 class QColor;
 class QLineF;
 class QPen;
+struct ModUnitUi;
 
 class ModItemUi : public QAbstractSlider
 {
@@ -22,13 +22,15 @@ public:
 
     enum Side { LEFT, RIGHT, TOP, BOTTOM };
 
-    ModItemUi(const QString& text = QString(),
-               QWidget* parent = nullptr);
+    ModItemUi(QWidget* parent = nullptr);
+
+    ModItemUi(const ModUnitUi& mod,
+              QWidget* parent = nullptr);
 
 
-    void setText(const QString& text);
+    void setModUnitUi(const ModUnitUi& mod);
 
-    QString getText() const;
+    ModUnitUi getModUnitUi() const;
 
 
     void setBorderColor(const QColor& color);
@@ -52,16 +54,21 @@ public:
 
 signals:
 
-    void scaledValueChanged(double value) const;
+    void depthChanged(double value) const;
+
+    void modUnitChanged(const ModUnitUi& mod) const;
+
+    void itemHovered() const;
 
 private:
+
+    virtual void mouseMoveEvent(QMouseEvent* event) override;
 
     virtual void resizeEvent(QResizeEvent* event) override;
 
     virtual void paintEvent(QPaintEvent*) override;
 
-
-    QString text_;
+    QSharedPointer<ModUnitUi> mod_;
 
     QSharedPointer<QPen> borderPen_;
 

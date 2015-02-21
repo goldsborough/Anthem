@@ -7,6 +7,7 @@
 class ModDock;
 class ModItemUi;
 class QString;
+struct ModUnitUi;
 
 class ModDockUi : public QWidget
 {
@@ -18,44 +19,33 @@ public:
 
     typedef unsigned short index_t;
 
+    ModDockUi(QWidget* parent = nullptr);
+
     ModDockUi(index_t dockSize,
               index_t wrap = 2,
               QWidget* parent = nullptr);
 
     ~ModDockUi();
 
-
-    void addModUnit(ModItemUi* unit);
-
-
-    ModItemUi* getModUnit(index_t index) const;
-
-    ModItemUi* getModUnit(const QString& text) const;
-
-
-    void removeModUnit(index_t index);
-
-    void removeModUnit(const QString& text);
-
-
     void setWrap(index_t wrap);
 
     index_t getWrap() const;
 
-
-    index_t size() const;
-
-    void clear();
-
 signals:
 
-    //void itemUnderMouse(index_t index) const;
+    void itemHovered(index_t index) const;
 
-    void itemValueChanged(index_t index, double value) const;
+    void depthChanged(index_t index, double value) const;
+
+    void modUnitChanged(index_t index, const ModUnitUi& mod) const;
 
 private slots:
 
-    void emitItemValueChanged(double value);
+    void emitDepthChanged(double value) const;
+
+    void emitModUnitChanged(const ModUnitUi& mod) const;
+
+    void emitItemHovered() const;
 
 private:
 
@@ -63,7 +53,7 @@ private:
 
     index_t wrap_;
 
-    QVector<ModItemUi*> units_;
+    QVector<ModItemUi*> items_;
 
 };
 

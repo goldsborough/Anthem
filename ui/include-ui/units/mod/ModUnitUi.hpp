@@ -1,13 +1,20 @@
 #ifndef MODUNITUI_HPP
 #define MODUNITUI_HPP
 
-class QString;
+#include <QString>
+
 class ModUnit;
 
 // Transports information
 struct ModUnitUi
 {
-    ModUnit* mod;
+    ModUnitUi(ModUnit* mod = nullptr,
+              const QString& modText = QString())
+    : modUnit(mod),
+      text(modText)
+    { }
+
+    ModUnit* modUnit;
 
     QString text;
 };

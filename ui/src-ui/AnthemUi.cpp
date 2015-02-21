@@ -62,6 +62,7 @@ void AnthemUi::setupUi()
 
     pages->addTab(envelopePage, "Envelope");
 
+
     QWidget* container = new QWidget(this);
 
     container->setLayout(layout);

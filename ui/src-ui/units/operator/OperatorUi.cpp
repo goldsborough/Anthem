@@ -4,8 +4,11 @@
 #include <QGridLayout>
 #include <QStyleOption>
 #include <QPainter>
-#include <QPushButton>
-#include <QDial>
+
+
+#include <QDebug>
+
+
 
 OperatorUi::OperatorUi(QWidget* parent)
     : QWidget(parent)
@@ -20,6 +23,10 @@ void OperatorUi::setupUi()
     QGridLayout* layout = new QGridLayout(this);
 
     ModControl* level = new ModControl("Level", this);
+
+    connect(level, &ModControl::depthChanged,
+            [&] (unsigned short index, double value)
+            { qDebug() << index << value << endl; });
 
     layout->addWidget(level);
 

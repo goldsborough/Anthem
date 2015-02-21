@@ -1,15 +1,20 @@
 #include "ModDockUi.hpp"
 #include "ModItemUi.hpp"
+#include "ModUnitUi.hpp"
 
 #include <QGridLayout>
 #include <algorithm>
+
+ModDockUi::ModDockUi(QWidget* parent)
+: QWidget(parent)
+{ }
 
 ModDockUi::ModDockUi(index_t dockSize,                   
                      index_t wrap,
                      QWidget* parent)
 : QWidget(parent),
   wrap_(wrap),
-  units_(dockSize)
+  items_(dockSize)
 {
     setupUi();
 }
@@ -25,12 +30,18 @@ void ModDockUi::setupUi()
 
     layout->setVerticalSpacing(0);
 
-    for (short i = 0, row = -1; i < units_.size(); ++i)
+    for (short i = 0, row = -1; i < items_.size(); ++i)
     {
-        units_[i] = new ModItemUi(QString('A' + i), this);
+        items_[i] = new ModItemUi(ModUnitUi(nullptr, "L1"), this);
 
-        connect(units_[i], &ModItemUi::scaledValueChanged,
-                this, &ModDockUi::emitItemValueChanged);
+        connect(items_[i], &ModItemUi::depthChanged,
+                this, &ModDockUi::emitDepthChanged);
+
+        connect(items_[i], &ModItemUi::modUnitChanged,
+                this, &ModDockUi::emitModUnitChanged);
+
+        connect(items_[i], &ModItemUi::itemHovered,
+                this, &ModDockUi::emitItemHovered);
 
         // Halve the top for the first row
         double top = (i < wrap_) ?  1 : 0.5;
@@ -39,7 +50,7 @@ void ModDockUi::setupUi()
         double left = 1;
 
         // Halve the bottom for the last row
-        double bottom = (i < (units_.size() - wrap_)) ? 0.5 : 1;
+        double bottom = (i < (items_.size() - wrap_)) ? 0.5 : 1;
 
         // Halve the right side if the next columnwill wrap
         double right = ((i + 1) % wrap_ > 0) ? 0.5 : 1;
@@ -48,72 +59,50 @@ void ModDockUi::setupUi()
 
         else left = 0.5; // First column of a row is halved
 
-        units_[i]->setBorderRatios(left, right, top, bottom);
+        items_[i]->setBorderRatios(left, right, top, bottom);
 
-        layout->addWidget(units_[i], row, i % wrap_);
+        layout->addWidget(items_[i], row, i % wrap_);
     }
 }
 
-void ModDockUi::emitItemValueChanged(double value)
+void ModDockUi::emitDepthChanged(double value) const
 {
     ModItemUi* senderItem = dynamic_cast<ModItemUi*>(QWidget::sender());
 
-    for (index_t i = 0; i < units_.size(); ++i)
+    for (index_t i = 0; i < items_.size(); ++i)
     {
-        if (senderItem == units_[i])
+        if (senderItem == items_[i])
         {
-            emit itemValueChanged(i, value);
+            emit depthChanged(i, value);
         }
     }
 }
 
-void ModDockUi::addModUnit(ModItemUi* unit)
+void ModDockUi::emitModUnitChanged(const ModUnitUi& mod) const
 {
-    units_.push_back(unit);
+    ModItemUi* senderItem = dynamic_cast<ModItemUi*>(QWidget::sender());
+
+    for (index_t i = 0; i < items_.size(); ++i)
+    {
+        if (senderItem == items_[i])
+        {
+            emit modUnitChanged(i, mod);
+        }
+    }
 }
 
-ModItemUi* ModDockUi::getModUnit(index_t index) const
+void ModDockUi::emitItemHovered() const
 {
-    return units_[index];
+    ModItemUi* senderItem = dynamic_cast<ModItemUi*>(QWidget::sender());
+
+    for (index_t i = 0; i < items_.size(); ++i)
+    {
+        if (senderItem == items_[i])
+        {
+            emit itemHovered(i);
+        }
+    }
 }
-
-ModItemUi* ModDockUi::getModUnit(const QString& text) const
-{
-    QVector<ModItemUi*>::const_iterator itr;
-
-    itr = std::find(units_.begin(),  units_.end(),
-                    [&] (ModItemUi* unit) {unit->getText() == text});
-
-    return (itr == units_.end()) ? 0 : *itr;
-}
-
-
-void ModDockUi::removeModUnit(index_t index)
-{
-    units_.remove(index);
-}
-
-void ModDockUi::removeModUnit(const QString& text)
-{
-    QVector<ModItemUi*>::iterator itr;
-
-    itr = std::find(units_.begin(),  units_.end(),
-                    [&] (ModItemUi* unit) {unit->getText() == text});
-
-    units_.erase(itr);
-}
-
-
-ModDockUi::index_t ModDockUi::size() const
-{
-    return units_.size();
-}
-
-void ModDockUi::clear()
-{
-    units_.clear();
-}
-
 
 void ModDockUi::setWrap(index_t wrap)
 {
@@ -124,3 +113,4 @@ ModDockUi::index_t ModDockUi::getWrap() const
 {
     return wrap_;
 }
+

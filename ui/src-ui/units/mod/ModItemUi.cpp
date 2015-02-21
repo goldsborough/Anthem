@@ -1,21 +1,30 @@
 #include "ModItemUi.hpp"
+#include "ModUnitUi.hpp"
 
 #include <QPainter>
 #include <QPaintEvent>
 
-ModItemUi::ModItemUi(const QString& text,
+#include <QDebug>
+
+ModItemUi::ModItemUi(QWidget* parent)
+: ModItemUi(ModUnitUi(), parent)
+{ }
+
+ModItemUi::ModItemUi(const ModUnitUi& mod,
                          QWidget* parent)
-: QAbstractSlider(parent), text_(text),
-  borderWidth_(0), borderPen_(new QPen),
+: QAbstractSlider(parent), mod_(new ModUnitUi(mod)),
+  borderPen_(new QPen), borderWidth_(0),
   borders_(new QLineF [4], [&] (QLineF lines []) { delete [] lines; } ),
   ratios_(4)
 {
-    setFixedSize(40, 40);
+    QAbstractSlider::setFixedSize(40, 40);
+
+    QAbstractSlider::setMouseTracking(true);
 
     QAbstractSlider::setRange(0,999);
 
     connect(this, &QAbstractSlider::valueChanged,
-            [=] (int value) { emit scaledValueChanged(value * 0.001); });
+            [=] (int value) { emit depthChanged(value * 0.001); });
 
     setBorderRatios(1,1,1,1);
 }
@@ -37,7 +46,7 @@ void ModItemUi::paintEvent(QPaintEvent*)
 
     painter.drawText(QAbstractSlider::rect(),
                      Qt::AlignCenter,
-                     text_);
+                     mod_->text);
 }
 
 void ModItemUi::setBorderRatios(double left,
@@ -72,6 +81,14 @@ void ModItemUi::setBorderWidth(double width)
 double ModItemUi::getBorderWidth() const
 {
     return borderWidth_;
+}
+
+void ModItemUi::mouseMoveEvent(QMouseEvent* event)
+{
+    if (QAbstractSlider::underMouse())
+    {
+        emit itemHovered();
+    }
 }
 
 void ModItemUi::resizeEvent(QResizeEvent* event)
@@ -110,12 +127,16 @@ QColor ModItemUi::getBorderColor() const
     return borderPen_->color();
 }
 
-void ModItemUi::setText(const QString& text)
+void ModItemUi::setModUnitUi(const ModUnitUi& mod)
 {
-    text_ = text;
+    mod_.reset(new ModUnitUi(mod));
+
+    QAbstractSlider::repaint();
+
+    emit modUnitChanged(mod);
 }
 
-QString ModItemUi::getText() const
+ModUnitUi ModItemUi::getModUnitUi() const
 {
-    return text_;
+    return *mod_;
 }
