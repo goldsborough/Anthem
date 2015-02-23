@@ -12,8 +12,10 @@ CustomDial::CustomDial(QWidget* parent)
 { }
 
 CustomDial::CustomDial(const QString& text,
+                       QWidget* parent,
                        double factor,
-                       QWidget* parent)
+                       int minimum,
+                       int maximum)
 
 : QDial(parent), factor_(factor), text_(text),
   arcRect_(new QRectF), valueRect_(new QRectF),
@@ -21,7 +23,7 @@ CustomDial::CustomDial(const QString& text,
   arcPen_(new QPen)
 
 {
-    QDial::setRange(0,999);
+    QDial::setRange(minimum, maximum);
 
     QDial::setCursor(Qt::PointingHandCursor);
 
@@ -115,6 +117,11 @@ void CustomDial::setArcWidth(double px)
                        QDial::height() - arcWidth_);
 
     arcPen_->setWidth(arcWidth_);
+}
+
+double CustomDial::getScaledValue() const
+{
+    return QDial::value() * factor_;
 }
 
 void CustomDial::setFactor(double factor)

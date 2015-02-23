@@ -32,6 +32,8 @@ public:
 
     ModUnitUi getModUnitUi() const;
 
+    void removeModUnitUi();
+
 
     void setBorderColor(const QColor& color);
 
@@ -72,7 +74,7 @@ private:
 
     QSharedPointer<QPen> borderPen_;
 
-    QSharedPointer<QLineF> borders_;
+    QVector<QSharedPointer<QLineF>> borders_;
 
     QVector<double> ratios_;
 

@@ -32,7 +32,7 @@ void ModControl::setupUi()
 
     layout->setMargin(0);
 
-    dial_ = new ModDial(title_, 0.01, this);
+    dial_ = new ModDial(title_, this);
 
     layout->addWidget(dial_);
 

@@ -32,7 +32,7 @@ void ModDockUi::setupUi()
 
     for (short i = 0, row = -1; i < items_.size(); ++i)
     {
-        items_[i] = new ModItemUi(ModUnitUi(nullptr, "L1"), this);
+        items_[i] = new ModItemUi(ModUnitUi(nullptr, "-"), this);
 
         connect(items_[i], &ModItemUi::depthChanged,
                 this, &ModDockUi::emitDepthChanged);

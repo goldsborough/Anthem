@@ -13,10 +13,11 @@ ModItemUi::ModItemUi(QWidget* parent)
 ModItemUi::ModItemUi(const ModUnitUi& mod,
                          QWidget* parent)
 : QAbstractSlider(parent), mod_(new ModUnitUi(mod)),
-  borderPen_(new QPen), borderWidth_(0),
-  borders_(new QLineF [4], [&] (QLineF lines []) { delete [] lines; } ),
-  ratios_(4)
+  borderPen_(new QPen), borders_(4), ratios_(4),
+  borderWidth_(0)
 {
+    for (int i = 0; i < 4; ++i) borders_[i].reset(new QLineF);
+
     QAbstractSlider::setFixedSize(40, 40);
 
     QAbstractSlider::setMouseTracking(true);
@@ -41,7 +42,7 @@ void ModItemUi::paintEvent(QPaintEvent*)
 
         painter.setPen(*borderPen_);
 
-        painter.drawLine(borders_.data()[border]);
+        painter.drawLine(*(borders_[border]));
     }
 
     painter.drawText(QAbstractSlider::rect(),
@@ -95,26 +96,17 @@ void ModItemUi::resizeEvent(QResizeEvent* event)
 {
     QAbstractSlider::resizeEvent(event);
 
-    borders_.data()[LEFT] = QLineF(0,
-                                   0,
-                                   0,
-                                   QAbstractSlider::height());
+    unsigned long h = QAbstractSlider::height();
 
-    borders_.data()[TOP] = QLineF(0,
-                                  0,
-                                  QAbstractSlider::width(),
-                                  0);
+    unsigned long w = QAbstractSlider::width();
 
-    borders_.data()[RIGHT] = QLineF(QAbstractSlider::width(),
-                                    0,
-                                    QAbstractSlider::width(),
-                                    QAbstractSlider::height());
+    borders_[LEFT]->setLine(0, 0, 0, h);
 
+    borders_[TOP]->setLine(0, 0, w, 0);
 
-    borders_.data()[BOTTOM] = QLineF(0,
-                                     QAbstractSlider::height(),
-                                     QAbstractSlider::width(),
-                                     QAbstractSlider::height());
+    borders_[RIGHT]->setLine(w, 0, w, h);
+
+    borders_[BOTTOM]->setLine(0, h, w, h);
 }
 
 void ModItemUi::setBorderColor(const QColor& color)
