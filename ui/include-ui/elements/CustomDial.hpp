@@ -20,10 +20,10 @@ public:
     explicit CustomDial(QWidget* parent = nullptr);
 
     CustomDial(const QString& text,
-               QWidget * parent = nullptr,
-               double factor = 0.001,
-               int minimum = 0,
-               int maximum = 999);
+			   QWidget * parent = nullptr,
+			   double factor = 0.001,
+			   int minimum = 0,
+			   int maximum = 999);
 
 
     virtual ~CustomDial();
@@ -59,11 +59,11 @@ public:
     virtual double getFactor() const;
 
 
-    virtual double getScaledValue() const;
+	virtual double getScaledValue() const;
 
 signals:
 
-    void scaledValueChanged(double value);
+	void scaledValueChanged(double value);
 
 protected slots:
 
@@ -73,7 +73,7 @@ protected:
 
     virtual void paintEvent(QPaintEvent*) override;
 
-    virtual void resizeEvent(QResizeEvent* event) override;
+	virtual void resizeEvent(QResizeEvent* event) override;
 
     double maximumAngle_;
 

@@ -22,7 +22,7 @@ signals:
 
     void depthChanged(unsigned short index, double value) const;
 
-    void modUnitChanged(unsigned short index, const ModUnitUi& mod) const;
+	void modUnitInserted(unsigned short index, const ModUnitUi& mod) const;
 
 private:
 

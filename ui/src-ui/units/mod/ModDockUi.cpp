@@ -9,60 +9,115 @@ ModDockUi::ModDockUi(QWidget* parent)
 : QWidget(parent)
 { }
 
+ModDockUi::ModDockUi(index_t dockSize,
+					 QWidget* parent)
+: ModDockUi(dockSize, dockSize, parent)
+{ }
+
 ModDockUi::ModDockUi(index_t dockSize,                   
                      index_t wrap,
                      QWidget* parent)
-: QWidget(parent),
-  wrap_(wrap),
-  items_(dockSize)
+: QWidget(parent), wrap_(wrap),
+  layout_(nullptr)
 {
+	setDockSize(dockSize);
+
     setupUi();
 }
 
-ModDockUi::~ModDockUi()
-{ }
+void ModDockUi::setDockSize(index_t size)
+{
+	index_t old = items_.size();
+
+	if (old != size)
+	{
+		items_.resize(size);
+
+		for (; old < size; ++old)
+		{
+			ModItemUi* temp = new ModItemUi(this);
+
+			connect(temp, &ModItemUi::depthChanged,
+					this, &ModDockUi::emitDepthChanged);
+
+			connect(temp, &ModItemUi::modUnitInserted,
+					this, &ModDockUi::emitModUnitInserted);
+
+			connect(temp, &ModItemUi::modUnitRemoved,
+					this, &ModDockUi::emitModUnitRemoved);
+
+			connect(temp, &ModItemUi::itemHovered,
+					this, &ModDockUi::emitItemHovered);
+
+			items_[old] = temp;
+		}
+
+		setupUi();
+	}
+}
+
+ModDockUi::index_t ModDockUi::getDockSize() const
+{
+	return items_.size();
+}
+
+void ModDockUi::addSpot()
+{
+	setDockSize(items_.size() + 1);
+}
+
+void ModDockUi::removeSpot()
+{
+	if (! items_.empty())
+	{
+		setDockSize(items_.size() - 1);
+	}
+}
 
 void ModDockUi::setupUi()
 {
-    QGridLayout* layout = new QGridLayout(this);
+	double top, left, bottom, right;
 
-    layout->setHorizontalSpacing(0);
+	// No other way to clear the layout
+	delete layout_;
 
-    layout->setVerticalSpacing(0);
+	layout_ = new QGridLayout(this);
 
-    for (short i = 0, row = -1; i < items_.size(); ++i)
-    {
-        items_[i] = new ModItemUi(ModUnitUi(nullptr, "-"), this);
+	layout_->setHorizontalSpacing(0);
 
-        connect(items_[i], &ModItemUi::depthChanged,
-                this, &ModDockUi::emitDepthChanged);
+	layout_->setVerticalSpacing(0);
 
-        connect(items_[i], &ModItemUi::modUnitChanged,
-                this, &ModDockUi::emitModUnitChanged);
+	for (short i = 0, row = -1; i < items_.size(); ++i)
+	{
+		// Halve the top for the first row
+		top = (i < wrap_) ?  1 : 0.5;
 
-        connect(items_[i], &ModItemUi::itemHovered,
-                this, &ModDockUi::emitItemHovered);
+		// Left is 1 at wraps else 0.5 (see below)
+		left = 1;
 
-        // Halve the top for the first row
-        double top = (i < wrap_) ?  1 : 0.5;
+		// Halve the bottom for the last row
+		bottom = (i < (items_.size() - wrap_)) ? 0.5 : 1;
 
-        // Left is 1 at wraps else 0.5 (see below)
-        double left = 1;
+		// Halve the right side if the next column will wrap
+		right = ((i + 1) % wrap_ > 0) ? 0.5 : 1;
 
-        // Halve the bottom for the last row
-        double bottom = (i < (items_.size() - wrap_)) ? 0.5 : 1;
+		// Wrap to next row at wrap point
+		if (i % wrap_ == 0) ++row;
 
-        // Halve the right side if the next columnwill wrap
-        double right = ((i + 1) % wrap_ > 0) ? 0.5 : 1;
+		else left = 0.5; // First column of a row is halved
 
-        if (i % wrap_ == 0) ++row;
+		items_[i]->setBorderRatios(left, right, top, bottom);
 
-        else left = 0.5; // First column of a row is halved
+		layout_->addWidget(items_[i], row, i % wrap_);
+	}
 
-        items_[i]->setBorderRatios(left, right, top, bottom);
+	if (! items_.empty())
+	{
+		QSize size = items_[0]->minimumSize();
 
-        layout->addWidget(items_[i], row, i % wrap_);
-    }
+		QWidget::setMinimumSize(size.height() * layout_->rowCount(),
+								size.width() * layout_->columnCount());
+	}
 }
 
 void ModDockUi::emitDepthChanged(double value) const
@@ -78,7 +133,7 @@ void ModDockUi::emitDepthChanged(double value) const
     }
 }
 
-void ModDockUi::emitModUnitChanged(const ModUnitUi& mod) const
+void ModDockUi::emitModUnitInserted(const ModUnitUi& mod) const
 {
     ModItemUi* senderItem = dynamic_cast<ModItemUi*>(QWidget::sender());
 
@@ -86,10 +141,24 @@ void ModDockUi::emitModUnitChanged(const ModUnitUi& mod) const
     {
         if (senderItem == items_[i])
         {
-            emit modUnitChanged(i, mod);
+			emit modUnitInserted(i, mod);
         }
     }
 }
+
+void ModDockUi::emitModUnitRemoved() const
+{
+	ModItemUi* senderItem = dynamic_cast<ModItemUi*>(QWidget::sender());
+
+	for (index_t i = 0; i < items_.size(); ++i)
+	{
+		if (senderItem == items_[i])
+		{
+			emit modUnitRemoved(i);
+		}
+	}
+}
+
 
 void ModDockUi::emitItemHovered() const
 {

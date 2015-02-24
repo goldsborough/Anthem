@@ -4,9 +4,10 @@
 #include <QWidget>
 #include <QVector>
 
+class QGridLayout;
+
 class ModDock;
 class ModItemUi;
-class QString;
 struct ModUnitUi;
 
 class ModDockUi : public QWidget
@@ -19,13 +20,26 @@ public:
 
     typedef unsigned short index_t;
 
+
     ModDockUi(QWidget* parent = nullptr);
 
+	ModDockUi(index_t dockSize,
+			  QWidget* parent);
+
     ModDockUi(index_t dockSize,
-              index_t wrap = 2,
+			  index_t wrap,
               QWidget* parent = nullptr);
 
-    ~ModDockUi();
+
+	void setDockSize(index_t size);
+
+	index_t getDockSize() const;
+
+
+	void addSpot();
+
+	void removeSpot();
+
 
     void setWrap(index_t wrap);
 
@@ -37,13 +51,17 @@ signals:
 
     void depthChanged(index_t index, double value) const;
 
-    void modUnitChanged(index_t index, const ModUnitUi& mod) const;
+	void modUnitInserted(index_t index, const ModUnitUi& mod) const;
+
+	void modUnitRemoved(index_t index) const;
 
 private slots:
 
     void emitDepthChanged(double value) const;
 
-    void emitModUnitChanged(const ModUnitUi& mod) const;
+	void emitModUnitInserted(const ModUnitUi& mod) const;
+
+	void emitModUnitRemoved() const;
 
     void emitItemHovered() const;
 
@@ -54,6 +72,8 @@ private:
     index_t wrap_;
 
     QVector<ModItemUi*> items_;
+
+	QGridLayout* layout_;
 
 };
 

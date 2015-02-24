@@ -7,25 +7,33 @@
 #include <QDebug>
 
 ModItemUi::ModItemUi(QWidget* parent)
-: ModItemUi(ModUnitUi(), parent)
+: ModItemUi(ModUnitUi(nullptr, "-"), parent)
 { }
 
 ModItemUi::ModItemUi(const ModUnitUi& mod,
-                         QWidget* parent)
-: QAbstractSlider(parent), mod_(new ModUnitUi(mod)),
-  borderPen_(new QPen), borders_(4), ratios_(4),
-  borderWidth_(0)
+					 QWidget* parent,
+					 double factor,
+					 int minimum,
+					 int maximum)
+: QAbstractSlider(parent),
+  mod_(new ModUnitUi(mod)),
+  borderPen_(new QPen),
+  borders_(4), ratios_(4),
+  borderWidth_(0), factor_(factor)
 {
-    for (int i = 0; i < 4; ++i) borders_[i].reset(new QLineF);
+	for (int i = 0; i < 4; ++i)
+	{
+		borders_[i].reset(new QLineF);
+	}
 
     QAbstractSlider::setFixedSize(40, 40);
 
     QAbstractSlider::setMouseTracking(true);
 
-    QAbstractSlider::setRange(0,999);
+	QAbstractSlider::setRange(minimum, maximum);
 
     connect(this, &QAbstractSlider::valueChanged,
-            [=] (int value) { emit depthChanged(value * 0.001); });
+			[=] (int value) { emit depthChanged(value * factor_); });
 
     setBorderRatios(1,1,1,1);
 }
@@ -42,12 +50,12 @@ void ModItemUi::paintEvent(QPaintEvent*)
 
         painter.setPen(*borderPen_);
 
-        painter.drawLine(*(borders_[border]));
+		painter.drawLine(*(borders_[border]));
     }
 
     painter.drawText(QAbstractSlider::rect(),
                      Qt::AlignCenter,
-                     mod_->text);
+					 mod_ ? mod_->text : "-");
 }
 
 void ModItemUi::setBorderRatios(double left,
@@ -96,17 +104,17 @@ void ModItemUi::resizeEvent(QResizeEvent* event)
 {
     QAbstractSlider::resizeEvent(event);
 
-    unsigned long h = QAbstractSlider::height();
+	unsigned long h = QAbstractSlider::height();
 
-    unsigned long w = QAbstractSlider::width();
+	unsigned long w = QAbstractSlider::width();
 
-    borders_[LEFT]->setLine(0, 0, 0, h);
+	borders_[LEFT]->setLine(0, 0, 0, h);
 
-    borders_[TOP]->setLine(0, 0, w, 0);
+	borders_[TOP]->setLine(0, 0, w, 0);
 
-    borders_[RIGHT]->setLine(w, 0, w, h);
+	borders_[RIGHT]->setLine(w, 0, w, h);
 
-    borders_[BOTTOM]->setLine(0, h, w, h);
+	borders_[BOTTOM]->setLine(0, h, w, h);
 }
 
 void ModItemUi::setBorderColor(const QColor& color)
@@ -119,16 +127,23 @@ QColor ModItemUi::getBorderColor() const
     return borderPen_->color();
 }
 
-void ModItemUi::setModUnitUi(const ModUnitUi& mod)
+void ModItemUi::insertModUnitUi(const ModUnitUi& mod)
 {
     mod_.reset(new ModUnitUi(mod));
 
     QAbstractSlider::repaint();
 
-    emit modUnitChanged(mod);
+	emit modUnitInserted(mod);
 }
 
 ModUnitUi ModItemUi::getModUnitUi() const
 {
     return *mod_;
+}
+
+void ModItemUi::removeModUnitUi()
+{
+	mod_.reset();
+
+	emit modUnitRemoved();
 }

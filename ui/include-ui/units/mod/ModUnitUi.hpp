@@ -8,15 +8,21 @@ class ModUnit;
 // Transports information
 struct ModUnitUi
 {
+	enum class Range { NONE, LINEAR, PERIODIC };
+
     ModUnitUi(ModUnit* mod = nullptr,
-              const QString& modText = QString())
-    : modUnit(mod),
-      text(modText)
+			  const QString& textString = QString(),
+			  Range valueRange = Range::NONE)
+	: modUnit(mod),
+	  text(textString),
+	  range(valueRange)
     { }
 
-    ModUnit* modUnit;
+	ModUnit* modUnit;
 
-    QString text;
+	QString text;
+
+	Range range;
 };
 
 #endif // MODUNITUI_HPP

@@ -25,14 +25,18 @@ public:
     ModItemUi(QWidget* parent = nullptr);
 
     ModItemUi(const ModUnitUi& mod,
-              QWidget* parent = nullptr);
+			  QWidget* parent = nullptr,
+			  double factor = 0.001,
+			  int minimum = 0,
+			  int maximum = 999);
 
 
-    void setModUnitUi(const ModUnitUi& mod);
+	void insertModUnitUi(const ModUnitUi& mod);
 
     ModUnitUi getModUnitUi() const;
 
-    void removeModUnitUi();
+
+	void removeModUnitUi();
 
 
     void setBorderColor(const QColor& color);
@@ -58,7 +62,9 @@ signals:
 
     void depthChanged(double value) const;
 
-    void modUnitChanged(const ModUnitUi& mod) const;
+	void modUnitInserted(const ModUnitUi& mod) const;
+
+	void modUnitRemoved() const;
 
     void itemHovered() const;
 
@@ -74,11 +80,13 @@ private:
 
     QSharedPointer<QPen> borderPen_;
 
-    QVector<QSharedPointer<QLineF>> borders_;
+	QVector<QSharedPointer<QLineF>> borders_;
 
     QVector<double> ratios_;
 
     double borderWidth_;
+
+	double factor_;
 };
 
 #endif /* MODDOCKITEM_HPP */

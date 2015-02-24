@@ -32,19 +32,21 @@ void ModControl::setupUi()
 
     layout->setMargin(0);
 
-    dial_ = new ModDial(title_, this);
+	dial_ = new ModDial(title_, this);
+
+	//dial_->addModArc(ModDial::Range::LINEAR, "LFO-A");
 
     layout->addWidget(dial_);
 
-    dock_ = new ModDockUi(4, 2, this);
+	dock_ = new ModDockUi(4, 2, this);
 
     connect(dock_, &ModDockUi::depthChanged,
             [&] (ModDockUi::index_t index, double value)
             { emit depthChanged(index, value); });
 
-    connect(dock_, &ModDockUi::modUnitChanged,
+	connect(dock_, &ModDockUi::modUnitInserted,
             [&] (ModDockUi::index_t index, const ModUnitUi& mod)
-            { emit modUnitChanged(index, mod); });
+			{ emit modUnitInserted(index, mod); });
 
     connect(dock_, &ModDockUi::itemHovered,
             [&] (ModDockUi::index_t index)
