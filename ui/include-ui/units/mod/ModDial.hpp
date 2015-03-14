@@ -16,6 +16,8 @@ class ModDial : public CustomDial
 
 	Q_PROPERTY(double arcPadding READ getArcPadding WRITE setArcPadding)
 
+	Q_PROPERTY(bool valueShown READ valueIsShown WRITE setValueShown)
+
 public:
 
 	typedef int index_t;
@@ -75,6 +77,11 @@ public:
 	double getArcPadding() const;
 
 
+	void setValueShown(bool state);
+
+	bool valueIsShown() const;
+
+
 	void showModArc(index_t index);
 
 	void showControl();
@@ -109,6 +116,8 @@ private:
 
 	void updateContents_();
 
+
+	bool valueShown_;
 
 	double arcPadding_;
 

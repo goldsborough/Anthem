@@ -176,11 +176,12 @@ CustomDial {
   color: #27272B;
   qproperty-arcColor: #FFFFFF;
   qproperty-arcWidth: 3;
-  qproperty-arcPadding: 4;
-  min-width: 110;
-  max-width: 110;
-  min-height: 110;
-  max-height: 110; }
+  qproperty-arcPadding: 3.5;
+  qproperty-valueShown: true;
+  min-width: 115;
+  max-width: 115;
+  min-height: 115;
+  max-height: 115; }
 
 ModItemUi {
   background-color: #DC4850;

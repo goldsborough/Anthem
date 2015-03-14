@@ -34,6 +34,7 @@ ModDial::ModDial(const QString& text,
 			 factor,
 			 minimum,
 			 maximum),
+  valueShown_(false),
   arcPadding_(0),
   modFactor_(modFactor),
   displayedModArc_(nullptr),
@@ -83,13 +84,13 @@ void ModDial::paintEvent(QPaintEvent*)
 					 Qt::AlignCenter,
 					 displayedModArc_ ? // Check if nullptr
 					 displayedModArc_->mod->text : text_);
-/*
+
 	// Draw the value of the dial
 	painter.drawText(*valueRect_,
 					 Qt::AlignCenter,
 					 displayedModArc_ ? // Check if nullptr
 					 QString::number(displayedModArc_->displayedValue) : valueString_);
-*/
+
 	painter.setPen(*arcPen_);
 
 	// Draw the dial value rect
@@ -226,29 +227,35 @@ void ModDial::updateContents_()
 {	
 	static const double sin45 = 0.7071067811865476;
 
+	double radius = arcRect_->width() / 2;
+
 	// Calculate opposite side of triangle
 	// - arcWidth to have the rect really "inside"
-	double side = sin45 * (arcRect_->width() / 2) - arcWidth_;
+	double heightHalf = sin45 * radius - arcWidth_;
 
-	double pos = (QDial::width() / 2) - side;
+	if (! valueShown_) heightHalf /= 2;
 
-	// Need the diameter
-	side *= 2;
+	double widthHalf = sqrt((radius*radius) - (heightHalf*heightHalf));
 
-	*contentsRect_ = QRectF(pos,
-							pos,
-							side,
-							side);
+	double dialRadius = QDial::width() / 2;
+
+	*contentsRect_ = QRectF(dialRadius - widthHalf,
+							dialRadius - heightHalf,
+							widthHalf * 2,
+							heightHalf * 2);
 
 	*textRect_ = QRectF(contentsRect_->left(),
 						contentsRect_->top(),
 						contentsRect_->width(),
-						contentsRect_->height() / 2);
+						(valueShown_) ? heightHalf : heightHalf * 2);
 
-	*valueRect_ = QRectF(textRect_->left(),
-						 textRect_->bottom(),
-						 textRect_->width(),
-						 textRect_->height());
+	if (valueShown_)
+	{
+		*valueRect_ = QRectF(textRect_->left(),
+							 textRect_->bottom(),
+							 textRect_->width(),
+							 textRect_->height());
+	}
 }
 
 void ModDial::resizeEvent(QResizeEvent* event)
@@ -339,4 +346,14 @@ void ModDial::setArcPadding(double padding)
 double ModDial::getArcPadding() const
 {
 	return arcPadding_;
+}
+
+void ModDial::setValueShown(bool state)
+{
+	valueShown_ = state;
+}
+
+bool ModDial::valueIsShown() const
+{
+	return valueShown_;
 }
