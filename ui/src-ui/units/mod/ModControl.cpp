@@ -16,9 +16,7 @@ ModControl::ModControl(const QString& title, QWidget* parent)
 {
     setupUi();
 
-    QWidget::setMouseTracking(true);
-
-    QWidget::setFixedSize(100, 200);
+	QWidget::setMouseTracking(true);
 }
 
 ModControl::~ModControl()
@@ -28,23 +26,35 @@ void ModControl::setupUi()
 {
     QVBoxLayout* layout = new QVBoxLayout(this);
 
-    layout->setSpacing(0);
+	layout->setSpacing(0);
 
-    layout->setMargin(0);
+	layout->setMargin(0);
 
 	ModDial* dial_ = new ModDial(title_, this);
 
-	//dial_->addModArc({nullptr, "LFO-A", ModUnitUi::Range::PERIODIC});
 
-	//dial_->setModArcValue(0, 0.25);
+	dial_->addModArc({nullptr, "LFO-A", ModUnitUi::Range::PERIODIC});
+
+	dial_->setModArcValue(0, 0.25);
+
 
 	dial_->addModArc({nullptr, "LFO-B", ModUnitUi::Range::LINEAR});
 
-	dial_->setModArcValue(0, -0.5);
+	dial_->setModArcValue(1, -0.5);
 
-    layout->addWidget(dial_);
 
-/*
+	dial_->addModArc({nullptr, "LFO-C", ModUnitUi::Range::LINEAR});
+
+	dial_->setModArcValue(2, 0.2);
+
+	dial_->addModArc({nullptr, "LFO-D", ModUnitUi::Range::LINEAR});
+
+	dial_->setModArcValue(3, 0.8);
+
+
+	layout->addWidget(dial_);
+
+
 	dock_ = new ModDockUi(4, 2, this);
 
     connect(dock_, &ModDockUi::depthChanged,
@@ -60,7 +70,6 @@ void ModControl::setupUi()
             { qDebug() << index << endl; });
 
     layout->addWidget(dock_);
-	*/
 
     QWidget::setLayout(layout);
 }

@@ -8,8 +8,13 @@
 
 struct ModUnitUi;
 class QRectF;
+
 class ModDial : public CustomDial
 {
+
+	Q_OBJECT
+
+	Q_PROPERTY(double arcPadding READ getArcPadding WRITE setArcPadding)
 
 public:
 
@@ -65,6 +70,11 @@ public:
 	double getModArcFactor() const;
 
 
+	void setArcPadding(double padding);
+
+	double getArcPadding() const;
+
+
 	void showModArc(index_t index);
 
 	void showControl();
@@ -95,10 +105,12 @@ private:
 
 	virtual void resizeEvent(QResizeEvent* event) override;
 
-	void updateModArcRects_();
+	void updateArcRects_();
 
 	void updateContents_();
 
+
+	double arcPadding_;
 
 	double modFactor_;
 

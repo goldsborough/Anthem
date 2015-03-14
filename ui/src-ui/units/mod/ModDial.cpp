@@ -3,7 +3,7 @@
 
 #include <QPainter>
 #include <QResizeEvent>
-
+#include <cmath>
 
 #include <QDebug>
 
@@ -11,8 +11,11 @@
 ModDial::ModArc::ModArc() = default;
 
 ModDial::ModArc::ModArc(const ModUnitUi& modUnit)
-: mod(new ModUnitUi(modUnit)), arcRect(new QRectF),
-  displayedValue(0), angleSpan(0), value(0)
+: mod(new ModUnitUi(modUnit)),
+  arcRect(new QRectF),
+  angleSpan(0),
+  displayedValue(0),
+  value(0)
 { }
 
 
@@ -26,8 +29,12 @@ ModDial::ModDial(const QString& text,
 				 double modFactor,
 				 int minimum,
 				 int maximum)
-: CustomDial(text, parent, factor,
-			 minimum, maximum),
+: CustomDial(text,
+			 parent,
+			 factor,
+			 minimum,
+			 maximum),
+  arcPadding_(0),
   modFactor_(modFactor),
   displayedModArc_(nullptr),
   contentsRect_(new QRectF)
@@ -73,29 +80,35 @@ void ModDial::paintEvent(QPaintEvent*)
 
 	// Draw the text / title (e.g. LEVEL)
 	painter.drawText(*textRect_,
-					 Qt::AlignHCenter | Qt::AlignBottom,
+					 Qt::AlignCenter,
 					 displayedModArc_ ? // Check if nullptr
 					 displayedModArc_->mod->text : text_);
-
+/*
 	// Draw the value of the dial
 	painter.drawText(*valueRect_,
 					 Qt::AlignCenter,
 					 displayedModArc_ ? // Check if nullptr
 					 QString::number(displayedModArc_->displayedValue) : valueString_);
-
+*/
 	painter.setPen(*arcPen_);
 
 	// Draw the dial value rect
 	painter.drawArc(*arcRect_, startAngle_, angleSpan_);
 
-	// The starting angle for modArcs is where the
-	// dial value arc ends
-	double modStart = startAngle_ + angleSpan_;
+	QPen temp(*arcPen_);
+
+	temp.setColor("#27272B");
+
+	painter.setPen(temp);
 
 	for (QVector<ModArc>::size_type i = 0, end = mods_.size(); i < end; ++i)
 	{
 		// Skip modArcs with null-ModUnitUis
 		if (! mods_[i].mod) continue;
+
+		// The starting angle for modArcs is where the
+		// dial value arc ends
+		double modStart = startAngle_ + angleSpan_;
 
 		double span = mods_[i].angleSpan;
 
@@ -210,43 +223,41 @@ ModDial::index_t ModDial::getModArcIndexFromModUnitUiText(const QString& text) c
 }
 
 void ModDial::updateContents_()
-{
-	// arcWidths_ * 2 for padding between arcs
-	double arcs = (arcWidth_ * 2) * mods_.size();
+{	
+	static const double sin45 = 0.7071067811865476;
 
-	// + dial value rect
-	arcs += arcWidth_;
+	// Calculate opposite side of triangle
+	// - arcWidth to have the rect really "inside"
+	double side = sin45 * (arcRect_->width() / 2) - arcWidth_;
 
-	*contentsRect_ = QRectF(arcs,
-							arcs,
-							QDial::width() - (2 * arcs),
-							QDial::height() - (2 * arcs));
+	double pos = (QDial::width() / 2) - side;
 
-	double heightHalf = contentsRect_->height() / 2;
+	// Need the diameter
+	side *= 2;
 
-	*textRect_ = QRectF(contentsRect_->x(),
-						contentsRect_->y(),
+	*contentsRect_ = QRectF(pos,
+							pos,
+							side,
+							side);
+
+	*textRect_ = QRectF(contentsRect_->left(),
+						contentsRect_->top(),
 						contentsRect_->width(),
-						heightHalf);
+						contentsRect_->height() / 2);
 
-	*valueRect_ = QRectF(contentsRect_->x(),
-						 heightHalf,
-						 contentsRect_->width(),
-						 heightHalf);
-
-	*arcRect_ = QRectF(contentsRect_->x() - (arcWidth_ / 2),
-					   contentsRect_->y() - (arcWidth_ / 2),
-					   contentsRect_->width() + arcWidth_,
-					   contentsRect_->height() + arcWidth_);
+	*valueRect_ = QRectF(textRect_->left(),
+						 textRect_->bottom(),
+						 textRect_->width(),
+						 textRect_->height());
 }
 
 void ModDial::resizeEvent(QResizeEvent* event)
 {
 	QDial::setMinimumSize(event->size());
 
-	updateContents_();
+	updateArcRects_();
 
-	updateModArcRects_();
+	updateContents_();
 }
 
 void ModDial::setArcWidth(double px)
@@ -257,28 +268,34 @@ void ModDial::setArcWidth(double px)
 
 	updateContents_();
 
-	updateModArcRects_();
+	updateArcRects_();
 }
 
-void ModDial::updateModArcRects_()
+void ModDial::updateArcRects_()
 {
+	// Initial offset for furthest out arc
+	// because the arc is drawn left and right
+	// of the arc (it's just a border) and we
+	// offset it by half to get the full arc
+	// inside the dial rect
+	double offset = arcWidth_ / 2;
+
 	for(QVector<ModArc>::size_type i = 0, end = mods_.size(); i < end; ++i)
 	{
-		// i + 1 because there has to be an offset
-		// another + 1 because of the dial value rect
-		// arcWidth_ * 2 for padding
-		double offset = (i + 2) * (arcWidth_ * 2);
+		if (i > 0) offset += arcWidth_ + arcPadding_;
 
-		// For dial value rect
-		offset += arcWidth_;
-
-		double half = offset / 2;
-
-		*(mods_[i].arcRect) = QRectF(contentsRect_->x() - half,
-									 contentsRect_->y() - half,
-									 contentsRect_->width() + offset,
-									 contentsRect_->height() + offset);
+		*(mods_[i].arcRect) = QRectF(offset,
+									 offset,
+									 QDial::width() - (2 * offset),
+									 QDial::height() - (2 * offset));
 	}
+
+	offset += arcWidth_ + arcPadding_;
+
+	*arcRect_ = QRectF(offset,
+					   offset,
+					   QDial::width() - (2 * offset),
+					   QDial::height() - (2 * offset));
 }
 
 void ModDial::setModArcValue(index_t index, double value)
@@ -312,4 +329,14 @@ void ModDial::showModArc(index_t index)
 void ModDial::showControl()
 {
 	displayedModArc_ = nullptr;
+}
+
+void ModDial::setArcPadding(double padding)
+{
+	arcPadding_ = padding;
+}
+
+double ModDial::getArcPadding() const
+{
+	return arcPadding_;
 }

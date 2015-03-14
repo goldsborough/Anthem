@@ -22,7 +22,7 @@ void OperatorUi::setupUi()
 {
     QGridLayout* layout = new QGridLayout(this);
 
-    ModControl* level = new ModControl("Level", this);
+	ModControl* level = new ModControl("Lvl", this);
 
     connect(level, &ModControl::depthChanged,
             [&] (unsigned short index, double value)
@@ -30,13 +30,13 @@ void OperatorUi::setupUi()
 
     layout->addWidget(level);
 
-    ModControl* offset = new ModControl("Offset", this);
+	ModControl* offset = new ModControl("Off", this);
 
     layout->addWidget(offset, 0, 1);
 
-    ModControl* ratio = new ModControl("Ratio", this);
+	ModControl* ratio = new ModControl("Rat", this);
 
-    layout->addWidget(ratio, 0, 2);
+	layout->addWidget(ratio, 0, 2);
 
     QWidget::setLayout(layout);
 }
