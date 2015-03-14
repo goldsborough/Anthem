@@ -8,7 +8,6 @@
 
 struct ModUnitUi;
 class QRectF;
-
 class ModDial : public CustomDial
 {
 
@@ -21,6 +20,7 @@ public:
 	ModDial(const QString& text,
 			QWidget * parent = nullptr,
 			double factor = 0.001,
+			double modFactor = 0.001,
 			int minimum = 0,
 			int maximum = 999);
 
@@ -42,6 +42,8 @@ public:
 
 	void setModUnitUiForModArc(index_t index, const ModUnitUi& mod);
 
+	void removeModunitUiForModArc(index_t index);
+
 	ModUnitUi getModUnitUiFromModArc(index_t index);
 
 
@@ -50,9 +52,17 @@ public:
 
 	void setModArcValue(index_t index, double value);
 
-	double getScaledModArcValue(index_t index) const;
+	double getModArcValue(index_t index) const;
 
-	double getDisplayedModArcValue(index_t index) const;
+	int getDisplayedModArcValue(index_t index) const;
+
+
+	virtual void setArcWidth(double px) override;
+
+
+	void setModArcFactor(double factor);
+
+	double getModArcFactor() const;
 
 
 	void showModArc(index_t index);
@@ -71,9 +81,11 @@ private:
 
         QSharedPointer<QRectF> arcRect;
 
+		double angleSpan;
+
 		int displayedValue;
 
-		double scaledValue;
+		double value;
     };
 
 
@@ -81,12 +93,20 @@ private:
 
     virtual void mouseMoveEvent(QMouseEvent* event) override;
 
-	virtual void updateValue() override;
+	virtual void resizeEvent(QResizeEvent* event) override;
 
+	void updateModArcRects_();
+
+	void updateContents_();
+
+
+	double modFactor_;
 
 	ModArc* displayedModArc_;
 
 	QVector<ModArc> mods_;
+
+	QSharedPointer<QRectF> contentsRect_;
 };
 
 #endif // MODDIAL_HPP

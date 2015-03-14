@@ -13,7 +13,9 @@ class CustomDial : public QDial
 {
     Q_OBJECT
 
-    Q_PROPERTY(QString arc READ getArcColor WRITE setArcColor)
+	Q_PROPERTY(QString arcColor READ getArcColor WRITE setArcColor)
+
+	Q_PROPERTY(double arcWidth READ getArcWidth WRITE setArcWidth)
 
 public:
 
@@ -75,7 +77,9 @@ protected:
 
 	virtual void resizeEvent(QResizeEvent* event) override;
 
-    double maximumAngle_;
+	double maximumAngleSpan_;
+
+	double endAngle_;
 
     double startAngle_;
 

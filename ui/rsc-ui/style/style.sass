@@ -71,8 +71,11 @@ Menubar
 #PreviousButton, #NextButton
   qproperty-iconWidth: 25
   qproperty-iconHeight: 25
-  max-width: 30px
-  min-width: 30px
+  min-width: 35px
+  max-width: 35px
+
+#PreviousButton
+  padding-right: 5px
 
 #MenuButton
   qproperty-iconWidth: 30
@@ -207,10 +210,15 @@ QTabWidget
 CustomDial
 
   background-color: transparent
-  font-size: 20px
+  font-size: 18px
   font-family: DIN
   color: $black
-  qproperty-arc: $black
+  qproperty-arcColor: $black
+  qproperty-arcWidth: 3
+  min-width: 100px
+  max-width: 100px
+  min-height: 100px
+  max-height: 100px
 
 ModItemUi
 

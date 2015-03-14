@@ -32,8 +32,6 @@ private:
 
     QString title_;
 
-    ModDial* dial_;
-
     ModDockUi* dock_;
 };
 

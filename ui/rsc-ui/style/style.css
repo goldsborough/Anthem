@@ -51,8 +51,11 @@ Menubar {
 #PreviousButton, #NextButton {
   qproperty-iconWidth: 25;
   qproperty-iconHeight: 25;
-  max-width: 30px;
-  min-width: 30px; }
+  min-width: 35px;
+  max-width: 35px; }
+
+#PreviousButton {
+  padding-right: 5px; }
 
 #MenuButton {
   qproperty-iconWidth: 30;
@@ -168,10 +171,15 @@ QTabWidget QTabBar::tab {
 
 CustomDial {
   background-color: transparent;
-  font-size: 20px;
+  font-size: 18px;
   font-family: DIN;
   color: #27272B;
-  qproperty-arc: #27272B; }
+  qproperty-arcColor: #27272B;
+  qproperty-arcWidth: 3;
+  min-width: 100px;
+  max-width: 100px;
+  min-height: 100px;
+  max-height: 100px; }
 
 ModItemUi {
   background-color: #DC4850;

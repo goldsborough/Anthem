@@ -41,9 +41,9 @@ double IconButton::getIconFactor() const
 
 void IconButton::setIconSize(const QSize &size)
 {
-    *size_ = size;
+	*size_ = size;
 
-    QPushButton::setIconSize(*size_);
+	QPushButton::setIconSize(*size_);
 }
 
 void IconButton::setStandardIcon(const QIcon& icon)
@@ -68,9 +68,9 @@ QIcon IconButton::getActiveIcon() const
 
 void IconButton::setIconWidth(int width)
 {
-    size_->setWidth(width);
+	size_->setWidth(width);
 
-    QPushButton::setIconSize(*size_);
+	QPushButton::setIconSize(*size_);
 }
 
 int IconButton::getIconWidth() const
@@ -80,9 +80,9 @@ int IconButton::getIconWidth() const
 
 void IconButton::setIconHeight(int height)
 {
-    size_->setHeight(height);
+	size_->setHeight(height);
 
-    QPushButton::setIconSize(*size_);
+	QPushButton::setIconSize(*size_);
 }
 
 int IconButton::getIconHeight() const

@@ -30,13 +30,11 @@ CustomDial::CustomDial(const QString& text,
     connect(this, &QDial::valueChanged,
             this, &CustomDial::updateValue);
 
-    setFixedSize(100,100);
+	setMinimumSize(100,100);
 
     setMaximumAngle(-360);
 
-    setStartAngle(270);
-
-    setArcWidth(3);
+	setStartAngle(270);
 
     updateValue();
 }
@@ -83,23 +81,28 @@ void CustomDial::resizeEvent(QResizeEvent* event)
 {
 	QDial::setMinimumSize(event->size());
 
-    double width = QDial::width() - 10;
+	double width = QDial::width() - 10;
 
     double height = width / 2;
 
-    *textRect_ = QRectF(5, 5, width, height);
+	*textRect_ = QRectF(arcWidth_, arcWidth_, width, height);
 
-    *valueRect_ = QRectF(5, height, width, height);
+	*valueRect_ = QRectF(arcWidth_, height, width, height);
+
+	*arcRect_ = QRectF(arcWidth_ / 2,
+					   arcWidth_ / 2,
+					   QDial::width() - arcWidth_,
+					   QDial::height() - arcWidth_);
 }
 
 void CustomDial::updateValue()
 {
-    double value = QDial::value();
+	double value = QDial::value();
 
-    // Get ratio between current value and maximum to calculate angle
-    double ratio = value / QDial::maximum();
+	// Get ratio between current value and maximum to calculate angle
+	double ratio = value / QDial::maximum();
 
-    angleSpan_ = maximumAngle_ * ratio;
+	angleSpan_ = maximumAngleSpan_ * ratio;
 
     valueString_ = QString::number(value);
 
@@ -110,10 +113,10 @@ void CustomDial::setArcWidth(double px)
 {
     arcWidth_ = px;
 
-    *arcRect_ = QRectF(arcWidth_ / 2,
-                       arcWidth_ / 2,
-                       QDial::width() - arcWidth_,
-                       QDial::height() - arcWidth_);
+	*arcRect_ = QRectF(arcWidth_ / 2,
+					   arcWidth_ / 2,
+					   QDial::width() - arcWidth_,
+					   QDial::height() - arcWidth_);
 
     arcPen_->setWidth(arcWidth_);
 }
@@ -150,17 +153,21 @@ double CustomDial::getArcWidth() const
 
 void CustomDial::setMaximumAngle(double angle)
 {
-    maximumAngle_ = angle * 16;
+	maximumAngleSpan_ = angle * 16;
+
+	endAngle_ = startAngle_ + maximumAngleSpan_;
 }
 
 double CustomDial::getMaximumAngle() const
 {
-    return maximumAngle_ / 16;
+	return maximumAngleSpan_ / 16;
 }
 
 void CustomDial::setStartAngle(double angle)
 {
     startAngle_ = angle * 16;
+
+	endAngle_ = startAngle_ + maximumAngleSpan_;
 }
 
 double CustomDial::getStartAngle() const

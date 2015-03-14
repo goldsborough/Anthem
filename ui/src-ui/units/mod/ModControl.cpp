@@ -32,12 +32,19 @@ void ModControl::setupUi()
 
     layout->setMargin(0);
 
-	dial_ = new ModDial(title_, this);
+	ModDial* dial_ = new ModDial(title_, this);
 
-	//dial_->addModArc(ModDial::Range::LINEAR, "LFO-A");
+	//dial_->addModArc({nullptr, "LFO-A", ModUnitUi::Range::PERIODIC});
+
+	//dial_->setModArcValue(0, 0.25);
+
+	dial_->addModArc({nullptr, "LFO-B", ModUnitUi::Range::LINEAR});
+
+	dial_->setModArcValue(0, -0.5);
 
     layout->addWidget(dial_);
 
+/*
 	dock_ = new ModDockUi(4, 2, this);
 
     connect(dock_, &ModDockUi::depthChanged,
@@ -53,6 +60,7 @@ void ModControl::setupUi()
             { qDebug() << index << endl; });
 
     layout->addWidget(dock_);
+	*/
 
     QWidget::setLayout(layout);
 }
