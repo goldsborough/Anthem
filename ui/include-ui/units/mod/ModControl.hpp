@@ -28,6 +28,8 @@ signals:
 
 	void modUnitInserted(unsigned short index, const ModUnitUi& mod) const;
 
+	void modUnitRemoved(unsigned short index) const;
+
 private:
 
 	void setupUi();

@@ -45,16 +45,14 @@ void ModItemUi::setupUi()
 	connect(this, &QAbstractSlider::valueChanged,
 			[=] (int value) { emit depthChanged(value * factor_); });
 
-	ModUnitUi mod{nullptr, "LFO", ModUnitUi::Range::PERIODIC};
-
 	connect(contextMenu_->addAction("Insert from Dock A    "), &QAction::triggered,
-			[=] (bool) {insertModUnitUi(mod);});
+			[=] (bool) { insertModUnitUi({nullptr, "LFO", ModUnitUi::Range::PERIODIC}); });
 
 	connect(contextMenu_->addAction("Insert from Dock B    "), &QAction::triggered,
-			[=] (bool) {qDebug() << "triggered b"; });
+			[=] (bool) { insertModUnitUi({nullptr, "ENV", ModUnitUi::Range::PERIODIC}); });
 
 	connect(contextMenu_->addAction("Remove    "), &QAction::triggered,
-			[=] (bool) {qDebug() << "triggered rem"; });
+			[=] (bool) { removeModUnitUi(); });
 
 	QAbstractSlider::setContextMenuPolicy(Qt::CustomContextMenu);
 
@@ -172,9 +170,14 @@ ModUnitUi ModItemUi::getModUnitUi() const
 
 void ModItemUi::removeModUnitUi()
 {
-	mod_.reset();
+	if (mod_)
+	{
+		mod_.reset();
 
-	emit modUnitRemoved();
+		repaint();
 
-	QAbstractSlider::setMouseTracking(false);
+		emit modUnitRemoved();
+
+		QAbstractSlider::setMouseTracking(false);
+	}
 }

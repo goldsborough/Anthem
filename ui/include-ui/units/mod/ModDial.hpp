@@ -28,6 +28,7 @@ public:
 
 	ModDial(const QString& text,
 			QWidget * parent = nullptr,
+			index_t numberOfArcs = 0,
 			double factor = 0.001,
 			double modFactor = 0.001,
 			int minimum = 0,

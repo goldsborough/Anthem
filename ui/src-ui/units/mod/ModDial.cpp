@@ -8,8 +8,13 @@
 
 #include <QDebug>
 
-
-ModDial::ModArc::ModArc() = default;
+ModDial::ModArc::ModArc()
+: mod(nullptr),
+  arcRect(new QRectF),
+  angleSpan(0),
+  displayedValue(0),
+  value(0)
+{ }
 
 ModDial::ModArc::ModArc(const ModUnitUi& modUnit)
 : mod(new ModUnitUi(modUnit)),
@@ -35,6 +40,7 @@ ModDial::ModDial(QWidget* parent)
 
 ModDial::ModDial(const QString& text,
 				 QWidget* parent,
+				 index_t numberOfArcs,
 				 double factor,
 				 double modFactor,
 				 int minimum,
@@ -48,6 +54,7 @@ ModDial::ModDial(const QString& text,
   arcPadding_(0),
   modFactor_(modFactor),
   displayedModArc_(nullptr),
+  mods_(numberOfArcs),
   contentsRect_(new QRectF),
   displayedArcColor_(new QColor)
 {
@@ -56,6 +63,8 @@ ModDial::ModDial(const QString& text,
 	setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
 	updateValue();
+
+	updateArcRects_();
 
 	updateContents_();
 }
@@ -210,13 +219,25 @@ void ModDial::insertModArc(index_t index, const ModUnitUi &mod)
 void ModDial::setModUnitUiForModArc(index_t index, const ModUnitUi& mod)
 {
 	mods_[index].mod.reset(new ModUnitUi(mod));
+
+	updateArcRects_();
+
+	updateContents_();
+
+	QDial::repaint();
 }
 
 void ModDial::removeModunitUiForModArc(index_t index)
 {
 	mods_[index].mod.reset();
 
-	mods_[index].arcRect.clear();
+	updateArcRects_();
+
+	updateContents_();
+
+	showControl();
+
+	QDial::repaint();
 }
 
 ModUnitUi ModDial::getModUnitUiFromModArc(index_t index)
@@ -296,9 +317,9 @@ void ModDial::setArcWidth(double px)
 
 	arcPen_->setWidth(arcWidth_);
 
-	updateContents_();
-
 	updateArcRects_();
+
+	updateContents_();
 }
 
 void ModDial::updateArcRects_()
@@ -312,12 +333,19 @@ void ModDial::updateArcRects_()
 
 	for(QVector<ModArc>::size_type i = 0, end = mods_.size(); i < end; ++i)
 	{
-		if (i > 0) offset += arcWidth_ + arcPadding_;
+		if (mods_[i].mod)
+		{
+			offset += arcPadding_;
 
-		*(mods_[i].arcRect) = QRectF(offset,
-									 offset,
-									 QDial::width() - (2 * offset),
-									 QDial::height() - (2 * offset));
+			if (i > 0) offset += arcWidth_;
+
+			*(mods_[i].arcRect) = QRectF(offset,
+										 offset,
+										 QDial::width() - (2 * offset),
+										 QDial::height() - (2 * offset));
+		}
+
+		else *(mods_[i].arcRect) =QRectF();
 	}
 
 	offset += arcWidth_ + arcPadding_;

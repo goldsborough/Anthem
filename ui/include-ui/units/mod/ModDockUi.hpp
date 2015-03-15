@@ -36,16 +36,6 @@ signals:
 
 	void modUnitRemoved(index_t index) const;
 
-private slots:
-
-    void emitDepthChanged(double value) const;
-
-	void emitModUnitInserted(const ModUnitUi& mod) const;
-
-	void emitModUnitRemoved() const;
-
-    void emitItemHovered() const;
-
 private:
 
     void setupUi();

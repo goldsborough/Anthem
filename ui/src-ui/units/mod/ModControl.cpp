@@ -36,8 +36,8 @@ void ModControl::setupUi()
 {
 	QVBoxLayout* layout = new QVBoxLayout(this);
 
-	ModDial* dial = new ModDial(title_, this);
-
+	ModDial* dial = new ModDial(title_, this, 4);
+/*
 	ModUnitUi mod{nullptr, "LFO A", ModUnitUi::Range::PERIODIC};
 
 	dial->addModArc(mod);
@@ -56,19 +56,29 @@ void ModControl::setupUi()
 
 	dial->addModArc({nullptr, "ENV D", ModUnitUi::Range::LINEAR});
 
-	dial->setModArcValue(3, 0.8);
+	dial->setModArcValue(3, 0.8);*/
 
 	layout->addWidget(dial);
 
 	ModDockUi* dock = new ModDockUi(4, 2, this);
 
 	connect(dock, &ModDockUi::depthChanged,
-            [&] (ModDockUi::index_t index, double value)
+			[=] (ModDockUi::index_t index, double value)
             { emit depthChanged(index, value); });
 
 	connect(dock, &ModDockUi::modUnitInserted,
-            [&] (ModDockUi::index_t index, const ModUnitUi& mod)
-			{ emit modUnitInserted(index, mod); });
+			[=] (ModDockUi::index_t index, const ModUnitUi& mod)
+			{
+				emit modUnitInserted(index, mod);
+				dial->setModUnitUiForModArc(index, mod);
+			});
+
+	connect(dock, &ModDockUi::modUnitRemoved,
+			[=] (ModDockUi::index_t index)
+			{
+				emit modUnitRemoved(index);
+				dial->removeModunitUiForModArc(index);
+			});
 
 	connect(dock, &ModDockUi::itemHovered,
 			[=] (ModDockUi::index_t index)

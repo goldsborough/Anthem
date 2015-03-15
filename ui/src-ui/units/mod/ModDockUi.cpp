@@ -43,16 +43,16 @@ void ModDockUi::setupUi()
 		items_[i] = new ModItemUi(this);
 
 		connect(items_[i], &ModItemUi::depthChanged,
-				this, &ModDockUi::emitDepthChanged);
+				[=] (double value) { emit depthChanged(i, value); });
 
 		connect(items_[i], &ModItemUi::modUnitInserted,
-				this, &ModDockUi::emitModUnitInserted);
+				[=] (const ModUnitUi& mod) { emit modUnitInserted(i, mod); });
 
 		connect(items_[i], &ModItemUi::modUnitRemoved,
-				this, &ModDockUi::emitModUnitRemoved);
+				[=] () { emit modUnitRemoved(i); });
 
 		connect(items_[i], &ModItemUi::itemHovered,
-				this, &ModDockUi::emitItemHovered);
+				[=] () { emit itemHovered(i); });
 
 		// Halve the top for all but the first row
 		top = (i < wrap_) ?  1 : 0.5;
@@ -85,59 +85,6 @@ void ModDockUi::setupUi()
 	setLayout(layout);
 
 	setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-}
-
-void ModDockUi::emitDepthChanged(double value) const
-{
-    ModItemUi* senderItem = dynamic_cast<ModItemUi*>(QWidget::sender());
-
-    for (index_t i = 0; i < items_.size(); ++i)
-    {
-        if (senderItem == items_[i])
-        {
-            emit depthChanged(i, value);
-        }
-    }
-}
-
-void ModDockUi::emitModUnitInserted(const ModUnitUi& mod) const
-{
-    ModItemUi* senderItem = dynamic_cast<ModItemUi*>(QWidget::sender());
-
-    for (index_t i = 0; i < items_.size(); ++i)
-    {
-        if (senderItem == items_[i])
-        {
-			emit modUnitInserted(i, mod);
-        }
-    }
-}
-
-void ModDockUi::emitModUnitRemoved() const
-{
-	ModItemUi* senderItem = dynamic_cast<ModItemUi*>(QWidget::sender());
-
-	for (index_t i = 0; i < items_.size(); ++i)
-	{
-		if (senderItem == items_[i])
-		{
-			emit modUnitRemoved(i);
-		}
-	}
-}
-
-
-void ModDockUi::emitItemHovered() const
-{
-    ModItemUi* senderItem = dynamic_cast<ModItemUi*>(QWidget::sender());
-
-    for (index_t i = 0; i < items_.size(); ++i)
-    {
-        if (senderItem == items_[i])
-        {
-            emit itemHovered(i);
-        }
-    }
 }
 
 void ModDockUi::paintEvent(QPaintEvent*)
