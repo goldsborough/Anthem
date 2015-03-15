@@ -29,7 +29,7 @@ namespace Global
     void init(const unsigned int smplr, const unsigned int wavetableLen)
     {
         samplerate = smplr;
-        nyquistLimit = smplr/2;
+        nyquistLimit = smplr / 2;
         
         wtLen = wavetableLen;
         

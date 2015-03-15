@@ -37,7 +37,7 @@ void ModControl::setupUi()
 	QVBoxLayout* layout = new QVBoxLayout(this);
 
 	ModDial* dial = new ModDial(title_, this);
-/*
+
 	ModUnitUi mod{nullptr, "LFO A", ModUnitUi::Range::PERIODIC};
 
 	dial->addModArc(mod);
@@ -57,7 +57,6 @@ void ModControl::setupUi()
 	dial->addModArc({nullptr, "ENV D", ModUnitUi::Range::LINEAR});
 
 	dial->setModArcValue(3, 0.8);
-*/
 
 	layout->addWidget(dial);
 
