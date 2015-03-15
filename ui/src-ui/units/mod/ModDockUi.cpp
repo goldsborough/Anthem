@@ -3,7 +3,15 @@
 #include "ModUnitUi.hpp"
 
 #include <QGridLayout>
+#include <QPaintEvent>
+#include <QStyleOption>
+#include <QPainter>
 #include <algorithm>
+
+
+#include <QDebug>
+
+
 
 ModDockUi::ModDockUi(QWidget* parent)
 : QWidget(parent)
@@ -17,107 +25,66 @@ ModDockUi::ModDockUi(index_t dockSize,
 ModDockUi::ModDockUi(index_t dockSize,                   
                      index_t wrap,
                      QWidget* parent)
-: QWidget(parent), wrap_(wrap),
-  layout_(nullptr)
+: QWidget(parent),
+  wrap_(wrap),
+  items_(dockSize)
 {
-	setDockSize(dockSize);
-
     setupUi();
-}
-
-void ModDockUi::setDockSize(index_t size)
-{
-	index_t old = items_.size();
-
-	if (old != size)
-	{
-		items_.resize(size);
-
-		for (; old < size; ++old)
-		{
-			ModItemUi* temp = new ModItemUi(this);
-
-			connect(temp, &ModItemUi::depthChanged,
-					this, &ModDockUi::emitDepthChanged);
-
-			connect(temp, &ModItemUi::modUnitInserted,
-					this, &ModDockUi::emitModUnitInserted);
-
-			connect(temp, &ModItemUi::modUnitRemoved,
-					this, &ModDockUi::emitModUnitRemoved);
-
-			connect(temp, &ModItemUi::itemHovered,
-					this, &ModDockUi::emitItemHovered);
-
-			items_[old] = temp;
-		}
-
-		setupUi();
-	}
-}
-
-ModDockUi::index_t ModDockUi::getDockSize() const
-{
-	return items_.size();
-}
-
-void ModDockUi::addSpot()
-{
-	setDockSize(items_.size() + 1);
-}
-
-void ModDockUi::removeSpot()
-{
-	if (! items_.empty())
-	{
-		setDockSize(items_.size() - 1);
-	}
 }
 
 void ModDockUi::setupUi()
 {
 	double top, left, bottom, right;
 
-	// No other way to clear the layout
-	delete layout_;
-
-	layout_ = new QGridLayout(this);
-
-	layout_->setHorizontalSpacing(0);
-
-	layout_->setVerticalSpacing(0);
+	QGridLayout* layout = new QGridLayout();
 
 	for (short i = 0, row = -1; i < items_.size(); ++i)
 	{
-		// Halve the top for the first row
+		items_[i] = new ModItemUi(this);
+
+		connect(items_[i], &ModItemUi::depthChanged,
+				this, &ModDockUi::emitDepthChanged);
+
+		connect(items_[i], &ModItemUi::modUnitInserted,
+				this, &ModDockUi::emitModUnitInserted);
+
+		connect(items_[i], &ModItemUi::modUnitRemoved,
+				this, &ModDockUi::emitModUnitRemoved);
+
+		connect(items_[i], &ModItemUi::itemHovered,
+				this, &ModDockUi::emitItemHovered);
+
+		// Halve the top for all but the first row
 		top = (i < wrap_) ?  1 : 0.5;
 
-		// Left is 1 at wraps else 0.5 (see below)
+		// Left is 1 for all but first, else 0.5 (see below)
 		left = 1;
 
-		// Halve the bottom for the last row
+		// Halve the bottom for all but the last row
 		bottom = (i < (items_.size() - wrap_)) ? 0.5 : 1;
 
 		// Halve the right side if the next column will wrap
 		right = ((i + 1) % wrap_ > 0) ? 0.5 : 1;
 
 		// Wrap to next row at wrap point
+		// This is true for i = 0, that's why
+		// row is equal to -1 initially
 		if (i % wrap_ == 0) ++row;
 
 		else left = 0.5; // First column of a row is halved
 
 		items_[i]->setBorderRatios(left, right, top, bottom);
 
-		layout_->addWidget(items_[i], row, i % wrap_);
+		layout->addWidget(items_[i], row, i % wrap_);
 	}
 
-	if (! items_.empty())
-	{
-		QSize size = items_[0]->minimumSize();
+	layout->setSpacing(0);
 
-		QWidget::setMinimumSize(size.height() * layout_->rowCount(),
-								size.width() * layout_->columnCount());
-	}
+	layout->setContentsMargins(0,0,0,0);
+
+	setLayout(layout);
+
+	setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 }
 
 void ModDockUi::emitDepthChanged(double value) const
@@ -173,13 +140,20 @@ void ModDockUi::emitItemHovered() const
     }
 }
 
-void ModDockUi::setWrap(index_t wrap)
+void ModDockUi::paintEvent(QPaintEvent*)
 {
-    wrap_ = wrap;
-}
+	QStyleOption opt;
+	opt.init(this);
+	QPainter p(this);
 
-ModDockUi::index_t ModDockUi::getWrap() const
-{
-    return wrap_;
+	QPen temp = p.pen();
+
+	p.setPen({QColor("blue")});
+
+	p.drawRect(0, 0, width() - 2, height() - 2);
+
+	p.setPen(temp);
+
+	style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
 }
 

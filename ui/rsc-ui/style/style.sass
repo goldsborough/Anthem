@@ -1,13 +1,13 @@
 $black: #27272B
 $red: #DC4850
-$white: #FFFFFF
+$white: #F7FDFA// F8F8EC
 $turquoise: #43D4B4
 $gray: #56595C
 
 $windowWidth: 1020px
 $windowHeight: 680px
 
-QMainWindow
+AnthemUi
   background-color: $black
   min-width: $windowWidth
   min-height: $windowHeight
@@ -191,8 +191,6 @@ QTabWidget
       background-color: $red
       color: $black
 
-
-
 #ContainerPage
   background-color: $red
 
@@ -201,28 +199,29 @@ QTabWidget
     min-height: 50px
     padding-top: 5px
 
-#OperatorUi
+OperatorUi
 
   border: 2px solid $black
   margin: 5px
-  padding: 5px
 
-CustomDial
-
-  $side: 115
+ModDial
 
   background-color: transparent
   font-size: 14px
   font-family: DIN
   color: $black
-  qproperty-arcColor: $white
+  qproperty-arcColor: $black
   qproperty-arcWidth: 3
-  qproperty-arcPadding: 3.5
-  qproperty-valueShown: true
-  min-width: $side
-  max-width: $side
-  min-height: $side
-  max-height: $side
+  qproperty-arcPadding: 4
+  qproperty-valueShown: false
+  qproperty-displayedArcColor: $white
+  min-width: 115
+  min-height: 115
+
+ModDockUi
+
+  min-width: 75
+  min-height: 75
 
 ModItemUi
 
@@ -231,6 +230,4 @@ ModItemUi
   qproperty-borderWidth: 4
   color: $black
   font-family: DIN
-  font-size: 20px
-  margin: 20px
-  padding: 20px
+  font-size: 14px

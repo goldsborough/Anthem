@@ -15,9 +15,9 @@ public:
 
 private:
 
-    void setupUi();
+	void setupUi();
 
-    void paintEvent(QPaintEvent* paintEvent);
+	void paintEvent(QPaintEvent* paintEvent);
 
 };
 

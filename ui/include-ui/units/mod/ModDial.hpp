@@ -18,6 +18,8 @@ class ModDial : public CustomDial
 
 	Q_PROPERTY(bool valueShown READ valueIsShown WRITE setValueShown)
 
+	Q_PROPERTY(QColor displayedArcColor READ getDisplayedArcColor WRITE setDisplayedArcColor)
+
 public:
 
 	typedef int index_t;
@@ -82,6 +84,11 @@ public:
 	bool valueIsShown() const;
 
 
+	void setDisplayedArcColor(const QColor& color);
+
+	QColor getDisplayedArcColor() const;
+
+
 	void showModArc(index_t index);
 
 	void showControl();
@@ -128,6 +135,8 @@ private:
 	QVector<ModArc> mods_;
 
 	QSharedPointer<QRectF> contentsRect_;
+
+	QSharedPointer<QColor> displayedArcColor_;
 };
 
 #endif // MODDIAL_HPP

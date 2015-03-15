@@ -4,8 +4,6 @@
 #include <QWidget>
 #include <QVector>
 
-class QGridLayout;
-
 class ModDock;
 class ModItemUi;
 struct ModUnitUi;
@@ -13,8 +11,6 @@ struct ModUnitUi;
 class ModDockUi : public QWidget
 {
     Q_OBJECT
-
-    Q_PROPERTY(int wrap READ getWrap WRITE setWrap)
 
 public:
 
@@ -29,21 +25,6 @@ public:
     ModDockUi(index_t dockSize,
 			  index_t wrap,
               QWidget* parent = nullptr);
-
-
-	void setDockSize(index_t size);
-
-	index_t getDockSize() const;
-
-
-	void addSpot();
-
-	void removeSpot();
-
-
-    void setWrap(index_t wrap);
-
-    index_t getWrap() const;
 
 signals:
 
@@ -69,11 +50,11 @@ private:
 
     void setupUi();
 
+	virtual void paintEvent(QPaintEvent*) override;
+
     index_t wrap_;
 
     QVector<ModItemUi*> items_;
-
-	QGridLayout* layout_;
 
 };
 

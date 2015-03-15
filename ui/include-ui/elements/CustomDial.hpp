@@ -13,7 +13,7 @@ class CustomDial : public QDial
 {
     Q_OBJECT
 
-	Q_PROPERTY(QString arcColor READ getArcColor WRITE setArcColor)
+	Q_PROPERTY(QColor arcColor READ getArcColor WRITE setArcColor)
 
 	Q_PROPERTY(double arcWidth READ getArcWidth WRITE setArcWidth)
 
@@ -31,9 +31,9 @@ public:
     virtual ~CustomDial();
 
 
-    virtual void setArcColor(const QString& color);
+	virtual void setArcColor(const QColor& color);
 
-    virtual QString getArcColor() const;
+	virtual QColor getArcColor() const;
 
 
     virtual void setStartAngle(double angle);

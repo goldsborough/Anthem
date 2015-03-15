@@ -3,7 +3,6 @@
 #include "ModDial.hpp"
 #include "ModUnitUi.hpp"
 
-#include <QGridLayout>
 #include <QStyleOption>
 #include <QPainter>
 #include <QVBoxLayout>
@@ -12,7 +11,8 @@
 #include <QDebug>
 
 ModControl::ModControl(const QString& title, QWidget* parent)
-: QWidget(parent), title_(title.toUpper())
+: QWidget(parent),
+  title_(title.toUpper())
 {
     setupUi();
 
@@ -22,62 +22,66 @@ ModControl::ModControl(const QString& title, QWidget* parent)
 ModControl::~ModControl()
 { }
 
+void ModControl::setTitle(const QString& title)
+{
+	title_ = title;
+}
+
+QString ModControl::getTitle() const
+{
+	return title_;
+}
+
 void ModControl::setupUi()
 {
-    QVBoxLayout* layout = new QVBoxLayout(this);
+	QVBoxLayout* layout = new QVBoxLayout(this);
 
-	layout->setSpacing(0);
+	ModDial* dial = new ModDial(title_, this);
+/*
+	ModUnitUi mod{nullptr, "LFO A", ModUnitUi::Range::PERIODIC};
 
-	layout->setMargin(0);
+	dial->addModArc(mod);
 
-	ModDial* dial_ = new ModDial(title_, this);
-
-
-	dial_->addModArc({nullptr, "LFO-A", ModUnitUi::Range::PERIODIC});
-
-	dial_->setModArcValue(0, 0.25);
+	dial->setModArcValue(0, 0.25);
 
 
-	dial_->addModArc({nullptr, "LFO-B", ModUnitUi::Range::LINEAR});
+	dial->addModArc({nullptr, "LFO B", ModUnitUi::Range::LINEAR});
 
-	dial_->setModArcValue(1, -0.5);
-
-
-	dial_->addModArc({nullptr, "LFO-C", ModUnitUi::Range::LINEAR});
-
-	dial_->setModArcValue(2, 0.2);
-
-	dial_->addModArc({nullptr, "LFO-D", ModUnitUi::Range::LINEAR});
-
-	dial_->setModArcValue(3, 0.8);
+	dial->setModArcValue(1, -0.5);
 
 
-	layout->addWidget(dial_);
+	dial->addModArc({nullptr, "ENV C", ModUnitUi::Range::LINEAR});
 
+	dial->setModArcValue(2, 0.2);
 
-	dock_ = new ModDockUi(4, 2, this);
+	dial->addModArc({nullptr, "ENV D", ModUnitUi::Range::LINEAR});
 
-    connect(dock_, &ModDockUi::depthChanged,
+	dial->setModArcValue(3, 0.8);
+*/
+
+	layout->addWidget(dial);
+
+	ModDockUi* dock = new ModDockUi(4, 2, this);
+
+	connect(dock, &ModDockUi::depthChanged,
             [&] (ModDockUi::index_t index, double value)
             { emit depthChanged(index, value); });
 
-	connect(dock_, &ModDockUi::modUnitInserted,
+	connect(dock, &ModDockUi::modUnitInserted,
             [&] (ModDockUi::index_t index, const ModUnitUi& mod)
 			{ emit modUnitInserted(index, mod); });
 
-    connect(dock_, &ModDockUi::itemHovered,
-            [&] (ModDockUi::index_t index)
-            { qDebug() << index << endl; });
+	connect(dock, &ModDockUi::itemHovered,
+			[=] (ModDockUi::index_t index)
+			{ dial->showModArc(index); });
 
-    layout->addWidget(dock_);
+	// Adding the dock in a grid layout centers
+	// it in the parent layout
+	QGridLayout* dockLayout = new QGridLayout;
 
-    QWidget::setLayout(layout);
-}
+	dockLayout->addWidget(dock);
 
-void ModControl::paintEvent(QPaintEvent *)
-{
-    QStyleOption opt;
-    opt.init(this);
-    QPainter p(this);
-    style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
+	layout->addLayout(dockLayout);
+
+	setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 }

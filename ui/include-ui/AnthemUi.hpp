@@ -1,9 +1,9 @@
 #ifndef ANTHEMUI_HPP
 #define ANTHEMUI_HPP
 
-#include <QMainWindow>
+#include <QWidget>
 
-class AnthemUi : public QMainWindow
+class AnthemUi : public QWidget
 {
     Q_OBJECT
 

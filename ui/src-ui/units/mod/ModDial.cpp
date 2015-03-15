@@ -3,6 +3,7 @@
 
 #include <QPainter>
 #include <QResizeEvent>
+#include <QColor>
 #include <cmath>
 
 #include <QDebug>
@@ -23,6 +24,15 @@ ModDial::ModDial(QWidget* parent)
 : CustomDial(parent)
 { }
 
+
+
+// To do: the moddial must have the minimum number of arcs from the beginning
+// else the whole indexing thing won't work
+
+
+
+
+
 ModDial::ModDial(const QString& text,
 				 QWidget* parent,
 				 double factor,
@@ -38,9 +48,12 @@ ModDial::ModDial(const QString& text,
   arcPadding_(0),
   modFactor_(modFactor),
   displayedModArc_(nullptr),
-  contentsRect_(new QRectF)
+  contentsRect_(new QRectF),
+  displayedArcColor_(new QColor)
 {
     CustomDial::setMouseTracking(true);
+
+	setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
 	updateValue();
 
@@ -51,6 +64,11 @@ ModDial::ModDial(const QString& text,
 void ModDial::mouseMoveEvent(QMouseEvent* event)
 {
     CustomDial::mouseMoveEvent(event);
+
+	if (CustomDial::underMouse())
+	{
+		showControl();
+	}
 }
 
 void ModDial::paintEvent(QPaintEvent*)
@@ -95,12 +113,6 @@ void ModDial::paintEvent(QPaintEvent*)
 
 	// Draw the dial value rect
 	painter.drawArc(*arcRect_, startAngle_, angleSpan_);
-
-	QPen temp(*arcPen_);
-
-	temp.setColor("#27272B");
-
-	painter.setPen(temp);
 
 	for (QVector<ModArc>::size_type i = 0, end = mods_.size(); i < end; ++i)
 	{
@@ -153,6 +165,17 @@ void ModDial::paintEvent(QPaintEvent*)
 		{
 			span = endAngle_ - modStart;
 		}
+
+		QPen pen(*arcPen_);
+
+		if (displayedModArc_ && displayedModArc_ == &(mods_[i]))
+		{
+			pen.setColor(*displayedArcColor_);
+		}
+
+		else pen.setColor(*arcColor_);
+
+		painter.setPen(pen);
 
 		// The start angle for
 		painter.drawArc(*(mods_[i].arcRect),
@@ -330,12 +353,27 @@ int ModDial::getDisplayedModArcValue(index_t index) const
 
 void ModDial::showModArc(index_t index)
 {
-	displayedModArc_ = &(mods_[index]);
+	if (! displayedModArc_ || displayedModArc_ != &(mods_[index]))
+	{
+		displayedModArc_ = &(mods_[index]);
+
+		arcPen_->setColor(*arcColor_);
+
+		QDial::repaint();
+	}
 }
 
 void ModDial::showControl()
 {
-	displayedModArc_ = nullptr;
+	// Keep here, not in if clause, for start
+	arcPen_->setColor(*displayedArcColor_);
+
+	if (displayedModArc_)
+	{
+		displayedModArc_ = nullptr;
+
+		QDial::repaint();
+	}
 }
 
 void ModDial::setArcPadding(double padding)
@@ -356,4 +394,14 @@ void ModDial::setValueShown(bool state)
 bool ModDial::valueIsShown() const
 {
 	return valueShown_;
+}
+
+void ModDial::setDisplayedArcColor(const QColor &color)
+{
+	*displayedArcColor_ = color;
+}
+
+QColor ModDial::getDisplayedArcColor() const
+{
+	return *displayedArcColor_;
 }

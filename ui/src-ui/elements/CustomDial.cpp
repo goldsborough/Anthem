@@ -175,14 +175,14 @@ double CustomDial::getStartAngle() const
     return startAngle_ / 16;
 }
 
-void CustomDial::setArcColor(const QString& color)
+void CustomDial::setArcColor(const QColor& color)
 {
-    arcColor_->setNamedColor(color);
+	*arcColor_ = color;
 
     arcPen_->setColor(*arcColor_);
 }
 
-QString CustomDial::getArcColor() const
+QColor CustomDial::getArcColor() const
 {
-    return arcColor_->name();
+	return *arcColor_;
 }

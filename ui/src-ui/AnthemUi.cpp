@@ -7,7 +7,7 @@
 #include <QVBoxLayout>
 
 AnthemUi::AnthemUi(QWidget *parent)
-    : QMainWindow(parent)
+	: QWidget(parent)
 {
     setupUi();
 }
@@ -63,12 +63,8 @@ void AnthemUi::setupUi()
     pages->addTab(envelopePage, "Envelope");
 
 
-    QWidget* container = new QWidget(this);
-
-    container->setLayout(layout);
-
-    QMainWindow::setCentralWidget(container);
+	QWidget::setLayout(layout);
 
 
-    QMainWindow::setWindowTitle("Anthem");
+	QWidget::setWindowTitle("Anthem");
 }

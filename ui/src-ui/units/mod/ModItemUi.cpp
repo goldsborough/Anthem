@@ -3,6 +3,7 @@
 
 #include <QPainter>
 #include <QPaintEvent>
+#include <QMenu>
 
 #include <QDebug>
 
@@ -16,26 +17,52 @@ ModItemUi::ModItemUi(const ModUnitUi& mod,
 					 int minimum,
 					 int maximum)
 : QAbstractSlider(parent),
+  contextMenu_(new QMenu(this)), // no make_shared, sorry
   mod_(new ModUnitUi(mod)),
   borderPen_(new QPen),
-  borders_(4), ratios_(4),
-  borderWidth_(0), factor_(factor)
+  borders_(4),
+  ratios_(4),
+  borderWidth_(0),
+  factor_(factor)
 {
 	for (int i = 0; i < 4; ++i)
 	{
 		borders_[i].reset(new QLineF);
 	}
 
-    QAbstractSlider::setFixedSize(40, 40);
-
-    QAbstractSlider::setMouseTracking(true);
-
 	QAbstractSlider::setRange(minimum, maximum);
 
-    connect(this, &QAbstractSlider::valueChanged,
+	setupUi();
+}
+
+void ModItemUi::setupUi()
+{
+	QAbstractSlider::setMouseTracking(false);
+
+	QAbstractSlider::setSizePolicy(QSizePolicy::MinimumExpanding,
+								   QSizePolicy::MinimumExpanding);
+
+	connect(this, &QAbstractSlider::valueChanged,
 			[=] (int value) { emit depthChanged(value * factor_); });
 
-    setBorderRatios(1,1,1,1);
+	ModUnitUi mod{nullptr, "LFO", ModUnitUi::Range::PERIODIC};
+
+	connect(contextMenu_->addAction("Insert from Dock A    "), &QAction::triggered,
+			[=] (bool) {insertModUnitUi(mod);});
+
+	connect(contextMenu_->addAction("Insert from Dock B    "), &QAction::triggered,
+			[=] (bool) {qDebug() << "triggered b"; });
+
+	connect(contextMenu_->addAction("Remove    "), &QAction::triggered,
+			[=] (bool) {qDebug() << "triggered rem"; });
+
+	QAbstractSlider::setContextMenuPolicy(Qt::CustomContextMenu);
+
+	connect(this, &QAbstractSlider::customContextMenuRequested,
+			[&] (const QPoint& pos) { contextMenu_->popup(QWidget::mapToGlobal(pos)); });
+
+
+	setBorderRatios(1,1,1,1);
 }
 
 void ModItemUi::paintEvent(QPaintEvent*)
@@ -51,7 +78,7 @@ void ModItemUi::paintEvent(QPaintEvent*)
         painter.setPen(*borderPen_);
 
 		painter.drawLine(*(borders_[border]));
-    }
+	}
 
     painter.drawText(QAbstractSlider::rect(),
                      Qt::AlignCenter,
@@ -92,9 +119,9 @@ double ModItemUi::getBorderWidth() const
     return borderWidth_;
 }
 
-void ModItemUi::mouseMoveEvent(QMouseEvent* event)
+void ModItemUi::mouseMoveEvent(QMouseEvent*)
 {
-    if (QAbstractSlider::underMouse())
+	if (QAbstractSlider::underMouse())
     {
         emit itemHovered();
     }
@@ -102,7 +129,7 @@ void ModItemUi::mouseMoveEvent(QMouseEvent* event)
 
 void ModItemUi::resizeEvent(QResizeEvent* event)
 {
-    QAbstractSlider::resizeEvent(event);
+	QAbstractSlider::resizeEvent(event);
 
 	unsigned long h = QAbstractSlider::height();
 
@@ -131,9 +158,11 @@ void ModItemUi::insertModUnitUi(const ModUnitUi& mod)
 {
     mod_.reset(new ModUnitUi(mod));
 
-    QAbstractSlider::repaint();
+	repaint();
 
 	emit modUnitInserted(mod);
+
+	QAbstractSlider::setMouseTracking(true);
 }
 
 ModUnitUi ModItemUi::getModUnitUi() const
@@ -146,4 +175,6 @@ void ModItemUi::removeModUnitUi()
 	mod_.reset();
 
 	emit modUnitRemoved();
+
+	QAbstractSlider::setMouseTracking(false);
 }

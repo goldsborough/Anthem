@@ -18,6 +18,10 @@ public:
 
     ~ModControl();
 
+	void setTitle(const QString& title);
+
+	QString getTitle() const;
+
 signals:
 
     void depthChanged(unsigned short index, double value) const;
@@ -26,13 +30,9 @@ signals:
 
 private:
 
-    void setupUi();
+	void setupUi();
 
-    virtual void paintEvent(QPaintEvent *) override;
-
-    QString title_;
-
-    ModDockUi* dock_;
+	QString title_;
 };
 
 #endif // MODCONTROL_HPP

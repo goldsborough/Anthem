@@ -8,6 +8,7 @@
 class QColor;
 class QLineF;
 class QPen;
+class QMenu;
 struct ModUnitUi;
 
 class ModItemUi : public QAbstractSlider
@@ -75,6 +76,13 @@ private:
     virtual void resizeEvent(QResizeEvent* event) override;
 
     virtual void paintEvent(QPaintEvent*) override;
+
+	void setupUi();
+
+	void showContextMenu() const;
+
+
+	QSharedPointer<QMenu> contextMenu_;
 
     QSharedPointer<ModUnitUi> mod_;
 
