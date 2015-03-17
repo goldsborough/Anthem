@@ -9,6 +9,7 @@ class QColor;
 class QLineF;
 class QPen;
 class QMenu;
+
 struct ModUnitUi;
 
 class ModItemUi : public QAbstractSlider

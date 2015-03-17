@@ -60,9 +60,6 @@ void Menubar::setupUi()
 
     connect(settingsButton, &IconButton::clicked,
             settings, &SettingsDialog::show);
-
-
-    QWidget::setLayout(layout);
 }
 
 void Menubar::setVolume(double volume)

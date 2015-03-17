@@ -8,8 +8,6 @@
 #include <QMouseEvent>
 #include <QApplication>
 
-#include <QDebug>
-
 ModItemUi::ModItemUi(QWidget* parent,
 					 double factor,
 					 int minimum,

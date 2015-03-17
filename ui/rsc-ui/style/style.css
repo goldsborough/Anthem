@@ -8,6 +8,7 @@ QLabel {
   color: #F7FDFA; }
 
 Menubar {
+  min-height: 80px;
   max-height: 80px; }
   Menubar #CopyDock {
     border: 3px solid #DC4850;
@@ -133,29 +134,34 @@ QComboBox {
     background: #DC4850;
     color: #27272B; }
 
-QTabWidget::pane {
-  background-color: transparent;
-  margin: 0px;
-  padding: 0px;
-  max-height: 0px;
-  max-width: 0px;
-  border-width: 0px; }
-QTabWidget QTabBar::tab {
-  background-color: #27272B;
-  font-size: 30px;
-  color: #F7FDFA;
-  font-family: "DIN Light";
-  border: none;
-  outline: none;
-  min-width: 205px;
-  min-height: 50px;
-  padding-bottom: 0px;
-  padding-top: 5px;
-  text-align: center;
-  qproperty-alignment: AlignCenter; }
-  QTabWidget QTabBar::tab:selected, QTabWidget QTabBar::tab:hover {
-    background-color: #DC4850;
-    color: #27272B; }
+QTabWidget {
+  min-width: 1020px; }
+  QTabWidget::pane {
+    background-color: transparent;
+    margin: 0px;
+    padding: 0px;
+    max-height: 0px;
+    max-width: 0px;
+    border-width: 0px; }
+  QTabWidget QTabBar::tab {
+    background-color: #27272B;
+    font-size: 30px;
+    color: #F7FDFA;
+    font-family: "DIN Light";
+    border: none;
+    outline: none;
+    min-width: 170px;
+    max-width: 170px;
+    min-height: 50px;
+    max-height: 50px;
+    padding-bottom: 0px;
+    padding-top: 5px;
+    margin: 0px;
+    text-align: center;
+    qproperty-alignment: AlignCenter; }
+    QTabWidget QTabBar::tab:selected, QTabWidget QTabBar::tab:hover {
+      background-color: #DC4850;
+      color: #27272B; }
 
 #ContainerPage {
   background-color: #DC4850; }
@@ -167,6 +173,21 @@ QTabWidget QTabBar::tab {
 OperatorUi {
   border: 2px solid #27272B;
   margin: 5px; }
+  OperatorUi QPushButton {
+    background-color: transparent;
+    color: #27272B;
+    font-size: 24px;
+    font-family: DIN;
+    qproperty-flat: true;
+    outline: none;
+    border: none;
+    padding: 14px;
+    margin-top: 5px;
+    margin-left: 0px;
+    margin-right: 5px; }
+    OperatorUi QPushButton:hover, OperatorUi QPushButton:open {
+      background-color: #27272B;
+      color: #DC4850; }
 
 ModDial {
   background-color: transparent;
@@ -176,7 +197,7 @@ ModDial {
   qproperty-arcColor: #27272B;
   qproperty-arcWidth: 3;
   qproperty-arcPadding: 4;
-  qproperty-valueShown: true;
+  qproperty-valueShown: false;
   qproperty-displayedArcColor: #F7FDFA;
   min-width: 120;
   min-height: 120; }

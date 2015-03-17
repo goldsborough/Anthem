@@ -6,6 +6,11 @@
 #include <QTabBar>
 #include <QVBoxLayout>
 
+
+#include <QDebug>
+
+
+
 AnthemUi::AnthemUi(QWidget *parent)
 	: QWidget(parent)
 {
@@ -18,17 +23,33 @@ void AnthemUi::setupUi()
 
     layout->setMargin(0);
 
+	layout->setContentsMargins(0,0,0,0);
 
-    Menubar* menubar = new Menubar(this);
-
-    layout->addWidget(menubar);
+	//layout->setSpacing(0);
 
 
-    QTabWidget* pages = new QTabWidget(this);
+	Menubar* menubar = new Menubar(this);
+
+	qDebug() << "menubar: " << menubar->sizeHint();
+
+	menubar->setSizePolicy(QSizePolicy::Expanding,
+						   QSizePolicy::Expanding);
+
+	layout->addWidget(menubar);
+
+	qDebug() << menubar->rect();
+
+
+	QTabWidget* pages = new QTabWidget(this);
+
+	qDebug() << "tabwidget: " << pages->sizeHint();
+
+	pages->setSizePolicy(QSizePolicy::Preferred,
+						 QSizePolicy::Preferred);
 
     pages->tabBar()->setCursor(Qt::PointingHandCursor);
 
-    layout->addWidget(pages);
+	layout->addWidget(pages);
 
 
 
@@ -60,11 +81,17 @@ void AnthemUi::setupUi()
 
     envelopePage->setObjectName("ContainerPage");
 
-    pages->addTab(envelopePage, "Envelope");
+	pages->addTab(envelopePage, "Envelope");
 
 
-	QWidget::setLayout(layout);
+	qDebug() << pages->rect();
 
+	qDebug() << "window" << QWidget::sizeHint();
+
+	qDebug() << QWidget::rect();
+
+	QWidget::setSizePolicy(QSizePolicy::Fixed,
+						   QSizePolicy::Fixed);
 
 	QWidget::setWindowTitle("Anthem");
 }
