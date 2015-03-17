@@ -8,6 +8,7 @@
 
 struct ModUnitUi;
 class QRectF;
+class QPoint;
 
 class ModDial : public CustomDial
 {
@@ -116,13 +117,15 @@ private:
 
 	virtual void paintEvent(QPaintEvent* event) override;
 
-    virtual void mouseMoveEvent(QMouseEvent* event) override;
+	virtual void mouseMoveEvent(QMouseEvent* event) override;
 
 	virtual void resizeEvent(QResizeEvent* event) override;
 
 	void updateArcRects_();
 
 	void updateContents_();
+
+	void setupUi();
 
 
 	bool valueShown_;

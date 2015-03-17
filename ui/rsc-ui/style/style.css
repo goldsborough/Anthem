@@ -176,10 +176,10 @@ ModDial {
   qproperty-arcColor: #27272B;
   qproperty-arcWidth: 3;
   qproperty-arcPadding: 4;
-  qproperty-valueShown: false;
+  qproperty-valueShown: true;
   qproperty-displayedArcColor: #F7FDFA;
-  min-width: 115;
-  min-height: 115; }
+  min-width: 120;
+  min-height: 120; }
 
 ModDockUi {
   min-width: 75;

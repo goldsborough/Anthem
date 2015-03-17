@@ -29,15 +29,6 @@ ModDial::ModDial(QWidget* parent)
 : CustomDial(parent)
 { }
 
-
-
-// To do: the moddial must have the minimum number of arcs from the beginning
-// else the whole indexing thing won't work
-
-
-
-
-
 ModDial::ModDial(const QString& text,
 				 QWidget* parent,
 				 index_t numberOfArcs,
@@ -58,7 +49,23 @@ ModDial::ModDial(const QString& text,
   contentsRect_(new QRectF),
   displayedArcColor_(new QColor)
 {
-    CustomDial::setMouseTracking(true);
+	setupUi();
+}
+
+
+void ModDial::mouseMoveEvent(QMouseEvent* event)
+{
+	CustomDial::mouseMoveEvent(event);
+
+	if (CustomDial::underMouse())
+	{
+		showControl();
+	}
+}
+
+void ModDial::setupUi()
+{
+	CustomDial::setMouseTracking(true);
 
 	setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
@@ -67,17 +74,6 @@ ModDial::ModDial(const QString& text,
 	updateArcRects_();
 
 	updateContents_();
-}
-
-
-void ModDial::mouseMoveEvent(QMouseEvent* event)
-{
-    CustomDial::mouseMoveEvent(event);
-
-	if (CustomDial::underMouse())
-	{
-		showControl();
-	}
 }
 
 void ModDial::paintEvent(QPaintEvent*)
@@ -366,6 +362,8 @@ void ModDial::setModArcValue(index_t index, double value)
 	double ratio = mods_[index].displayedValue / static_cast<double>(CustomDial::maximum());
 
 	mods_[index].angleSpan = maximumAngleSpan_ * ratio;
+
+	QDial::repaint();
 }
 
 double ModDial::getModArcValue(index_t index) const

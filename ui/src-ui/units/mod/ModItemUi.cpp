@@ -4,26 +4,27 @@
 #include <QPainter>
 #include <QPaintEvent>
 #include <QMenu>
+#include <QPoint>
+#include <QMouseEvent>
+#include <QApplication>
 
 #include <QDebug>
 
-ModItemUi::ModItemUi(QWidget* parent)
-: ModItemUi(ModUnitUi(nullptr, "-"), parent)
-{ }
-
-ModItemUi::ModItemUi(const ModUnitUi& mod,
-					 QWidget* parent,
+ModItemUi::ModItemUi(QWidget* parent,
 					 double factor,
 					 int minimum,
-					 int maximum)
+					 int maximum,
+					 int dialSpeed)
 : QAbstractSlider(parent),
   contextMenu_(new QMenu(this)), // no make_shared, sorry
-  mod_(new ModUnitUi(mod)),
+  mod_(nullptr),
   borderPen_(new QPen),
+  lastPosition_(new QPoint),
   borders_(4),
   ratios_(4),
   borderWidth_(0),
-  factor_(factor)
+  factor_(factor),
+  speed_(dialSpeed)
 {
 	for (int i = 0; i < 4; ++i)
 	{
@@ -39,17 +40,20 @@ void ModItemUi::setupUi()
 {
 	QAbstractSlider::setMouseTracking(false);
 
+	QAbstractSlider::setTracking(true);
+
 	QAbstractSlider::setSizePolicy(QSizePolicy::MinimumExpanding,
 								   QSizePolicy::MinimumExpanding);
 
+	// Display current value as tooltip
 	connect(this, &QAbstractSlider::valueChanged,
-			[=] (int value) { emit depthChanged(value * factor_); });
+			[=] (int value) { QAbstractSlider::setToolTip(QString::number(value)); });
 
 	connect(contextMenu_->addAction("Insert from Dock A    "), &QAction::triggered,
 			[=] (bool) { insertModUnitUi({nullptr, "LFO", ModUnitUi::Range::PERIODIC}); });
 
 	connect(contextMenu_->addAction("Insert from Dock B    "), &QAction::triggered,
-			[=] (bool) { insertModUnitUi({nullptr, "ENV", ModUnitUi::Range::PERIODIC}); });
+			[=] (bool) { insertModUnitUi({nullptr, "ENV", ModUnitUi::Range::LINEAR}); });
 
 	connect(contextMenu_->addAction("Remove    "), &QAction::triggered,
 			[=] (bool) { removeModUnitUi(); });
@@ -57,10 +61,59 @@ void ModItemUi::setupUi()
 	QAbstractSlider::setContextMenuPolicy(Qt::CustomContextMenu);
 
 	connect(this, &QAbstractSlider::customContextMenuRequested,
-			[&] (const QPoint& pos) { contextMenu_->popup(QWidget::mapToGlobal(pos)); });
-
+				[&] (const QPoint& pos)
+				{ contextMenu_->popup(QWidget::mapToGlobal(pos)); });
 
 	setBorderRatios(1,1,1,1);
+}
+
+void ModItemUi::mouseMoveEvent(QMouseEvent* event)
+{
+	if (mod_)
+	{
+		if (QAbstractSlider::underMouse())
+		{
+			emit itemHovered();
+		}
+
+		// Mouse tracking is on for hovering, so check
+		// if a button was actually pressed because
+		// this method is also called when no button
+		// is pressed if mouse tracking is enabled
+		if (event->buttons() != Qt::NoButton)
+		{
+			// Get the delta in distance
+			int distance = event->pos().y() - lastPosition_->y();
+
+			// Save some function calls
+			int value = QAbstractSlider::value();
+
+			// No uneccesary changes
+			if ((distance > 0 && value != QAbstractSlider::minimum()) ||
+				(distance < 0 && value != QAbstractSlider::maximum()))
+			{
+				// A positive distance means the mouse moved
+				// downwards from the origin, so the dial value
+				// must decrease and vice-versa
+				QAbstractSlider::setValue(value + ((distance > 0) ? -speed_ : speed_));
+
+				// New value here, must call QAbstractSlider::value()
+				emit depthChanged(QAbstractSlider::value() * factor_);
+			}
+
+			*lastPosition_ = event->pos();
+		}
+	}
+
+	else event->ignore();
+}
+
+void ModItemUi::mousePressEvent(QMouseEvent* event)
+{
+	if (event->button() == Qt::LeftButton)
+	{
+		*lastPosition_ = event->pos();
+	}
 }
 
 void ModItemUi::paintEvent(QPaintEvent*)
@@ -117,14 +170,6 @@ double ModItemUi::getBorderWidth() const
     return borderWidth_;
 }
 
-void ModItemUi::mouseMoveEvent(QMouseEvent*)
-{
-	if (QAbstractSlider::underMouse())
-    {
-        emit itemHovered();
-    }
-}
-
 void ModItemUi::resizeEvent(QResizeEvent* event)
 {
 	QAbstractSlider::resizeEvent(event);
@@ -161,6 +206,8 @@ void ModItemUi::insertModUnitUi(const ModUnitUi& mod)
 	emit modUnitInserted(mod);
 
 	QAbstractSlider::setMouseTracking(true);
+
+	QAbstractSlider::setToolTip("0");
 }
 
 ModUnitUi ModItemUi::getModUnitUi() const
@@ -179,5 +226,18 @@ void ModItemUi::removeModUnitUi()
 		emit modUnitRemoved();
 
 		QAbstractSlider::setMouseTracking(false);
+
+		// Reset the tool tip
+		QAbstractSlider::setToolTip(QString());
 	}
+}
+
+void ModItemUi::setDialSpeed(int speed)
+{
+	speed_ = speed;
+}
+
+int ModItemUi::getDialSpeed() const
+{
+	return speed_;
 }

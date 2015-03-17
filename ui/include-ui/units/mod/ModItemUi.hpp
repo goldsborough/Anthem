@@ -23,13 +23,11 @@ public:
 
     enum Side { LEFT, RIGHT, TOP, BOTTOM };
 
-    ModItemUi(QWidget* parent = nullptr);
-
-    ModItemUi(const ModUnitUi& mod,
-			  QWidget* parent = nullptr,
+	ModItemUi(QWidget* parent = nullptr,
 			  double factor = 0.001,
 			  int minimum = 0,
-			  int maximum = 999);
+			  int maximum = 999,
+			  int dialSpeed = 20);
 
 
 	void insertModUnitUi(const ModUnitUi& mod);
@@ -59,6 +57,11 @@ public:
 
     double getBorderRatio(Side side) const;
 
+
+	void setDialSpeed(int speed);
+
+	int getDialSpeed() const;
+
 signals:
 
     void depthChanged(double value) const;
@@ -72,6 +75,8 @@ signals:
 private:
 
     virtual void mouseMoveEvent(QMouseEvent* event) override;
+
+	virtual void mousePressEvent(QMouseEvent* event) override;
 
     virtual void resizeEvent(QResizeEvent* event) override;
 
@@ -88,6 +93,8 @@ private:
 
     QSharedPointer<QPen> borderPen_;
 
+	QSharedPointer<QPoint> lastPosition_;
+
 	QVector<QSharedPointer<QLineF>> borders_;
 
     QVector<double> ratios_;
@@ -95,6 +102,8 @@ private:
     double borderWidth_;
 
 	double factor_;
+
+	int speed_;
 };
 
 #endif /* MODDOCKITEM_HPP */
