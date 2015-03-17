@@ -150,8 +150,8 @@ QTabWidget {
     font-family: "DIN Light";
     border: none;
     outline: none;
-    min-width: 170px;
-    max-width: 170px;
+    min-width: 204px;
+    max-width: 204px;
     min-height: 50px;
     max-height: 50px;
     padding-bottom: 0px;
