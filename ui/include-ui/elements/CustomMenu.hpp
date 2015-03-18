@@ -21,7 +21,7 @@ public:
 
     CustomMenu(QPushButton* button,
                QWidget* parent,
-			   const Position& pos = Position::LEFT);
+			   const Position& pos = Position::BOTTOM);
 
     ~CustomMenu();
 

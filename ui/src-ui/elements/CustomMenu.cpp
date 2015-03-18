@@ -50,8 +50,7 @@ void CustomMenu::popup_()
 		{
 			pos.ry() -= QMenu::actions().size() * QMenu::actionGeometry(QMenu::actions()[0]).height();
 
-			// extra margin
-			pos.ry() -= 20;
+			pos.ry() -= button_->height();
 
 			 break;
 		}
@@ -67,8 +66,7 @@ void CustomMenu::popup_()
 		{
 			pos.rx() -= QMenu::actionGeometry(QMenu::actions()[0]).width();
 
-			// extra margin
-			pos.rx() -= 20;
+			pos.rx() -= button_->width();
 
 			break;
 		}

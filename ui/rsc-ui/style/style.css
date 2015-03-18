@@ -59,7 +59,11 @@ Menubar {
 
 #MenuButton {
   qproperty-iconWidth: 30;
-  qproperty-iconHeight: 30; }
+  qproperty-iconHeight: 30;
+  min-width: 35px;
+  max-width: 35px;
+  min-height: 35px;
+  max-height: 35px; }
 
 QMenu {
   background-color: #DC4850;
