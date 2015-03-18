@@ -50,7 +50,7 @@ void OperatorUi::setupUi()
 
 	activityLayout->setMargin(0);
 
-	QPushButton* activityButton = new QPushButton(QString(title));
+	QPushButton* activityButton = new QPushButton(QString(title++));
 
 	activityButton->setCheckable(true);
 
@@ -62,11 +62,10 @@ void OperatorUi::setupUi()
 								  QSizePolicy::Fixed);
 
 	connect(activityButton, &QPushButton::toggled,
-			[=] (bool state) { /* setActive() on operator (non-ui operator) */});
+			[=] (bool) { /* setActive() on operator (non-ui operator) */});
 
-	QSpacerItem* spacer = new QSpacerItem(0,0,
-										 QSizePolicy::Maximum,
-										 QSizePolicy::MinimumExpanding);
+	QSpacerItem* spacer = new QSpacerItem(0, 0, QSizePolicy::Maximum,
+												QSizePolicy::MinimumExpanding);
 
 	activityLayout->addWidget(activityButton);
 

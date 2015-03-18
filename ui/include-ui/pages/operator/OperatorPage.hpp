@@ -4,23 +4,20 @@
 #include <QWidget>
 #include <QTabWidget>
 
-namespace OperatorPage
+class OperatorPage : public QTabWidget
 {
-    class ContainerPage : public QTabWidget
-    {
-        Q_OBJECT
+	Q_OBJECT
 
-    public:
+public:
 
-        ContainerPage(QWidget* parent = nullptr);
+	OperatorPage(QWidget* parent = nullptr);
 
-    private:
+private:
 
-        void paintEvent(QPaintEvent* paintEvent);
+	void paintEvent(QPaintEvent* paintEvent);
 
-        void setupUi();
+	void setupUi();
 
-    };
-}
+};
 
 #endif // OPERATORPAGE_HPP

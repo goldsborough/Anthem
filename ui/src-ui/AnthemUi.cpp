@@ -52,7 +52,7 @@ void AnthemUi::setupUi()
     pages->addTab(lfoPage, "LFO");
 
 
-    pages->addTab(new OperatorPage::ContainerPage(), "Operator");
+	pages->addTab(new OperatorPage(), "Operator");
 
 
     QWidget* masterPage = new QWidget;
@@ -74,6 +74,7 @@ void AnthemUi::setupUi()
     envelopePage->setObjectName("ContainerPage");
 
 	pages->addTab(envelopePage, "Envelope");
+
 
 	QWidget::setSizePolicy(QSizePolicy::Fixed,
 						   QSizePolicy::Fixed);

@@ -56,9 +56,12 @@ public:
     *
     *****************************************************************************************************/
     
-    Operator(unsigned short wt = 0, double freqOffset = 0,
-             double level = 0, bool mode = 0,
-             short phaseOffset = 0, double ratio = 1);
+    Operator(unsigned short wt = 0,
+             double freqOffset = 0,
+             double level = 0,
+             bool mode = 0,
+             short phaseOffset = 0,
+             double ratio = 1);
     
     /*************************************************************************************************//*!
     *

@@ -7,34 +7,27 @@
 #include <QPainter>
 #include <QPushButton>
 
-namespace OperatorPage
+OperatorPage::OperatorPage(QWidget* parent)
+	: QTabWidget(parent)
 {
-    ContainerPage::ContainerPage(QWidget* parent)
-        : QTabWidget(parent)
-    {
-        QTabWidget::setObjectName("ContainerPage");
+	setupUi();
+}
 
-        setupUi();
-    }
+void OperatorPage::setupUi()
+{
+	QTabWidget::addTab(new UnitPage(), "Units");
 
-    void ContainerPage::setupUi()
-    {
-        QTabWidget::addTab(new OperatorPage::UnitPage(), "Units");
+	QTabWidget::addTab(new AlgorithmPage(), "Algorithms");
 
-        QTabWidget::addTab(new OperatorPage::AlgorithmPage(), "Algorithms");
+	QTabWidget::setTabPosition(QTabWidget::South);
 
-        QTabWidget::setTabPosition(QTabWidget::South);
+	QTabWidget::tabBar()->setCursor(Qt::PointingHandCursor);
+}
 
-        QTabWidget::tabBar()->setCursor(Qt::PointingHandCursor);
-    }
-
-    void ContainerPage::paintEvent(QPaintEvent*)
-    {
-        QStyleOption opt;
-        opt.init(this);
-        QPainter p(this);
-        style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
-    }
-
-
+void OperatorPage::paintEvent(QPaintEvent*)
+{
+	QStyleOption opt;
+	opt.init(this);
+	QPainter p(this);
+	style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
 }

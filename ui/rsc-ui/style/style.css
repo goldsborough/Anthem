@@ -170,9 +170,9 @@ QTabWidget {
       background-color: #DC4850;
       color: #27272B; }
 
-#ContainerPage {
+OperatorPage {
   background-color: #DC4850; }
-  #ContainerPage QTabBar::tab {
+  OperatorPage QTabBar::tab {
     min-width: 250px;
     min-height: 50px;
     padding-top: 5px; }
@@ -187,11 +187,10 @@ OperatorUi {
     font-family: DIN;
     qproperty-flat: true;
     outline: none;
-    border: none;
-    padding: 14px;
-    margin-top: 5px;
-    margin-left: 0px;
-    margin-right: 5px; }
+    border: 2px solid #27272B;
+    min-width: 40px;
+    min-height: 50px;
+    margin-top: 5px; }
     OperatorUi QPushButton:open {
       background-color: #27272B;
       color: #DC4850; }
@@ -220,5 +219,23 @@ ModItemUi {
   color: #27272B;
   font-family: DIN;
   font-size: 14px; }
+
+AlgorithmUi {
+  background-color: transparent;
+  border: none;
+  outline: none; }
+  AlgorithmUi QLabel {
+    background-color: #DC4850;
+    color: #27272B;
+    font-size: 20px;
+    font-family: DIN;
+    border: 2px solid #27272B;
+    min-width: 24px;
+    max-width: 24px;
+    min-height: 30px;
+    max-height: 30px; }
+  AlgorithmUi:hover {
+    background-color: #27272B;
+    color: #DC4850; }
 
 /*# sourceMappingURL=style.css.map */

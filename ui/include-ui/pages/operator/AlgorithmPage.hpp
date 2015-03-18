@@ -3,20 +3,19 @@
 
 #include <QWidget>
 
-namespace OperatorPage
+class AlgorithmPage : public QWidget
 {
-    class AlgorithmPage : public QWidget
-    {
-        Q_OBJECT
+	Q_OBJECT
 
-    public:
+public:
 
-        AlgorithmPage(QWidget* parent = nullptr);
+	AlgorithmPage(QWidget* parent = nullptr);
 
-    private:
+private:
+
+	void setupUi();
 
 
-    };
-}
+};
 
 #endif // ALGORITHMPAGE_HPP

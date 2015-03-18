@@ -6,26 +6,23 @@
 
 class OperatorUi;
 
-namespace OperatorPage
+class UnitPage : public QWidget
 {
-    class UnitPage : public QWidget
-    {
-        Q_OBJECT
+	Q_OBJECT
 
-    public:
+public:
 
-        enum { A, B, C, D };
+	enum { A, B, C, D };
 
-        UnitPage(QWidget* parent = nullptr);
+	UnitPage(QWidget* parent = nullptr);
 
-    private:
+private:
 
-        typedef QList<OperatorUi*>::size_type size_t;
+	typedef QList<OperatorUi*>::size_type size_t;
 
-        void setupUi();
+	void setupUi();
 
-        QVector<OperatorUi*> operators_;
-    };
-}
+	QVector<OperatorUi*> operators_;
+};
 
 #endif // UNITPAGE_HPP

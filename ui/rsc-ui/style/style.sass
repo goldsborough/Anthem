@@ -1,8 +1,9 @@
 $black: #27272B
 $red: #DC4850
-$white: #F7FDFA// F8F8EC
+$white: #F7FDFA // #F8F8EC
 $turquoise: #43D4B4
 $gray: #56595C
+$gold: #FBB829
 
 $windowWidth: 1020px
 $windowHeight: 680px
@@ -209,7 +210,7 @@ QTabWidget
       background-color: $red
       color: $black
 
-#ContainerPage
+OperatorPage
   background-color: $red
 
   & QTabBar::tab
@@ -229,11 +230,10 @@ OperatorUi
     font-family: DIN
     qproperty-flat: true
     outline: none
-    border: none //2px solid $black
-    padding: 14px
+    border: 2px solid $black
+    min-width: 40px
+    min-height: 50px
     margin-top: 5px
-    margin-left: 0px
-    margin-right: 5px
 
     &:open
       background-color: $black
@@ -266,3 +266,24 @@ ModItemUi
   color: $black
   font-family: DIN
   font-size: 14px
+
+AlgorithmUi
+  background-color: transparent
+  border: none
+  outline: none
+
+  & QLabel
+    background-color: $red
+    color: $black
+    font-size: 20px
+    font-family: DIN
+    border: 2px solid $black
+    min-width: 24px
+    max-width: 24px
+    min-height: 30px
+    max-height: 30px
+
+  &:hover
+    background-color: $black
+    color: $red
+
