@@ -7,54 +7,17 @@
 CustomMenu::CustomMenu(QPushButton *icon,
                        QWidget* parent,
                        const Position& pos)
-: QMenu(parent), button_(icon),
-  pos_(pos), point_(new QPoint)
+: QMenu(parent),
+  button_(icon),
+  pos_(pos)
 {
-
-    QWidget::setCursor(Qt::PointingHandCursor);
+	QMenu::setCursor(Qt::PointingHandCursor);
 
     connect(icon, &QPushButton::clicked,
-            this, &CustomMenu::popup_);
-
-   updatePoint();
+			this, &CustomMenu::popup_);
 }
 
-CustomMenu::~CustomMenu()
-{ }
-
-void CustomMenu::updatePoint()
-{
-    *point_ = button_->pos();
-
-    switch(pos_)
-    {
-        case Position::TOP:
-        {
-             //point_->rx() -= (QMenu::width() + button_->width()) / 2;
-
-             point_->ry() -= QMenu::height() + 5;
-
-             break;
-        }
-
-        case Position::BOTTOM:
-        {
-            //point_->rx() -= (QMenu::width() + button_->width()) / 2;
-
-            point_->ry() += button_->height() + 5;
-
-            break;
-        }
-
-        case Position::LEFT:
-            point_->rx() -= button_->width() + QMenu::width() + 50;
-            break;
-
-        case Position::RIGHT:
-            point_->rx() += button_->width() + 10;
-            break;
-    }
-}
+CustomMenu::~CustomMenu() = default;
 
 void CustomMenu::setPosition(const Position& pos)
 {
@@ -79,5 +42,44 @@ QPushButton* CustomMenu::getButton() const
 
 void CustomMenu::popup_()
 {
-    QMenu::popup(QMenu::parentWidget()->mapToGlobal(*point_));
+	QPoint pos = button_->pos();
+
+	switch(pos_)
+	{
+		case Position::TOP:
+		{
+			pos.ry() -= QMenu::actions().size() * QMenu::actionGeometry(QMenu::actions()[0]).height();
+
+			// extra margin
+			pos.ry() -= 20;
+
+			 break;
+		}
+
+		case Position::BOTTOM:
+		{
+			pos.ry() += button_->height();
+
+			break;
+		}
+
+		case Position::LEFT:
+		{
+			pos.rx() -= QMenu::actionGeometry(QMenu::actions()[0]).width();
+
+			// extra margin
+			pos.rx() -= 20;
+
+			break;
+		}
+
+		case Position::RIGHT:
+		{
+			pos.rx() += button_->width();
+
+			break;
+		}
+	}
+
+	QMenu::popup(button_->parentWidget()->mapToGlobal(pos));
 }

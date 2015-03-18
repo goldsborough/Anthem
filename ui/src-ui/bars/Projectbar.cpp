@@ -73,6 +73,9 @@ void Projectbar::setupUi()
 
     menuButton->setObjectName("MenuButton");
 
+	menuButton->setSizePolicy(QSizePolicy::Fixed,
+							  QSizePolicy::Fixed);
+
     layout->addWidget(menuButton);
 
 
@@ -147,11 +150,7 @@ void Projectbar::setupUi()
     connect(saveAsAction, &QAction::triggered,
             newAction, &QAction::trigger);
 
-    menu->addAction(saveAsAction);
-
-    /* --------- This Window -------- */
-
-    QWidget::setLayout(layout);
+	menu->addAction(saveAsAction);
 }
 
 void Projectbar::paintEvent(QPaintEvent*)

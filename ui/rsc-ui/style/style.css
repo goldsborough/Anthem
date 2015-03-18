@@ -39,8 +39,7 @@ Menubar {
   Menubar Projectbar {
     background-color: #DC4850;
     min-width: 500px;
-    max-width: 500px;
-    max-height: 60px; }
+    max-width: 500px; }
     Menubar Projectbar QLabel {
       color: #27272B;
       font-family: DIN;
@@ -185,7 +184,7 @@ OperatorUi {
     margin-top: 5px;
     margin-left: 0px;
     margin-right: 5px; }
-    OperatorUi QPushButton:hover, OperatorUi QPushButton:open {
+    OperatorUi QPushButton:open {
       background-color: #27272B;
       color: #DC4850; }
 

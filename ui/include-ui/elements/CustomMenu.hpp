@@ -3,11 +3,7 @@
 
 #include <QMenu>
 
-#include <memory>
-
 class QPushButton;
-class QPoint;
-class QAction;
 
 class CustomMenu : public QMenu
 {
@@ -25,7 +21,7 @@ public:
 
     CustomMenu(QPushButton* button,
                QWidget* parent,
-               const Position& pos = Position::BOTTOM);
+			   const Position& pos = Position::LEFT);
 
     ~CustomMenu();
 
@@ -35,9 +31,7 @@ public:
 
     void setPosition(const Position& pos);
 
-    Position getPosition() const;
-
-    void updatePoint();
+	Position getPosition() const;
 
 private slots:
 
@@ -47,9 +41,7 @@ private:
 
     QPushButton* button_;
 
-    Position pos_;
-
-    std::unique_ptr<QPoint> point_;
+	Position pos_;
 
 };
 
