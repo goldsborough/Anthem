@@ -40,13 +40,14 @@ Menubar {
     background-color: #DC4850;
     min-width: 500px;
     max-width: 500px; }
-    Menubar Projectbar QLabel {
-      color: #27272B;
-      font-family: DIN;
-      font-size: 30px;
-      min-width: 350px;
-      max-width: 350px;
-      padding-right: 15px; }
+
+#ProjectLabel {
+  color: #27272B;
+  font-family: DIN;
+  font-size: 30px;
+  min-width: 350px;
+  max-width: 350px;
+  padding-right: 15px; }
 
 #PreviousButton, #NextButton {
   qproperty-iconWidth: 25;
@@ -95,13 +96,16 @@ QDialog, SettingsDialog {
     QDialog QPushButton:hover, SettingsDialog QPushButton:hover {
       background-color: #27272B;
       color: #DC4850; }
-  QDialog QLabel, SettingsDialog QLabel {
-    color: #27272B;
-    font-family: "Proxima Nova";
-    font-size: 30px; }
 
 SettingsDialog QLabel {
+  color: #27272B;
+  font-family: "Proxima Nova";
   font-size: 20px; }
+
+CustomMessageBox QLabel {
+  color: #27272B;
+  font-family: "Proxima Nova";
+  font-size: 30px; }
 
 PopupLine QPushButton {
   border: none; }

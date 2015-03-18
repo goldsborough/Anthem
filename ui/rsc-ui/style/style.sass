@@ -63,13 +63,13 @@ Menubar
     min-width: 500px
     max-width: 500px
 
-    & QLabel
-      color: $black
-      font-family: DIN
-      font-size: 30px
-      min-width: 350px
-      max-width: 350px
-      padding-right: 15px
+#ProjectLabel
+  color: $black
+  font-family: DIN
+  font-size: 30px
+  min-width: 350px
+  max-width: 350px
+  padding-right: 15px
 
 #PreviousButton, #NextButton
   qproperty-iconWidth: 25
@@ -123,15 +123,21 @@ QDialog
       background-color: $black
       color: $red
 
+SettingsDialog
+  @extend QDialog
+  & QLabel
+    color: $black
+    font-family: "Proxima Nova"
+    font-size: 20px
+
+CustomMessageBox 
+
+  //$min-width: 300px
+
   & QLabel
     color: $black
     font-family: "Proxima Nova"
     font-size: 30px
-
-SettingsDialog
-  @extend QDialog
-  & QLabel
-    font-size: 20px
 
 PopupLine QPushButton
   border: none
@@ -173,7 +179,6 @@ QComboBox
 QTabWidget
 
   min-width: $windowWidth
-  //max-width: $windowWidth
 
   &::pane
     background-color: transparent

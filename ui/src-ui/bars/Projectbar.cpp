@@ -64,6 +64,8 @@ void Projectbar::setupUi()
 
     projectLabel_ = new QLabel(currProject_->baseName(), this);
 
+	projectLabel_->setObjectName("ProjectLabel");
+
     layout->addWidget(projectLabel_);
 
 
@@ -212,6 +214,9 @@ void Projectbar::changeDirectory()
                                      "The directory you chose does not\n contain any Anthem project files!",
                                      this
                                      );
+
+			message.setSizePolicy(QSizePolicy::MinimumExpanding,
+					  QSizePolicy::MinimumExpanding);
 
             QPushButton* createnewProjectButton = new QPushButton("Create new project in this directory", &message);
 

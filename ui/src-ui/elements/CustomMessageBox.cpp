@@ -15,7 +15,7 @@ CustomMessageBox::CustomMessageBox(const QString& title,
 {
     QDialog::setWindowTitle(title);
 
-    layout_ = new QGridLayout(parent);
+	layout_ = new QGridLayout;
 
     if (icon)
     {
@@ -29,14 +29,12 @@ CustomMessageBox::CustomMessageBox(const QString& title,
     }
 
 
-    QLabel* messageLabel = new QLabel(message,this);
+	QLabel* messageLabel = new QLabel(message,this);
 
     layout_->addWidget(messageLabel);
 
 
-    QDialog::setLayout(layout_);
-
-    QDialog::setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+	QDialog::setLayout(layout_);
 }
 
 QPushButton* CustomMessageBox::lastButtonPressed() const
