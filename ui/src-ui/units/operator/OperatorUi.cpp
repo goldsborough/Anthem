@@ -42,14 +42,6 @@ void OperatorUi::setupUi()
 	layout->addWidget(ratio);
 
 
-	QVBoxLayout* activityLayout = new QVBoxLayout;
-
-	activityLayout->setContentsMargins(0,0,0,0);
-
-	activityLayout->setSpacing(0);
-
-	activityLayout->setMargin(0);
-
 	QPushButton* activityButton = new QPushButton(QString(title++));
 
 	activityButton->setCheckable(true);
@@ -59,19 +51,12 @@ void OperatorUi::setupUi()
 	activityButton->setCursor(Qt::PointingHandCursor);
 
 	activityButton->setSizePolicy(QSizePolicy::Fixed,
-								  QSizePolicy::Fixed);
+								  QSizePolicy::Expanding);
 
 	connect(activityButton, &QPushButton::toggled,
 			[=] (bool) { /* setActive() on operator (non-ui operator) */});
 
-	QSpacerItem* spacer = new QSpacerItem(0, 0, QSizePolicy::Maximum,
-												QSizePolicy::MinimumExpanding);
-
-	activityLayout->addWidget(activityButton);
-
-	activityLayout->addItem(spacer);
-
-	layout->addLayout(activityLayout);
+	layout->addWidget(activityButton);
 }
 
 void OperatorUi::paintEvent(QPaintEvent*)

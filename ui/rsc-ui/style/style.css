@@ -191,8 +191,8 @@ OperatorUi {
     outline: none;
     border: 2px solid #27272B;
     min-width: 40px;
-    min-height: 50px;
-    margin-top: 5px; }
+    margin-top: 5px;
+    margin-bottom: 5px; }
     OperatorUi QPushButton:open {
       background-color: #27272B;
       color: #DC4850; }
