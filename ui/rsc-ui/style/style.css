@@ -1,7 +1,9 @@
 AnthemUi {
   background-color: #27272B;
   min-width: 1020px;
-  min-height: 680px; }
+  max-width: 1020px;
+  min-height: 680px;
+  max-height: 680px; }
 
 QLabel {
   qproperty-alignment: AlignCenter;
@@ -222,7 +224,7 @@ ModItemUi {
 
 AlgorithmUi {
   background-color: transparent;
-  border: none;
+  border: 2px solid #27272B;
   outline: none; }
   AlgorithmUi QLabel {
     background-color: #DC4850;
@@ -234,8 +236,8 @@ AlgorithmUi {
     max-width: 24px;
     min-height: 30px;
     max-height: 30px; }
-  AlgorithmUi:hover {
-    background-color: #27272B;
-    color: #DC4850; }
+    AlgorithmUi QLabel:enabled {
+      background-color: #27272B;
+      color: #DC4850; }
 
 /*# sourceMappingURL=style.css.map */

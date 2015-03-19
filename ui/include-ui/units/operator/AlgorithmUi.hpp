@@ -3,6 +3,7 @@
 
 #include <QAbstractButton>
 #include <QSharedPointer>
+#include <QVector>
 
 class QPoint;
 class QGridLayout;
@@ -27,15 +28,23 @@ public:
 
 	QPoint getPosition(Unit unit) const;
 
+
+	void setActive(bool state);
+
+	bool isActive() const;
+
 private:
 
 	void setupUi();
 
 	virtual void paintEvent(QPaintEvent* event) override;
 
-	QSharedPointer<QPoint> positions_ [4];
+
+	QVector<QSharedPointer<QPoint>> units_;
 
 	QSharedPointer<QGridLayout> layout_;
+
+	bool active_;
 
 };
 

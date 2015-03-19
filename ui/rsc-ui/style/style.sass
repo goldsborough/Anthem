@@ -11,9 +11,9 @@ $windowHeight: 680px
 AnthemUi
   background-color: $black
   min-width: $windowWidth
-  //max-width: $windowWidth
+  max-width: $windowWidth
   min-height: $windowHeight
-  //max-height: $windowHeight
+  max-height: $windowHeight
 
 QLabel
   qproperty-alignment: AlignCenter
@@ -269,7 +269,7 @@ ModItemUi
 
 AlgorithmUi
   background-color: transparent
-  border: none
+  border: 2px solid $black
   outline: none
 
   & QLabel
@@ -283,7 +283,7 @@ AlgorithmUi
     min-height: 30px
     max-height: 30px
 
-  &:hover
-    background-color: $black
-    color: $red
+    &:enabled
+      background-color: $black
+      color: $red
 

@@ -5,7 +5,10 @@
 #include <QGridLayout>
 #include <QStyleOption>
 #include <QPainter>
-#include <QPushButton>
+
+
+#include <QDebug>
+
 
 OperatorPage::OperatorPage(QWidget* parent)
 	: QTabWidget(parent)
@@ -15,9 +18,19 @@ OperatorPage::OperatorPage(QWidget* parent)
 
 void OperatorPage::setupUi()
 {
-	QTabWidget::addTab(new UnitPage(), "Units");
+	UnitPage* unit = new UnitPage(this);
 
-	QTabWidget::addTab(new AlgorithmPage(), "Algorithms");
+	QTabWidget::addTab(unit, "Units");
+
+
+	AlgorithmPage* alg = new AlgorithmPage(this);
+
+	connect(alg, &AlgorithmPage::algorithmChanged,
+			[=] (AlgorithmPage::index_t index)
+			{ qDebug() << index; });
+
+	QTabWidget::addTab(alg, "Algorithms");
+
 
 	QTabWidget::setTabPosition(QTabWidget::South);
 
