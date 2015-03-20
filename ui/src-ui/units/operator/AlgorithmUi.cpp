@@ -8,11 +8,6 @@
 #include <QString>
 #include <QMouseEvent>
 
-
-#include <QDebug>
-
-
-
 AlgorithmUi::AlgorithmUi(QWidget* parent)
 : QAbstractButton(parent)
 { }
@@ -93,7 +88,7 @@ void AlgorithmUi::setupUi()
 	QAbstractButton::setCheckable(true);
 
 	QAbstractButton::setSizePolicy(QSizePolicy::Expanding,
-							   QSizePolicy::Expanding);
+								   QSizePolicy::Expanding);
 
 	setActive(false);
 }

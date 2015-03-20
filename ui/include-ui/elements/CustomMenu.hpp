@@ -3,7 +3,7 @@
 
 #include <QMenu>
 
-class QPushButton;
+class QWidget;
 
 class CustomMenu : public QMenu
 {
@@ -19,27 +19,20 @@ public:
         LEFT
     };
 
-    CustomMenu(QPushButton* button,
-               QWidget* parent,
+	CustomMenu(QWidget* parent,
 			   const Position& pos = Position::BOTTOM);
 
     ~CustomMenu();
-
-    void setButton(QPushButton* icon);
-
-    QPushButton* getButton() const;
 
     void setPosition(const Position& pos);
 
 	Position getPosition() const;
 
-private slots:
+public slots:
 
-    void popup_();
+	void popup();
 
 private:
-
-    QPushButton* button_;
 
 	Position pos_;
 

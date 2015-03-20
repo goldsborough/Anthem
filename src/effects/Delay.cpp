@@ -146,7 +146,9 @@ void Delay::setDelayTime(double delayTime)
     delayTime *= Global::samplerate;
     
     if (delayTime < 0 || delayTime >= buffer_.size())
-    { throw std::invalid_argument("Delay line length cannot be less than 0 or greater the delay line capacity!"); }
+    {
+        throw std::invalid_argument("Delay line length cannot be less than 0 or greater the delay line capacity!");
+    }
     
     // Cast to int
     readIntegral_ = delayTime;
@@ -167,7 +169,9 @@ double Delay::getDelayTime() const
 void Delay::setFeedback(double feedbackLevel)
 {
     if (feedbackLevel < 0 || feedbackLevel > 1)
-    { throw std::invalid_argument("Feedback level must be between 0 and 1!"); }
+    {
+        throw std::invalid_argument("Feedback level must be between 0 and 1!");
+    }
 
     mods_[FEEDBACK].setBaseValue(feedbackLevel);
     

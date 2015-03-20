@@ -1,21 +1,3 @@
-#################################################################  
-#  
-# Vibe uses this file to keep track of its wavetables.  
-#  
-# Generally, do not touch this file unless you are 99%  
-# of what you are doing and backup before making any  
-# changes.  
-#  
-# The order of the names is just as important as the naming  
-# itself. Vibe might not find the correct binary files or  
-# play a square wave when you actually want a triangle wave  
-# or something similar if you mess up.  
-#  
-# This file is internally parsed. Everything is read except  
-# for blanks and lines starting with a "#".  
-#  
-#################################################################  
-
 sine  
 sine_3  
 sine_4  

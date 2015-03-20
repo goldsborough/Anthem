@@ -4,17 +4,12 @@
 #include <QPoint>
 #include <QDebug>
 
-CustomMenu::CustomMenu(QPushButton *icon,
-                       QWidget* parent,
+CustomMenu::CustomMenu(QWidget* parent,
                        const Position& pos)
 : QMenu(parent),
-  button_(icon),
   pos_(pos)
 {
 	QMenu::setCursor(Qt::PointingHandCursor);
-
-    connect(icon, &QPushButton::clicked,
-			this, &CustomMenu::popup_);
 }
 
 CustomMenu::~CustomMenu() = default;
@@ -29,35 +24,25 @@ CustomMenu::Position CustomMenu::getPosition() const
     return pos_;
 }
 
-void CustomMenu::setButton(QPushButton* icon)
+void CustomMenu::popup()
 {
-    button_ = icon;
-}
-
-QPushButton* CustomMenu::getButton() const
-{
-    return button_;
-}
-
-
-void CustomMenu::popup_()
-{
-	QPoint pos = button_->pos();
+	QPoint pos = QMenu::parentWidget()->pos();
 
 	switch(pos_)
 	{
 		case Position::TOP:
 		{
-			pos.ry() -= QMenu::actions().size() * QMenu::actionGeometry(QMenu::actions()[0]).height();
+			pos.ry() -= QMenu::actions().size() *
+						QMenu::actionGeometry(QMenu::actions()[0]).height();
 
-			pos.ry() -= button_->height();
+			pos.ry() -= QMenu::parentWidget()->height();
 
 			 break;
 		}
 
 		case Position::BOTTOM:
 		{
-			pos.ry() += button_->height();
+			pos.ry() += QMenu::parentWidget()->height();
 
 			break;
 		}
@@ -66,18 +51,18 @@ void CustomMenu::popup_()
 		{
 			pos.rx() -= QMenu::actionGeometry(QMenu::actions()[0]).width();
 
-			pos.rx() -= button_->width();
+			pos.rx() -= QMenu::parentWidget()->width();
 
 			break;
 		}
 
 		case Position::RIGHT:
 		{
-			pos.rx() += button_->width();
+			pos.rx() += QMenu::parentWidget()->width();
 
 			break;
 		}
 	}
 
-	QMenu::popup(button_->parentWidget()->mapToGlobal(pos));
+	QMenu::popup(QMenu::parentWidget()->parentWidget()->mapToGlobal(pos));
 }

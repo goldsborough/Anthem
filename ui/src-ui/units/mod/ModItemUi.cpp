@@ -59,8 +59,8 @@ void ModItemUi::setupUi()
 	QAbstractSlider::setContextMenuPolicy(Qt::CustomContextMenu);
 
 	connect(this, &QAbstractSlider::customContextMenuRequested,
-				[&] (const QPoint& pos)
-				{ contextMenu_->popup(QWidget::mapToGlobal(pos)); });
+			[&] (const QPoint& pos)
+			{ contextMenu_->popup(pos); });
 
 	setBorderRatios(1,1,1,1);
 }

@@ -24,6 +24,7 @@ public:
 				const QPoint& d,
 				QWidget* parent = nullptr);
 
+
 	void setPosition(Unit unit, const QPoint& pos);
 
 	QPoint getPosition(Unit unit) const;

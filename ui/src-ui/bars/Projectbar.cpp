@@ -82,7 +82,10 @@ void Projectbar::setupUi()
 
 
 
-    CustomMenu* menu = new CustomMenu(menuButton, this);
+	CustomMenu* menu = new CustomMenu(menuButton);
+
+	connect(menuButton, &IconButton::clicked,
+			menu, &CustomMenu::popup);
 
     /* --------- Refresh Action -------- */
 
