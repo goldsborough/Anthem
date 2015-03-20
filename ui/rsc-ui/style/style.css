@@ -221,6 +221,8 @@ ModItemUi {
   color: #27272B;
   font-family: DIN;
   font-size: 14px; }
+  ModItemUi QMenu::item {
+    padding-right: 30px; }
 
 AlgorithmUi {
   background-color: transparent;

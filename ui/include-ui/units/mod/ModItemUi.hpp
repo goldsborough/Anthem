@@ -9,8 +9,6 @@ class QColor;
 class QLineF;
 class QPen;
 
-class QMenu;
-
 struct ModUnitUi;
 
 class ModItemUi : public QAbstractSlider
@@ -88,8 +86,6 @@ private:
 
 	void showContextMenu() const;
 
-
-	QSharedPointer<QMenu> contextMenu_;
 
     QSharedPointer<ModUnitUi> mod_;
 

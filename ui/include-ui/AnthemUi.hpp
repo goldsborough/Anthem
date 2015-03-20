@@ -9,11 +9,13 @@ class AnthemUi : public QWidget
 
 public:
 
-    AnthemUi(QWidget *parent = 0);
+	AnthemUi(QWidget* parent = nullptr);
 
 private:
 
-    void setupUi();
+	void setupUi();
+
+	virtual void paintEvent(QPaintEvent* event) override;
 };
 
 #endif // ANTHEMUI_HPP

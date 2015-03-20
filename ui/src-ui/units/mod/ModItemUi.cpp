@@ -8,15 +8,19 @@
 #include <QMouseEvent>
 #include <QApplication>
 
+
+#include <QDebug>
+
+
+
 ModItemUi::ModItemUi(QWidget* parent,
 					 double factor,
 					 int minimum,
 					 int maximum,
 					 int dialSpeed)
 : QAbstractSlider(parent),
-  contextMenu_(new QMenu(this)), // no make_shared, sorry
   mod_(nullptr),
-  borderPen_(new QPen),
+  borderPen_(new QPen),// no make_shared, sorry
   lastPosition_(new QPoint),
   borders_(4),
   ratios_(4),
@@ -47,20 +51,22 @@ void ModItemUi::setupUi()
 	connect(this, &QAbstractSlider::valueChanged,
 			[=] (int value) { QAbstractSlider::setToolTip(QString::number(value)); });
 
-	connect(contextMenu_->addAction("Insert from Dock A    "), &QAction::triggered,
+	QMenu* context = new QMenu(this);
+
+	connect(context->addAction("Insert from Dock A"), &QAction::triggered,
 			[=] (bool) { insertModUnitUi({nullptr, "LFO", ModUnitUi::Range::PERIODIC}); });
 
-	connect(contextMenu_->addAction("Insert from Dock B    "), &QAction::triggered,
+	connect(context->addAction("Insert from Dock B"), &QAction::triggered,
 			[=] (bool) { insertModUnitUi({nullptr, "ENV", ModUnitUi::Range::LINEAR}); });
 
-	connect(contextMenu_->addAction("Remove    "), &QAction::triggered,
+	connect(context->addAction("Remove"), &QAction::triggered,
 			[=] (bool) { removeModUnitUi(); });
 
 	QAbstractSlider::setContextMenuPolicy(Qt::CustomContextMenu);
 
 	connect(this, &QAbstractSlider::customContextMenuRequested,
-			[&] (const QPoint& pos)
-			{ contextMenu_->popup(pos); });
+			[=] (const QPoint& pos)
+			{ context->popup(mapToGlobal(pos)); });
 
 	setBorderRatios(1,1,1,1);
 }

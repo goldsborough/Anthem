@@ -11,7 +11,7 @@
 
 
 OperatorPage::OperatorPage(QWidget* parent)
-	: QTabWidget(parent)
+: QTabWidget(parent)
 {
 	setupUi();
 }

@@ -43,7 +43,7 @@ private:
 
 	QVector<QSharedPointer<QPoint>> units_;
 
-	QSharedPointer<QGridLayout> layout_;
+	QGridLayout* layout_;
 
 	bool active_;
 

@@ -3,23 +3,21 @@
 #include <QApplication>
 #include <QFile>
 #include <QString>
-
-extern void qt_set_sequence_auto_mnemonic(bool b);
+#include <QDesktopWidget>
 
 int main(int argc, char *argv[])
 {
-    qt_set_sequence_auto_mnemonic(true);
-
     QApplication app(argc, argv);
 
     QFile file("/Users/petergoldsborough/Documents/Anthem/ui/rsc-ui/style/style.css");
-    file.open(QFile::ReadOnly);
-    QString styleSheet = QString(file.readAll());
-    app.setStyleSheet(styleSheet);
 
-    AnthemUi anthemUi;
+	file.open(QFile::ReadOnly);
 
-    anthemUi.show();
+	app.setStyleSheet(QString(file.readAll()));
+
+	AnthemUi anthemUi;
+
+	anthemUi.show();
 
     return app.exec();
 }

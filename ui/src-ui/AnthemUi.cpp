@@ -4,22 +4,26 @@
 
 #include <QTabWidget>
 #include <QTabBar>
+#include <QMoveEvent>
 #include <QVBoxLayout>
+#include <QStyleOption>
+#include <QPainter>
 
 
 #include <QDebug>
+#include <QMenu>
 
 
 
 AnthemUi::AnthemUi(QWidget *parent)
-	: QWidget(parent)
+: QWidget(parent)
 {
     setupUi();
 }
 
 void AnthemUi::setupUi()
 {
-    QVBoxLayout* layout = new QVBoxLayout(this);
+	QVBoxLayout* layout = new QVBoxLayout(this);
 
     layout->setMargin(0);
 
@@ -41,43 +45,31 @@ void AnthemUi::setupUi()
 
     pages->tabBar()->setCursor(Qt::PointingHandCursor);
 
+
+	pages->addTab(new QWidget(this), "LFO");
+
+	pages->addTab(new OperatorPage(this), "Operator");
+
+	pages->addTab(new QWidget(this), "Master");
+
+	pages->addTab(new QWidget(this), "Effect");
+
+	pages->addTab(new QWidget(this), "Envelope");
+
+
 	layout->addWidget(pages);
-
-
-
-    QWidget* lfoPage = new QWidget;
-
-    lfoPage->setObjectName("ContainerPage");
-
-    pages->addTab(lfoPage, "LFO");
-
-
-	pages->addTab(new OperatorPage(), "Operator");
-
-
-    QWidget* masterPage = new QWidget;
-
-    masterPage->setObjectName("ContainerPage");
-
-    pages->addTab(masterPage, "Master");
-
-
-    QWidget* effectPage = new QWidget;
-
-    effectPage->setObjectName("ContainerPage");
-
-    pages->addTab(effectPage, "Effect");
-
-
-    QWidget* envelopePage = new QWidget;
-
-    envelopePage->setObjectName("ContainerPage");
-
-	pages->addTab(envelopePage, "Envelope");
 
 
 	QWidget::setSizePolicy(QSizePolicy::Fixed,
 						   QSizePolicy::Fixed);
 
 	QWidget::setWindowTitle("Anthem");
+}
+
+void AnthemUi::paintEvent(QPaintEvent*)
+{
+	QStyleOption opt;
+	opt.init(this);
+	QPainter p(this);
+	style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
 }
