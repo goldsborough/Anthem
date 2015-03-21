@@ -242,4 +242,11 @@ AlgorithmUi {
       background-color: #27272B;
       color: #DC4850; }
 
+MasterPage {
+  background-color: #DC4850; }
+
+VolumeUi {
+  border: 2px solid #27272B;
+  margin: 5px; }
+
 /*# sourceMappingURL=style.css.map */

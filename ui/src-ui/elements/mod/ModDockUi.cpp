@@ -8,15 +8,6 @@
 #include <QPainter>
 #include <algorithm>
 
-
-#include <QDebug>
-
-
-
-ModDockUi::ModDockUi(QWidget* parent)
-: QWidget(parent)
-{ }
-
 ModDockUi::ModDockUi(index_t dockSize,
 					 QWidget* parent)
 : ModDockUi(dockSize, dockSize, parent)

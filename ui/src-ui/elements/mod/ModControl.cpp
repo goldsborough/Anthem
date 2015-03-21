@@ -8,19 +8,17 @@
 #include <QVBoxLayout>
 #include <QMouseEvent>
 
-#include <QDebug>
-
-ModControl::ModControl(const QString& title, QWidget* parent)
+ModControl::ModControl(const QString& title,
+					   index_t dockSize,
+					   index_t wrap,
+					   QWidget* parent)
 : QWidget(parent),
+  wrap_(wrap),
+  dockSize_(dockSize),
   title_(title.toUpper())
 {
     setupUi();
-
-	QWidget::setMouseTracking(true);
 }
-
-ModControl::~ModControl()
-{ }
 
 void ModControl::setTitle(const QString& title)
 {
@@ -36,11 +34,11 @@ void ModControl::setupUi()
 {
 	QVBoxLayout* layout = new QVBoxLayout(this);
 
-	ModDial* dial = new ModDial(title_, this, 4);
+	ModDial* dial = new ModDial(title_, this, dockSize_);
 
 	layout->addWidget(dial);
 
-	ModDockUi* dock = new ModDockUi(4, 2, this);
+	ModDockUi* dock = new ModDockUi(dockSize_, wrap_, this);
 
 	connect(dock, &ModDockUi::depthChanged,
 			[=] (ModDockUi::index_t index, double value)
@@ -76,4 +74,6 @@ void ModControl::setupUi()
 	layout->addLayout(dockLayout);
 
 	setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+	QWidget::setMouseTracking(true);
 }

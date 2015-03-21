@@ -14,9 +14,14 @@ class ModControl : public QWidget
 
 public:
 
-    ModControl(const QString& title, QWidget* parent = nullptr);
+	typedef unsigned short index_t;
 
-    ~ModControl();
+	ModControl(QWidget* parent = nullptr);
+
+	ModControl(const QString& title,
+			   index_t dockSize,
+			   index_t wrap,
+			   QWidget* parent = nullptr);
 
 	void setTitle(const QString& title);
 
@@ -24,15 +29,20 @@ public:
 
 signals:
 
-    void depthChanged(unsigned short index, double value) const;
+	void depthChanged(index_t index, double value) const;
 
-	void modUnitInserted(unsigned short index, const ModUnitUi& mod) const;
+	void modUnitInserted(index_t index, const ModUnitUi& mod) const;
 
-	void modUnitRemoved(unsigned short index) const;
+	void modUnitRemoved(index_t index) const;
 
 private:
 
 	void setupUi();
+
+
+	const index_t wrap_;
+
+	const index_t dockSize_;
 
 	QString title_;
 };

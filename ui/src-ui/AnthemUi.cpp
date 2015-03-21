@@ -1,6 +1,7 @@
 #include "AnthemUi.hpp"
 #include "Menubar.hpp"
 #include "OperatorPage.hpp"
+#include "MasterPage.hpp"
 
 #include <QTabWidget>
 #include <QTabBar>
@@ -35,11 +36,14 @@ AnthemUi::AnthemUi()
 
 	pages->addTab(new OperatorPage(this), "Operator");
 
-	pages->addTab(new QWidget(this), "Master");
+	pages->addTab(new MasterPage(this), "Master");
 
 	pages->addTab(new QWidget(this), "Effect");
 
 	pages->addTab(new QWidget(this), "Envelope");
+
+
+	pages->setCurrentIndex(2);
 
 
 	layout->addWidget(pages);
