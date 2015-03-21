@@ -6,7 +6,9 @@
 #include <QColor>
 #include <cmath>
 
+
 #include <QDebug>
+
 
 ModDial::ModArc::ModArc()
 : mod(nullptr),
@@ -52,6 +54,19 @@ ModDial::ModDial(const QString& text,
 	setupUi();
 }
 
+void ModDial::setupUi()
+{
+	CustomDial::setMouseTracking(true);
+
+	setSizePolicy(QSizePolicy::Fixed,
+				  QSizePolicy::Fixed);
+
+	updateValue();
+
+	updateArcRects_();
+
+	updateContents_();
+}
 
 void ModDial::mouseMoveEvent(QMouseEvent* event)
 {
@@ -61,19 +76,6 @@ void ModDial::mouseMoveEvent(QMouseEvent* event)
 	{
 		showControl();
 	}
-}
-
-void ModDial::setupUi()
-{
-	CustomDial::setMouseTracking(true);
-
-	setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-
-	updateValue();
-
-	updateArcRects_();
-
-	updateContents_();
 }
 
 void ModDial::paintEvent(QPaintEvent*)
@@ -108,15 +110,42 @@ void ModDial::paintEvent(QPaintEvent*)
 					 displayedModArc_ ? // Check if nullptr
 					 displayedModArc_->mod->text : text_);
 
-	// Draw the value of the dial
+	int value;
+
+	// Boundary checking for displayed value of mod arc
+	if (displayedModArc_)
+	{
+		if (displayedModArc_->value > 0)
+		{
+			value = displayedModArc_->displayedValue;
+
+			if ((CustomDial::value() + value) > CustomDial::maximum())
+			{
+				value = CustomDial::maximum() - CustomDial::value();
+			}
+		}
+
+		else
+		{
+			value = displayedModArc_->displayedValue;
+
+			if ((CustomDial::value() + value) < CustomDial::minimum())
+			{
+				value = -CustomDial::value();
+			}
+		}
+	}
+
+	else value = CustomDial::value();
+
+	// Draw the current value of the dial
 	painter.drawText(*valueRect_,
 					 Qt::AlignCenter,
-					 displayedModArc_ ? // Check if nullptr
-					 QString::number(displayedModArc_->displayedValue) : valueString_);
+					 QString::number(value));
 
 	painter.setPen(*arcPen_);
 
-	// Draw the dial value rect
+	// Draw the dial setting arc
 	painter.drawArc(*arcRect_, startAngle_, angleSpan_);
 
 	for (QVector<ModArc>::size_type i = 0, end = mods_.size(); i < end; ++i)
@@ -341,7 +370,7 @@ void ModDial::updateArcRects_()
 										 QDial::height() - (2 * offset));
 		}
 
-		else *(mods_[i].arcRect) =QRectF();
+		else *(mods_[i].arcRect) = QRectF();
 	}
 
 	offset += arcWidth_ + arcPadding_;
@@ -359,7 +388,8 @@ void ModDial::setModArcValue(index_t index, double value)
 	mods_[index].displayedValue = value / modFactor_;
 
 	// Get circle ratio
-	double ratio = mods_[index].displayedValue / static_cast<double>(CustomDial::maximum());
+	double ratio = mods_[index].displayedValue /
+				   static_cast<double>(CustomDial::maximum());
 
 	mods_[index].angleSpan = maximumAngleSpan_ * ratio;
 

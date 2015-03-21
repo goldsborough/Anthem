@@ -25,7 +25,7 @@ public:
 
 	ModItemUi(QWidget* parent = nullptr,
 			  double factor = 0.001,
-			  int minimum = 0,
+			  int minimum = -999,
 			  int maximum = 999,
 			  int dialSpeed = 20);
 
@@ -73,6 +73,8 @@ signals:
     void itemHovered() const;
 
 private:
+
+	virtual void mouseDoubleClickEvent(QMouseEvent* event) override;
 
     virtual void mouseMoveEvent(QMouseEvent* event) override;
 

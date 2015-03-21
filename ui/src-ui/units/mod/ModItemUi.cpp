@@ -112,6 +112,16 @@ void ModItemUi::mouseMoveEvent(QMouseEvent* event)
 	else event->ignore();
 }
 
+void ModItemUi::mouseDoubleClickEvent(QMouseEvent* event)
+{
+	// Reset the value on a double click
+	QAbstractSlider::setValue(0);
+
+	emit depthChanged(0);
+
+	event->accept();
+}
+
 void ModItemUi::mousePressEvent(QMouseEvent* event)
 {
 	if (event->button() == Qt::LeftButton)

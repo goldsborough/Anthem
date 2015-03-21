@@ -4,28 +4,13 @@
 
 #include <QTabWidget>
 #include <QTabBar>
-#include <QMoveEvent>
 #include <QVBoxLayout>
-#include <QStyleOption>
-#include <QPainter>
 
-
-#include <QDebug>
-#include <QMenu>
-
-
-
-AnthemUi::AnthemUi(QWidget *parent)
-: QWidget(parent)
-{
-    setupUi();
-}
-
-void AnthemUi::setupUi()
+AnthemUi::AnthemUi()
 {
 	QVBoxLayout* layout = new QVBoxLayout(this);
 
-    layout->setMargin(0);
+	layout->setMargin(0);
 
 	layout->setContentsMargins(0,0,0,0);
 
@@ -43,7 +28,7 @@ void AnthemUi::setupUi()
 	pages->setSizePolicy(QSizePolicy::Preferred,
 						 QSizePolicy::Preferred);
 
-    pages->tabBar()->setCursor(Qt::PointingHandCursor);
+	pages->tabBar()->setCursor(Qt::PointingHandCursor);
 
 
 	pages->addTab(new QWidget(this), "LFO");
@@ -64,12 +49,4 @@ void AnthemUi::setupUi()
 						   QSizePolicy::Fixed);
 
 	QWidget::setWindowTitle("Anthem");
-}
-
-void AnthemUi::paintEvent(QPaintEvent*)
-{
-	QStyleOption opt;
-	opt.init(this);
-	QPainter p(this);
-	style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
 }

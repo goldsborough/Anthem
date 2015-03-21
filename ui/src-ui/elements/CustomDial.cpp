@@ -7,6 +7,10 @@
 #include <QPen>
 #include <QResizeEvent>
 
+
+#include <QDebug>
+
+
 CustomDial::CustomDial(QWidget* parent)
 : QDial(parent)
 { }

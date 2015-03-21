@@ -114,6 +114,7 @@ private:
 		double value;
     };
 
+	void setupUi();
 
 	virtual void paintEvent(QPaintEvent* event) override;
 
@@ -124,8 +125,6 @@ private:
 	void updateArcRects_();
 
 	void updateContents_();
-
-	void setupUi();
 
 
 	bool valueShown_;
