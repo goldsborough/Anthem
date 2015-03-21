@@ -24,7 +24,7 @@ int main(int argc, const char * argv[])
     anthem.envelopes[Anthem::A].setSegStartLevel(Envelope::ATK, 0);
     
     anthem.envelopes[Anthem::A].setSegEndLevel(Envelope::ATK, 1);
-    
+
     
     anthem.audio.start();
     

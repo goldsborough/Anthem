@@ -170,7 +170,7 @@ private:
     /*! CrossfadeUnit for panning */
     std::unique_ptr<CrossfadeUnit> pan_;
     
-    /*! Wavfile object */
+    /*! Wavefile object to record */
     Wavefile wavefile_;
 };
 

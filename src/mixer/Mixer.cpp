@@ -89,7 +89,9 @@ Sample Mixer::process(Sample sample)
 void Mixer::setMasterAmp(double amp)
 {
     if (amp > 1 || amp < 0)
-    { throw std::invalid_argument("Amplitude must be between 0 and 1!"); }
+    {
+        throw std::invalid_argument("Amplitude must be between 0 and 1!");
+    }
     
     mods_[MASTER_AMP].setBaseValue(amp);
     

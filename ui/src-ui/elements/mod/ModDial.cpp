@@ -6,10 +6,6 @@
 #include <QColor>
 #include <cmath>
 
-
-#include <QDebug>
-
-
 ModDial::ModArc::ModArc()
 : mod(nullptr),
   arcRect(new QRectF),
@@ -421,7 +417,7 @@ void ModDial::showModArc(index_t index)
 
 void ModDial::showControl()
 {
-	// Keep here, not in if clause, for start
+	// Keep here, not in if clause, for startup
 	arcPen_->setColor(*displayedArcColor_);
 
 	if (displayedModArc_)

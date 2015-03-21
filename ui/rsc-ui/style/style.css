@@ -205,7 +205,7 @@ ModDial {
   qproperty-arcColor: #27272B;
   qproperty-arcWidth: 3;
   qproperty-arcPadding: 4;
-  qproperty-valueShown: true;
+  qproperty-valueShown: false;
   qproperty-displayedArcColor: #F7FDFA;
   min-width: 120;
   min-height: 120; }
