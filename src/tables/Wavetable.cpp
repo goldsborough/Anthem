@@ -15,18 +15,18 @@
 #include <cmath>
 
 Wavetable::Wavetable(double * ptr,
-                     index_t wtLength,
+                     index_t wavetableLengthgth,
                      index_t id,
                      const std::string& name)
-: LookupTable<double>(ptr, wtLength, id, name)
+: LookupTable<double>(ptr, wavetableLengthgth, id, name)
 { }
 
 Wavetable::Wavetable(MathematicalWaveform waveform,
-                     index_t wtLength,
+                     index_t wavetableLengthgth,
                      index_t id,
                      const std::string& name)
 
-: LookupTable<double>(0,wtLength,id, name)
+: LookupTable<double>(0,wavetableLengthgth,id, name)
 
 {
     switch (waveform)
@@ -59,7 +59,7 @@ Wavetable::Wavetable(MathematicalWaveform waveform,
 
 double* Wavetable::smoothSaw_() const
 {
-    double* wt = new double[Global::wtLen + 1];
+    double* wt = new double[Global::wavetableLength + 1];
     
     // First decrement from 1 to -1 in 9/10 of the cycle,
     // then go back up smoothly the last 1/10 of the cycle
@@ -76,12 +76,12 @@ double* Wavetable::smoothSaw_() const
     double value = 0.9;
     
     // Increment value from -1 to 1
-    double ampIncr = 2.0/(Global::wtLen * 0.9);
+    double ampIncr = 2.0/(Global::wavetableLength * 0.9);
     
     // Increment value for the time
-    double indIncr = 0.1/(Global::wtLen * 0.1);
+    double indIncr = 0.1/(Global::wavetableLength * 0.1);
     
-    for (unsigned int n = 0; n < Global::wtLen; n++)
+    for (unsigned int n = 0; n < Global::wavetableLength; n++)
     {
         if (amp > -1)
         {
@@ -119,14 +119,14 @@ double* Wavetable::smoothSaw_() const
         }
     }
     
-    wt[Global::wtLen] = wt[0];
+    wt[Global::wavetableLength] = wt[0];
     
     return wt;
 }
 
 double* Wavetable::smoothRamp_() const
 {
-    double* wt = new double[Global::wtLen + 1];
+    double* wt = new double[Global::wavetableLength + 1];
     
     // First decrement from 1 to -1 in 9/10 of the cycle,
     // then go back up smoothly the last 1/10 of the cycle
@@ -143,12 +143,12 @@ double* Wavetable::smoothRamp_() const
     double value = 0.9;
     
     // Increment value from -1 to 1
-    double ampIncr = 2.0/(Global::wtLen * 0.9);
+    double ampIncr = 2.0/(Global::wavetableLength * 0.9);
     
     // Increment value for the time
-    double indIncr = 0.1/(Global::wtLen * 0.1);
+    double indIncr = 0.1/(Global::wavetableLength * 0.1);
     
-    for (unsigned int n = 0; n < Global::wtLen; n++)
+    for (unsigned int n = 0; n < Global::wavetableLength; n++)
     {
         if (amp < 1)
         {
@@ -169,20 +169,20 @@ double* Wavetable::smoothRamp_() const
         }
     }
     
-    wt[Global::wtLen] = wt[0];
+    wt[Global::wavetableLength] = wt[0];
     
     return wt;
 }
 
 double* Wavetable::smoothSquare_() const
 {
-    double* wt = new double[Global::wtLen + 1];
+    double* wt = new double[Global::wavetableLength + 1];
     
     double value = 0;
     
-    double incr = 1.0 / Global::wtLen;
+    double incr = 1.0 / Global::wavetableLength;
     
-    for (unsigned int n = 0; n < Global::wtLen; n++)
+    for (unsigned int n = 0; n < Global::wavetableLength; n++)
     {
         double val;
         
@@ -210,7 +210,7 @@ double* Wavetable::smoothSquare_() const
         value += incr;
     }
     
-    wt[Global::wtLen] = wt[0];
+    wt[Global::wavetableLength] = wt[0];
     
     return wt;
 }
@@ -218,10 +218,10 @@ double* Wavetable::smoothSquare_() const
 double* Wavetable::directSquare_() const
 {
     // the sample buffer
-    double * wt = new double [Global::wtLen + 1];
+    double * wt = new double [Global::wavetableLength + 1];
     
     // time for one sample
-    double sampleTime = 1.0 / Global::wtLen;
+    double sampleTime = 1.0 / Global::wavetableLength;
     
     // the midpoint of the period
     double mid = 0.5;
@@ -229,14 +229,14 @@ double* Wavetable::directSquare_() const
     double value = 0;
     
     // fill the sample buffer
-    for (int n = 0; n < Global::wtLen; n++)
+    for (int n = 0; n < Global::wavetableLength; n++)
     {
         wt[n] = (value < mid) ? -1 : 1;
         
         value += sampleTime;
     }
     
-    wt[Global::wtLen] = wt[0];
+    wt[Global::wavetableLength] = wt[0];
     
     return wt;
 }
@@ -244,42 +244,42 @@ double* Wavetable::directSquare_() const
 double* Wavetable::directSaw_() const
 {
     // the sample buffer
-    double * wt = new double [Global::wtLen];
+    double * wt = new double [Global::wavetableLength];
     
     // how much we must decrement the count
     // by at each iteration
     // 2.0 because the range is from 1 to -1
-    double incr = 2.0 / Global::wtLen;
+    double incr = 2.0 / Global::wavetableLength;
     
     double value = 1;
     
-    for (int n = 0; n < Global::wtLen; n++)
+    for (int n = 0; n < Global::wavetableLength; n++)
     {
         wt[n] = value;
         
         value -= incr;
     }
     
-    wt[Global::wtLen] = wt[0];
+    wt[Global::wavetableLength] = wt[0];
     
     return wt;
 }
 
 double* Wavetable::directTriangle_() const
 {
-    double* wt = new double[Global::wtLen + 1];
+    double* wt = new double[Global::wavetableLength + 1];
     
     double value = -1;
     
     // 4.0 because we're incrementing/decrementing
     // half the period and the range is 2, so it's
-    // actually 2 / wtLen / 2.
-    double incr = 4.0 / Global::wtLen;
+    // actually 2 / wavetableLength / 2.
+    double incr = 4.0 / Global::wavetableLength;
     
     // Boolean to indicate direction
     bool reachedMid = false;
     
-    for (unsigned int n = 0; n < Global::wtLen; n++)
+    for (unsigned int n = 0; n < Global::wavetableLength; n++)
     {
         wt[n] = value;
         
@@ -293,7 +293,7 @@ double* Wavetable::directTriangle_() const
         { reachedMid = !reachedMid; }
     }
     
-    wt[Global::wtLen] = wt[0];
+    wt[Global::wavetableLength] = wt[0];
     
     return wt;
 }
@@ -312,22 +312,17 @@ void WavetableDatabase::init()
     // Fetch all wavetable names and read their respective data files
     for (index_t i = 0; i < names.size(); ++i)
     {
-        fname = "/Users/petergoldsborough/Documents/Anthem/rsc/wavetables/" + names[i] + ".wavetable";
-        
         // Read wavetables with i as their id and push them into the tables_ vector.
-        tables_[i] = Wavetable(readWavetable(fname), Global::wtLen, i, names[i]);
+        tables_[i] = Wavetable(readWavetable(names[i]), Global::wavetableLength, i, names[i]);
     }
 }
 
-double* WavetableDatabase::readWavetable(const std::string &fname) const
+double* WavetableDatabase::readWavetable(const std::string &name) const
 {
-    std::ifstream file(fname);
-    
-    if (! file.is_open())
-    { throw FileNotOpenError("Could not find wavetable file: " + fname); }
+    std::ifstream file("../../../rsc/wavetables/" + name + ".wavetable");
     
     if (! file.good())
-    { throw FileOpenError("Error opening wavetable: " + fname); }
+    { throw FileOpenError("Error opening wavetable: " + name); }
     
     char signature[6];
     
@@ -336,7 +331,7 @@ double* WavetableDatabase::readWavetable(const std::string &fname) const
     if (strncmp(signature, "ANTHEM", 6))
     { throw ParseError("Invalid signature for Anthem file!"); }
     
-    int len = Global::wtLen + 1;
+    int len = Global::wavetableLength + 1;
     int size = len * sizeof(double);
     
     double * wt = new double [len];
@@ -346,21 +341,39 @@ double* WavetableDatabase::readWavetable(const std::string &fname) const
     return wt;
 }
 
-void WavetableDatabase::writeWavetable(const std::string &fname, const Wavetable& wt) const
+void WavetableDatabase::writeWavetable(const std::string &name,
+                                       const Wavetable& wt,
+                                       bool addToDefaults) const
 {
-    std::ofstream file(fname);
-    
-    if (! file.is_open())
-    { throw FileNotOpenError(); }
+    std::ofstream file("../../../rsc/wavetables/" + name + ".wavetable");
     
     if (! file.good())
     { throw FileOpenError(); }
     
     file.write("ANTHEM", 6);
     
-    int size = (Global::wtLen + 1) * sizeof(double);
+    int size = (Global::wavetableLength + 1) * sizeof(double);
     
     file.write(reinterpret_cast<char*>(wt.get()), size);
+    
+    if (! file.good())
+    { throw FileWriteError("Error writing to wavetable file!"); }
+    
+    if (addToDefaults)
+    {
+        file.close();
+        
+        file.open("../../../rsc/wavetables/wavetables.md", std::ios::app);
+        
+        if (! file.good())
+        { throw FileOpenError("Error opening wavetable configuration file!"); }
+        
+        file << name << "\n";
+        
+        if (! file.good())
+        { throw FileWriteError("Error writing to wavetable configuration file!"); }
+        
+    }
 }
 
 Wavetable::index_t WavetableDatabase::size() const

@@ -22,7 +22,7 @@ namespace Global
 {
     unsigned int samplerate = 0;
     unsigned int nyquistLimit = 0;
-    unsigned int wtLen = 0;
+    unsigned int wavetableLength = 0;
     
     double tableIncr = 0;
     
@@ -31,9 +31,9 @@ namespace Global
         samplerate = smplr;
         nyquistLimit = smplr / 2;
         
-        wtLen = wavetableLen;
+        wavetableLength = wavetableLen;
         
-        tableIncr = static_cast<double>(wtLen) / smplr;
+        tableIncr = static_cast<double>(wavetableLength) / smplr;
         
         wavetableDatabase.init();
         

@@ -84,7 +84,7 @@
 *  More on this here: http://bit.ly/1nkyXfW
 *
 *
-*  The wavetable must be initalized as _wtLength + 1, as we are using
+*  The wavetable must be initalized as _wavetableLengthgth + 1, as we are using
 *  linear interpolation. Say the current sample is sample 12345, at a table
 *  length of 4096, the index increment per sample in the wavetable is
 *  4096/44100 = 0.0928..., so the index for sample 12345 would be 1146.60....
@@ -108,30 +108,15 @@
 
 struct Partial
 {
-    /*************************************************************************************************//*!
-    *
-    *  @brief       Constructs a Partial object.
-    *
-    *  @param       number The Partial's number e.g. 2 means it has twice the frequency of the fundamental.
-    *
-    *  @param       ampl The initial amplitude value.
-    *
-    *  @param       phsOffs An optional initial phase offset in degrees, defaults to 0 (no offset).
-    *
-    *****************************************************************************************************/
+    /*! The Partial's number (freq = 
+        number * fundamental frequency). */
+    unsigned short number;
     
-    Partial(unsigned short number, double ampl, double phsOffs = 0)
-    : num(number), amp(ampl), phaseOffs(phsOffs)
-    { }
-    
-    /*! The Partial's number, stays const. */
-    const unsigned short num;
-    
-    /*! The amplitude value. */
+    /*! Its amplitude value. */
     double amp;
     
     /*! A phase offset */
-    double phaseOffs;
+    double phaseOffset;
 };
 
 /*********************************************************************************************//*!
@@ -174,7 +159,7 @@ public:
     *
     *  @param       end An iterator to the end of a sequence of Partial objects.
     *
-    *  @param       wtLength The length of the wavetable to construct, 4095 is used throughout Anthem.
+    *  @param       wavetableLengthgth The length of the wavetable to construct, 4095 is used throughout Anthem.
     *
     *  @param       masterAmp Attenuation value for all values in the table.
     *
@@ -190,26 +175,26 @@ public:
     
     template <class PartItr>
     Wavetable(PartItr start, PartItr end,
-              index_t wtLength,
+              index_t wavetableLengthgth,
               double masterAmp = 1,
               bool sigmaAprox = false,
               unsigned int bitWidth = 16,
               index_t id = 0,
               const std::string& name = std::string())
-    : LookupTable<double>(0, wtLength, id, name)
+    : LookupTable<double>(0, wavetableLengthgth, id, name)
     {
         // calculate number of partials
-        index_t partNum = end - start;
+        index_t partialNumber = std::distance(start, end);
         
-        data_ = new double [wtLength + 1];
+        data_ = new double [wavetableLengthgth + 1];
         
-        double * amp = new double [partNum];        // the amplitudes
-        double * phase = new double [partNum];      // the current phase
-        double * phaseIncr = new double [partNum];  // the phase increments
+        double * amp = new double [partialNumber];        // the amplitudes
+        double * phase = new double [partialNumber];      // the current phase
+        double * phaseIncr = new double [partialNumber];  // the phase increments
         
-        /**********************************************************
+         /**********************************************************
          *
-         *  The Lanczos sigma constant, aka sigma approximation,
+         *  The Lanczos sigma constant, a.k.a. sigma approximation,
          *  is a method of minimizing the effect of the Gibbs
          *  phenomenon, which leads to ripples and horns towards the
          *  ends of additively synthesized waveforms. It is defined
@@ -229,8 +214,8 @@ public:
          *
          **********************************************************/
         
-        // constant sigma constant part
-        double sigmaK = Global::pi / partNum;
+        // constant sigma part
+        double sigmaK = Global::pi / partialNumber;
         
         // variable part
         double sigmaV;
@@ -240,18 +225,17 @@ public:
         // possible values the samples can assume
         bitWidth = pow(2, bitWidth - 1);
         
-        // the fundamental increment of one period
-        // in radians
-        static double fundIncr = Global::twoPi / wtLength;
+        // the fundamental increment of one period in radians
+        static double fundIncr = Global::twoPi / wavetableLengthgth;
         
         // fill the arrays with the respective partial values
         for (index_t p = 0; start != end; ++p, ++start)
         {
             // initial phase
-            phase[p] = start->phaseOffs;
+            phase[p] = start->phaseOffset;
             
             // fundIncr is two π / tablelength
-            phaseIncr[p] = fundIncr * start->num;
+            phaseIncr[p] = fundIncr * start->number;
             
             // reduce amplitude if necessary
             amp[p] = start->amp * masterAmp;
@@ -260,19 +244,19 @@ public:
             if (sigmaAprox)
             {
                 // following the formula
-                sigmaV = sigmaK * start->num;
+                sigmaV = sigmaK * start->number;
                 
                 amp[p] *= sin(sigmaV) / sigmaV;
             }
         }
         
         // fill the wavetable
-        for (unsigned int n = 0; n < wtLength; n++)
+        for (unsigned int n = 0; n < wavetableLengthgth; n++)
         {
             double value = 0;
             
             // do additive magic
-            for (unsigned short p = 0; p < partNum; p++)
+            for (unsigned short p = 0; p < partialNumber; p++)
             {
                 value += sin(phase[p]) * amp[p];
                 
@@ -292,7 +276,7 @@ public:
         }
         
         // Append the last item for interpolation
-        data_[wtLength] = data_[0];
+        data_[wavetableLengthgth] = data_[0];
         
         delete [] phase;
         delete [] phaseIncr;
@@ -305,16 +289,16 @@ public:
     *
     *  @param       ptr The pointer to waveform values to store and manage.
     *
-    *  @param       wtLength The length of the wavetable (and the array of values pointed to by ptr).
+    *  @param       wavetableLengthgth The length of the wavetable (and the array of values pointed to by ptr).
     *
-    *  @param       id The wavetable's id, defaults to -1.
+    *  @param       id The wavetable's id, defaults to 0.
     *
     *  @param       name An optional name for the Wavetable, as std::string.
     *
     *****************************************************************************************************/
     
     Wavetable(double * ptr = 0,
-              index_t wtLength = 0,
+              index_t wavetableLengthgth = 0,
               index_t id = 0,
               const std::string& name = std::string());
     
@@ -324,7 +308,7 @@ public:
     *
     *  @param       waveform A MathematicalWaveform member to generate.
     *
-    *  @param       wtLength The length of the wavetable (and the array of values pointed to by ptr).
+    *  @param       wavetableLengthgth The length of the wavetable (and the array of values pointed to by ptr).
     *
     *  @param       id The wavetable's id, defaults to -1.
     *
@@ -333,7 +317,7 @@ public:
     *****************************************************************************************************/
     
     Wavetable(MathematicalWaveform waveform,
-              index_t wtLength,
+              index_t wavetableLengthgth,
               index_t id = 0,
               const std::string& name = std::string());
     
@@ -396,7 +380,14 @@ public:
         SAW_64,
         
         TRIANGLE,
-        RAMP,
+        
+        RAMP, // with sigma
+        RAMP_2,
+        RAMP_4,
+        RAMP_8,
+        RAMP_16,
+        RAMP_32,
+        RAMP_64,
         
         DIRECT_TRIANGLE,
         DIRECT_SQUARE,
@@ -428,13 +419,17 @@ public:
     *
     *   @brief Writes Wavetable object to file.
     *
-    *   @param fname The name of the file to write to.
+    *   @param name The name of the wavetable.
     *
     *   @param wt The wavetable object to write to file. 
     *
+    *   @param addToDefault Whether or not the WT should be loaded at start-up.
+    *
     ****************************************************************************/
     
-    void writeWavetable(const std::string& fname, const Wavetable& wt) const;
+    void writeWavetable(const std::string& name,
+                        const Wavetable& wt,
+                        bool addToDefaults = true) const;
     
     /*! Returns the number of wavetables stored. */
     index_t size() const;
@@ -445,11 +440,11 @@ private:
     *
     *   @brief Reads a wavetable and returns a double pointer.
     *
-    *   @param fname The name of the file to read from.
+    *   @param name The name of the wavetable.
     *
     ****************************************************************************/
     
-    double* readWavetable(const std::string& fname) const;
+    double* readWavetable(const std::string& name) const;
     
     /*! Vector of Wavetable objects */
     std::vector<Wavetable> tables_;

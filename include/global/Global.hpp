@@ -35,9 +35,9 @@ namespace Global
     extern unsigned int nyquistLimit;
     
     /*! The wavetable length */
-    extern unsigned int wtLen;
+    extern unsigned int wavetableLength;
     
-    /*! The fundamental tale increment: wtLen/samplerate*/
+    /*! The fundamental tale increment: wavetableLength/samplerate*/
     extern double tableIncr;
     
     /*************************************************************************************************//*!

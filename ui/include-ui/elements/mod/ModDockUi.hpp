@@ -42,7 +42,8 @@ private:
 
 	virtual void paintEvent(QPaintEvent*) override;
 
-    index_t wrap_;
+
+	const index_t wrap_;
 
     QVector<ModItemUi*> items_;
 

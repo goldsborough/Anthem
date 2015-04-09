@@ -34,7 +34,7 @@ qrc_rsc.cpp
 *.pro*
 
 # Folders
-build*
+[bB]uild*
 wavefiles
 html
 other/design

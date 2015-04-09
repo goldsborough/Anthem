@@ -97,7 +97,7 @@ void Oscillator::setPhaseOffset(short degrees)
     // The wavetable holds 360 degrees, so divide the degrees
     // by 360 to get e.g. 1/4 and multiply by the wavetable's length
     // to get the number of samples to shift by
-    phaseOffset_ = ((Global::wtLen + 1) * degrees) / 360.0;
+    phaseOffset_ = ((Global::wavetableLength + 1) * degrees) / 360.0;
     
     // Add new offset
     ind_ += phaseOffset_;
@@ -105,7 +105,7 @@ void Oscillator::setPhaseOffset(short degrees)
 
 double Oscillator::getPhaseOffset() const
 {
-    return (phaseOffset_ * 360) / (Global::wtLen + 1);
+    return (phaseOffset_ * 360) / (Global::wavetableLength + 1);
 }
 
 void Oscillator::reset()
@@ -119,11 +119,11 @@ void Oscillator::increment_(double value)
     ind_ += value;
     
     // Check index against wavetable length
-    if ( ind_ >= Global::wtLen)
-    { ind_ -= Global::wtLen; }
+    if ( ind_ >= Global::wavetableLength)
+    { ind_ -= Global::wavetableLength; }
     
     if ( ind_ < 0)
-    { ind_ += Global::wtLen; }
+    { ind_ += Global::wavetableLength; }
 }
 
 void Oscillator::update()

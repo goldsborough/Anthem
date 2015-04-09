@@ -29,15 +29,15 @@ void OperatorUi::setupUi()
 	layout->setContentsMargins(0,0,0,0);
 
 
-	ModControl* level = new ModControl("Level", this);
+	ModControl* level = new ModControl("Level", 4, 2, this);
 
 	layout->addWidget(level);
 
-	ModControl* offset = new ModControl("Offs", this);
+	ModControl* offset = new ModControl("Offs", 4, 2, this);
 
 	layout->addWidget(offset);
 
-	ModControl* ratio = new ModControl("Ratio", this);
+	ModControl* ratio = new ModControl("Ratio", 4, 2, this);
 
 	layout->addWidget(ratio);
 

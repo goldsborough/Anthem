@@ -22,6 +22,12 @@ saw_64
 triangle  
 
 ramp  
+ramp_2  
+ramp_4  
+ramp_8  
+ramp_16  
+ramp_32  
+ramp_64  
 
 direct_tri  
 direct_square  
