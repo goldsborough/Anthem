@@ -81,7 +81,7 @@ double* Wavetable::smoothSaw_() const
     // Increment value for the time
     double indIncr = 0.1/(Global::wavetableLength * 0.1);
     
-    for (unsigned int n = 0; n < Global::wavetableLength; n++)
+    for (std::size_t n = 0; n < Global::wavetableLength; n++)
     {
         if (amp > -1)
         {
@@ -148,7 +148,7 @@ double* Wavetable::smoothRamp_() const
     // Increment value for the time
     double indIncr = 0.1/(Global::wavetableLength * 0.1);
     
-    for (unsigned int n = 0; n < Global::wavetableLength; n++)
+    for (std::size_t n = 0; n < Global::wavetableLength; n++)
     {
         if (amp < 1)
         {
@@ -182,7 +182,7 @@ double* Wavetable::smoothSquare_() const
     
     double incr = 1.0 / Global::wavetableLength;
     
-    for (unsigned int n = 0; n < Global::wavetableLength; n++)
+    for (std::size_t n = 0; n < Global::wavetableLength; n++)
     {
         double val;
         
@@ -279,7 +279,7 @@ double* Wavetable::directTriangle_() const
     // Boolean to indicate direction
     bool reachedMid = false;
     
-    for (unsigned int n = 0; n < Global::wavetableLength; n++)
+    for (std::size_t n = 0; n < Global::wavetableLength; n++)
     {
         wt[n] = value;
         

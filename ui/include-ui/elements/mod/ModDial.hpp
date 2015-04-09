@@ -53,12 +53,14 @@ public:
 
 	void setModUnitUiForModArc(index_t index, const ModUnitUi& mod);
 
-	void removeModunitUiForModArc(index_t index);
+	void removeModUnitUiForModArc(index_t index);
 
 	ModUnitUi getModUnitUiFromModArc(index_t index);
 
 
 	index_t getModArcIndexFromModUnitUiText(const QString& text) const;
+
+	index_t activeModArcs() const;
 
 
 	void setModArcValue(index_t index, double value);
@@ -126,6 +128,8 @@ private:
 
 	void updateContents_();
 
+
+	index_t activeModArcs_;
 
 	bool valueShown_;
 

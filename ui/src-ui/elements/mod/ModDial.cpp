@@ -4,22 +4,17 @@
 #include <QPainter>
 #include <QResizeEvent>
 #include <QColor>
+
 #include <cmath>
 
 ModDial::ModArc::ModArc()
 : mod(nullptr),
-  arcRect(new QRectF),
-  angleSpan(0),
-  displayedValue(0),
-  value(0)
+  arcRect(new QRectF)
 { }
 
 ModDial::ModArc::ModArc(const ModUnitUi& modUnit)
 : mod(new ModUnitUi(modUnit)),
-  arcRect(new QRectF),
-  angleSpan(0),
-  displayedValue(0),
-  value(0)
+  arcRect(new QRectF)
 { }
 
 
@@ -39,6 +34,7 @@ ModDial::ModDial(const QString& text,
 			 factor,
 			 minimum,
 			 maximum),
+  activeModArcs_(0),
   valueShown_(false),
   arcPadding_(0),
   modFactor_(modFactor),
@@ -159,7 +155,7 @@ void ModDial::paintEvent(QPaintEvent*)
 		{
 			if (span > 0) span = -span;
 
-			// Offset modsStart by one span length
+			// Offset modStart by one span length
 			// (half of the periodic span length)
 			modStart -= span;
 
@@ -241,6 +237,8 @@ void ModDial::setModUnitUiForModArc(index_t index, const ModUnitUi& mod)
 {
 	mods_[index].mod.reset(new ModUnitUi(mod));
 
+	activeModArcs_++;
+
 	updateArcRects_();
 
 	updateContents_();
@@ -248,9 +246,11 @@ void ModDial::setModUnitUiForModArc(index_t index, const ModUnitUi& mod)
 	QDial::repaint();
 }
 
-void ModDial::removeModunitUiForModArc(index_t index)
+void ModDial::removeModUnitUiForModArc(index_t index)
 {
 	mods_[index].mod.reset();
+
+	activeModArcs_--;
 
 	updateArcRects_();
 
@@ -286,6 +286,11 @@ ModDial::index_t ModDial::getModArcIndexFromModUnitUiText(const QString& text) c
 													   { return modArc.mod->text == text; });
 
 	return std::distance(mods_.begin(), itr);
+}
+
+ModDial::index_t ModDial::activeModArcs() const
+{
+	return activeModArcs_;
 }
 
 void ModDial::updateContents_()
@@ -417,8 +422,12 @@ void ModDial::showModArc(index_t index)
 
 void ModDial::showControl()
 {
-	// Keep here, not in if clause, for startup
-	arcPen_->setColor(*displayedArcColor_);
+	if (activeModArcs_)
+	{
+		arcPen_->setColor(*displayedArcColor_);
+	}
+
+	else arcPen_->setColor(*arcColor_);
 
 	if (displayedModArc_)
 	{

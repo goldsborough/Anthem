@@ -57,7 +57,7 @@ void ModControl::setupUi()
 	connect(dock, &ModDockUi::modUnitRemoved,
 			[=] (ModDockUi::index_t index)
 			{
-				dial->removeModunitUiForModArc(index);
+				dial->removeModUnitUiForModArc(index);
 				emit modUnitRemoved(index);
 			});
 
