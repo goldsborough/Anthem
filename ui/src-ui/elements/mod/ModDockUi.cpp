@@ -75,7 +75,7 @@ void ModDockUi::setupUi()
 
 	setLayout(layout);
 
-	setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+	setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
 }
 
 void ModDockUi::paintEvent(QPaintEvent*)

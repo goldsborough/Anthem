@@ -210,17 +210,15 @@ ModDial {
   min-width: 120;
   min-height: 120; }
 
-ModDockUi {
-  min-width: 75;
-  min-height: 75; }
-
 ModItemUi {
   background-color: #DC4850;
   qproperty-borderColor: #27272B;
   qproperty-borderWidth: 4;
   color: #27272B;
   font-family: DIN;
-  font-size: 14px; }
+  font-size: 14px;
+  min-width: 37.5;
+  min-height: 37.5; }
   ModItemUi QMenu::item {
     padding-right: 30px; }
 

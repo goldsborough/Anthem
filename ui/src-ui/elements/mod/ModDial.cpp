@@ -397,6 +397,14 @@ void ModDial::setModArcValue(index_t index, double value)
 	QDial::repaint();
 }
 
+void ModDial::resetModArcValues()
+{
+	for (index_t i = 0; i < mods_.size(); ++i)
+	{
+		setModArcValue(i, 0);
+	}
+}
+
 double ModDial::getModArcValue(index_t index) const
 {
 	return mods_[index].value;

@@ -65,6 +65,8 @@ public:
 
 	void setModArcValue(index_t index, double value);
 
+	void resetModArcValues();
+
 	double getModArcValue(index_t index) const;
 
 	int getDisplayedModArcValue(index_t index) const;
@@ -115,6 +117,7 @@ private:
 
 		double value;
     };
+
 
 	void setupUi();
 

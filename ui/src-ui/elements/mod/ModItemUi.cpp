@@ -44,8 +44,8 @@ void ModItemUi::setupUi()
 
 	QAbstractSlider::setTracking(true);
 
-	QAbstractSlider::setSizePolicy(QSizePolicy::MinimumExpanding,
-								   QSizePolicy::MinimumExpanding);
+	QAbstractSlider::setSizePolicy(QSizePolicy::Fixed,
+								   QSizePolicy::Fixed);
 
 	// Display current value as tooltip
 	connect(this, &QAbstractSlider::valueChanged,
