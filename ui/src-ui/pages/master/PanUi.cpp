@@ -2,10 +2,10 @@
 #include "ModControl.hpp"
 
 #include <QLabel>
-#include <QComboBox>
+#include <QPushButton>
 #include <QPainter>
 #include <QStyleOption>
-#include <QGridLayout>
+#include <QVBoxLayout>
 
 PanUi::PanUi(QWidget* parent)
 : QWidget(parent)
@@ -15,23 +15,33 @@ PanUi::PanUi(QWidget* parent)
 
 void PanUi::setupUi()
 {
-	QGridLayout* layout = new QGridLayout(this);
+	QVBoxLayout* layout = new QVBoxLayout(this);
+
+	layout->setSpacing(0);
+
+	layout->setMargin(0);
+
+	layout->setContentsMargins(0, 0, 0, 0);
+
+
+	QPushButton* type = new QPushButton("Radical", this);
+
+	type->setSizePolicy(QSizePolicy::Minimum,
+						QSizePolicy::Minimum);
+
+	layout->addWidget(type);
 
 
 	ModControl* control = new ModControl("Pan", 2, 2, this);
 
-	layout->addWidget(control, 0, 0, 2, 1);
+	control->setSizePolicy(QSizePolicy::Expanding,
+						   QSizePolicy::Expanding);
 
 
-	QLabel* label = new QLabel("Type", this);
+	layout->addWidget(control);
 
-	layout->addWidget(label, 0, 1);
-
-
-	QComboBox* box = new QComboBox(this);
-
-	layout->addWidget(box, 1, 1);
-
+	QWidget::setSizePolicy(QSizePolicy::Maximum,
+						   QSizePolicy::Maximum);
 }
 
 void PanUi::paintEvent(QPaintEvent*)

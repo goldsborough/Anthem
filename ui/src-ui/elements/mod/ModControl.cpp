@@ -36,6 +36,10 @@ void ModControl::setupUi()
 
 	ModDial* dial = new ModDial(title_, this, dockSize_);
 
+	connect(dial, &ModDial::scaledValueChanged,
+			[=] (double value)
+			{ emit controlChanged(value); });
+
 	layout->addWidget(dial);
 
 	ModDockUi* dock = new ModDockUi(dockSize_, wrap_, this);
@@ -76,4 +80,12 @@ void ModControl::setupUi()
 	setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
 	QWidget::setMouseTracking(true);
+}
+
+void ModControl::paintEvent(QPaintEvent* )
+{
+	QStyleOption opt;
+	opt.init(this);
+	QPainter p(this);
+	style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
 }

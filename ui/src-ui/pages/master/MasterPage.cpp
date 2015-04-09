@@ -1,5 +1,5 @@
 #include "MasterPage.hpp"
-#include "VolumeUi.hpp"
+#include "ModControl.hpp"
 #include "RecordUi.hpp"
 #include "PanUi.hpp"
 
@@ -17,11 +17,23 @@ void MasterPage::setupUi()
 {
 	QGridLayout* layout = new QGridLayout(this);
 
-	layout->addWidget(new VolumeUi(this), 0, 0);
 
-	layout->addWidget(new PanUi(this), 0, 1);
+	ModControl* volume = new ModControl("Volume", 2, 2, this);
 
-	layout->addWidget(new RecordUi(this), 1, 0);
+	connect(volume, &ModControl::controlChanged,
+			[=] (double value) { emit volumeChanged(value); });
+
+	layout->addWidget(volume, 0, 0);
+
+
+	PanUi* pan = new PanUi(this);
+
+	layout->addWidget(pan, 0, 1);
+
+
+	RecordUi* record = new RecordUi(this);
+
+	layout->addWidget(record, 1, 0);
 }
 
 void MasterPage::paintEvent(QPaintEvent* )

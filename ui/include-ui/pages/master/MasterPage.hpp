@@ -11,6 +11,10 @@ public:
 
 	MasterPage(QWidget* parent = nullptr);
 
+signals:
+
+	void volumeChanged(double volume) const;
+
 private:
 
 	void setupUi();

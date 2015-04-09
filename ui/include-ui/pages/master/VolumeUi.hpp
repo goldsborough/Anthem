@@ -11,6 +11,10 @@ public:
 
 	VolumeUi(QWidget* parent = nullptr);
 
+signals:
+
+	void volumeChanged
+
 private:
 
 	void setupUi();

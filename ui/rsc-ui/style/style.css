@@ -176,24 +176,26 @@ OperatorPage {
   background-color: #DC4850; }
   OperatorPage QTabBar::tab {
     min-width: 250px;
-    min-height: 50px;
-    padding-top: 5px; }
+    min-height: 40px;
+    padding-top: 10px;
+    font-size: 30px;
+    margin: 0px; }
 
-OperatorUi {
-  border: 2px solid #27272B;
-  margin: 5px; }
-  OperatorUi QPushButton {
+OperatorUi, PanUi {
+  border: 2px solid #27272B; }
+  OperatorUi QPushButton, PanUi QPushButton {
     background-color: transparent;
     color: #27272B;
-    font-size: 24px;
+    font-size: 20px;
     font-family: DIN;
     qproperty-flat: true;
     outline: none;
-    border: 2px solid #27272B;
-    min-width: 40px;
-    margin-top: 5px;
-    margin-bottom: 5px; }
-    OperatorUi QPushButton:open {
+    border-top: 0px solid #27272B;
+    border-bottom: 2px solid #27272B;
+    border-right: 1px solid #27272B;
+    border-left: 1px solid #27272B;
+    min-width: 40px; }
+    OperatorUi QPushButton:open, PanUi QPushButton:open {
       background-color: #27272B;
       color: #DC4850; }
 
@@ -217,8 +219,8 @@ ModItemUi {
   color: #27272B;
   font-family: DIN;
   font-size: 14px;
-  min-width: 37.5;
-  min-height: 37.5; }
+  min-width: 35px;
+  min-height: 35px; }
   ModItemUi QMenu::item {
     padding-right: 30px; }
 
@@ -242,9 +244,17 @@ AlgorithmUi {
 
 MasterPage {
   background-color: #DC4850; }
+  MasterPage ModDial {
+    font-size: 15px; }
 
-VolumeUi {
-  border: 2px solid #27272B;
-  margin: 5px; }
+#VolumeUi {
+  border: 2px solid #27272B; }
+  #VolumeUi QMenu {
+    background-color: transparent;
+    border: 0px solid #DC4850; }
+  #VolumeUi QMenu::item {
+    border: 0 px solid #DC4850;
+    outline: none;
+    qproperty-flat: true; }
 
 /*# sourceMappingURL=style.css.map */

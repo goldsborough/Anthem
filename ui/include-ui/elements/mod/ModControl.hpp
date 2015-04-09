@@ -29,6 +29,8 @@ public:
 
 signals:
 
+	void controlChanged(double value) const;
+
 	void depthChanged(index_t index, double value) const;
 
 	void modUnitInserted(index_t index, const ModUnitUi& mod) const;
@@ -38,6 +40,8 @@ signals:
 private:
 
 	void setupUi();
+
+	void paintEvent(QPaintEvent*);
 
 
 	const index_t wrap_;

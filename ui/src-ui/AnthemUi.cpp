@@ -38,7 +38,16 @@ AnthemUi::AnthemUi()
 
 	pages->addTab(new OperatorPage(this), "Operator");
 
-	pages->addTab(new MasterPage(this), "Master");
+
+
+	MasterPage* master = new MasterPage(this);
+
+	connect(master, &MasterPage::volumeChanged,
+			menubar, &Menubar::setVolume);
+
+	pages->addTab(master, "Master");
+
+
 
 	pages->addTab(new QWidget(this), "Effect");
 

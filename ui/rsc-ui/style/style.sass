@@ -106,7 +106,9 @@ QMenu
         color: $black
         padding: 15px
         font-size: 16px
+
         &::selected
+
             background-color: $black
             color: $red
 
@@ -241,26 +243,28 @@ OperatorPage
     & QTabBar::tab
 
         min-width: 250px
-        min-height: 50px
-        padding-top: 5px
+        min-height: 40px
+        padding-top: 10px
+        font-size: 30px
+        margin: 0px
 
-OperatorUi
+OperatorUi, PanUi
 
     border: 2px solid $black
-    margin: 5px
 
     & QPushButton
 
         background-color: transparent
         color: $black
-        font-size: 24px
+        font-size: 20px
         font-family: DIN
         qproperty-flat: true
         outline: none
-        border: 2px solid $black
+        border-top: 0px solid $black // Necessary
+        border-bottom: 2px solid $black
+        border-right: 1px solid $black
+        border-left: 1px solid $black
         min-width: 40px
-        margin-top: 5px
-        margin-bottom: 5px
 
         &:open
 
@@ -289,11 +293,11 @@ ModItemUi
     color: $black
     font-family: DIN
     font-size: 14px
-    min-width: 37.5
-    min-height: 37.5
+    min-width: 35px
+    min-height: 35px
 
     & QMenu::item
-        // Don't ask me why this is necessary
+
         padding-right: 30px
 
 AlgorithmUi
@@ -313,6 +317,7 @@ AlgorithmUi
         max-width: 24px
         min-height: 30px
         max-height: 30px
+
         &:enabled
             background-color: $black
             color: $red
@@ -321,7 +326,21 @@ MasterPage
 
     background-color: $red
 
-VolumeUi 
+    & ModDial
+
+        font-size: 15px
+
+#VolumeUi
 
     border: 2px solid $black
-    margin: 5px
+    
+    & QMenu
+
+        background-color: transparent
+        border: 0px solid $red
+
+    & QMenu::item
+        border: 0 px solid $red
+        outline: none 
+        qproperty-flat: true
+
