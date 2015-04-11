@@ -8,19 +8,25 @@
 #include <QPainter>
 #include <algorithm>
 
+
+
+#include <QDebug>
+
+
+
 ModDockUi::ModDockUi(index_t dockSize,
 					 QWidget* parent)
 : ModDockUi(dockSize, dockSize, parent)
 { }
 
-ModDockUi::ModDockUi(index_t dockSize,                   
-                     index_t wrap,
-                     QWidget* parent)
+ModDockUi::ModDockUi(index_t dockSize,
+					 index_t wrap,
+					 QWidget* parent)
 : QWidget(parent),
   wrap_(wrap),
   items_(dockSize)
 {
-    setupUi();
+	setupUi();
 }
 
 void ModDockUi::setupUi()
@@ -44,6 +50,12 @@ void ModDockUi::setupUi()
 
 		connect(items_[i], &ModItemUi::itemHovered,
 				[=] () { emit itemHovered(i); });
+
+		connect(items_[i], &ModItemUi::sidechainEvent,
+				[=] (QObject* slave, bool enable) { qDebug() << slave << enable; });
+
+		connect(items_[i], &ModItemUi::clearSlavesEvent,
+				[=] () { qDebug() << "Clearing"; });
 
 		// Halve the top for all but the first row
 		top = (i < wrap_) ?  1 : 0.5;
@@ -73,9 +85,9 @@ void ModDockUi::setupUi()
 
 	layout->setContentsMargins(0,0,0,0);
 
-	setLayout(layout);
+	QWidget::setLayout(layout);
 
-	setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
+	QWidget::setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
 }
 
 void ModDockUi::paintEvent(QPaintEvent*)
@@ -94,4 +106,3 @@ void ModDockUi::paintEvent(QPaintEvent*)
 
 	style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
 }
-

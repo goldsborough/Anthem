@@ -1,3 +1,5 @@
+s = \
+"""
 $black: #27272B
 $red: #DC4850
 $white: #F7FDFA
@@ -15,46 +17,25 @@ AnthemUi
     min-height: $windowHeight
     max-height: $windowHeight
 
-AlgorithmUi
-    background-color: transparent
-    border: 2px solid $black
-    outline: none
-    & QLabel
-        background-color: $red
-        color: $black
-        font-size: 20px
-        font-family: DIN
-        border: 2px solid $black
-        min-width: 24px
-        max-width: 24px
-        min-height: 30px
-        max-height: 30px
-        &:enabled
-            background-color: $black
-            color: $red
+QLabel
+    qproperty-alignment: AlignCenter
+    color: $white
 
-CustomComboBox QMenu
-    margin: 0px
-    &::item
-        padding: 40px
-
-CustomDial
+QPushButton
     background-color: transparent
-    font-family: "DIN"
     color: $black
-    qproperty-arcColor: $black
-    qproperty-arcWidth: 3
-
-CustomMessageBox
-    & QLabel
-        color: $black
-        font-family: "Proxima Nova"
-        font-size: 30px
-
-IconButton
-    background-color: none
+    font-size: 20px
+    font-family: DIN
+    qproperty-flat: true
     outline: none
-    border: none
+    border-top: 0px solid $black
+    border-bottom: 2px solid $black
+    border-right: 1px solid $black
+    border-left: 1px solid $black
+    min-width: 40px
+    &:open
+        background-color: $black
+        color: $red
 
 Menubar
     $menuHeight: 60px
@@ -93,79 +74,6 @@ Menubar
         min-width: 500px
         max-width: 500px
 
-#MenuButton
-    qproperty-iconWidth: 30
-    qproperty-iconHeight: 30
-    min-width: 35px
-    max-width: 35px
-    min-height: 35px
-    max-height: 35px
-
-ModDial
-    @extend CustomDial
-    qproperty-displayedArcColor: $white
-    qproperty-arcPadding: 4
-    font-size: 16px
-    min-width: 120
-    min-height: 120
-
-ModItemUi
-    background-color: $red
-    qproperty-borderColor: $black
-    qproperty-borderWidth: 4
-    color: $black
-    font-family: DIN
-    font-size: 14px
-    min-width: 35px
-    min-height: 35px
-    & QMenu::item
-        padding-right: 30px
-
-MasterPage
-    background-color: $red
-    & ModDial
-        font-size: 16px
-
-OperatorPage
-    background-color: $red
-    & QTabBar::tab
-        min-width: 250px
-        min-height: 40px
-        padding-top: 10px
-        font-size: 30px
-        margin: 0px
-
-OperatorUi
-    border: 2px solid $black
-
-    & QPushButton
-        font-size: 20px
-        border-top: 0px solid $black
-        border-bottom: 2px solid $black
-        border-right: 1px solid $black
-        border-left: 1px solid $black
-        min-width: 40px
-
-        &:open
-            background-color: $black
-            color: $red
-
-PanUi, MacroUi, #VolumeUi
-    @extend OperatorUi
-    max-height: 215px
-    min-height: 215px
-    min-width: 145px
-    max-width: 145px
-
-#Record
-    font-size: 30px
-
-#Stop
-    font-size: 80px
-
-#Save
-    font-size: 35px
-
 #ProjectLabel
     color: $black
     font-family: DIN
@@ -183,14 +91,13 @@ PanUi, MacroUi, #VolumeUi
 #PreviousButton
     padding-right: 5px
 
-PopupLine QPushButton
-    border: none
-    &:hover
-        background: none
-
-QLabel
-    qproperty-alignment: AlignCenter
-    color: $white
+#MenuButton
+    qproperty-iconWidth: 30
+    qproperty-iconHeight: 30
+    min-width: 35px
+    max-width: 35px
+    min-height: 35px
+    max-height: 35px
 
 QMenu
     background-color: $red
@@ -207,16 +114,48 @@ QMenu
             color: $red
             padding-left: 30px
 
+CustomComboBox QMenu
+    margin: 0px
+    &::item
+        padding: 40px
+
 QDialog
     background-color: $red
     & QPushButton
+        background-color: transparent
+        color: $black
         font-size: 18px
         font-family: "Proxima Nova"
+        qproperty-flat: true
+        outline: none
         border: 1px solid $black
         min-height: 50px
         &:hover
             background-color: $black
             color: $red
+
+SettingsDialog
+    @extend QDialog
+    & QLabel
+        color: $black
+        font-family: "Proxima Nova"
+        font-size: 20px
+
+CustomMessageBox
+    & QLabel
+        color: $black
+        font-family: "Proxima Nova"
+        font-size: 30px
+
+PopupLine QPushButton
+    border: none
+    &:hover
+        background: none
+
+IconButton
+    background-color: none
+    outline: none
+    border: none
 
 QLineEdit
     font-size: 30px
@@ -241,14 +180,6 @@ QComboBox
     & QListView
         background: $red
         color: $black
-
-QPushButton
-    outline: none
-    background-color: transparent
-    border: none
-    color: $black
-    font-family: "DIN"
-    qproperty-flat: true
 
 QTabWidget
     min-width: $windowWidth
@@ -279,44 +210,78 @@ QTabWidget
             background-color: $red
             color: $black
 
-RecordUi
+OperatorPage
+    background-color: $red
+    & QTabBar::tab
+        min-width: 250px
+        min-height: 40px
+        padding-top: 10px
+        font-size: 30px
+        margin: 0px
 
+OperatorUi, PanUi
     border: 2px solid $black
 
-    & QPushButton
-        font-size: 30px
-        min-height: 100px
-        max-height: 100px
+ModDial
+    background-color: transparent
+    font-size: 14px
+    font-family: DIN
+    color: $black
+    qproperty-arcColor: $black
+    qproperty-arcWidth: 3
+    qproperty-arcPadding: 4
+    qproperty-valueShown: false
+    qproperty-displayedArcColor: $white
+    min-width: 120
+    min-height: 120
 
-        &:open
+ModItemUi
+    background-color: $red
+    qproperty-borderColor: $black
+    qproperty-borderWidth: 4
+    color: $black
+    font-family: DIN
+    font-size: 14px
+    min-width: 35px
+    min-height: 35px
+    & QMenu::item
+        padding-right: 30px
+
+AlgorithmUi
+    background-color: transparent
+    border: 2px solid $black
+    outline: none
+    & QLabel
+        background-color: $red
+        color: $black
+        font-size: 20px
+        font-family: DIN
+        border: 2px solid $black
+        min-width: 24px
+        max-width: 24px
+        min-height: 30px
+        max-height: 30px
+        &:enabled
             background-color: $black
             color: $red
 
-    & QLineEdit
-        padding-left: 20px
-        padding-right: 20px
-        font-size: 24px
-        border: none
-        qproperty-frame: false
-        background-color: transparent
-        color: $black
+MasterPage
+    background-color: $red
+    & ModDial
+        font-size: 15px
 
-#SecondaryOperatorUi
+#VolumeUi
+    border: 2px solid $black
+    padding-top: 50px
+"""
 
-    & CustomDial
-        font-size: 16px
-        qproperty-valueShown: false
-        min-width: 16px
-        min-height: 16px
+if __name__ == "__main__":
 
-    & QPushButton
-        font-size: 16px
-        //min-width: 100px
-        border: 2px solid $black
+	l = s.split("\n\n")
 
-SettingsDialog
-    @extend QDialog
-    & QLabel
-        color: $black
-        font-family: "Proxima Nova"
-        font-size: 20px
+	l.sort(key=lambda x: x.split()[0][0] if x.split()[0][0].isalpha() else x.split()[0][1])
+
+	print("\n\n".join(l))
+
+
+

@@ -35,7 +35,6 @@ ModDial::ModDial(const QString& text,
 			 minimum,
 			 maximum),
   activeModArcs_(0),
-  valueShown_(false),
   arcPadding_(0),
   modFactor_(modFactor),
   displayedModArc_(nullptr),
@@ -100,7 +99,7 @@ void ModDial::paintEvent(QPaintEvent*)
 	painter.drawText(*textRect_,
 					 Qt::AlignCenter,
 					 displayedModArc_ ? // Check if nullptr
-					 displayedModArc_->mod->text : text_);
+					 displayedModArc_->mod->id : text_);
 
 	int value;
 
@@ -278,12 +277,12 @@ void ModDial::removeModArc(index_t index)
 }
 
 
-ModDial::index_t ModDial::getModArcIndexFromModUnitUiText(const QString& text) const
+ModDial::index_t ModDial::getModArcIndexFromModUnitUiId(const QString& id) const
 {
 	QVector<ModArc>::const_iterator itr = std::find_if(mods_.begin(),
 													   mods_.end(),
 													   [&] (const ModArc& modArc)
-													   { return modArc.mod->text == text; });
+													   { return modArc.mod->id == id; });
 
 	return std::distance(mods_.begin(), itr);
 }
@@ -453,16 +452,6 @@ void ModDial::setArcPadding(double padding)
 double ModDial::getArcPadding() const
 {
 	return arcPadding_;
-}
-
-void ModDial::setValueShown(bool state)
-{
-	valueShown_ = state;
-}
-
-bool ModDial::valueIsShown() const
-{
-	return valueShown_;
 }
 
 void ModDial::setDisplayedArcColor(const QColor &color)

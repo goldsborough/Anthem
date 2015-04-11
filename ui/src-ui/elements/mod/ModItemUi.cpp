@@ -4,13 +4,15 @@
 #include <QPainter>
 #include <QPaintEvent>
 #include <QMenu>
+#include <QAction>
 #include <QPoint>
 #include <QMouseEvent>
 #include <QApplication>
+#include <QDrag>
+#include <QMimeData>
 
 
 #include <QDebug>
-
 
 
 ModItemUi::ModItemUi(QWidget* parent,
@@ -20,7 +22,7 @@ ModItemUi::ModItemUi(QWidget* parent,
 					 int dialSpeed)
 : QAbstractSlider(parent),
   mod_(nullptr),
-  borderPen_(new QPen),// no make_shared, sorry
+  borderPen_(new QPen), // no make_shared, sorry
   lastPosition_(new QPoint),
   borders_(4),
   ratios_(4),
@@ -40,12 +42,14 @@ ModItemUi::ModItemUi(QWidget* parent,
 
 void ModItemUi::setupUi()
 {
-	QAbstractSlider::setMouseTracking(false);
-
 	QAbstractSlider::setTracking(true);
+
+	QAbstractSlider::setAcceptDrops(true);
 
 	QAbstractSlider::setSizePolicy(QSizePolicy::Fixed,
 								   QSizePolicy::Fixed);
+
+	QAbstractSlider::setCursor(Qt::PointingHandCursor);
 
 	// Display current value as tooltip
 	connect(this, &QAbstractSlider::valueChanged,
@@ -62,11 +66,13 @@ void ModItemUi::setupUi()
 	connect(context->addAction("Remove"), &QAction::triggered,
 			[=] (bool) { removeModUnitUi(); });
 
+
 	QAbstractSlider::setContextMenuPolicy(Qt::CustomContextMenu);
 
 	connect(this, &QAbstractSlider::customContextMenuRequested,
 			[=] (const QPoint& pos)
 			{ context->popup(mapToGlobal(pos)); });
+
 
 	setBorderRatios(1,1,1,1);
 }
@@ -84,7 +90,9 @@ void ModItemUi::mouseMoveEvent(QMouseEvent* event)
 		// if a button was actually pressed because
 		// this method is also called when no button
 		// is pressed if mouse tracking is enabled
-		if (event->buttons() != Qt::NoButton)
+		// The Control modifier is for drag & drop
+		if (event->buttons() == Qt::LeftButton &&
+			! (event->modifiers() & Qt::ControlModifier))
 		{
 			// Get the delta in distance
 			int distance = event->pos().y() - lastPosition_->y();
@@ -114,19 +122,38 @@ void ModItemUi::mouseMoveEvent(QMouseEvent* event)
 
 void ModItemUi::mouseDoubleClickEvent(QMouseEvent* event)
 {
-	// Reset the value on a double click
-	QAbstractSlider::setValue(0);
+	if (! (event->modifiers() & (Qt::ControlModifier | Qt::AltModifier)))
+	{
+		// Reset the value on a double click
+		QAbstractSlider::setValue(0);
 
-	emit depthChanged(0);
+		emit depthChanged(0);
 
-	event->accept();
+		event->accept();
+	}
+
+	else emit clearSlavesEvent();
 }
 
 void ModItemUi::mousePressEvent(QMouseEvent* event)
 {
 	if (event->button() == Qt::LeftButton)
 	{
-		*lastPosition_ = event->pos();
+		if (event->modifiers() & Qt::ControlModifier)
+		{
+			QDrag* drag = new QDrag(this);
+
+			// Don't actually need any data,
+			// the target ModItem will just look
+			// at the source of the QDragEvent
+			// it receives. But QDrag needs some
+			// data, so whateves
+			drag->setMimeData(new QMimeData());
+
+			drag->exec();
+		}
+
+		else *lastPosition_ = event->pos();
 	}
 }
 
@@ -147,7 +174,31 @@ void ModItemUi::paintEvent(QPaintEvent*)
 
     painter.drawText(QAbstractSlider::rect(),
                      Qt::AlignCenter,
-					 mod_ ? mod_->text : "-");
+					 mod_ ? mod_->id : "-");
+}
+
+void ModItemUi::dragEnterEvent(QDragEnterEvent *event)
+{
+	// Check if the source is a sibling ModItemUi to prevent
+	// ModItemUis from other ModDockUis to be sidechained
+	if (QAbstractSlider::parent() == event->source()->parent())
+	{
+		event->acceptProposedAction();
+	}
+}
+
+void ModItemUi::dragMoveEvent(QDragMoveEvent* event)
+{
+	event->accept();
+}
+
+void ModItemUi::dropEvent(QDropEvent* event)
+{
+	event->acceptProposedAction();
+
+	slaves_.push_back(event->source());
+
+	emit sidechainEvent(event->source(), true);
 }
 
 void ModItemUi::setBorderRatios(double left,

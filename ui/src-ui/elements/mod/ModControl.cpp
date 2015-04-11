@@ -15,7 +15,7 @@ ModControl::ModControl(const QString& title,
 : QWidget(parent),
   wrap_(wrap),
   dockSize_(dockSize),
-  title_(title.toUpper())
+  title_(title)
 {
     setupUi();
 }

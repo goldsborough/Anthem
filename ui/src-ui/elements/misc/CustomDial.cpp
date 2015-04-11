@@ -19,31 +19,43 @@ CustomDial::CustomDial(const QString& text,
 					   QWidget* parent,
                        double factor,
 					   int minimum,
-					   int maximum)
+					   int maximum,
+					   bool baseTwo)
 
-: QDial(parent), factor_(factor), text_(text),
-  arcRect_(new QRectF), valueRect_(new QRectF),
-  textRect_(new QRectF), arcColor_(new QColor),
+: QDial(parent),
+  valueShown_(false),
+  baseTwo_(baseTwo),
+  factor_(factor),
+  text_(text),
+  arcRect_(new QRectF),
+  valueRect_(new QRectF),
+  textRect_(new QRectF),
+  arcColor_(new QColor),
   arcPen_(new QPen)
 
 {
 	QDial::setRange(minimum, maximum);
 
-    QDial::setCursor(Qt::PointingHandCursor);
-
-    connect(this, &QDial::valueChanged,
-            this, &CustomDial::updateValue);
-
-	setMinimumSize(100,100);
-
-    setMaximumAngle(-360);
-
-	setStartAngle(270);
-
-    updateValue();
+	setupUi();
 }
 
 CustomDial::~CustomDial() = default;
+
+void CustomDial::setupUi()
+{
+	QDial::setCursor(Qt::PointingHandCursor);
+
+	connect(this, &QDial::valueChanged,
+			this, &CustomDial::updateValue);
+
+	setMinimumSize(100,100);
+
+	setMaximumAngle(-360);
+
+	setStartAngle(270);
+
+	updateValue();
+}
 
 void CustomDial::paintEvent(QPaintEvent*)
 {
@@ -97,20 +109,31 @@ void CustomDial::resizeEvent(QResizeEvent* event)
 					   arcWidth_ / 2,
 					   QDial::width() - arcWidth_,
 					   QDial::height() - arcWidth_);
+
+	if (valueShown_)
+	{
+		*valueRect_ = QRectF(textRect_->left(),
+							 textRect_->bottom(),
+							 textRect_->width(),
+							 textRect_->height());
+	}
 }
 
 void CustomDial::updateValue()
 {
-	double value = QDial::value();
+	int value = QDial::value();
 
 	// Get ratio between current value and maximum to calculate angle
-	double ratio = value / QDial::maximum();
+	double ratio = (static_cast<double>(value) - QDial::minimum()) /
+				   (QDial::maximum() - QDial::minimum());
 
 	angleSpan_ = maximumAngleSpan_ * ratio;
 
-    valueString_ = QString::number(value);
+	if (baseTwo_) value = 0x01 << value;
 
-    emit scaledValueChanged(value * factor_);
+	valueString_ = QString::number(value);
+
+	emit scaledValueChanged(value * factor_);
 }
 
 void CustomDial::setArcWidth(double px)
@@ -123,6 +146,26 @@ void CustomDial::setArcWidth(double px)
 					   QDial::height() - arcWidth_);
 
     arcPen_->setWidth(arcWidth_);
+}
+
+void CustomDial::setBaseTwo(bool state)
+{
+	baseTwo_ = state;
+}
+
+bool CustomDial::isBaseTwo() const
+{
+	return baseTwo_;
+}
+
+void CustomDial::setValueShown(bool state)
+{
+	valueShown_ = state;
+}
+
+bool CustomDial::valueIsShown() const
+{
+	return valueShown_;
 }
 
 double CustomDial::getScaledValue() const

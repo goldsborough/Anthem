@@ -5,9 +5,45 @@ AnthemUi {
   min-height: 680px;
   max-height: 680px; }
 
-QLabel {
-  qproperty-alignment: AlignCenter;
-  color: #F7FDFA; }
+AlgorithmUi {
+  background-color: transparent;
+  border: 2px solid #27272B;
+  outline: none; }
+  AlgorithmUi QLabel {
+    background-color: #DC4850;
+    color: #27272B;
+    font-size: 20px;
+    font-family: DIN;
+    border: 2px solid #27272B;
+    min-width: 24px;
+    max-width: 24px;
+    min-height: 30px;
+    max-height: 30px; }
+    AlgorithmUi QLabel:enabled {
+      background-color: #27272B;
+      color: #DC4850; }
+
+CustomComboBox QMenu {
+  margin: 0px; }
+  CustomComboBox QMenu::item {
+    padding: 40px; }
+
+CustomDial, ModDial {
+  background-color: transparent;
+  font-family: "DIN";
+  color: #27272B;
+  qproperty-arcColor: #27272B;
+  qproperty-arcWidth: 3; }
+
+CustomMessageBox QLabel {
+  color: #27272B;
+  font-family: "Proxima Nova";
+  font-size: 30px; }
+
+IconButton {
+  background-color: none;
+  outline: none;
+  border: none; }
 
 Menubar {
   min-height: 80px;
@@ -43,6 +79,75 @@ Menubar {
     min-width: 500px;
     max-width: 500px; }
 
+#MenuButton {
+  qproperty-iconWidth: 30;
+  qproperty-iconHeight: 30;
+  min-width: 35px;
+  max-width: 35px;
+  min-height: 35px;
+  max-height: 35px; }
+
+ModDial {
+  qproperty-displayedArcColor: #F7FDFA;
+  qproperty-arcPadding: 4;
+  font-size: 16px;
+  min-width: 120;
+  min-height: 120; }
+
+ModItemUi {
+  background-color: #DC4850;
+  qproperty-borderColor: #27272B;
+  qproperty-borderWidth: 4;
+  color: #27272B;
+  font-family: DIN;
+  font-size: 14px;
+  min-width: 35px;
+  min-height: 35px; }
+  ModItemUi QMenu::item {
+    padding-right: 30px; }
+
+MasterPage {
+  background-color: #DC4850; }
+  MasterPage ModDial {
+    font-size: 16px; }
+
+OperatorPage {
+  background-color: #DC4850; }
+  OperatorPage QTabBar::tab {
+    min-width: 250px;
+    min-height: 40px;
+    padding-top: 10px;
+    font-size: 30px;
+    margin: 0px; }
+
+OperatorUi, PanUi, MacroUi, #VolumeUi {
+  border: 2px solid #27272B; }
+  OperatorUi QPushButton, PanUi QPushButton, MacroUi QPushButton, #VolumeUi QPushButton {
+    font-size: 20px;
+    border-top: 0px solid #27272B;
+    border-bottom: 2px solid #27272B;
+    border-right: 1px solid #27272B;
+    border-left: 1px solid #27272B;
+    min-width: 40px; }
+    OperatorUi QPushButton:open, PanUi QPushButton:open, MacroUi QPushButton:open, #VolumeUi QPushButton:open {
+      background-color: #27272B;
+      color: #DC4850; }
+
+PanUi, MacroUi, #VolumeUi {
+  max-height: 215px;
+  min-height: 215px;
+  min-width: 145px;
+  max-width: 145px; }
+
+#Record {
+  font-size: 30px; }
+
+#Stop {
+  font-size: 80px; }
+
+#Save {
+  font-size: 35px; }
+
 #ProjectLabel {
   color: #27272B;
   font-family: DIN;
@@ -60,13 +165,14 @@ Menubar {
 #PreviousButton {
   padding-right: 5px; }
 
-#MenuButton {
-  qproperty-iconWidth: 30;
-  qproperty-iconHeight: 30;
-  min-width: 35px;
-  max-width: 35px;
-  min-height: 35px;
-  max-height: 35px; }
+PopupLine QPushButton {
+  border: none; }
+  PopupLine QPushButton:hover {
+    background: none; }
+
+QLabel {
+  qproperty-alignment: AlignCenter;
+  color: #F7FDFA; }
 
 QMenu {
   background-color: #DC4850;
@@ -78,46 +184,21 @@ QMenu {
     QMenu::item::selected {
       background-color: #27272B;
       color: #DC4850; }
-
-CustomComboBox QMenu {
-  margin: 0px; }
-  CustomComboBox QMenu::item {
-    padding: 40px; }
+    QMenu::item::checked {
+      background-color: #27272B;
+      color: #DC4850;
+      padding-left: 30px; }
 
 QDialog, SettingsDialog {
   background-color: #DC4850; }
   QDialog QPushButton, SettingsDialog QPushButton {
-    background-color: transparent;
-    color: #27272B;
     font-size: 18px;
     font-family: "Proxima Nova";
-    qproperty-flat: true;
-    outline: none;
     border: 1px solid #27272B;
     min-height: 50px; }
     QDialog QPushButton:hover, SettingsDialog QPushButton:hover {
       background-color: #27272B;
       color: #DC4850; }
-
-SettingsDialog QLabel {
-  color: #27272B;
-  font-family: "Proxima Nova";
-  font-size: 20px; }
-
-CustomMessageBox QLabel {
-  color: #27272B;
-  font-family: "Proxima Nova";
-  font-size: 30px; }
-
-PopupLine QPushButton {
-  border: none; }
-  PopupLine QPushButton:hover {
-    background: none; }
-
-IconButton {
-  background-color: none;
-  outline: none;
-  border: none; }
 
 QLineEdit {
   font-size: 30px;
@@ -142,6 +223,14 @@ QComboBox {
   QComboBox QListView {
     background: #DC4850;
     color: #27272B; }
+
+QPushButton {
+  outline: none;
+  background-color: transparent;
+  border: none;
+  color: #27272B;
+  font-family: "DIN";
+  qproperty-flat: true; }
 
 QTabWidget {
   min-width: 1020px; }
@@ -172,89 +261,36 @@ QTabWidget {
       background-color: #DC4850;
       color: #27272B; }
 
-OperatorPage {
-  background-color: #DC4850; }
-  OperatorPage QTabBar::tab {
-    min-width: 250px;
-    min-height: 40px;
-    padding-top: 10px;
+RecordUi {
+  border: 2px solid #27272B; }
+  RecordUi QPushButton {
     font-size: 30px;
-    margin: 0px; }
-
-OperatorUi, PanUi {
-  border: 2px solid #27272B; }
-  OperatorUi QPushButton, PanUi QPushButton {
-    background-color: transparent;
-    color: #27272B;
-    font-size: 20px;
-    font-family: DIN;
-    qproperty-flat: true;
-    outline: none;
-    border-top: 0px solid #27272B;
-    border-bottom: 2px solid #27272B;
-    border-right: 1px solid #27272B;
-    border-left: 1px solid #27272B;
-    min-width: 40px; }
-    OperatorUi QPushButton:open, PanUi QPushButton:open {
+    min-height: 100px;
+    max-height: 100px; }
+    RecordUi QPushButton:open {
       background-color: #27272B;
       color: #DC4850; }
+  RecordUi QLineEdit {
+    padding-left: 20px;
+    padding-right: 20px;
+    font-size: 24px;
+    border: none;
+    qproperty-frame: false;
+    background-color: transparent;
+    color: #27272B; }
 
-ModDial {
-  background-color: transparent;
-  font-size: 14px;
-  font-family: DIN;
-  color: #27272B;
-  qproperty-arcColor: #27272B;
-  qproperty-arcWidth: 3;
-  qproperty-arcPadding: 4;
+#SecondaryOperatorUi CustomDial, #SecondaryOperatorUi ModDial {
+  font-size: 16px;
   qproperty-valueShown: false;
-  qproperty-displayedArcColor: #F7FDFA;
-  min-width: 120;
-  min-height: 120; }
-
-ModItemUi {
-  background-color: #DC4850;
-  qproperty-borderColor: #27272B;
-  qproperty-borderWidth: 4;
-  color: #27272B;
-  font-family: DIN;
-  font-size: 14px;
-  min-width: 35px;
-  min-height: 35px; }
-  ModItemUi QMenu::item {
-    padding-right: 30px; }
-
-AlgorithmUi {
-  background-color: transparent;
-  border: 2px solid #27272B;
-  outline: none; }
-  AlgorithmUi QLabel {
-    background-color: #DC4850;
-    color: #27272B;
-    font-size: 20px;
-    font-family: DIN;
-    border: 2px solid #27272B;
-    min-width: 24px;
-    max-width: 24px;
-    min-height: 30px;
-    max-height: 30px; }
-    AlgorithmUi QLabel:enabled {
-      background-color: #27272B;
-      color: #DC4850; }
-
-MasterPage {
-  background-color: #DC4850; }
-  MasterPage ModDial {
-    font-size: 15px; }
-
-#VolumeUi {
+  min-width: 16px;
+  min-height: 16px; }
+#SecondaryOperatorUi QPushButton {
+  font-size: 16px;
   border: 2px solid #27272B; }
-  #VolumeUi QMenu {
-    background-color: transparent;
-    border: 0px solid #DC4850; }
-  #VolumeUi QMenu::item {
-    border: 0 px solid #DC4850;
-    outline: none;
-    qproperty-flat: true; }
+
+SettingsDialog QLabel {
+  color: #27272B;
+  font-family: "Proxima Nova";
+  font-size: 20px; }
 
 /*# sourceMappingURL=style.css.map */
