@@ -75,6 +75,14 @@ public:
     
     void startRecording();
     
+    /*********************************************************************************************//*!
+    *
+    *  @brief       Pauses audio sample storage for wavefile output. Re-start, save or stop after.
+    *
+    *************************************************************************************************/
+    
+    void pauseRecording();
+    
     /************************************************************************************************//*!
     *
     *  @brief       Stops recording and flushes the samples stored so far by the wavefile object.

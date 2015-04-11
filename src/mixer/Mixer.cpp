@@ -147,6 +147,11 @@ void Mixer::startRecording()
     recording_ = true;
 }
 
+void Mixer::pauseRecording()
+{
+    recording_ = false;
+}
+
 void Mixer::stopRecording()
 {
     recording_ = false;

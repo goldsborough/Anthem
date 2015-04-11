@@ -235,6 +235,18 @@ public:
     
     /*********************************************************************************************//*!
     *
+    *  @brief       Removes all sidechain connections of a certain master.
+    *
+    *  @param       master The index of the master.
+    *
+    *  @throws      std::out_of_range If the master index is out of bounds.
+    *
+    *************************************************************************************************/
+    
+    void clearSlaves(index_t master);
+    
+    /*********************************************************************************************//*!
+    *
     *  @brief       Returns true if there is a sidechain connection between master and slave.
     *
     *  @param       master The index of the master.
