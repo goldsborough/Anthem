@@ -64,6 +64,10 @@ public:
 
 signals:
 
+	void sidechainEvent(QObject* slave, bool enable) const;
+
+	void clearSlavesEvent() const;
+
     void depthChanged(double value) const;
 
 	void modUnitInserted(const ModUnitUi& mod) const;
@@ -84,6 +88,13 @@ private:
 
     virtual void paintEvent(QPaintEvent*) override;
 
+	virtual void dragEnterEvent(QDragEnterEvent* event) override;
+
+	virtual void dragMoveEvent(QDragMoveEvent* event) override;
+
+	virtual void dropEvent(QDropEvent* event) override;
+
+
 	void setupUi();
 
 	void showContextMenu() const;
@@ -98,6 +109,8 @@ private:
 	QVector<QSharedPointer<QLineF>> borders_;
 
     QVector<double> ratios_;
+
+	QVector<QObject*> slaves_;
 
     double borderWidth_;
 

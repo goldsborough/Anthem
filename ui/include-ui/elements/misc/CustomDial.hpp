@@ -17,6 +17,8 @@ class CustomDial : public QDial
 
 	Q_PROPERTY(double arcWidth READ getArcWidth WRITE setArcWidth)
 
+	Q_PROPERTY(bool valueShown READ valueIsShown WRITE setValueShown)
+
 public:
 
     explicit CustomDial(QWidget* parent = nullptr);
@@ -25,7 +27,8 @@ public:
 			   QWidget * parent = nullptr,
 			   double factor = 0.001,
 			   int minimum = 0,
-			   int maximum = 999);
+			   int maximum = 999,
+			   bool setBaseTwo = false);
 
 
     virtual ~CustomDial();
@@ -61,6 +64,16 @@ public:
     virtual double getFactor() const;
 
 
+	virtual void setBaseTwo(bool state);
+
+	virtual bool isBaseTwo() const;
+
+
+	virtual void setValueShown(bool state);
+
+	virtual bool valueIsShown() const;
+
+
 	virtual double getScaledValue() const;
 
 signals:
@@ -77,6 +90,14 @@ protected:
 
 	virtual void resizeEvent(QResizeEvent* event) override;
 
+	void setupUi();
+
+
+	bool valueShown_;
+
+	bool baseTwo_;
+
+
 	double maximumAngleSpan_;
 
 	double endAngle_;
@@ -89,9 +110,11 @@ protected:
 
     double factor_;
 
+
     QString valueString_;
 
     QString text_;
+
 
     QSharedPointer<QRectF> arcRect_;
 

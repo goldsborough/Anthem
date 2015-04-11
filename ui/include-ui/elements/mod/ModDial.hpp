@@ -17,8 +17,6 @@ class ModDial : public CustomDial
 
 	Q_PROPERTY(double arcPadding READ getArcPadding WRITE setArcPadding)
 
-	Q_PROPERTY(bool valueShown READ valueIsShown WRITE setValueShown)
-
 	Q_PROPERTY(QColor displayedArcColor READ getDisplayedArcColor WRITE setDisplayedArcColor)
 
 public:
@@ -58,7 +56,7 @@ public:
 	ModUnitUi getModUnitUiFromModArc(index_t index);
 
 
-	index_t getModArcIndexFromModUnitUiText(const QString& text) const;
+	index_t getModArcIndexFromModUnitUiId(const QString& id) const;
 
 	index_t activeModArcs() const;
 
@@ -83,11 +81,6 @@ public:
 	void setArcPadding(double padding);
 
 	double getArcPadding() const;
-
-
-	void setValueShown(bool state);
-
-	bool valueIsShown() const;
 
 
 	void setDisplayedArcColor(const QColor& color);
@@ -133,8 +126,6 @@ private:
 
 
 	index_t activeModArcs_;
-
-	bool valueShown_;
 
 	double arcPadding_;
 

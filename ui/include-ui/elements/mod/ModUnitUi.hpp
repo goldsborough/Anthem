@@ -5,22 +5,21 @@
 
 class ModUnit;
 
-// Transports information
 struct ModUnitUi
-{
+{	
 	enum class Range { NONE, LINEAR, PERIODIC };
 
     ModUnitUi(ModUnit* mod = nullptr,
-			  const QString& textString = QString(),
+			  const QString& text = QString(),
 			  Range valueRange = Range::NONE)
 	: modUnit(mod),
-	  text(textString),
+	  id(text),
 	  range(valueRange)
     { }
 
 	ModUnit* modUnit;
 
-	QString text;
+	QString id;
 
 	Range range;
 };
