@@ -83,9 +83,12 @@ void CustomDial::paintEvent(QPaintEvent*)
 
     painter.setPen(textPen);
 
-    painter.drawText(*textRect_, Qt::AlignHCenter | Qt::AlignBottom, text_);
+	painter.drawText(*textRect_, Qt::AlignCenter, text_);
 
-    painter.drawText(*valueRect_, Qt::AlignCenter, valueString_);
+	if (valueShown_)
+	{
+		painter.drawText(*valueRect_, Qt::AlignCenter, valueString_);
+	}
 
     painter.setPen(*arcPen_);
 
@@ -97,25 +100,24 @@ void CustomDial::resizeEvent(QResizeEvent* event)
 {
 	QDial::setMinimumSize(event->size());
 
-	double width = QDial::width() - 10;
+	double width = QDial::width() - (2 * arcWidth_);
 
-    double height = width / 2;
-
-	*textRect_ = QRectF(arcWidth_, arcWidth_, width, height);
-
-	*valueRect_ = QRectF(arcWidth_, height, width, height);
+	double height = (valueShown_) ? (width / 2) : width;
 
 	*arcRect_ = QRectF(arcWidth_ / 2,
 					   arcWidth_ / 2,
-					   QDial::width() - arcWidth_,
-					   QDial::height() - arcWidth_);
+					   width, width);
+
+	*textRect_ = QRectF(arcWidth_,
+						arcWidth_,
+						width,
+						height);
 
 	if (valueShown_)
 	{
 		*valueRect_ = QRectF(textRect_->left(),
 							 textRect_->bottom(),
-							 textRect_->width(),
-							 textRect_->height());
+							 width, height);
 	}
 }
 
@@ -161,6 +163,8 @@ bool CustomDial::isBaseTwo() const
 void CustomDial::setValueShown(bool state)
 {
 	valueShown_ = state;
+
+	QDial::update();
 }
 
 bool CustomDial::valueIsShown() const

@@ -2,17 +2,20 @@
 #include "ModControl.hpp"
 #include "CustomDial.hpp"
 #include "ModDial.hpp"
+#include "WavetableUi.hpp"
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QStyleOption>
 #include <QPainter>
 #include <QPushButton>
+#include <QListWidget>
+#include <cmath>
 
 #include <QDebug>
 
 OperatorUi::OperatorUi(QWidget* parent)
-    : QWidget(parent)
+: QWidget(parent)
 {
     setupUi();
 }
@@ -21,6 +24,45 @@ void OperatorUi::setupUi()
 {
 	static char title = 'A';
 
+	/* ==================== Top Bar ==================== */
+
+	QHBoxLayout* top = new QHBoxLayout;
+
+	top->setMargin(0);
+
+	top->setSpacing(0);
+
+	top->setContentsMargins(0,0,0,0);
+
+
+	QPushButton* settings = new QPushButton("Sine", this);
+
+	settings->setSizePolicy(QSizePolicy::Expanding,
+							QSizePolicy::Maximum);
+
+	settings->setCursor(Qt::PointingHandCursor);
+
+	top->addWidget(settings);
+
+
+	QPushButton* activityButton = new QPushButton(QString(title++), this);
+
+	activityButton->setSizePolicy(QSizePolicy::Maximum,
+								  QSizePolicy::Maximum);
+
+	activityButton->setCheckable(true);
+
+	activityButton->setChecked(true);
+
+	activityButton->setCursor(Qt::PointingHandCursor);
+
+	connect(activityButton, &QPushButton::toggled,
+			[=] (bool) { });
+
+	top->addWidget(activityButton);
+
+
+	/* ==================== Primary Widget ==================== */
 
 	QWidget* primary = new QWidget(this);
 
@@ -48,12 +90,11 @@ void OperatorUi::setupUi()
 	primaryLayout->addWidget(ratio);
 
 
+	/* ==================== Secondary Widget ==================== */
 
 	QWidget* secondary = new QWidget(this);
 
 	secondary->setObjectName("SecondaryOperatorUi");
-
-	secondary->hide();
 
 	QGridLayout* secondaryLayout = new QGridLayout(secondary);
 /*
@@ -64,97 +105,59 @@ void OperatorUi::setupUi()
 	secondaryLayout->setContentsMargins(0,0,0,0);*/
 
 
-	CustomDial* phase = new CustomDial("PHASE", secondary, 1, 0, 359);
+	WavetableUi* wavetable = new WavetableUi(this);
 
-	phase->setSizePolicy(QSizePolicy::Fixed,
-						 QSizePolicy::Fixed);
+	wavetable->setSizePolicy(QSizePolicy::Expanding,
+							 QSizePolicy::Expanding);
 
-	secondaryLayout->addWidget(phase, 0, 0);
+	secondaryLayout->addWidget(wavetable);
 
-	CustomDial* partials = new CustomDial("PARTIALS", secondary, 1, 1, 6, true);
+/*
+	QListWidget* browser = new QListWidget(secondary);
 
-	partials->setSizePolicy(QSizePolicy::Fixed,
-							QSizePolicy::Fixed);
+	browser->setSizePolicy(QSizePolicy::Expanding,
+						   QSizePolicy::Expanding);
 
-	secondaryLayout->addWidget(partials, 0, 1);
+	browser->setSizeAdjustPolicy(QListWidget::AdjustToContents);
 
+	browser->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-	QPushButton* sigma = new QPushButton("SIGMA", this);
+	// Removes focus rectangle
+	browser->setAttribute(Qt::WA_MacShowFocusRect, false);
 
-	sigma->setCheckable(true);
+	const QList<QString> waves = {"Sine",
+								  "Ramp",
+								  "Square",
+								  "Sawtooth",
+								  "Triangle"};
 
-	sigma->setCursor(Qt::PointingHandCursor);
+	for (const auto& wave : waves)
+	{
+		for (int bits = 2; bits <= 64; bits *= 2)
+		{
+			QListWidgetItem* item = new QListWidgetItem(wave + QString::number(bits));
 
-	connect(sigma, &QPushButton::clicked,
-			[=] (bool checked) { qDebug() << checked; });
+			item->setTextAlignment(Qt::AlignCenter);
 
-	secondaryLayout->addWidget(sigma, 1, 0);
+			browser->addItem(item);
+		}
+	}
 
+	browser->setCursor(Qt::PointingHandCursor);
 
-	QPushButton* custom = new QPushButton("CUSTOM", this);
+	browser->setCurrentRow(0);
 
-	custom->setCheckable(true);
+	connect(browser, &QListWidget::currentTextChanged,
+			[=] (const QString& text) { settings->setText(text); });
 
-	custom->setCursor(Qt::PointingHandCursor);
-
-	connect(custom , &QPushButton::clicked,
-			[=] (bool checked) { qDebug() << checked; });
-
-	secondaryLayout->addWidget(custom, 1, 1);
-
-
-	QHBoxLayout* top = new QHBoxLayout;
-
-	top->setMargin(0);
-
-	top->setSpacing(0);
-
-	top->setContentsMargins(0,0,0,0);
-
-
-	QPushButton* settings = new QPushButton("Sine Wave", this);
-
-	settings->setCursor(Qt::PointingHandCursor);
-
-	settings->setSizePolicy(QSizePolicy::Expanding,
-							QSizePolicy::Expanding);
-
-	connect(settings, &QPushButton::clicked,
-			[=] (bool)
-			{
-				if (primary->isHidden())
-				{
-					secondary->hide();
-					primary->show();
-				}
-
-				else
-				{
-					primary->hide();
-					secondary->show();
-				}
-			});
+	secondaryLayout->addWidget(browser, 1, 2);*/
 
 
-	top->addWidget(settings);
+	/* ==================== OperatorUi Settings ==================== */
 
 
-	QPushButton* activityButton = new QPushButton(QString(title++), this);
-
-	activityButton->setCheckable(true);
-
-	activityButton->setChecked(true);
-
-	activityButton->setCursor(Qt::PointingHandCursor);
-
-	activityButton->setSizePolicy(QSizePolicy::Minimum,
-								  QSizePolicy::Minimum);
-
-	connect(activityButton, &QPushButton::toggled,
-			[=] (bool) { });
-
-	top->addWidget(activityButton);
-
+	QWidget::setSizePolicy(QSizePolicy::Maximum,
+						   QSizePolicy::Maximum);
 
 	QVBoxLayout* layout = new QVBoxLayout(this);
 
@@ -170,6 +173,24 @@ void OperatorUi::setupUi()
 	layout->addWidget(primary);
 
 	layout->addWidget(secondary);
+
+	secondary->hide();
+
+	connect(settings, &QPushButton::clicked,
+			[=] (bool)
+	{
+		if (primary->isHidden())
+		{
+			secondary->hide();
+			primary->show();
+		}
+
+		else
+		{
+			primary->hide();
+			secondary->show();
+		}
+	});
 }
 
 void OperatorUi::paintEvent(QPaintEvent*)

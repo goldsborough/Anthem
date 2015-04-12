@@ -242,7 +242,7 @@ void ModDial::setModUnitUiForModArc(index_t index, const ModUnitUi& mod)
 
 	updateContents_();
 
-	QDial::repaint();
+	QDial::update();
 }
 
 void ModDial::removeModUnitUiForModArc(index_t index)
@@ -257,7 +257,7 @@ void ModDial::removeModUnitUiForModArc(index_t index)
 
 	showControl();
 
-	QDial::repaint();
+	QDial::update();
 }
 
 ModUnitUi ModDial::getModUnitUiFromModArc(index_t index)
@@ -302,10 +302,17 @@ void ModDial::updateContents_()
 	// - arcWidth to have the rect really "inside"
 	double heightHalf = sin45 * radius - arcWidth_;
 
+	// Divide by two to lower the opposite side
+	// for the following calculation of widthHalf
+	// because we want to center the text
 	if (! valueShown_) heightHalf /= 2;
 
+	// Do some trigonometry to get the adjacent side
 	double widthHalf = sqrt((radius*radius) - (heightHalf*heightHalf));
 
+	// Need the full radius here, including
+	// all modArcs (other radius is relative
+	// to the control arc's rect)
 	double dialRadius = QDial::width() / 2;
 
 	*contentsRect_ = QRectF(dialRadius - widthHalf,
@@ -393,7 +400,7 @@ void ModDial::setModArcValue(index_t index, double value)
 
 	mods_[index].angleSpan = maximumAngleSpan_ * ratio;
 
-	QDial::repaint();
+	QDial::update();
 }
 
 void ModDial::resetModArcValues()
@@ -423,7 +430,7 @@ void ModDial::showModArc(index_t index)
 
 		arcPen_->setColor(*arcColor_);
 
-		QDial::repaint();
+		QDial::update();
 	}
 }
 
@@ -440,7 +447,7 @@ void ModDial::showControl()
 	{
 		displayedModArc_ = nullptr;
 
-		QDial::repaint();
+		QDial::update();
 	}
 }
 

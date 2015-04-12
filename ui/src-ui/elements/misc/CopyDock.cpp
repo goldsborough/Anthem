@@ -6,14 +6,21 @@ CopyDock::CopyDock(const QString& text,
                    QWidget* parent)
 : QLabel(text, parent)
 {
-    QLabel::setObjectName("CopyDock");
+	setupUi();
+}
 
-    QLabel::setEnabled(false);
+void CopyDock::setupUi()
+{
+	QLabel::setObjectName("CopyDock");
 
-    QLabel::setContextMenuPolicy(Qt::CustomContextMenu);
+	QLabel::setCursor(Qt::PointingHandCursor);
 
-    connect(this, &QLabel::customContextMenuRequested,
-            this, &CopyDock::showContextMenu);
+	QLabel::setEnabled(false);
+
+	QLabel::setContextMenuPolicy(Qt::CustomContextMenu);
+
+	connect(this, &QLabel::customContextMenuRequested,
+			this, &CopyDock::showContextMenu);
 }
 
 void CopyDock::showContextMenu(const QPoint& pos)

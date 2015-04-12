@@ -33,6 +33,8 @@ private slots:
 
 private:
 
+   void setupUi();
+
    ModUnit* mod_;
 };
 

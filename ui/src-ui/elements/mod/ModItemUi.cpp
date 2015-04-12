@@ -49,8 +49,6 @@ void ModItemUi::setupUi()
 	QAbstractSlider::setSizePolicy(QSizePolicy::Fixed,
 								   QSizePolicy::Fixed);
 
-	QAbstractSlider::setCursor(Qt::PointingHandCursor);
-
 	// Display current value as tooltip
 	connect(this, &QAbstractSlider::valueChanged,
 			[=] (int value) { QAbstractSlider::setToolTip(QString::number(value)); });
@@ -174,7 +172,7 @@ void ModItemUi::paintEvent(QPaintEvent*)
 
     painter.drawText(QAbstractSlider::rect(),
                      Qt::AlignCenter,
-					 mod_ ? mod_->id : "-");
+					 mod_ ? mod_->id : "");
 }
 
 void ModItemUi::dragEnterEvent(QDragEnterEvent *event)
@@ -273,6 +271,8 @@ void ModItemUi::insertModUnitUi(const ModUnitUi& mod)
 	QAbstractSlider::setMouseTracking(true);
 
 	QAbstractSlider::setToolTip("0");
+
+	QAbstractSlider::setCursor(Qt::PointingHandCursor);
 }
 
 ModUnitUi ModItemUi::getModUnitUi() const
@@ -294,6 +294,8 @@ void ModItemUi::removeModUnitUi()
 
 		// Reset the tool tip
 		QAbstractSlider::setToolTip(QString());
+
+		QAbstractSlider::setCursor(Qt::ArrowCursor);
 	}
 }
 

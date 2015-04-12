@@ -9,18 +9,19 @@ $windowWidth: 1020px
 $windowHeight: 680px
 
 AnthemUi
-    background-color: $black
+    background: $black
     min-width: $windowWidth
     max-width: $windowWidth
     min-height: $windowHeight
     max-height: $windowHeight
+    font-family: "DIN"
 
 AlgorithmUi
-    background-color: transparent
+    background: transparent
     border: 2px solid $black
     outline: none
     & QLabel
-        background-color: $red
+        background: $red
         color: $black
         font-size: 20px
         font-family: DIN
@@ -30,7 +31,7 @@ AlgorithmUi
         min-height: 30px
         max-height: 30px
         &:enabled
-            background-color: $black
+            background: $black
             color: $red
 
 CustomComboBox QMenu
@@ -39,7 +40,7 @@ CustomComboBox QMenu
         padding: 40px
 
 CustomDial
-    background-color: transparent
+    background: transparent
     font-family: "DIN"
     color: $black
     qproperty-arcColor: $black
@@ -52,7 +53,7 @@ CustomMessageBox
         font-size: 30px
 
 IconButton
-    background-color: none
+    background: none
     outline: none
     border: none
 
@@ -68,12 +69,12 @@ Menubar
         min-height: $fitted
         max-width: $fitted
         max-height: $fitted
-        background-color: $black
+        background: $black
         font-size: 30px
         font-family: DIN
         color: $red
         &:enabled
-            background-color: $red
+            background: $red
             color: $black
     & IconButton
         border: $borderWidth solid $red
@@ -89,7 +90,7 @@ Menubar
         max-width: $menuHeight
         max-height: $menuHeight
     Projectbar
-        background-color: $red
+        background: $red
         min-width: 500px
         max-width: 500px
 
@@ -110,7 +111,7 @@ ModDial
     min-height: 120
 
 ModItemUi
-    background-color: $red
+    background: $red
     qproperty-borderColor: $black
     qproperty-borderWidth: 4
     color: $black
@@ -122,21 +123,22 @@ ModItemUi
         padding-right: 30px
 
 MasterPage
-    background-color: $red
+    background: $red
     & ModDial
         font-size: 16px
 
 OperatorPage
-    background-color: $red
+    background: $red
     & QTabBar::tab
         min-width: 250px
         min-height: 40px
         padding-top: 10px
         font-size: 30px
-        margin: 0px
 
 OperatorUi
     border: 2px solid $black
+    min-width: 480px
+    min-height: 220px
     & QPushButton
         font-size: 20px
         border-top: 0px solid $black
@@ -144,8 +146,9 @@ OperatorUi
         border-right: 1px solid $black
         border-left: 1px solid $black
         min-width: 40px
+        min-height: 32px
         &:open
-            background-color: $black
+            background: $black
             color: $red
 
 PanUi, MacroUi, #VolumeUi
@@ -191,40 +194,54 @@ QLabel
     color: $white
 
 QMenu
-    background-color: $red
+    background: $red
     margin: 15px
     &::item
         color: $black
         padding: 15px
         font-size: 16px
         &::selected
-            background-color: $black
+            background: $black
             color: $red
         &::checked
-            background-color: $black
+            background: $black
             color: $red
             padding-left: 30px
 
 QDialog
-    background-color: $red
+    background: $red
     & QPushButton
         font-size: 18px
         font-family: "Proxima Nova"
         border: 1px solid $black
         min-height: 50px
         &:hover
-            background-color: $black
+            background: $black
             color: $red
 
 QLineEdit
     font-size: 30px
     border: none
     qproperty-frame: false
-    background-color: $red
+    background: $red
     color: $black
 
+QListView
+    background: transparent
+    color: $black
+    font-size: 16px
+    border: 2px solid $black
+
+    &::item
+        padding: 10px
+
+        &::selected
+            padding: 0px
+            background: $black
+            color: $red
+
 QComboBox
-    background-color: transparent
+    background: transparent
     color: $black
     font-size: 20px
     font-family: "Proxima Nova"
@@ -234,7 +251,7 @@ QComboBox
     &::drop-down
         border: none
     &:hover
-        background-color: $black
+        background: $black
         color: $red
     & QListView
         background: $red
@@ -242,23 +259,34 @@ QComboBox
 
 QPushButton
     outline: none
-    background-color: transparent
+    background: transparent
     border: none
     color: $black
     font-family: "DIN"
     qproperty-flat: true
 
+QScrollBar
+    background: transparent
+    border-left: 2px solid $black
+    width: 10px
+    &::handle
+        background: $black
+
+    &:add-line, &:sub-line
+        border: none
+        background: none
+
 QTabWidget
     min-width: $windowWidth
     &::pane
-        background-color: transparent
+        background: transparent
         margin: 0px
         padding: 0px
         max-height: 0px
         max-width: 0px
         border-width: 0px
     & QTabBar::tab
-        background-color: $black
+        background: $black
         font-size: 30px
         color: $white
         font-family: "DIN Light"
@@ -274,7 +302,7 @@ QTabWidget
         text-align: center
         qproperty-alignment: AlignCenter
         &:selected, &:hover
-            background-color: $red
+            background: $red
             color: $black
 
 RecordUi
@@ -284,7 +312,7 @@ RecordUi
         min-height: 100px
         max-height: 100px
         &:open
-            background-color: $black
+            background: $black
             color: $red
     & QLineEdit
         padding-left: 20px
@@ -292,15 +320,14 @@ RecordUi
         font-size: 24px
         border: none
         qproperty-frame: false
-        background-color: transparent
+        background: transparent
         color: $black
 
 #SecondaryOperatorUi
     & CustomDial
         font-size: 16px
-        qproperty-valueShown: false
-        min-width: 16px
-        min-height: 16px
+        min-width: 100px
+        max-width: 100px
     & QPushButton
         font-size: 16px
         //min-width: 100px
@@ -312,3 +339,7 @@ SettingsDialog
         color: $black
         font-family: "Proxima Nova"
         font-size: 20px
+
+WavetableUi
+    color: $black
+    background-color: $red
