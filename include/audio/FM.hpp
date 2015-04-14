@@ -14,6 +14,7 @@
 #define __Anthem__FM__
 
 class Operator;
+enum class Mode;
 
 /*************************************************************************************************//*!
 *
@@ -66,6 +67,8 @@ public:
     *
     *  @brief       Sets the currently used FM algorithm.
     *
+    *  @details     Sets the FM algorithm by setting the appropriate modes for the individual operators.
+    *
     *  @param       alg The algorithm number (0-11).
     *
     *  @throws      std::invalid_argument if the algorithm number is invalid.
@@ -82,11 +85,8 @@ private:
     /*! Returns an Operator's tick if active, else 0. */
     double tickIfActive_(index_t index);
     
-    /*! Sets the Operators' modes. @see setAlgorithm() */
-    void setOperatorModes_(bool a, bool b, bool c, bool d);
-    
     /*! The four Operators used for synthesis. */
-    Operator* ops_ [4];
+    Operator* operators_ [4];
     
     /*! Frequency modulates an Operator with a value. */
     double modulate_(index_t carrier, double value);

@@ -3,6 +3,7 @@
 #include "CustomDial.hpp"
 #include "ModDial.hpp"
 #include "WavetableUi.hpp"
+#include "BrowserUi.hpp"
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -10,6 +11,7 @@
 #include <QPainter>
 #include <QPushButton>
 #include <QListWidget>
+#include <QTabWidget>
 #include <cmath>
 
 #include <QDebug>
@@ -92,65 +94,41 @@ void OperatorUi::setupUi()
 
 	/* ==================== Secondary Widget ==================== */
 
-	QWidget* secondary = new QWidget(this);
+	QTabWidget* secondary = new QTabWidget(this);
 
-	secondary->setObjectName("SecondaryOperatorUi");
+	secondary->setMovable(true);
 
-	QGridLayout* secondaryLayout = new QGridLayout(secondary);
-/*
-	secondaryLayout->setMargin(0);
+	secondary->tabBar()->setCursor(Qt::PointingHandCursor);
 
-	secondaryLayout->setSpacing(0);
-
-	secondaryLayout->setContentsMargins(0,0,0,0);*/
+	secondary->setTabPosition(QTabWidget::South);
 
 
-	WavetableUi* wavetable = new WavetableUi(this);
+	QWidget* waves = new QWidget(secondary);
 
-	wavetable->setSizePolicy(QSizePolicy::Expanding,
-							 QSizePolicy::Expanding);
+	waves->setObjectName("Waves");
 
-	secondaryLayout->addWidget(wavetable);
+	secondary->addTab(waves, "Waves");
 
-/*
-	QListWidget* browser = new QListWidget(secondary);
+	QHBoxLayout* waveLayout = new QHBoxLayout(waves);
 
-	browser->setSizePolicy(QSizePolicy::Expanding,
-						   QSizePolicy::Expanding);
+	waveLayout->setMargin(10);
 
-	browser->setSizeAdjustPolicy(QListWidget::AdjustToContents);
+	waveLayout->setSpacing(0);
 
-	browser->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-	// Removes focus rectangle
-	browser->setAttribute(Qt::WA_MacShowFocusRect, false);
+	BrowserUi* browser = new BrowserUi(this);
 
-	const QList<QString> waves = {"Sine",
-								  "Ramp",
-								  "Square",
-								  "Sawtooth",
-								  "Triangle"};
+	waveLayout->addWidget(browser);
 
-	for (const auto& wave : waves)
-	{
-		for (int bits = 2; bits <= 64; bits *= 2)
-		{
-			QListWidgetItem* item = new QListWidgetItem(wave + QString::number(bits));
 
-			item->setTextAlignment(Qt::AlignCenter);
+	WavetableUi* wavetable = new WavetableUi(waves);
 
-			browser->addItem(item);
-		}
-	}
+	waveLayout->addWidget(wavetable);
 
-	browser->setCursor(Qt::PointingHandCursor);
 
-	browser->setCurrentRow(0);
+	QWidget* custom = new QWidget(this);
 
-	connect(browser, &QListWidget::currentTextChanged,
-			[=] (const QString& text) { settings->setText(text); });
-
-	secondaryLayout->addWidget(browser, 1, 2);*/
+	secondary->addTab(custom, "Custom");
 
 
 	/* ==================== OperatorUi Settings ==================== */

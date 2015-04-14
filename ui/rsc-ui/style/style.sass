@@ -34,6 +34,19 @@ AlgorithmUi
             background: $black
             color: $red
 
+BrowserUi
+    min-width: 300px
+    max-width: 300px
+    & QLineEdit  
+        border-top: 2px solid $black
+        border-left: 2px solid $black
+        border-right: 2px solid $black
+        font-size: 16px
+        qproperty-alignment: AlignCenter
+        padding-right: 10px
+        padding-left: 10px
+        min-height: 30px
+
 CustomComboBox QMenu
     margin: 0px
     &::item
@@ -143,13 +156,23 @@ OperatorUi
         font-size: 20px
         border-top: 0px solid $black
         border-bottom: 2px solid $black
-        border-right: 1px solid $black
+        border-right: 1px solid $black 
         border-left: 1px solid $black
         min-width: 40px
         min-height: 32px
         &:open
             background: $black
+            color: $white
+        &::hover
+            background: $black
             color: $red
+
+    & QTabWidget QTabBar::tab
+        font-size: 20px
+        min-width: 120px
+        min-height: 30px
+        border-bottom: 2px solid $black
+
 
 PanUi, MacroUi, #VolumeUi
     @extend OperatorUi
@@ -223,22 +246,8 @@ QLineEdit
     font-size: 30px
     border: none
     qproperty-frame: false
-    background: $red
-    color: $black
-
-QListView
     background: transparent
     color: $black
-    font-size: 16px
-    border: 2px solid $black
-
-    &::item
-        padding: 10px
-
-        &::selected
-            padding: 0px
-            background: $black
-            color: $red
 
 QComboBox
     background: transparent
@@ -265,19 +274,7 @@ QPushButton
     font-family: "DIN"
     qproperty-flat: true
 
-QScrollBar
-    background: transparent
-    border-left: 2px solid $black
-    width: 10px
-    &::handle
-        background: $black
-
-    &:add-line, &:sub-line
-        border: none
-        background: none
-
 QTabWidget
-    min-width: $windowWidth
     &::pane
         background: transparent
         margin: 0px
@@ -296,11 +293,7 @@ QTabWidget
         max-width: $windowWidth / 5
         min-height: 50px
         max-height: 50px
-        padding-bottom: 0px
         padding-top: 5px
-        margin: 0px
-        text-align: center
-        qproperty-alignment: AlignCenter
         &:selected, &:hover
             background: $red
             color: $black
@@ -322,16 +315,6 @@ RecordUi
         qproperty-frame: false
         background: transparent
         color: $black
-
-#SecondaryOperatorUi
-    & CustomDial
-        font-size: 16px
-        min-width: 100px
-        max-width: 100px
-    & QPushButton
-        font-size: 16px
-        //min-width: 100px
-        border: 2px solid $black
 
 SettingsDialog
     @extend QDialog

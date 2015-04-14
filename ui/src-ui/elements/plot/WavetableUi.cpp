@@ -61,19 +61,5 @@ void WavetableUi::paintEvent(QPaintEvent *)
 
 	QPainter painter(this);
 
-	QPen pen = plot_->graph(0)->pen();
-
-	QBrush background = plot_->background();
-
 	style()->drawPrimitive(QStyle::PE_Widget, &option, &painter, this);
-/*
-	if (painter.background().color() != background.color() &&
-		painter.pen().color() != pen.color())
-	{
-		plot_->setBackground(background);
-
-		plot_->graph(0)->setPen(pen);
-
-		plot_->replot();
-	}*/
 }

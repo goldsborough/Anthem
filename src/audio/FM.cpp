@@ -19,20 +19,12 @@ FM::FM(Operator* a,
        Operator* d,
        index_t alg)
 {
-    ops_[A] = a;
-    ops_[B] = b;
-    ops_[C] = c;
-    ops_[D] = d;
+    operators_[A] = a;
+    operators_[B] = b;
+    operators_[C] = c;
+    operators_[D] = d;
     
     setAlgorithm(alg);
-}
-
-void FM::setOperatorModes_(bool a, bool b, bool c, bool d)
-{
-    ops_[A]->setMode(a);
-    ops_[B]->setMode(b);
-    ops_[C]->setMode(c);
-    ops_[D]->setMode(d);
 }
 
 void FM::setAlgorithm(unsigned short alg)
@@ -49,23 +41,48 @@ void FM::setAlgorithm(unsigned short alg)
         case 2:
         case 3:
         case 6:
-            setOperatorModes_(0,0,0,1);
+        {
+            operators_[A]->setMode(Operator::Mode::FM);
+            operators_[B]->setMode(Operator::Mode::FM);
+            operators_[C]->setMode(Operator::Mode::FM);
+            operators_[D]->setMode(Operator::Mode::ADDITIVE);
+            
             break;
+        }
             
         case 4:
         case 5:
         case 7:
-            setOperatorModes_(0, 0, 1,1);
+        {
+            operators_[A]->setMode(Operator::Mode::FM);
+            operators_[B]->setMode(Operator::Mode::FM);
+            operators_[C]->setMode(Operator::Mode::ADDITIVE);
+            operators_[D]->setMode(Operator::Mode::ADDITIVE);
+            
             break;
+        }
             
         case 8:
         case 9:
         case 10:
-            setOperatorModes_(0, 1, 1, 1);
+        {
+            operators_[A]->setMode(Operator::Mode::FM);
+            operators_[B]->setMode(Operator::Mode::ADDITIVE);
+            operators_[C]->setMode(Operator::Mode::ADDITIVE);
+            operators_[D]->setMode(Operator::Mode::ADDITIVE);
+            
             break;
+        }
             
         case 11:
-            setOperatorModes_(1, 1, 1, 1);
+        {
+            operators_[A]->setMode(Operator::Mode::ADDITIVE);
+            operators_[B]->setMode(Operator::Mode::ADDITIVE);
+            operators_[C]->setMode(Operator::Mode::ADDITIVE);
+            operators_[D]->setMode(Operator::Mode::ADDITIVE);
+            
+            break;
+        }
     }
 }
 
@@ -76,23 +93,23 @@ unsigned short FM::getAlgorithm() const
 
 double FM::tickIfActive_(index_t index)
 {
-    return (ops_[index]->isActive()) ? ops_[index]->tick() : 0;
+    return (operators_[index]->isActive()) ? operators_[index]->tick() : 0;
 }
 
 double FM::modulate_(index_t carrier, double value)
 {
-    if (! ops_[carrier]->isActive()) return 0;
+    if (! operators_[carrier]->isActive()) return 0;
     
-    ops_[carrier]->modulateFrequency(value);
+    operators_[carrier]->modulateFrequency(value);
     
-    return ops_[carrier]->tick();
+    return operators_[carrier]->tick();
 }
 
 double FM::add_(index_t carrier, double value)
 {
-    if (! ops_[carrier]->isActive()) return 0;
+    if (! operators_[carrier]->isActive()) return 0;
     
-    return ops_[carrier]->tick() + value;
+    return operators_[carrier]->tick() + value;
 }
 
 double FM::tick()

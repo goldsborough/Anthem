@@ -38,7 +38,7 @@ public:
     enum Docks { LEVEL };
     
     /*! Synthesis mode for setting the level */
-    enum Mode { FM, ADDITIVE };
+    enum class Mode { FM, ADDITIVE };
     
     /*************************************************************************************************//*!
     *
@@ -59,7 +59,7 @@ public:
     Operator(unsigned short wt = 0,
              double freqOffset = 0,
              double level = 0,
-             bool mode = 0,
+             Mode mode = Mode::FM,
              short phaseOffset = 0,
              double ratio = 1);
     
@@ -202,10 +202,10 @@ public:
     *
     *****************************************************************************************************/
     
-    void setMode(bool mode);
+    void setMode(Mode mode);
     
     /*! Returns the current mode. */
-    bool getMode() const;
+    Mode getMode() const;
     
     /*************************************************************************************************//*!
     *
@@ -237,7 +237,10 @@ public:
 private:
     
     /*! Current mode - FM or ADDITIVE */
-    bool mode_;
+    Mode mode_;
+    
+    /*! The max/min boundary for the current mode. */
+    double boundary_;
     
     /*! The current fm modulation level */
     double level_;

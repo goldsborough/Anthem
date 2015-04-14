@@ -27,13 +27,30 @@
 
 #include <vector>
 
-struct Anthem
+class Uncopyable
 {
+protected:
+    
+    Uncopyable() = default;
+    
+    ~Uncopyable() = default;
+    
+private:
+    
+    Uncopyable(const Uncopyable&) = default;
+    
+    Uncopyable& operator=(const Uncopyable&) = default;
+};
+
+class Anthem : public Uncopyable
+{
+public:
+    
     enum Units { A, B, C, D };
     
-    typedef unsigned char note_t;
+    using note_t = unsigned char;
     
-    typedef unsigned long long count_t;
+    using count_t = std::size_t;
     
     Anthem();
     

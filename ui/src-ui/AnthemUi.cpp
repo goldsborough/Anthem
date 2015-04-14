@@ -26,9 +26,6 @@ AnthemUi::AnthemUi()
 
 	QTabWidget* pages = new QTabWidget(this);
 
-	pages->setSizePolicy(QSizePolicy::Preferred,
-						 QSizePolicy::Preferred);
-
 	pages->setMovable(true);
 
 	pages->tabBar()->setCursor(Qt::PointingHandCursor);
@@ -58,10 +55,6 @@ AnthemUi::AnthemUi()
 
 
 	layout->addWidget(pages);
-
-
-	QWidget::setSizePolicy(QSizePolicy::Fixed,
-						   QSizePolicy::Fixed);
 
 	QWidget::setWindowTitle("Anthem");
 }

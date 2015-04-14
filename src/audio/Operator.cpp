@@ -15,11 +15,14 @@
 #include "Notetable.hpp"
 #include "Util.hpp"
 
-Operator::Operator(unsigned short wt, double freqOffset,
-                   double level, bool mode,
-                   short phaseOffset, double ratio)
+Operator::Operator(unsigned short wt,
+                   double freqOffset,
+                   double level,
+                   Mode mode,
+                   short phaseOffset,
+                   double ratio)
 
-: Oscillator(wt,0,phaseOffset),
+: Oscillator(wt, 0, phaseOffset),
   ratio_(ratio),
   GenUnit(1),
   noteFreq_(0),
@@ -29,9 +32,11 @@ Operator::Operator(unsigned short wt, double freqOffset,
   freqOffset_(0),
   realFreq_(0),
   level_(0)
-
 {
     setFrequencyOffset(freqOffset);
+    
+    // setMode only works if the modes are different
+    mode_ = (mode == Mode::FM) ? Mode::ADDITIVE : Mode::FM;
     
     setMode(mode);
     
@@ -41,38 +46,47 @@ Operator::Operator(unsigned short wt, double freqOffset,
     setLevel(level);
 }
 
-void Operator::setMode(bool mode)
+void Operator::setMode(Mode mode)
 {
     if (mode_ == mode) return;
     
     mode_ = mode;
     
-    if (mode)
+    switch(mode)
     {
-        // More efficient to set level here
-        // Factor 10 because of the different
-        // ranges depending on the mode (0-1
-        // for additive, 0-10 for FM)
-        level_ /= 10;
-        
-        amp_ = level_;
-        
-        mods_[LEVEL].setBaseValue(level_);
-        
-        // Like amplitude, between 0 and 1
-        mods_[LEVEL].setHigherBoundary(1);
+        case Mode::FM:
+        {
+            setLevel(level_ * 10);
+            
+            // Index of modulation, between 0 and 10
+            boundary_ = 10;
+            
+            break;
+        }
+    
+        case Mode::ADDITIVE:
+        {
+            // More efficient to set level here
+            // Factor 10 because of the different
+            // ranges depending on the mode (0-1
+            // for additive, 0-10 for FM)
+            level_ /= 10;
+            
+            amp_ = level_;
+            
+            mods_[LEVEL].setBaseValue(level_);
+            
+            // Like amplitude, between 0 and 1
+            boundary_ = 1;
+            
+            break;
+        }
     }
     
-    else
-    {
-        setLevel(level_ * 10);
-        
-        // Index of modulation, between 0 and 10
-        mods_[LEVEL].setHigherBoundary(10);
-    }
+    mods_[LEVEL].setHigherBoundary(boundary_);
 }
 
-bool Operator::getMode() const
+Operator::Mode Operator::getMode() const
 {
     return mode_;
 }
@@ -87,12 +101,16 @@ void Operator::setSilent()
 
 void Operator::setLevel(double level)
 {
-    if (level < 0 || (mode_ && level > 1) || (! mode_ && level > 10))
+    if (level > boundary_ || level < -boundary_)
     { throw std::invalid_argument("Level out of range!"); }
-    
+
     level_ = level;
     
-    amp_ = (mode_) ? level : level * realFreq_;
+    // For FM Mode, the level is the index of modulation beta,
+    // and the amplitude is the beta times the current real
+    // frequency, as beta = amplitude/frequency. For Additive
+    // Mode, the amplitude is simply the usual range from 0 to 1
+    amp_ = (mode_ == Mode::FM) ? level * realFreq_ : level;
     
     mods_[LEVEL].setBaseValue(level);
 }
@@ -124,7 +142,7 @@ void Operator::setNote(note_t note)
     
     realFreq_ = freq_ + freqOffset_;
     
-    if (! mode_) amp_ = level_ * realFreq_;
+    if (mode_ == Mode::FM) amp_ = level_ * realFreq_;
     
     indIncr_ = Global::tableIncr * freq_;
     
@@ -144,7 +162,7 @@ void Operator::setFrequencyOffset(double Hz)
     
     realFreq_ = freq_ + freqOffset_;
     
-    if (! mode_) amp_ = level_ * realFreq_;
+    if (mode_ == Mode::FM) amp_ = level_ * realFreq_;
     
     indexOffset_ = Global::tableIncr * freqOffset_;
     
@@ -165,9 +183,12 @@ void Operator::setSemitoneOffset(double semitones)
 {
     freqOffset_ = Util::semitonesToFreq(freq_, semitones);
     
+    // More efficient to do things here
+    // than to call setFrequencyOffset
+    
     realFreq_ = freq_ + freqOffset_;
     
-    if (! mode_) amp_ = level_ * realFreq_;
+    if (mode_ == Mode::FM) amp_ = level_ * realFreq_;
     
     indexOffset_ = Global::tableIncr * freqOffset_;
     
@@ -190,7 +211,7 @@ void Operator::setRatio(double ratio)
     
     realFreq_ = freq_ + freqOffset_;
     
-    if (! mode_) amp_ = level_ * realFreq_;
+    if (mode_ == Mode::FM) amp_ = level_ * realFreq_;
     
     indIncr_ = Global::tableIncr * freq_;
     
@@ -218,7 +239,7 @@ double Operator::tick()
         
         amp_ = level_;
         
-        if (! mode_) amp_ *= realFreq_;
+        if (mode_ == Mode::FM) amp_ *= realFreq_;
     }
     
     return Oscillator::tick() * amp_;
