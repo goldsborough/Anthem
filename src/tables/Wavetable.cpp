@@ -14,120 +14,117 @@
 #include <fstream>
 #include <cmath>
 
-Wavetable::Wavetable(double * ptr,
-                     index_t wavetableLengthgth,
-                     index_t id,
-                     const std::string& name)
-: LookupTable<double>(ptr, wavetableLengthgth, id, name)
+Wavetable::Wavetable(double* data,
+                     index_t length,
+                     const std::string& id)
+: LookupTable<double>(data, length, id)
 { }
 
 Wavetable::Wavetable(MathematicalWaveform waveform,
-                     index_t wavetableLengthgth,
-                     index_t id,
-                     const std::string& name)
-
-: LookupTable<double>(0,wavetableLengthgth,id, name)
-
+                     index_t length,
+                     const std::string& id)
+: LookupTable<double>(length, id)
 {
     switch (waveform)
     {
         case MathematicalWaveform::DIRECT_SAW:
-            data_ = directSaw_();
-            break;
+             mathematicalSaw_();
+             break;
         
         case MathematicalWaveform::DIRECT_SQUARE:
-            data_ = directSquare_();
-            break;
+             mathematicalSquare_();
+             break;
             
         case MathematicalWaveform::DIRECT_TRIANGLE:
-            data_ = directTriangle_();
-            break;
+             mathematicalTriangle_();
+             break;
             
         case MathematicalWaveform::SMOOTH_SAW:
-            data_ = smoothSaw_();
-            break;
+             smoothSaw_();
+             break;
             
         case MathematicalWaveform::SMOOTH_RAMP:
-            data_ = smoothRamp_();
-            break;
+             smoothRamp_();
+             break;
             
         case MathematicalWaveform::SMOOTH_SQUARE:
-            data_ = smoothSquare_();
-            break;
+             smoothSquare_();
+             break;
     }
 }
 
-double* Wavetable::smoothSaw_() const
+void Wavetable::smoothSaw_() const
 {
-    double* wt = new double[Global::wavetableLength + 1];
-    
     // First decrement from 1 to -1 in 9/10 of the cycle,
     // then go back up smoothly the last 1/10 of the cycle
     
-    // The first part is calculated linearly so that the
-    // amplitude simply decrements from 1 to -1. This is
-    // measured in amplitude
-    
-    double amp = 1;
-    
-    // The second part is measured in time, going from 0.9
-    // to 1 (of the Wavetable period)
-    
+    // For the falling part
+    double amplitude = 1;
+
+    // For the rising part
     double value = 0.9;
     
-    // Increment value from -1 to 1
-    double ampIncr = 2.0/(Global::wavetableLength * 0.9);
+    // Increment value from -1 to 1 (range = 2.0; 9/10 of time)
+    double ampIncrement = 2.0/(Global::wavetableLength * 0.9);
     
-    // Increment value for the time
-    double indIncr = 0.1/(Global::wavetableLength * 0.1);
+    // Increment value for the time (1/10 of time)
+    double valueIncrement = 0.1/(Global::wavetableLength * 0.1);
     
-    for (std::size_t n = 0; n < Global::wavetableLength; n++)
+    for (auto& sample : *data_)
     {
-        if (amp > -1)
+        // The first part is calculated linearly so
+        // that the amplitude simply decrements from
+        // 1 to -1. This is measured in amplitude
+        if (amplitude > -1)
         {
-            wt[n] = amp;
+            // Set the wavetable sample
+            sample = amplitude;
             
             // simply decrement
-            amp -= ampIncr;
+            amplitude -= ampIncrement;
         }
         
         else
         {
-            /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-             *
-             * The smooth transition is nothing else than a function I found
-             * empirically in graphing software (GeoGebra). There are actually
-             * two functions. The first increments from -1 to 0 (amp) from 0.9
-             * to 0.95 (time). This function is positive and right-shifted by 0.9
-             * This first function intersects the second function in (0.95,0) which
-             * is basically the same function but with negative coefficient and
-             * right shifted by 1. It is best to put these functions in graphing
-             * software to get a clear picture. In any case, these functions are
-             * changed between so that from 0.9 to 0.95 the curvature is negative
-             * so the function is progressive and the second part has a positive
-             * curvature and is degressive.
-             *
-             * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+            /*********************************************************************
+            *
+            *   The smooth transition is nothing else than a function I found
+            *   empirically in graphing software (GeoGebra). There are actually
+            *   two functions. The first increments from -1 to 0 (amplitude) from
+            *   0.9 to 0.95 (time). This function is positive and right-shifted
+            *   by 0.9. This first function intersects the second function in
+            *   (0.95,0) which is basically the same function but with negative
+            *   right shifted by 1. It is best to put these functions in graphing
+            *   coefficient and software to get a clear picture. In any case,
+            *   these functions are changed between so that from 0.9 to 0.95 the
+            *   curvature is negative so the function is progressive and the
+            *   second part has  a positive curvature and is degressive.
+            *
+            ***********************************************************************/
             
+            // First part
             if (value < 0.95)
-            { wt[n] = 400 * pow(value - 1,2) - 1; }
+            {
+                // Set the wavetable sample
+                sample = 400 * pow(value - 1,2) - 1;
+            }
             
+            // Second part
             else
-            { wt[n] = -400 * pow(value - 0.9,2) + 1; }
+            {
+                // Set the wavetable sample
+                sample = -400 * pow(value - 0.9,2) + 1;
+            }
             
-            value += indIncr;
+            value += valueIncrement;
         }
     }
     
-    wt[Global::wavetableLength] = wt[0];
-    
-    return wt;
+    data_->push_back(*data_->begin());
 }
 
-double* Wavetable::smoothRamp_() const
+void Wavetable::smoothRamp_() const
 {
-    double* wt = new double[Global::wavetableLength + 1];
-    
     // First decrement from 1 to -1 in 9/10 of the cycle,
     // then go back up smoothly the last 1/10 of the cycle
     
@@ -135,7 +132,7 @@ double* Wavetable::smoothRamp_() const
     // amplitude simply decrements from 1 to -1. This is
     // measured in amplitude
     
-    double amp = -1;
+    double amplitude = -1;
     
     // The second part is measured in time, going from 0.9
     // to 1 (of the Wavetable period)
@@ -143,46 +140,42 @@ double* Wavetable::smoothRamp_() const
     double value = 0.9;
     
     // Increment value from -1 to 1
-    double ampIncr = 2.0/(Global::wavetableLength * 0.9);
+    double ampIncrement = 2.0/(Global::wavetableLength * 0.9);
     
     // Increment value for the time
-    double indIncr = 0.1/(Global::wavetableLength * 0.1);
+    double valueIncrement = 0.1/(Global::wavetableLength * 0.1);
     
-    for (std::size_t n = 0; n < Global::wavetableLength; n++)
+    for (auto& sample : *data_)
     {
-        if (amp < 1)
+        if (amplitude < 1)
         {
-            wt[n] = amp;
+            sample = amplitude;
             
-            amp += ampIncr;
+            amplitude += ampIncrement;
         }
         
         else
         {
             if (value < 0.95)
-            { wt[n] = -400 * pow(value - 0.9,2) + 1; }
+            { sample = -400 * pow(value - 0.9,2) + 1; }
             
             else
-            { wt[n] = 400 * pow(value - 1,2) - 1; }
+            { sample = 400 * pow(value - 1,2) - 1; }
             
-            value += indIncr;
+            value += valueIncrement;
         }
     }
     
-    wt[Global::wavetableLength] = wt[0];
-    
-    return wt;
+    data_->push_back(*data_->begin());
 }
 
-double* Wavetable::smoothSquare_() const
+void Wavetable::smoothSquare_() const
 {
-    double* wt = new double[Global::wavetableLength + 1];
-    
     double value = 0;
     
     double incr = 1.0 / Global::wavetableLength;
     
-    for (std::size_t n = 0; n < Global::wavetableLength; n++)
+    for (auto& sample : *data_)
     {
         double val;
         
@@ -205,20 +198,18 @@ double* Wavetable::smoothSquare_() const
         else
         { val = -pow(value, 50) + 1; }
         
-        wt[n] = val;
+        sample = val;
         
         value += incr;
     }
     
-    wt[Global::wavetableLength] = wt[0];
-    
-    return wt;
+    data_->push_back(*data_->begin());
 }
 
-double* Wavetable::directSquare_() const
+void Wavetable::mathematicalSquare_() const
 {
     // the sample buffer
-    double * wt = new double [Global::wavetableLength + 1];
+    double * wavetable = new double [Global::wavetableLength + 1];
     
     // time for one sample
     double sampleTime = 1.0 / Global::wavetableLength;
@@ -229,23 +220,18 @@ double* Wavetable::directSquare_() const
     double value = 0;
     
     // fill the sample buffer
-    for (int n = 0; n < Global::wavetableLength; n++)
+    for (auto& sample : *data_)
     {
-        wt[n] = (value < mid) ? -1 : 1;
+        sample = (value < mid) ? -1 : 1;
         
         value += sampleTime;
     }
     
-    wt[Global::wavetableLength] = wt[0];
-    
-    return wt;
+    data_->push_back(*data_->begin());
 }
 
-double* Wavetable::directSaw_() const
+void Wavetable::mathematicalSaw_() const
 {
-    // the sample buffer
-    double * wt = new double [Global::wavetableLength];
-    
     // how much we must decrement the count
     // by at each iteration
     // 2.0 because the range is from 1 to -1
@@ -253,22 +239,18 @@ double* Wavetable::directSaw_() const
     
     double value = 1;
     
-    for (int n = 0; n < Global::wavetableLength; n++)
+    for (auto& sample : *data_)
     {
-        wt[n] = value;
+        sample = value;
         
         value -= incr;
     }
     
-    wt[Global::wavetableLength] = wt[0];
-    
-    return wt;
+    data_->push_back(*data_->begin());
 }
 
-double* Wavetable::directTriangle_() const
+void Wavetable::mathematicalTriangle_() const
 {
-    double* wt = new double[Global::wavetableLength + 1];
-    
     double value = -1;
     
     // 4.0 because we're incrementing/decrementing
@@ -279,9 +261,9 @@ double* Wavetable::directTriangle_() const
     // Boolean to indicate direction
     bool reachedMid = false;
     
-    for (std::size_t n = 0; n < Global::wavetableLength; n++)
+    for (auto& sample : *data_)
     {
-        wt[n] = value;
+        sample = value;
         
         // Increment or decrement depending
         // on the current direction
@@ -293,9 +275,7 @@ double* Wavetable::directTriangle_() const
         { reachedMid = !reachedMid; }
     }
     
-    wt[Global::wavetableLength] = wt[0];
-    
-    return wt;
+    data_->push_back(*data_->begin());
 }
 
 void WavetableDatabase::init()
@@ -313,48 +293,55 @@ void WavetableDatabase::init()
     for (index_t i = 0; i < names.size(); ++i)
     {
         // Read wavetables with i as their id and push them into the tables_ vector.
-        tables_[i] = Wavetable(readWavetable(names[i]), Global::wavetableLength, i, names[i]);
+        tables_[i] = Wavetable(readWavetable_(names[i]), Global::wavetableLength, names[i]);
     }
 }
 
-double* WavetableDatabase::readWavetable(const std::string &name) const
+double* WavetableDatabase::readWavetable_(const std::string &name) const
 {
     std::ifstream file("../../../rsc/wavetables/" + name + ".wavetable");
     
     if (! file.good())
-    { throw FileOpenError("Error opening wavetable: " + name); }
+    {
+        throw FileOpenError("Error opening wavetable: " + name);
+    }
     
     char signature[6];
     
     file.read(signature, 6);
     
     if (strncmp(signature, "ANTHEM", 6))
-    { throw ParseError("Invalid signature for Anthem file!"); }
+    {
+        throw ParseError("Invalid signature for Anthem file!");
+    }
     
     int len = Global::wavetableLength + 1;
+    
     int size = len * sizeof(double);
     
-    double * wt = new double [len];
+    double * wavetable = new double [len];
     
-    file.read(reinterpret_cast<char*>(wt), size);
+    file.read(reinterpret_cast<char*>(wavetable), size);
     
-    return wt;
+    return wavetable;
 }
 
 void WavetableDatabase::writeWavetable(const std::string &name,
-                                       const Wavetable& wt,
+                                       const Wavetable& wavetable,
                                        bool addToDefaults) const
 {
-    std::ofstream file("../../../rsc/wavetables/" + name + ".wavetable");
+    std::ofstream file("../../../rsc/wavetables/" + name + ".wavetable", std::ios::binary);
     
     if (! file.good())
-    { throw FileOpenError(); }
+    {
+        throw FileOpenError();
+    }
     
     file.write("ANTHEM", 6);
     
     int size = (Global::wavetableLength + 1) * sizeof(double);
     
-    file.write(reinterpret_cast<char*>(wt.get()), size);
+    file.write(reinterpret_cast<const char*>(wavetable.data()), size);
     
     if (! file.good())
     { throw FileWriteError("Error writing to wavetable file!"); }
@@ -366,13 +353,16 @@ void WavetableDatabase::writeWavetable(const std::string &name,
         file.open("../../../rsc/wavetables/wavetables.md", std::ios::app);
         
         if (! file.good())
-        { throw FileOpenError("Error opening wavetable configuration file!"); }
+        {
+            throw FileOpenError("Error opening wavetable configuration file!");
+        }
         
         file << name << "\n";
         
         if (! file.good())
-        { throw FileWriteError("Error writing to wavetable configuration file!"); }
-        
+        {
+            throw FileWriteError("Error writing to wavetable configuration file!");
+        }
     }
 }
 
@@ -381,12 +371,12 @@ Wavetable::index_t WavetableDatabase::size() const
     return tables_.size();
 }
 
-Wavetable& WavetableDatabase::operator[](index_t wt)
+Wavetable& WavetableDatabase::operator[](index_t wavetable)
 {
-    return tables_[wt];
+    return tables_[wavetable];
 }
 
-const Wavetable& WavetableDatabase::operator[](index_t wt) const
+const Wavetable& WavetableDatabase::operator[](index_t wavetable) const
 {
-    return tables_[wt];
+    return tables_[wavetable];
 }

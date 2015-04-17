@@ -10,10 +10,13 @@
 *
 *************************************************************************************************/
 
-#ifndef Anthem_LookupTable_hpp
-#define Anthem_LookupTable_hpp
+#ifndef LOOKUP_TABLE_HPP
+#define LOOKUP_TABLE_HPP
 
+#include <memory>
+#include <utility>
 #include <string>
+#include <vector>
 
 template <typename T>
 class LookupTable
@@ -21,217 +24,128 @@ class LookupTable
     
 public:
     
-    typedef unsigned long index_t;
+    using value_t = T;
     
-    LookupTable(T* data = 0,
-                index_t size = 0,
-                index_t id = 0,
-                const std::string& name = std::string())
+    using pointer_t = T*;
     
-    : data_(data), size_(size), name_(name),
-      id_(id), refptr_(new index_t(1))
+    using const_pointer_t = const T*;
     
+    using index_t = typename std::vector<T>::size_type;
+    
+    
+    LookupTable(pointer_t data,
+                index_t size,
+                const std::string& id) noexcept
+    : id_(std::make_shared<std::string>(id)),
+      data_(std::make_shared<std::vector<value_t>>(data, size))
     { }
     
-    ~LookupTable()
+    LookupTable(const LookupTable& other) noexcept
+    : id_(other.id_),
+      data_(other.data_)
+    { }
+    
+    LookupTable(LookupTable&& other) noexcept
+    : id_(std::move(other.id_)),
+      data_(std::move(other.data_))
+    { }
+
+    LookupTable& operator= (LookupTable other) noexcept
     {
-        if (! --(*refptr_))
-        {
-            delete [] data_;
-            delete refptr_;
-        }
-    }
-    
-    /*************************************************************************************************//*!
-    *
-    *  @brief       Constructs a LookupTable object from another LookupTable.
-    *
-    *  @details     Because this class uses reference counting, the new Wavetable object will point to
-    *               other's data. Call makeUnique() to create a copy of the data pointed to (after).
-    *
-    *  @param       other The other LookupTable object.
-    *
-    *****************************************************************************************************/
-    
-    LookupTable(const LookupTable& other)
-    
-    : id_(other.id_), size_(other.size_), name_(other.name_),
-      data_(other.data_), refptr_(other.refptr_)
-    
-    {
-        // now one more instance is pointing to
-        // the same data
-        ++(*refptr_);
-    }
-    
-    /*************************************************************************************************//*!
-    *
-    *  @brief       Makes the internal pointer point to other's data.
-    *
-    *  @details     Copying a LookupTable makes it point to other's data and destructs its data if it
-    *               is the last class pointing to it. Use makeUnique() (after) to create a copy of the
-    *               data pointed to.
-    *
-    *  @param       other The other LookupTable object.
-    *
-    *****************************************************************************************************/
-    
-    LookupTable& operator= (const LookupTable& other)
-    {
-        if (this != &other)
-        {
-            // delete current data if this is the last
-            // instance pointing to this data
-            if (! --(*refptr_))
-            {
-                delete [] data_;
-                delete refptr_;
-            }
-            
-            // copy other's data
-            this->data_ = other.data_;
-            this->size_ = other.size_;
-            this->id_ = other.id_;
-            this->name_ = other.name_;
-            
-            this->refptr_ = other.refptr_;
-            
-            // one more pointing to this data now
-            ++(*refptr_);
-        }
+        swap(other);
         
         return *this;
     }
     
-    /*! Returns an item from the lookup table. */
-    T& operator[] (index_t index)
+    virtual ~LookupTable() = default;
+    
+    
+    virtual inline void swap(const LookupTable& other)
     {
-        // Make this object's data unique as it might
-        // have to be changed
-        makeUnique();
+        // Enable ADL
+        using std::swap;
         
-        return data_[index];
+        swap(*data_, *other.data_);
+        
+        swap(*id_, *other.id_);
     }
     
-    /*! Returns a const item from the lookup table. */
-    const T& operator[] (index_t index) const
+    friend inline void swap(const LookupTable& left,
+                            const LookupTable& right)
     {
-        return data_[index];
+        left.swap(right);
     }
+
     
-    /*************************************************************************************************//*!
+    /************************************************************************//*!
     *
     *  @brief       Interpolates values from a fractional index.
     *
-    *  @details     This function returns a proportionate value from a fractional index. For example,
-    *               passing it an index of 1.5 will return [1] + (([2] - [1]) * 0.5).
+    *  @details     This function returns a proportionate value 
+    *               from a fractional index. For example, passing
+    *               it an index of 1.5 will return [1] + (([2] - [1]) * 0.5).
     *
     *  @param       index The fractional index.
     *
-    *****************************************************************************************************/
+    ***************************************************************************/
     
-    T interpolate(double index) const
+    virtual value_t interpolate(double index) const
     {
-        long integral = static_cast<long>(index);  // The truncated integral part
-        double fractional = index - integral;    // The remaining fractional part
+        // The truncated integral part
+        long integral = static_cast<long>(index);
         
-        // grab the two items in-between which the actual value lies
-        T value1 = data_[integral];
-        T value2 = data_[integral+1];
+        // The remaining fractional part
+        double fractional = index - integral;
         
-        // interpolate: integer part + (fractional part * difference between value2 and value1)
-        T final = value1 + ((value2 - value1) * fractional);
-        
-        return final;
+        // Grab the two items in-between which the actual value lies
+        value_t lower = (*data_)[integral];
+        value_t upper = (*data_)[integral+1];
+    
+        // Perform interpolation
+        return lower + ((upper - lower) * fractional);
+    }
+    
+    virtual inline const value_t& operator[] (index_t index) const
+    {
+        return (*data_)[index];
+    }
+    
+    /*! Returns a const LookupTable's data pointer. */
+    virtual inline const_pointer_t data() const
+    {
+        return data_->data();
     }
     
     /*! Returns the LookupTable's data pointer. */
-    T* get() const 
+    virtual inline pointer_t data()
     {
-        return data_;
+        return data_->data();
     }
     
     /*! Returns the LookupTable's size. */
-    index_t size() const
+    virtual inline index_t size() const
     {
-        return size_;
+        return data_->size();
     }
     
     /*! Returns the LookupTable's id. */
-    index_t id() const
+    virtual inline std::string id() const
     {
-        return id_;
-    }
-    
-    /*! Sets the LookupTable's id */
-    void setId(index_t id)
-    {
-        id_ = id;
-    }
-    
-    /******************************************************************************************************//*!
-    *
-    *  @brief       Makes a unique copy of the pointed-to data.
-    *
-    *  @details     The LookupTable class implements reference counting so constructing a new LookupTable
-    *               object from an existing object will make both objects point to the same data. It
-    *               may be required to make the data unique to an object at one point, for which this
-    *               method exists. Note that calling the non-const operator[] also calls makeUnique().
-    *
-    **********************************************************************************************************/
-    
-    LookupTable& makeUnique()
-    {
-        if ((*refptr_) > 1)
-        {
-            // One Table less pointing
-            // to the current shared data
-            --(*refptr_);
-            
-            refptr_ = new index_t(1);
-            
-            T* temp = data_;
-            
-            data_ = new T [size_];
-            
-            for (index_t i = 0; i < size_; ++i)
-            {
-                data_[i] = temp[i];
-            }
-        }
-        
-        return *this;
-    }
-    
-    /*! Returns the name of the table. */
-    std::string getName() const
-    {
-        return name_;
-    }
-    
-    /*! Sets the name of the table. */
-    void setName(const std::string& name)
-    {
-        name_ = name;
+        return *id_;
     }
     
 protected:
     
-    /*! The LookupTable's data */
-    T* data_;
+    LookupTable(index_t size, const std::string& id)
+    : id_(std::make_shared<std::string>(id)),
+      data_(std::make_shared<std::vector<value_t>>(size))
+    { }
     
-    /*! The LookupTable's ID */
-    index_t id_;
+    /*! The LookupTable's data. */
+    std::shared_ptr<std::vector<value_t>> data_;
     
-    /*! The LookupTable's table size */
-    index_t size_;
-    
-    /*! The pointer pointing to the number of LookupTable objects
-        pointing to data_ */
-    index_t* refptr_;
-    
-    /*! A descriptive name of the waveform in the Wavetable */
-    std::string name_;
+    /*! A descriptive ID for the LookupTable. */
+    std::shared_ptr<std::string> id_;
 };
 
-#endif
+#endif /* LOOKUP_TABLE_HPP */

@@ -36,4 +36,5 @@ int main(int argc, const char * argv[])
     while (anthem.getSampleCount() < len);
     
     anthem.mixer.saveRecording();
+    
 }

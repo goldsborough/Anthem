@@ -27,22 +27,7 @@
 
 #include <vector>
 
-class Uncopyable
-{
-protected:
-    
-    Uncopyable() = default;
-    
-    ~Uncopyable() = default;
-    
-private:
-    
-    Uncopyable(const Uncopyable&) = default;
-    
-    Uncopyable& operator=(const Uncopyable&) = default;
-};
-
-class Anthem : public Uncopyable
+class Anthem
 {
 public:
     
@@ -85,6 +70,10 @@ public:
     AudioOutput audio;
     
 private:
+    
+    Anthem(const Anthem&);
+    
+    Anthem& operator=(const Anthem&);
     
     friend class AudioOutput;
     

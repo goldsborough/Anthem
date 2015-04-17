@@ -21,7 +21,7 @@ class Wavetable;
 *
 *  @brief       The Oscillator class.
 *
-*  @details     An Oscillator is the most basic audio-samples-generating unit. It interpolates
+*  @details     An Oscillator is the most basic audio-sample-generating unit. It interpolates
 *               samples from a wavetable, which it gets from WavetableDB. It has methods to set
 *               its frequency, wavetable, phase offset and more. It is the basis for LFOs and
 *               Operators.
