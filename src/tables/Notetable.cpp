@@ -12,16 +12,17 @@
 
 #include <fstream>
 
-void Notetable::init()
+Notetable::Notetable()
+: LookupTable<double>(128, "Notes")
 {
-    size_ = 128;
-    
-    data_ = new double [size_];
-    
     std::ifstream file("/Users/petergoldsborough/Documents/Anthem/rsc/notes.table");
     
-    for (index_t note = 0; note < size_; ++note)
+    // 128 MIDI notes. Number hasn't changed in the
+    // last 30 years, probably wont't too soon.
+    data_.resize(128);
+    
+    for (auto& note : data_)
     {
-        file >> data_[note];
+        file >> note;
     }
 }

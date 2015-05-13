@@ -45,7 +45,9 @@ public:
     *
     *****************************************************************************************************/
     
-    Oscillator(unsigned short wt = 0, double frq = 1, short phaseOffset = 0);
+    Oscillator(unsigned short wavetable = 0,
+               double freq = 1,
+               short phaseOffset = 0);
     
     Oscillator(const Oscillator& other);
     
@@ -121,7 +123,7 @@ public:
     *
     *****************************************************************************************************/
     
-    virtual void setWavetable(short wt);
+    virtual void setWavetable(unsigned short id);
     
     /*************************************************************************************************//*!
     *
@@ -131,7 +133,7 @@ public:
     *
     *****************************************************************************************************/
     
-    virtual short getWavetableID() const;
+    virtual std::shared_ptr<Wavetable> getWavetable() const;
     
     /*************************************************************************************************//*!
     *
@@ -150,16 +152,16 @@ protected:
     double freq_;
     
     /*! The current wavetable index */
-    double ind_;
+    double index_;
     
     /*! The wavetable index increment per sample */
-    double indIncr_;
+    double incr_;
     
     /*! The current phase offset value */
     double phaseOffset_;
     
     /*! The wavetable member currently in use */
-    std::unique_ptr<Wavetable> wt_;
+    std::shared_ptr<Wavetable> wavetable_;
 };
 
 #endif /* defined(__Anthem__Oscillator__) */

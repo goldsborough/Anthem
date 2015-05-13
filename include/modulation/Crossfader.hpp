@@ -14,7 +14,12 @@
 #define __Anthem__Crossfade__
 
 #include "Units.hpp"
-#include "Pantable.hpp"
+#include "Sample.hpp"
+#include "LookupTable.hpp"
+
+#include <memory>
+
+using Pantable = LookupTable<Sample>;
 
 /*********************************************************************************************//*!
 *
@@ -35,7 +40,7 @@ public:
     *
     *  @brief       Constructs a CrossfadeUnit.
     *
-    *  @param       type The crossfading type, usually a member of the CrossfadeTypes namespace.
+    *  @param       type The crossfading type, usually a member of the Pantables::Type enum.
     *
     *  @param       scalingEnabled Enable or disable scaling to 1 for sine and sqrt crossfading.
     *
@@ -144,7 +149,7 @@ protected:
     Sample curr_;
     
     /*! Array of Sample tables for crossfading values */
-    Pantable table_;
+    std::shared_ptr<Pantable> table_;
 };
 
 /*********************************************************************************************//*!

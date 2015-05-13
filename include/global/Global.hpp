@@ -35,7 +35,7 @@ namespace Global
     extern unsigned int nyquistLimit;
     
     /*! The wavetable length */
-    extern unsigned int wavetableLength;
+    extern unsigned short wavetableLength;
     
     /*! The fundamental tale increment: wavetableLength/samplerate*/
     extern double tableIncr;

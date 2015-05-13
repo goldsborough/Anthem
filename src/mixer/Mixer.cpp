@@ -18,7 +18,7 @@ Mixer::Mixer(double amp)
 
 : Unit(2),
   masterAmp_(amp), recording_(false),
-  pan_(new CrossfadeUnit(PantableDatabase::SINE))
+  pan_(new CrossfadeUnit)
 
 {
     // Initialize ModDocks

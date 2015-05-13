@@ -94,7 +94,7 @@ Operator::Mode Operator::getMode() const
 void Operator::setSilent()
 {
     // 0 frequency means no increment and thus silence
-    noteFreq_ = freq_ = indIncr_ = ind_ = note_ = modOffset_ = 0;
+    noteFreq_ = freq_ = incr_ = index_ = note_ = modOffset_ = 0;
     
     realFreq_ = freqOffset_;
 }
@@ -144,7 +144,7 @@ void Operator::setNote(note_t note)
     
     if (mode_ == Mode::FM) amp_ = level_ * realFreq_;
     
-    indIncr_ = Global::tableIncr * freq_;
+    incr_ = Global::tableIncr * freq_;
     
     semitoneOffset_ = Util::freqToSemitones(freq_, realFreq_);
     
@@ -213,7 +213,7 @@ void Operator::setRatio(double ratio)
     
     if (mode_ == Mode::FM) amp_ = level_ * realFreq_;
     
-    indIncr_ = Global::tableIncr * freq_;
+    incr_ = Global::tableIncr * freq_;
     
     semitoneOffset_ = Util::freqToSemitones(freq_, realFreq_);
 }
@@ -228,7 +228,7 @@ void Operator::update()
     // Normal frequency index increment     +
     // Index increment for frequency offset +
     // Index increment for frequency modulation value
-    increment_(indIncr_ + indexOffset_ + modOffset_);
+    increment_(incr_ + indexOffset_ + modOffset_);
 }
 
 double Operator::tick()

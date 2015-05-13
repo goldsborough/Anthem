@@ -11,6 +11,7 @@
 #include "Crossfader.hpp"
 #include "Global.hpp"
 #include "ModDock.hpp"
+#include "Pantable.hpp"
 
 #include <stdexcept>
 #include <cmath>
@@ -47,7 +48,7 @@ CrossfadeUnit& CrossfadeUnit::operator=(const CrossfadeUnit &other)
     return *this;
 }
 
-CrossfadeUnit::~CrossfadeUnit() { }
+CrossfadeUnit::~CrossfadeUnit() = default;
 
 void CrossfadeUnit::setType(unsigned short type)
 {
@@ -79,7 +80,7 @@ void CrossfadeUnit::setValue(double value)
     
     index_ = value + 100;
     
-    curr_ = table_.interpolate(index_);
+    curr_ = table_->interpolate(index_);
 }
 
 double CrossfadeUnit::getValue() const

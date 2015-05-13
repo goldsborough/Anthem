@@ -22,6 +22,7 @@
 #include <cmath>
 #include <string>
 #include <vector>
+#include <memory>
 
 /*****************************************************************************//*!
 *
@@ -136,6 +137,8 @@ class Wavetable : public LookupTable<double>
     
 public:
     
+    using index_t = unsigned short;
+    
     enum class MathematicalWaveform
     {
         DIRECT_TRIANGLE,
@@ -249,7 +252,7 @@ public:
         }
         
         // fill the wavetable
-        for (auto& sample : *data_)
+        for (auto& sample : data_)
         {
             // do additive magic
             for (unsigned short p = 0; p < partials; p++)
@@ -273,7 +276,7 @@ public:
         // requires an adjacent value for
         // the last valid wavetable index,
         // so the first is re-used.
-        data_->push_back(*data_->begin());
+        data_.push_back(*data_.begin());
         
         delete [] phase;
         delete [] increment;
@@ -319,22 +322,22 @@ public:
 private:
     
     /*! Generates a sawavetableooth wave directly/mathematically */
-    void mathematicalSaw_() const;
+    void mathematicalSaw_();
     
     /*! Generates a square wave directly/mathematically */
-    void mathematicalSquare_() const;
+    void mathematicalSquare_();
     
     /*! Generates a triangle wave directly/mathematically */
-    void mathematicalTriangle_() const;
+    void mathematicalTriangle_();
     
     /*! Generates a smoothed sawavetableooth wave directly/mathematically */
-    void smoothSaw_() const;
+    void smoothSaw_();
     
     /*! Generates a smoothed ramp wave directly/mathematically */
-    void smoothRamp_() const;
+    void smoothRamp_();
     
     /*! Generates a smoothed square wave directly/mathematically */
-    void smoothSquare_() const;
+    void smoothSquare_();
 };
 
 /*********************************************************************************************//*!
@@ -393,7 +396,7 @@ public:
         SMOOTH_RAMP
     };
     
-    typedef unsigned long index_t;
+    typedef unsigned short index_t;
     
     /*********************************************************************************************//*!
     *
@@ -406,9 +409,9 @@ public:
     
     void init();
     
-    Wavetable& operator[] (index_t wavetable);
+    std::shared_ptr<Wavetable>& operator[] (index_t wavetable);
     
-    const Wavetable& operator[] (index_t wavetable) const;
+    const std::shared_ptr<Wavetable>& operator[] (index_t wavetable) const;
     
     /*************************************************************************//*!
     *
@@ -441,8 +444,8 @@ private:
     
     double* readWavetable_(const std::string& name) const;
     
-    /*! Vector of Wavetable objects */                                                                              // map
-    std::vector<Wavetable> tables_;
+    /*! Vector of Wavetable objects */
+    std::vector<std::shared_ptr<Wavetable>> tables_;
 };
 
 extern WavetableDatabase wavetableDatabase;

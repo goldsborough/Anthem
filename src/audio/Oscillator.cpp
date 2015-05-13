@@ -15,52 +15,54 @@
 
 #include <stdexcept>
 
-Oscillator::Oscillator(unsigned short wt, double frq, short phaseOffset)
-: ind_(0), phaseOffset_(phaseOffset),
-  wt_(new Wavetable(wavetableDatabase[wt]))
+Oscillator::Oscillator(unsigned short wt,
+                       double freq,
+                       short phaseOffset)
+: index_(0),
+  phaseOffset_(phaseOffset),
+  wavetable_(wavetableDatabase[wt])
 {
     setPhaseOffset(phaseOffset);
     
-    setFrequency(frq);
+    setFrequency(freq);
 }
 
 Oscillator::Oscillator(const Oscillator& other)
-: ind_(other.ind_), phaseOffset_(other.phaseOffset_),
-  freq_(other.freq_), indIncr_(other.indIncr_),
-  wt_(new Wavetable(*other.wt_))
+: index_(other.index_),
+  phaseOffset_(other.phaseOffset_),
+  freq_(other.freq_),
+  incr_(other.incr_),
+   wavetable_(other.wavetable_)
 { }
 
 Oscillator& Oscillator::operator=(const Oscillator &other)
 {
     if (&other != this)
     {
-        ind_ = other.ind_;
+        index_ = other.index_;
         
-        indIncr_ = other.indIncr_;
+        incr_ = other.incr_;
         
         phaseOffset_ = other.phaseOffset_;
         
         freq_ = other.freq_;
         
-        wt_.reset(new Wavetable(*other.wt_));
+        wavetable_.reset(new Wavetable(*other.wavetable_));
     }
     
     return *this;
 }
 
-Oscillator::~Oscillator()
+Oscillator::~Oscillator() = default;
+
+void Oscillator::setWavetable(unsigned short id)
 {
-    
+    wavetable_ = wavetableDatabase[id];
 }
 
-void Oscillator::setWavetable(short wt)
+std::shared_ptr<Wavetable> Oscillator::getWavetable() const
 {
-    wt_.reset(new Wavetable(wavetableDatabase[wt]));
-}
-
-short Oscillator::getWavetableID() const
-{
-    return wt_->id();
+    return wavetable_;
 }
 
 void Oscillator::setFrequency(double Hz)
@@ -70,7 +72,7 @@ void Oscillator::setFrequency(double Hz)
     
     freq_ = Hz;
     
-    indIncr_ = Global::tableIncr * Hz;
+    incr_ = Global::tableIncr * Hz;
 }
 
 double Oscillator::getFrequency() const
@@ -92,7 +94,7 @@ void Oscillator::setPhaseOffset(short degrees)
     // Return to original index (without offset), so
     // that setting a new offset doesn't add to the
     // old one but really set a new one
-    ind_ -= phaseOffset_;
+    index_ -= phaseOffset_;
     
     // The wavetable holds 360 degrees, so divide the degrees
     // by 360 to get e.g. 1/4 and multiply by the wavetable's length
@@ -100,7 +102,7 @@ void Oscillator::setPhaseOffset(short degrees)
     phaseOffset_ = ((Global::wavetableLength + 1) * degrees) / 360.0;
     
     // Add new offset
-    ind_ += phaseOffset_;
+    index_ += phaseOffset_;
 }
 
 double Oscillator::getPhaseOffset() const
@@ -110,29 +112,29 @@ double Oscillator::getPhaseOffset() const
 
 void Oscillator::reset()
 {
-    ind_ = phaseOffset_;
+    index_ = phaseOffset_;
 }
 
 void Oscillator::increment_(double value)
 {
     // Increment wavetable index
-    ind_ += value;
+    index_ += value;
     
     // Check index against wavetable length
-    if ( ind_ >= Global::wavetableLength)
-    { ind_ -= Global::wavetableLength; }
+    if ( index_ >= Global::wavetableLength)
+    { index_ -= Global::wavetableLength; }
     
-    if ( ind_ < 0)
-    { ind_ += Global::wavetableLength; }
+    if ( index_ < 0)
+    { index_ += Global::wavetableLength; }
 }
 
 void Oscillator::update()
 {
-    increment_(indIncr_);
+    increment_(incr_);
 }
 
 double Oscillator::tick()
 {
     // Grab a value through interpolation from the wavetable
-    return wt_->interpolate(ind_);
+    return wavetable_->interpolate(index_);
 }

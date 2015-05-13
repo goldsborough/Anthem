@@ -14,7 +14,7 @@
 #include <string>
 #include <fstream>
 
-void PantableDatabase::init()
+PantableDatabase::PantableDatabase()
 {
     // The pantable configuration file
     TextParsley textParser("/Users/petergoldsborough/Documents/Anthem/rsc/pantables/pantables.md");
@@ -22,46 +22,44 @@ void PantableDatabase::init()
     std::vector<std::string> config = textParser.getAllWords();
     
     // First item is the table length
-    index_t tableLength = std::stoi(config.front());
+    std::size_t tableLength = std::stoi(config.front());
     
     // So we can start from 0 when looping
     config.erase(config.begin());
     
     std::ifstream file;
     
-    for (index_t i = 0; i < size_; ++i)
+    for (auto& name : config)
     {
-        file.open("/Users/petergoldsborough/Documents/Anthem/rsc/pantables/" + config[i] + ".table");
+        file.open("/Users/petergoldsborough/Documents/Anthem/rsc/pantables/" + name + ".table");
         
         if (! file)
-        {
-            throw FileOpenError("Error opening Pantable!");
-        }
+        { throw FileOpenError("Error opening Pantable!"); }
         
         Sample* data = new Sample [tableLength];
         
-        for (index_t j = 0; j < tableLength; ++j)
+        for (std::size_t i = 0; i < tableLength; ++i)
         {
-            file >> data[j].left >> data[j].right;
+            file >> data[i].left >> data[i].right;
         }
         
-        tables_[i] = Pantable(data, tableLength, config[i]);
+        tables_.push_back(std::make_shared<Pantable>(data, tableLength, name));
         
         file.close();
     }
 }
 
-Pantable& PantableDatabase::operator[] (index_t index)
+std::shared_ptr<Pantable>& PantableDatabase::operator[] (index_t type)
 {
-    return tables_[index];
+    return tables_[type];
 }
 
-const Pantable& PantableDatabase::operator[] (index_t index) const
+const std::shared_ptr<Pantable>& PantableDatabase::operator[] (index_t type) const
 {
-    return tables_[index];
+    return tables_[type];
 }
 
 PantableDatabase::index_t PantableDatabase::size() const
 {
-    return size_;
+    return tables_.size();
 }

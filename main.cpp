@@ -8,7 +8,7 @@ int main(int argc, const char * argv[])
     
     Anthem anthem;
     
-    anthem.operators[Anthem::D].setWavetable(WavetableDatabase::SAW_2);
+    anthem.operators[Anthem::D].setWavetable(WavetableDatabase::SINE);
     
     anthem.operators[Anthem::D].setActive(true);
     

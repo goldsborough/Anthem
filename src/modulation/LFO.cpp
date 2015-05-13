@@ -239,12 +239,12 @@ void LFOSeq::setModWavetable(seg_t seg, unsigned short wt)
     lfos_[seg].lfo.setWavetable(wt);
 }
 
-unsigned short LFOSeq::getModWavetableID(seg_t seg) const
+std::shared_ptr<Wavetable> LFOSeq::getModWavetable(seg_t seg) const
 {
     if (seg >= segs_.size())
     { throw std::invalid_argument("Segment out of range for LFOSeq!"); }
     
-    return lfos_[seg].lfo.getWavetableID();
+    return lfos_[seg].lfo.getWavetable();
 }
 
 void LFOSeq::setModDepth(seg_t seg, double depth)

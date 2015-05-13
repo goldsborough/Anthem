@@ -17,10 +17,11 @@
 #include "Sample.hpp"
 
 #include <vector>
+#include <memory>
 
 /*! A Pantable is just a normal LookupTable
  with two-channel Samples as value_t. */
-typedef LookupTable<Sample> Pantable;
+using Pantable = LookupTable<Sample>;
 
 /*********************************************************************************************//*!
 *
@@ -34,7 +35,7 @@ typedef LookupTable<Sample> Pantable;
 *               + __Sine__ panning:         sin(left * pi/2), sin(right * pi/2)
 *               + __Sqrt panning:           sqrt(left), sqrt(right)
 *               + ___Scaled sine__ panning: like sine, but multiplied with sqrt(2)/2
-*               + ___Scaled sqrt__ panning  like sqrt, but multiplied with sqrt(2)/2
+*               + ___Scaled sqrt__ panning: like sqrt, but multiplied with sqrt(2)/2
 *
 *               Scaled tables have left and right at 0.5 in the middle.
 *
@@ -46,7 +47,7 @@ class PantableDatabase
 public:
     
     /*! Different types of crossfading */
-    enum Types
+    enum Type
     {
         LINEAR,
         SINE,
@@ -55,27 +56,24 @@ public:
         SCALED_SQRT
     };
     
-    typedef unsigned short index_t;
+    using index_t = unsigned short;
     
     /*! Reads the pantable data from disk and initializes the Pantables. */
-    void init();
+    PantableDatabase();
     
     /*! Returns a Pantable. */
-    Pantable& operator[] (index_t index);
+    std::shared_ptr<Pantable>& operator[] (index_t type);
     
     /*! Returns a const Pantable. */
-    const Pantable& operator[] (index_t index) const;
+    const std::shared_ptr<Pantable>& operator[] (index_t type) const;
     
     /*! Returns the number of Pantables in the database. */
     index_t size() const;
     
 private:
     
-    /*! Right now there are 5 Pantables. */
-    index_t size_ = 5;
-    
     /*! Array of pantables. */
-    Pantable tables_ [5];
+    std::vector<std::shared_ptr<Pantable>> tables_;
 };
 
 extern PantableDatabase pantableDatabase;

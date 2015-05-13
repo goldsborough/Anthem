@@ -21,8 +21,10 @@ Notetable notetable;
 namespace Global
 {
     unsigned int samplerate = 0;
+    
     unsigned int nyquistLimit = 0;
-    unsigned int wavetableLength = 0;
+    
+    unsigned short wavetableLength = 0;
     
     double tableIncr = 0;
     
@@ -36,9 +38,5 @@ namespace Global
         tableIncr = static_cast<double>(wavetableLength) / smplr;
         
         wavetableDatabase.init();
-        
-        pantableDatabase.init();
-        
-        notetable.init();
     }
 }

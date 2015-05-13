@@ -17,7 +17,7 @@
 
 /*********************************************************************************************//*!
 *
-*  @brief       Table with piano key to frequency conversions for lookup.
+*  @brief       Table with MIDI key to frequency conversions for lookup.
 *
 *  @details     The Notetable holds frequency values for the 128 MIDI notes.
 *               The note number is the index where the frequency is found ([48] = 440Hz).
@@ -27,7 +27,7 @@
 struct Notetable : public LookupTable<double>
 {
     /*! Reads the Notetable data from disk. */
-    void init();
+    Notetable();
 };
 
 extern Notetable notetable;
