@@ -40,8 +40,8 @@ EnvelopeSegment::EnvelopeSegment(double startLevel,
     mods_[END_LEVEL].setLowerBoundary(0);
     mods_[END_LEVEL].setBaseValue(endLevel);
     
-    calcRange_();
-    calcIncr_();
+    calculateRange_();
+    calculateIncr_();
 }
 
 void EnvelopeSegment::reset()
@@ -49,13 +49,13 @@ void EnvelopeSegment::reset()
     curr_ = 0;
 }
 
-void EnvelopeSegment::calcRange_()
+void EnvelopeSegment::calculateRange_()
 {
     // The range between start and end
     range_ = endLevel_ - startLevel_;
 }
 
-void EnvelopeSegment::calcIncr_()
+void EnvelopeSegment::calculateIncr_()
 {
     incr_ = (len_) ? 1.0/len_ : 0;
 }
@@ -75,7 +75,7 @@ double EnvelopeSegment::tick()
     if (curr_ >= 1 || ! len_) return endLevel_;
     
     // Modulate members
-    // All together so we only call calcRange_ once
+    // All together so we only call calculateRange_ once
     if (mods_[RATE].inUse()        ||
         mods_[START_LEVEL].inUse() ||
         mods_[END_LEVEL].inUse())
@@ -95,17 +95,17 @@ double EnvelopeSegment::tick()
             endLevel_ = mods_[END_LEVEL].tick();
         }
         
-        calcRange_();
+        calculateRange_();
     }
     
-    return range_ * pow(curr_,rate_) + startLevel_;
+    return range_ * std::pow(curr_, rate_) + startLevel_;
 }
 
 void EnvelopeSegment::setLength(EnvelopeSegment::length_t sampleLength)
 {
     len_ = sampleLength;
     
-    calcIncr_();
+    calculateIncr_();
 }
 
 EnvelopeSegment::length_t EnvelopeSegment::getLength() const
@@ -122,7 +122,7 @@ void EnvelopeSegment::setStartLevel(double lv)
     
     mods_[START_LEVEL].setBaseValue(startLevel_);
     
-    calcRange_();
+    calculateRange_();
 }
 
 double EnvelopeSegment::getStartLevel() const
@@ -144,7 +144,7 @@ void EnvelopeSegment::setEndLevel(double lv)
     
     mods_[END_LEVEL].setBaseValue(endLevel_);
     
-    calcRange_();
+    calculateRange_();
 }
 
 double EnvelopeSegment::getEndLevel() const

@@ -17,7 +17,29 @@ int main(int argc, const char * argv[])
     
     anthem.envelopes[Anthem::A].setActive(true);
     
-    anthem.envelopes[Anthem::A].setSegmentLength(Envelope::Segments::ATTACK, 100);
+    
+    anthem.envelopes[Anthem::A].setSegmentLength(Envelope::Segments::ATTACK, 1000);
+    
+    anthem.envelopes[Anthem::A].setSegmentRate(Envelope::Segments::ATTACK, 2);
+    
+    anthem.envelopes[Anthem::A].setSegmentStartLevel(Envelope::Segments::ATTACK, 0);
+    
+    anthem.envelopes[Anthem::A].setSegmentEndLevel(Envelope::Segments::ATTACK, 1);
+    
+    
+    anthem.envelopes[Anthem::A].setSegmentLength(Envelope::Segments::A, 1000);
+    
+    anthem.envelopes[Anthem::A].setSegmentBothLevels(Envelope::Segments::A, 1);
+    
+    
+    anthem.envelopes[Anthem::A].setSegmentLength(Envelope::Segments::B, 1000);
+
+    anthem.envelopes[Anthem::A].setSegmentRate(Envelope::Segments::B, 2);
+    
+    anthem.envelopes[Anthem::A].setSegmentStartLevel(Envelope::Segments::B, 1);
+    
+    anthem.envelopes[Anthem::A].setSegmentEndLevel(Envelope::Segments::B, 0);
+    
     
     anthem.operators[Anthem::D].attachMod(Operator::LEVEL, &anthem.envelopes[Anthem::A]);
     
@@ -29,7 +51,7 @@ int main(int argc, const char * argv[])
     
     anthem.mixer.startRecording();
     
-    const unsigned long len = Global::samplerate * 1;
+    const unsigned long len = Global::samplerate * 3;
     
     while (anthem.getSampleCount() < len);
     

@@ -27,6 +27,7 @@ Envelope::Envelope(bool sustainEnabled)
     segments_[CONNECTOR].setLength(Global::samplerate / 40.0);
     
     // Initial settings
+    /*
     setSegmentLevel(Segments::ATTACK, 0.8);
     setSegmentLength(Segments::ATTACK, 500);
     setSegmentRate(Segments::ATTACK, 1.2);
@@ -38,6 +39,7 @@ Envelope::Envelope(bool sustainEnabled)
     setSegmentStartLevel(Segments::RELEASE, 0.5);
     setSegmentRate(Segments::RELEASE, 0.6);
     setSegmentLength(Segments::RELEASE, 500);
+    */
 
     mods_[AMP].setHigherBoundary(1);
     mods_[AMP].setLowerBoundary(0);

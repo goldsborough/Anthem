@@ -112,19 +112,17 @@ public:
     *
     *  @brief       Sets the rate of the segment
     *
-    *  @details     The rate of the segment determines whether the the segment
-    *               is exponential (0 to 1), linear (exactly 1) or logarithmic
-    *               (1 to 2). The rate increases away from 1, so 0.1 would be
-    *               equally exponential as 1.9 would be logarithmic. Note that
-    *               the logarithmic scale is later on converted to the equivalent
-    *               ranging from 0 to 1, this scale is provided so that there
-    *               need not be a second parameter. It finally calls _calcRate()
-    *               to do the math.
+    *  @details     The rate of the segment determines whether its shape is
+    *               that of a power function (1 < r < 10) or that of a radical
+    *               function (0 < r < 1). For example, a rate of 2 would be a
+    *               quadratic function while a rate of 0.5 would be a perfect
+    *               square root function. A rate of exactly 1 means a linear
+    *               increase or decrease.
     *
-    *  @param       rate The rate of the segment. 0 ≤ x < 1 is exponential, 1 is
-    *               linear and 1 < x ≤ 2 is logarithmic.
+    *  @param       rate The rate of the segment. 0 < r < 1 is radical, 1 is
+    *               linear and 1 < r < 10 is power.
     *
-    *  @see         _calcRate()
+    *  @see         calculateRate_()
     *
     *  @exception   Throws std::invalid_argument if the range is not between 0 and 2
     *
@@ -146,14 +144,14 @@ public:
     *
     *  @brief       Sets the end amplitude of the segment.
     *
-    *  @details     Sets _endLevel and calls _calcLevel and _calcRate to
-    *               re-calculate the increment.
+    *  @details     Sets _endLevel and calls _calculateLevel and _calculateRate to
+    *               re-calculateulate the increment.
     *
     *  @param       lv The level. Must be between 0 and 1.
     *
-    *  @see         _calcRate()
+    *  @see         _calculateRate()
     *
-    *  @see         _calcLevel()
+    *  @see         _calculateLevel()
     *
     *  @exception   Throws std::invalid_argument if lv is not between 0 and 1.
     *
@@ -175,14 +173,14 @@ public:
     *
     *  @brief       Sets the starting amplitude of the segment.
     *
-    *  @details     It sets _startLevel and calls _calcLevel and _calcRate to
-    *               re-calculate the increment.
+    *  @details     It sets _startLevel and calls _calculateLevel and _calculateRate to
+    *               re-calculateulate the increment.
     *
     *  @param       lv The level. Must be between 0 and 1.
     *
-    *  @see         _calcRate()
+    *  @see         _calculateRate()
     *
-    *  @see         _calcLevel()
+    *  @see         _calculateLevel()
     *
     *  @exception   Throws std::invalid_argument if lv is not between 0 and 1.
     *
@@ -220,10 +218,10 @@ public:
     *
     *  @brief       Resets the envelope segment.
     *
-    *  @details     Resets the sample count to 0 and calls _calcRate() to 
+    *  @details     Resets the sample count to 0 and calls _calculateRate() to 
     *               reset the increment.
     *
-    *  @see         _calcRate()
+    *  @see         _calculateRate()
     *
     ****************************************************************************/
     
@@ -232,10 +230,10 @@ public:
 private:
     
     /*! Calculates the amplitude range and assigns it to range_ */
-    void calcRange_();
+    void calculateRange_();
     
     /*! Calculates the increment for curr_ and assigns it to incr_ */
-    void calcIncr_();
+    void calculateIncr_();
     
     /*! The rate determining the type (lin,log,exp) */
     double rate_;
