@@ -13,7 +13,7 @@
 #ifndef __Anthem__Envelope__
 #define __Anthem__Envelope__
 
-#include "EnvSeg.hpp"
+#include "EnvelopeSegment.hpp"
 
 /*********************************************************************************************//*!
 *
@@ -36,14 +36,14 @@
 *
 *************************************************************************************************/
 
-class Envelope : public ModEnvSegSeqFlexible
+class Envelope : public ModEnvelopeSegmentSequenceFlexible
 {
 public:
 
-    typedef unsigned short seg_t;
+    typedef unsigned short segment_t;
     
     /*! Available ModDocks for segments. */
-    enum Seg_Docks
+    enum segmentDocks
     {
         SEG_RATE,
         SEG_LEVEL
@@ -53,14 +53,14 @@ public:
     enum Docks { AMP };
     
     /*! The Envelope's segments */
-    enum Segment
+    enum Segments
     {
-        DEL,
-        ATK,
-        SEG_A,
-        SEG_B,
-        SEG_C,
-        REL
+        DELAY,
+        ATTACK,
+        A,
+        B,
+        C,
+        RELEASE
     };
     
     /*********************************************************************************************************************//*!
@@ -99,51 +99,51 @@ public:
     *  @details     Setting the level of a segment sets its end level and the start level of
     *               the next segment.
     *
-    *  @param       seg The segment in the sequence.
+    *  @param       segment The segment in the sequence.
     *
     *  @param       lv The new level, between 0 and 1.
     *
     ********************************************************************************************/
     
-    void setSegLevel(seg_t seg, double lv);
+    void setSegmentLevel(segment_t segment, double lv);
     
     /*****************************************************************************************//*!
     *
     *  @brief       Returns the level of a segment.
     *
-    *  @details     Equivalent to EnvSegSeq::getSegEndLevel()
+    *  @details     Equivalent to EnvelopeSegmentSequence::getSegmentEndLevel()
     *
-    *  @param       seg The segment in the sequence.
+    *  @param       segment The segment in the sequence.
     *
     *  @return      The segment's level, between 0 and 1.
     *
     ********************************************************************************************/
     
-    double getSegLevel(seg_t seg) const;
+    double getSegmentLevel(segment_t segment) const;
     
     /******************************************************************************//*!
     *
     *  @brief      Sets the rate of a segment.
     *
-    *  @param      seg The segment in the sequence.
+    *  @param      segment The segment in the sequence.
     *
     *  @param      rate The new rate. 0-1 is exp., 1 is linear and 1-2 is log.
     *
     *********************************************************************************/
     
-    void setSegRate(seg_t seg, double rate);
+    void setSegmentRate(segment_t segment, double rate);
     
     /******************************************************************************//*!
     *
     *  @brief       Returns the current rate of a segment.
     *
-    *  @param       seg The segment, of which to get the rate.
+    *  @param       segment The segment, of which to get the rate.
     *
     *  @return      The rate of a segment.
     *
     *********************************************************************************/
     
-    double getSegRate(seg_t seg) const;
+    double getSegmentRate(segment_t segment) const;
     
     /*****************************************************************************************//*!
     *
@@ -151,15 +151,15 @@ public:
     *
     *  @details     Note that you must set a loopMax value to enable looping.
     *
-    *  @param       seg The segment in the sequence to start the loop from.
+    *  @param       segment The segment in the sequence to start the loop from.
     *
     *  @see         setLoopEnd()
     *
-    *  @see         EnvSegSeq::setLoopMax()
+    *  @see         EnvelopeSegmentSequence::setLoopMax()
     *
     ********************************************************************************************/
     
-    void setLoopStart(seg_t seg);
+    void setLoopStart(segment_t segment);
     
     /*****************************************************************************************//*!
     *
@@ -167,15 +167,15 @@ public:
     *
     *  @details     Note that you must set a loopMax value to enable looping.
     *
-    *  @param       seg The segment in the sequence to end the loop at.
+    *  @param       segment The segment in the sequence to end the loop at.
     *
     *  @see         setLoopStart()
     *
-    *  @see         EnvSegSeq::setLoopMax()
+    *  @see         EnvelopeSegmentSequence::setLoopMax()
     *
     ********************************************************************************************/
     
-    void setLoopEnd(seg_t seg);
+    void setLoopEnd(segment_t segment);
     
     /*****************************************************************************************//*!
     *
@@ -213,37 +213,37 @@ public:
     *
     ********************************************************************************************/
     
-    bool sustainEnabled() const;
+    bool sustainIsEnabled() const;
     
-    /*! @copydoc ModEnvSegSeq::setModUnitDepth_Seg() */
-    void setModUnitDepth_Seg(seg_t segNum, index_t dockNum, index_t modNum, double depth);
+    /*! @copydoc ModEnvelopeSegmentSequence::setModUnitDepth_Segment() */
+    void setModUnitDepth_Segment(segment_t segmentNum, index_t dockNum, index_t modNum, double depth);
     
-    /*! @copydoc ModEnvSegSeq::getModUnitDepth_Seg() */
-    double getModUnitDepth_Seg(seg_t segNum, index_t dockNum, index_t modNum) const;
+    /*! @copydoc ModEnvelopeSegmentSequence::getModUnitDepth_Segment() */
+    double getModUnitDepth_Segment(segment_t segmentNum, index_t dockNum, index_t modNum) const;
     
-    /*! @copydoc ModEnvSegSeq::attachMod_Seg() */
-    void attachMod_Seg(seg_t segNum, index_t dockNum, ModUnit* mod);
+    /*! @copydoc ModEnvelopeSegmentSequence::attachMod_Segment() */
+    void attachMod_Segment(segment_t segmentNum, index_t dockNum, ModUnit* mod);
     
-    /*! @copydoc ModEnvSegSeq::detachMod_Seg() */
-    void detachMod_Seg(seg_t segNum, index_t dockNum, index_t modNum);
+    /*! @copydoc ModEnvelopeSegmentSequence::detachMod_Segment() */
+    void detachMod_Segment(segment_t segmentNum, index_t dockNum, index_t modNum);
     
-    /*! @copydoc ModEnvSegSeq::setSidechain_Seg() */
-    void setSidechain_Seg(seg_t segNum, index_t dockNum, index_t master, index_t slave);
+    /*! @copydoc ModEnvelopeSegmentSequence::setSidechain_Segment() */
+    void setSidechain_Segment(segment_t segmentNum, index_t dockNum, index_t master, index_t slave);
     
-    /*! @copydoc ModEnvSegSeq::unSidechain_Seg() */
-    void unSidechain_Seg(seg_t segNum, index_t dockNum, index_t master, index_t slave);
+    /*! @copydoc ModEnvelopeSegmentSequence::unSidechain_Segment() */
+    void unSidechain_Segment(segment_t segmentNum, index_t dockNum, index_t master, index_t slave);
     
-    /*! @copydoc ModEnvSegSeq::isSidechain_Seg() */
-    bool isSidechain_Seg(seg_t segNum, index_t dockNum, index_t master, index_t slave) const;
+    /*! @copydoc ModEnvelopeSegmentSequence::isSidechain_Segment() */
+    bool isSidechain_Segment(segment_t segmentNum, index_t dockNum, index_t master, index_t slave) const;
     
-    /*! @copydoc ModEnvSegSeq::isMaster_Seg() */
-    bool isMaster_Seg(seg_t segNum, index_t dockNum, index_t index) const;
+    /*! @copydoc ModEnvelopeSegmentSequence::isMaster_Segment() */
+    bool isMaster_Segment(segment_t segmentNum, index_t dockNum, index_t index) const;
     
-    /*! @copydoc ModEnvSegSeq::isSlave_Seg() */
-    bool isSlave_Seg(seg_t segNum, index_t dockNum, index_t index) const;
+    /*! @copydoc ModEnvelopeSegmentSequence::isSlave_Segment() */
+    bool isSlave_Segment(segment_t segmentNum, index_t dockNum, index_t index) const;
     
-    /*! @copydoc ModEnvSegSeq::dockSize_Seg() */
-    unsigned long dockSize_Seg(seg_t segNum, index_t dockNum) const;
+    /*! @copydoc ModEnvelopeSegmentSequence::dockSize_Segment() */
+    unsigned long dockSize_Segment(segment_t segmentNum, index_t dockNum) const;
     
     /*! @copydoc GenUnit::setAmp() */
     void setAmp(double amp);
@@ -255,10 +255,10 @@ private:
     
     /*! Connects the end and starting levels of the loop
         to avoid harsh transitions */
-    enum { CONNECTOR = 6 };
+    enum Hidden { CONNECTOR = 6 };
     
     /*! Changes the current segment in the sequence */
-    void changeSeg_(segItr itr);
+    void changeSegment_(segmentItr itr);
     
     /*! Does the actual work for modulate() */
     double tick_();

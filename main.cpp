@@ -12,16 +12,14 @@ int main(int argc, const char * argv[])
     
     anthem.operators[Anthem::D].setActive(true);
     
-    anthem.operators[Anthem::D].setLevel(1);
+    anthem.operators[Anthem::D].setLevel(0);
     
     
-    //anthem.operators[Anthem::C].setActive(true);
+    anthem.envelopes[Anthem::A].setActive(true);
     
-    //anthem.operators[Anthem::C].setRatio(1);
+    anthem.envelopes[Anthem::A].setSegmentLength(Envelope::Segments::ATTACK, 100);
     
-    //anthem.operators[Anthem::C].setLevel(-1);
-    
-    //anthem.operators[Anthem::C].setPhaseOffset(180);
+    anthem.operators[Anthem::D].attachMod(Operator::LEVEL, &anthem.envelopes[Anthem::A]);
     
      
     anthem.setNote(69, true);

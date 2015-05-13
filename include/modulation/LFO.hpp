@@ -14,7 +14,7 @@
 #define __Anthem__LFO__
 
 #include "Oscillator.hpp"
-#include "EnvSeg.hpp"
+#include "EnvelopeSegment.hpp"
 
 /*************************************************************************************************//*!
 *
@@ -125,39 +125,39 @@ public:
 
 /****************************************************************************************************//*!
 *
-*  @brief       Derived class from EnvSegSeq for specific LFO purposes.
+*  @brief       Derived class from EnvelopeSegmentSequence for specific LFO purposes.
 *
-*  @details     The main difference between EnvSegSeq and LFOSeq is that LFOSeq has a rate parameter
-*               that sets the rate or frequency of the entire Envelope sequence. Internally, changing
-*               this "rate" is equivalent to appropriately adjusting the length of each EnvSeg.
+*  @details     The main difference between EnvelopeSegmentSequence and LFOSequence is that LFOSequence has a rate parameter
+*               that sets the rate or frequency of the entire Envelopeelope sequence. Internally, changing
+*               this "rate" is equivalent to appropriately adjusting the length of each EnvelopeSegment.
 *
 ********************************************************************************************************/
 
-class LFOSeq : public ModEnvSegSeq
+class LFOSequence : public ModEnvelopeSegmentSequence
 {
     
 public:
     
     /*! ModDocks for segments */
-    enum Seg_Docks
+    enum Segment_Docks
     {
         MOD_FREQ,
         MOD_PHASE,
         MOD_DEPTH
     };
     
-    /*! ModDocks for LFOSeq (entire unit, not segments) */
+    /*! ModDocks for LFOSequence (entire unit, not segments) */
     enum Docks { AMP, RATE };
     
     /*************************************************************************************************//*!
     *
-    *  @brief       Constructs an LFOSeq object.
+    *  @brief       Constructs an LFOSequence object.
     *
     *  @param       seqLength The amount of individual envelope segments. Defaults to 10.
     *
     *****************************************************************************************************/
     
-    LFOSeq(unsigned short seqLength = 5, double rate = 1);
+    LFOSequence(unsigned short seqLength = 5, double rate = 1);
     
     /*************************************************************************************************//*!
     *
@@ -217,13 +217,13 @@ public:
     *
     *********************************************************************************/
     
-    void setSegRate(seg_t seg, double rate);
+    void setSegmentRate(segment_t seg, double rate);
     
     /*************************************************************************************************//*!
     *
     *  @brief       Sets the depth of a segment's modulator.
     *
-    *  @details     Do not confuse with setModUnitDepth_Seg to set the depth of a modulator in a
+    *  @details     Do not confuse with setModUnitDepth_Segment to set the depth of a modulator in a
     *               segment's wave's ModDock. 
     *
     *  @param       seg The segment to set the depth for.
@@ -234,7 +234,7 @@ public:
     *
     *****************************************************************************************************/
     
-    void setModDepth(seg_t seg, double depth);
+    void setModDepth(segment_t seg, double depth);
     
     /*************************************************************************************************//*!
     *
@@ -248,7 +248,7 @@ public:
     *
     *****************************************************************************************************/
     
-    double getModDepth(seg_t seg) const;
+    double getModDepth(segment_t seg) const;
     
     /*************************************************************************************************//*!
     *
@@ -262,7 +262,7 @@ public:
     *
     *****************************************************************************************************/
     
-    void setModFreq(seg_t seg, double freq);
+    void setModFreq(segment_t seg, double freq);
     
     /*************************************************************************************************//*!
     *
@@ -276,7 +276,7 @@ public:
     *
     *****************************************************************************************************/
     
-    double getModFreq(seg_t seg) const;
+    double getModFreq(segment_t seg) const;
     
     /*************************************************************************************************//*!
     *
@@ -290,7 +290,7 @@ public:
     *
     *****************************************************************************************************/
     
-    void setModPhaseOffset(seg_t seg, double degrees);
+    void setModPhaseOffset(segment_t seg, double degrees);
     
     /*************************************************************************************************//*!
     *
@@ -304,7 +304,7 @@ public:
     *
     *****************************************************************************************************/
     
-    double getModPhaseOffset(seg_t seg);
+    double getModPhaseOffset(segment_t seg);
     
     /*************************************************************************************************//*!
     *
@@ -318,7 +318,7 @@ public:
     *
     *****************************************************************************************************/
     
-    void setModWavetable(seg_t seg, unsigned short wt);
+    void setModWavetable(segment_t seg, unsigned short wt);
     
     /*************************************************************************************************//*!
     *
@@ -332,13 +332,13 @@ public:
     *
     *****************************************************************************************************/
     
-    std::shared_ptr<Wavetable> getModWavetable(seg_t seg) const;
+    std::shared_ptr<Wavetable> getModWavetable(segment_t seg) const;
     
     /****************************************************************************************************//*!
     *
     *  @brief       Returns the segments' length.
     *
-    *  @details     The length is the same for all LFOSeqs and depends on the rate. Computed in setRate().
+    *  @details     The length is the same for all LFOSequences and depends on the rate. Computed in setRate().
     *
     *  @return      The segment's length.
     *
@@ -346,7 +346,7 @@ public:
     *
     ********************************************************************************************************/
     
-    unsigned long getSegLen() const;
+    unsigned long getSegmentLength() const;
     
     /******************************************************************************//*!
     *
@@ -364,7 +364,7 @@ public:
     *
     *********************************************************************************/
     
-    void insertSegment(seg_t pos);
+    void insertSegment(segment_t pos);
     
     /******************************************************************************//*!
     *
@@ -372,11 +372,11 @@ public:
     *
     *  @param      pos The position where to insert the new segment.
     *
-    *  @param      seg The EnvSeg to insert.
+    *  @param      seg The EnvelopeSegment to insert.
     *
     *********************************************************************************/
     
-    void insertSegment(seg_t pos, const EnvSeg& seg);
+    void insertSegment(segment_t pos, const EnvelopeSegment& seg);
     
     /*************************************************************************************************//*!
     *
@@ -396,7 +396,7 @@ public:
     *
     *****************************************************************************************************/
     
-    void removeSegment(seg_t seg);
+    void removeSegment(segment_t seg);
     
     /*************************************************************************************************//*!
     *
@@ -414,47 +414,47 @@ public:
     
     double getScaledModFreqValue(double freq) const;
     
-    /*! @copydoc EnvSegSeq::update() */
+    /*! @copydoc EnvelopeSegmentSequence::update() */
     void update();
     
     /*! @copydoc ModUnit::modulate() */
     double modulate(double sample, double depth, double maximum);
     
-    /*! @copydoc ModEnvSegSeq::setModUnitDepth_Seg() */
-    void setModUnitDepth_Seg(seg_t segNum, index_t dockNum, index_t modNum, double depth);
+    /*! @copydoc ModEnvelopeSegmentSequence::setModUnitDepth_Segment() */
+    void setModUnitDepth_Segment(segment_t segNum, index_t dockNum, index_t modNum, double depth);
     
-    /*! @copydoc ModEnvSegSeq::getModUnitDepth_Seg() */
-    double getModUnitDepth_Seg(seg_t segNum, index_t dockNum, index_t modNum) const;
+    /*! @copydoc ModEnvelopeSegmentSequence::getModUnitDepth_Segment() */
+    double getModUnitDepth_Segment(segment_t segNum, index_t dockNum, index_t modNum) const;
     
-    /*! @copydoc ModEnvSegSeq::attachMod_Seg() */
-    void attachMod_Seg(seg_t segNum, index_t dockNum, ModUnit* mod);
+    /*! @copydoc ModEnvelopeSegmentSequence::attachMod_Segment() */
+    void attachMod_Segment(segment_t segNum, index_t dockNum, ModUnit* mod);
     
-    /*! @copydoc ModEnvSegSeq::detachMod_Seg() */
-    void detachMod_Seg(seg_t segNum, index_t dockNum, index_t modNum);
+    /*! @copydoc ModEnvelopeSegmentSequence::detachMod_Segment() */
+    void detachMod_Segment(segment_t segNum, index_t dockNum, index_t modNum);
     
-    /*! @copydoc ModEnvSegSeq::setSidechain_Seg() */
-    void setSidechain_Seg(seg_t segNum, index_t dockNum, index_t master, index_t slave);
+    /*! @copydoc ModEnvelopeSegmentSequence::setSidechain_Segment() */
+    void setSidechain_Segment(segment_t segNum, index_t dockNum, index_t master, index_t slave);
     
-    /*! @copydoc ModEnvSegSeq::unSidechain_Seg() */
-    void unSidechain_Seg(seg_t segNum, index_t dockNum, index_t master, index_t slave);
+    /*! @copydoc ModEnvelopeSegmentSequence::unSidechain_Segment() */
+    void unSidechain_Segment(segment_t segNum, index_t dockNum, index_t master, index_t slave);
     
-    /*! @copydoc ModEnvSegSeq::isSidechain_Seg() */
-    bool isSidechain_Seg(seg_t segNum, index_t dockNum, index_t master, index_t slave) const;
+    /*! @copydoc ModEnvelopeSegmentSequence::isSidechain_Segment() */
+    bool isSidechain_Segment(segment_t segNum, index_t dockNum, index_t master, index_t slave) const;
     
-    /*! @copydoc ModEnvSegSeq::isMaster_Seg() */
-    bool isMaster_Seg(seg_t segNum, index_t dockNum, index_t index) const;
+    /*! @copydoc ModEnvelopeSegmentSequence::isMaster_Segment() */
+    bool isMaster_Segment(segment_t segNum, index_t dockNum, index_t index) const;
     
-    /*! @copydoc ModEnvSegSeq::isSlave_Seg() */
-    bool isSlave_Seg(seg_t segNum, index_t dockNum, index_t index) const;
+    /*! @copydoc ModEnvelopeSegmentSequence::isSlave_Segment() */
+    bool isSlave_Segment(segment_t segNum, index_t dockNum, index_t index) const;
     
-    /*! @copydoc ModEnvSegSeq::dockSize_Seg() */
-    unsigned long dockSize_Seg(seg_t segNum, index_t dockNum) const;
+    /*! @copydoc ModEnvelopeSegmentSequence::dockSize_Segment() */
+    unsigned long dockSize_Segment(segment_t segNum, index_t dockNum) const;
     
 private:
     
-    struct LFOSeq_LFO
+    struct LFOSequence_LFO
     {
-        LFOSeq_LFO(double f = 1)
+        LFOSequence_LFO(double f = 1)
         : freq(f)
         { }
         
@@ -466,14 +466,14 @@ private:
     };
     
     /*! Vector of above Mod structs */
-    std::vector<LFOSeq_LFO> lfos_;
+    std::vector<LFOSequence_LFO> lfos_;
     
     /*! Calls getScaledModFreqValue() for seg */
-    void setScaledModFreq_(seg_t seg);
+    void setScaledModFreq_(segment_t seg);
     
     /*! Resets the length of all segments according 
         to the sequence's rate parameter */
-    void resizeSegsFromRate_(double rate);
+    void resizeSegmentsFromRate_(double rate);
     
     /*! The current rate of the sequence */
     double rate_;
@@ -489,8 +489,8 @@ class Crossfader;
 *  @brief       The main "LFO" interface for Anthem.
 *
 *  @details     In Anthem, an LFO is relatively large unit, consisting of two normal LFOs (Oscillators)
-*               and two LFOSeqs (EnvSegSeqs). The user can switch between the normal LFO mode and the
-*               Sequencer mode. In both cases, the user can then crossfade between the two respective
+*               and two LFOSequences (EnvelopeSegmentSequences). The user can switch between the normal LFO mode and the
+*               Sequenceuencer mode. In both cases, the user can then crossfade between the two respective
 *               units, e.g. between LFO A and LFO B.
 *
 ********************************************************************************************************/
@@ -501,7 +501,7 @@ class LFOUnit : public ModUnit
 public:
     
     /*! LFO modes - lfo mode and sequencer mode */
-    enum Modes { LFO_MODE, SEQ_MODE };
+    enum class Mode { LFO, SEQ };
     
     /*! One of the two units of a mode (e.g. LFO A and B)*/
     enum Units { A, B };
@@ -513,11 +513,11 @@ public:
     *
     *  @brief       Constructs an LFO Unit.
     *
-    *  @param       mode The initial mode, defaults to LFO_MODE
+    *  @param       mode The initial mode, defaults to Mode::LFO
     *
     ********************************************************************************************************/
     
-    LFOUnit(unsigned short mode = LFO_MODE);
+    LFOUnit(Mode mode = Mode::LFO);
     
     LFOUnit(const LFOUnit& other);
     
@@ -551,32 +551,32 @@ public:
     *
     ********************************************************************************************************/
     
-    void setMode(bool mode);
+    void setMode(Mode mode);
     
     /****************************************************************************************************//*!
     *
     *  @brief       Returns the LFOUnit's current mode.
     *
-    *  @return      Boolean mode, either LFO_Mode or SEQ_Mode;
+    *  @return      A member of the Mode enum class.
     *
     ********************************************************************************************************/
     
-    bool getMode() const;
+    Mode getMode() const;
     
     /****************************************************************************************************//*!
     *
-    *  @brief       Returns one of the LFOUnit's LFOSeqs.
+    *  @brief       Returns one of the LFOUnit's LFOSequences.
     *
     *  @details     This is a function so that LFOseqs must be accessed the same way as the crossfader,
     *               which is returned through a function in order to hide the std::unique_ptr.
     *
     *  @param       unit The unit number, LFOUnit::A or ::B.
     *
-    *  @return      A reference to the LFOSeq.
+    *  @return      A reference to the LFOSequence.
     *
     ********************************************************************************************************/
     
-    LFOSeq& seqs(bool unit);
+    LFOSequence& seqs(bool unit);
     
     /****************************************************************************************************//*!
     *
@@ -615,12 +615,12 @@ private:
     std::unique_ptr<Crossfader> fader_;
     
     /*! The step sequencer lfos, activated with setMode() and Modes::SEQ_MODE */
-    LFOSeq lfoSeqs_ [2];
+    LFOSequence lfoSequences_ [2];
     
-    /*! The normal lfos, activated with setMode() and Modes::LFO_MODE */
+    /*! The normal lfos, activated with setMode() and Modes::Mode::LFO */
     LFO lfos_ [2];
     
-    bool mode_;
+    Mode mode_;
 };
 
 #endif /* defined(__Anthem__LFO__) */

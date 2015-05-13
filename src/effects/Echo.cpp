@@ -1,11 +1,11 @@
 #include "Echo.hpp"
 
-Echo::Echo(double delayLen,
+Echo::Echo(double delayLength,
            double decayTime,
            double decayRate,
            double feedbackLevel,
            double capacity)
-: Delay(delayLen,decayTime,decayRate,feedbackLevel,capacity)
+: Delay(delayLength,decayTime,decayRate,feedbackLevel,capacity)
 { }
 
 Echo::~Echo()

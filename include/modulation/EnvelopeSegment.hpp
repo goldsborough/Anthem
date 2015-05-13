@@ -1,17 +1,17 @@
 /*********************************************************************************************//*!
 *
-*  @file        EnvSeg.hpp
+*  @file        EnvelopeSegment.hpp
 *
 *  @author      Peter Goldsborough
 *
 *  @date        18/10/2014
 *
-*  @brief       EnvSeg, EnvSegSeq and ModEnvSegSeq classes.
+*  @brief       EnvelopeSegment, EnvelopeSegmentSequence and ModEnvelopeSegmentSequence classes.
 *
 *************************************************************************************************/
 
-#ifndef __Anthem__EnvSeg__
-#define __Anthem__EnvSeg__
+#ifndef __Anthem__EnvelopeSegment__
+#define __Anthem__EnvelopeSegment__
 
 #include "Units.hpp"
 #include <vector>
@@ -20,19 +20,19 @@
  *
  *  @brief      An envelope segment
  *
- *  @details    The EnvSeg class is a single segment of a EnvSegSeq. It can be
+ *  @details    The EnvelopeSegment class is a single segment of a EnvelopeSegmentSequence. It can be
  *              be either an attack, decay or a sustain segment and increment or
  *              decrement either exponentially, logarithmically or linearly in
  *              case of being a decay, an attack or a release segment.
  *
  *********************************************************************************/
 
-class EnvSeg : public GenUnit
+class EnvelopeSegment : public GenUnit
 {
     
 public:
     
-    friend class ModEnvSegSeq;
+    friend class ModEnvelopeSegmentSequence;
     
     /*! Parameters for modulation */
     enum Docks
@@ -42,7 +42,7 @@ public:
         END_LEVEL
     };
     
-    typedef unsigned long len_t;
+    typedef unsigned long length_t;
     
     /**********************************************************************************************//*!
      *
@@ -58,9 +58,9 @@ public:
      *
      **************************************************************************************************/
     
-    EnvSeg(double startLevel = 0,
+    EnvelopeSegment(double startLevel = 0,
            double endLevel = 0,
-           len_t len = 0,
+           length_t len = 0,
            double rate = 1);
     
     /******************************************************************//*!
@@ -90,13 +90,13 @@ public:
      *
      *  @brief      Sets the length of the segment
      *
-     *  @param      sampleLen Length of the segment in __samples__.
+     *  @param      sampleLength Length of the segment in __samples__.
      *
-     *  @exception  Throws std::invalid_argument if len > _maxLen (60 seconds)
+     *  @exception  Throws std::invalid_argument if len > _maxLength (60 seconds)
      *
      *************************************************************************/
 
-    void setLen(len_t sampleLen);
+    void setLength(length_t sampleLength);
     
     /*************************************************************************//*!
     *
@@ -106,7 +106,7 @@ public:
     *
     ****************************************************************************/
     
-    len_t getLen() const;
+    length_t getLength() const;
     
     /*************************************************************************//*!
     *
@@ -256,41 +256,41 @@ private:
     double incr_;
     
     /*! Length of segment in samples */
-    len_t len_;
+    length_t len_;
 };
 
 /******************************************************************************//*!
 *
-*  @brief       A sequence of EnvSegs.
+*  @brief       A sequence of EnvelopeSegments.
 *
-*  @details     An EnvSegSeq is a sequence of envelope segments that are activated
+*  @details     An EnvelopeSegmentSequence is a sequence of envelope segments that are activated
 *               one after the other. Control over the individual segments is possible
 *               as well as looping.
 *
 *********************************************************************************/
 
-class EnvSegSeq
+class EnvelopeSegmentSequence
 {
     
 public:
 
-    typedef unsigned long seg_t;
+    typedef unsigned long segment_t;
     
     /******************************************************************************//*!
     *
-    *  @brief       Constructs an EnvSegSeq.
+    *  @brief       Constructs an EnvelopeSegmentSequence.
     *
-    *  @param       seqLen The number of segments in the sequence.
+    *  @param       seqLength The number of segments in the sequence.
     *
     *********************************************************************************/
     
-    EnvSegSeq(seg_t seqLen);
+    EnvelopeSegmentSequence(segment_t seqLength);
     
-    EnvSegSeq(const EnvSegSeq& other);
+    EnvelopeSegmentSequence(const EnvelopeSegmentSequence& other);
     
-    EnvSegSeq& operator= (const EnvSegSeq& other);
+    EnvelopeSegmentSequence& operator= (const EnvelopeSegmentSequence& other);
     
-    virtual ~EnvSegSeq() { }
+    virtual ~EnvelopeSegmentSequence() { }
 
     /******************************************************************************//*!
     *
@@ -314,25 +314,25 @@ public:
     *
     *  @brief      Sets the rate of a segment.
     *
-    *  @param      seg The segment in the sequence.
+    *  @param      segment The segment in the sequence.
     *
     *  @param      rate The new rate. 0-1 is exp., 1 is linear and 1-2 is log.
     *
     *********************************************************************************/
     
-    virtual void setSegRate(seg_t seg, double rate);
+    virtual void setSegmentRate(segment_t segment, double rate);
     
     /******************************************************************************//*!
     *
     *  @brief       Returns the current rate of a segment.
     *
-    *  @param       seg The segment, of which to get the rate.
+    *  @param       segment The segment, of which to get the rate.
     *
     *  @return      The rate of a segment.
     *
     *********************************************************************************/
     
-    virtual double getSegRate(seg_t seg) const;
+    virtual double getSegmentRate(segment_t segment) const;
     
     /*****************************************************************************************************//*!
     *
@@ -340,85 +340,85 @@ public:
     *
     *  @details     This method 'links' the levels of two adjacent segments by making any
     *               segment's ending level equal to the starting level of the next. This
-    *               applies to all segments except the last one, since it has no next seg.
+    *               applies to all segments except the last one, since it has no next segment.
     *
-    *  @param       seg The segment in the sequence for which to set the ending amp (and starting of seg+1).
+    *  @param       segment The segment in the sequence for which to set the ending amp (and starting of segment+1).
     *
     *  @param       lv The new level.
     *
     ********************************************************************************************************/
     
-    virtual void setLinkedLevel(seg_t seg, double lv);
+    virtual void setLinkedLevel(segment_t segment, double lv);
     
     /******************************************************************************//*!
     *
     *  @brief       Sets the starting level of a segment.
     *
-    *  @param       seg The segment in the sequence.
+    *  @param       segment The segment in the sequence.
     *
     *  @param       lv The new level.
     *
     *********************************************************************************/
     
-    virtual void setSegStartLevel(seg_t seg, double lv);
+    virtual void setSegmentStartLevel(segment_t segment, double lv);
     
     /******************************************************************************//*!
     *
     *  @brief      Returns the current starting level of a segment.
     *
-    *  @param     seg The segment, of which to get the starting level.
+    *  @param     segment The segment, of which to get the starting level.
     *
     *  @return     The starting level of a segment.
     *
     *********************************************************************************/
     
-    virtual double getSegStartLevel(seg_t seg) const;
+    virtual double getSegmentStartLevel(segment_t segment) const;
     
     /******************************************************************************//*!
     *
     *  @brief       Sets the end level of a segment.
     *
-    *  @param       seg The segment in the sequence.
+    *  @param       segment The segment in the sequence.
     *
     *  @param       lv The new level.
     *
     *********************************************************************************/
     
-    virtual void setSegEndLevel(seg_t seg, double lv);
+    virtual void setSegmentEndLevel(segment_t segment, double lv);
     
     /******************************************************************************//*!
     *
     *  @brief      Returns the current ending level of a segment.
     *
-    *  @param      seg The segment, of which to get the ending level.
+    *  @param      segment The segment, of which to get the ending level.
     *
     *  @return     The ending level of a segment.
     *
     *********************************************************************************/
     
-    virtual double getSegEndLevel(seg_t seg) const;
+    virtual double getSegmentEndLevel(segment_t segment) const;
     
     /******************************************************************************//*!
     *
     *  @brief       Sets the both starting and ending levels at the same time.
     *
-    *  @param       seg The segment in the sequence.
+    *  @param       segment The segment in the sequence.
     *
     *  @param       lv The new level.
     *
     *********************************************************************************/
     
-    virtual void setSegBothLevels(seg_t seg, double lv);
+    virtual void setSegmentBothLevels(segment_t segment, double lv);
     
     /******************************************************************************//*!
     *
     *  @brief       Sets the sequence's loop start segment.
     *
-    *  @param       seg The segment to start the loop from.
+    *  @param       segment The segment to start the loop from.
     *
     *********************************************************************************/
     
-    virtual void setLoopStart(seg_t seg);
+    virtual void setLoopStart(segment_t segment);
     
     /******************************************************************************//*!
     *
@@ -428,17 +428,17 @@ public:
     *
     *********************************************************************************/
     
-    virtual seg_t getLoopStart() const;
+    virtual segment_t getLoopStart() const;
     
     /******************************************************************************//*!
     *
     *  @brief       Sets the sequence's loop end segment.
     *
-    *  @param       seg The segment to end the loop at.
+    *  @param       segment The segment to end the loop at.
     *
     *********************************************************************************/
     
-    virtual void setLoopEnd(seg_t seg);
+    virtual void setLoopEnd(segment_t segment);
     
     /******************************************************************************//*!
     *
@@ -448,7 +448,7 @@ public:
     *
     *********************************************************************************/
     
-    virtual seg_t getLoopEnd() const;
+    virtual segment_t getLoopEnd() const;
     
     /******************************************************************************//*!
     *
@@ -500,11 +500,11 @@ public:
     *
     *********************************************************************************/
 
-    virtual std::vector<EnvSeg>::size_type size() const;
+    virtual std::vector<EnvelopeSegment>::size_type size() const;
     
     /******************************************************************************//*!
     *
-    *  @brief      Resets the EnvSegSeq to its first sample.
+    *  @brief      Resets the EnvelopeSegmentSequence to its first sample.
     *
     *********************************************************************************/
     
@@ -512,10 +512,10 @@ public:
     
 protected:
     
-    typedef std::vector<EnvSeg>::iterator segItr;
+    typedef std::vector<EnvelopeSegment>::iterator segmentItr;
     
     /*! Changes the current segment in the sequence */
-    virtual void changeSeg_(segItr seg);
+    virtual void changeSegment_(segmentItr segment);
     
     /*! Executes various steps to reset a loop (go from end back to start) */
     virtual void resetLoop_();
@@ -524,50 +524,50 @@ protected:
     unsigned long currSample_;
     
     /*! Number of the current segment in the sequence */
-    seg_t currSegNum_;
+    segment_t currSegmentNum_;
     
     /*! Iterator pointing to the current segment */
-    segItr currSeg_;
+    segmentItr currSegment_;
     
     /*! Iterator pointing to the loop start segment */
-    segItr loopStart_;
+    segmentItr loopStart_;
     
     /*! Iterator pointing to the loop end segment */
-    segItr loopEnd_;
+    segmentItr loopEnd_;
     
     /*! Current number of loops executed */
-    seg_t loopCount_;
+    segment_t loopCount_;
     
     /*! Maximum number of loops */
-    seg_t loopMax_;
+    segment_t loopMax_;
  
     /*! Boolean whether or not to loop infinitely */
     bool loopInf_;
     
     /*! The segment sequence */
-    std::vector<EnvSeg> segs_;
+    std::vector<EnvelopeSegment> segments_;
 };
 
 
 /******************************************************************************//*!
 *
-*  @brief      An EnvSegSeq with ModDocks.
+*  @brief      An EnvelopeSegmentSequence with ModDocks.
 *
-*  @details    ModEnvSegSeq is an abstract class that implements methods for
+*  @details    ModEnvelopeSegmentSequence is an abstract class that implements methods for
 *              envelope classes that have to handle the modulation of their
 *              own ModDocks (e.g. for rate or master depth) as well as those
 *              of their segments (rate, amplitude).
 *
 *********************************************************************************/
 
-class ModEnvSegSeq : public EnvSegSeq, public ModUnit
+class ModEnvelopeSegmentSequence : public EnvelopeSegmentSequence, public ModUnit
 {
     
 public:
     
     /******************************************************************************//*!
     *
-    *  @param       numSegs The number of segments in the sequence.
+    *  @param       numSegments The number of segments in the sequence.
     *
     *  @param       numDocks The number of ModDocks for the sequence (not segments).
     *
@@ -575,29 +575,29 @@ public:
     *
     *********************************************************************************/
     
-    ModEnvSegSeq(seg_t numSegs,
-                 seg_t numDocks = 0,
+    ModEnvelopeSegmentSequence(segment_t numSegments,
+                 segment_t numDocks = 0,
                  double masterAmp = 1);
     
-    virtual ~ModEnvSegSeq() { }
+    virtual ~ModEnvelopeSegmentSequence() { }
     
     /*************************************************************************************************//*!
     *
     *  @brief       Returns the number of ModDocks of a segment.
     *
-    *  @param       segNum The segment index in the sequence to do this for.
+    *  @param       segmentNum The segment index in the sequence to do this for.
     *
     *  @return      The number of ModDocks.
     *
     *****************************************************************************************************/
     
-    virtual std::vector<ModDock*>::size_type numDocks_Seg(seg_t segNum) const;
+    virtual std::vector<ModDock*>::size_type numDocks_Segment(segment_t segmentNum) const;
     
     /*************************************************************************************************//*!
     *
     *  @brief       Sets the depth for a single modulation unit of a segment's dock.
     *
-    *  @param       segNum The segment index in the sequence to do this for.
+    *  @param       segmentNum The segment index in the sequence to do this for.
     *
     *  @param       dockNum The dock number of the modulation unit (e.g. Operator::AMP).
     *
@@ -607,13 +607,13 @@ public:
     *
     *****************************************************************************************************/
     
-    virtual void setModUnitDepth_Seg(seg_t segNum, index_t dockNum, index_t modNum, double depth);
+    virtual void setModUnitDepth_Segment(segment_t segmentNum, index_t dockNum, index_t modNum, double depth);
     
     /*************************************************************************************************//*!
     *
     *  @brief       Returns the depth for a single modulation unit of a segment's  dock.
     *
-    *  @param       segNum The segment index in the sequence to do this for.
+    *  @param       segmentNum The segment index in the sequence to do this for.
     *
     *  @param       dockNum The dock number of the modulation unit (e.g. Operator::AMP).
     *
@@ -623,13 +623,13 @@ public:
     *
     *****************************************************************************************************/
     
-    virtual double getModUnitDepth_Seg(seg_t segNum, index_t dockNum, index_t modNum) const;
+    virtual double getModUnitDepth_Segment(segment_t segmentNum, index_t dockNum, index_t modNum) const;
     
     /*************************************************************************************************//*!
     *
     *  @brief       Attaches a new modulation unit to a segment's dock.
     *
-    *  @param       segNum The segment index in the sequence to do this for.
+    *  @param       segmentNum The segment index in the sequence to do this for.
     *
     *  @param       dockNum The dock number of the dock to attach the new modulation unit to.
     *
@@ -641,13 +641,13 @@ public:
     *
     *****************************************************************************************************/
     
-    virtual void attachMod_Seg(seg_t segNum, index_t dockNum, ModUnit* mod);
+    virtual void attachMod_Segment(segment_t segmentNum, index_t dockNum, ModUnit* mod);
     
     /*************************************************************************************************//*!
     *
     *  @brief       Detaches a modulation unit from a segment's dock.
     *
-    *  @param       segNum The segment index in the sequence to do this for.
+    *  @param       segmentNum The segment index in the sequence to do this for.
     *
     *  @param       dockNum The dock number of the dock to detach from.
     *
@@ -657,13 +657,13 @@ public:
     *
     *****************************************************************************************************/
     
-    virtual void detachMod_Seg(seg_t segNum, index_t dockNum, index_t modNum);
+    virtual void detachMod_Segment(segment_t segmentNum, index_t dockNum, index_t modNum);
     
     /*************************************************************************************************//*!
     *
     *  @brief       Returns boolean whether or not a dock of a segment is in use.
     *
-    *  @param       segNum The segment index in the sequence to do this for.
+    *  @param       segmentNum The segment index in the sequence to do this for.
     *
     *  @param       dockNum The dock number of the modulation unit (e.g. Operator::AMP).
     *
@@ -671,7 +671,7 @@ public:
     *
     *****************************************************************************************************/
     
-    virtual bool dockInUse_Seg(seg_t segNum, index_t dockNum) const;
+    virtual bool dockInUse_Segment(segment_t segmentNum, index_t dockNum) const;
     
     /*********************************************************************************************//*!
     *
@@ -684,7 +684,7 @@ public:
     *               cannot simultaneously be a master of slaves and contribute to the ModDock's
     *               modulation value, it is either-or.
     *
-    *  @param       segNum The segment index in the sequence to do this for.
+    *  @param       segmentNum The segment index in the sequence to do this for.
     *
     *  @param       dockNum The index of the ModDock in which to connect the two ModUnits.
     *
@@ -694,13 +694,13 @@ public:
     *
     *************************************************************************************************/
     
-    virtual void setSidechain_Seg(seg_t segNum, index_t dockNum, index_t master, index_t slave);
+    virtual void setSidechain_Segment(segment_t segmentNum, index_t dockNum, index_t master, index_t slave);
     
     /*********************************************************************************************//*!
     *
     *  @brief       Cuts the sidechain connection between two ModUnits in a segment's ModDock.
     *
-    *  @param       segNum The segment index in the sequence to do this for.
+    *  @param       segmentNum The segment index in the sequence to do this for.
     *
     *  @param       dockNum The index of the ModDock in which to connect the two ModUnits.
     *
@@ -712,13 +712,13 @@ public:
     *
     *************************************************************************************************/
     
-    virtual void unSidechain_Seg(seg_t segNum, index_t dockNum, index_t master, index_t slave);
+    virtual void unSidechain_Segment(segment_t segmentNum, index_t dockNum, index_t master, index_t slave);
     
     /*******************************************************************************************************//*!
     *
     *  @brief       Returns true if there is a sidechain connection between master and slave in a segment's ModDock.
     *
-    *  @param       segNum The segment index in the sequence to do this for.
+    *  @param       segmentNum The segment index in the sequence to do this for.
     *
     *  @param       dockNum The index of the ModDock in which to connect the two ModUnits.
     *
@@ -730,13 +730,13 @@ public:
     *
     ***********************************************************************************************************/
     
-    virtual bool isSidechain_Seg(seg_t segNum, index_t dockNum, index_t master, index_t slave) const;
+    virtual bool isSidechain_Segment(segment_t segmentNum, index_t dockNum, index_t master, index_t slave) const;
     
     /*********************************************************************************************//*!
     *
     *  @brief       Whether or not a certain ModUnit in a segment's ModDock is a master.
     *
-    *  @param       segNum The segment index in the sequence to do this for.
+    *  @param       segmentNum The segment index in the sequence to do this for.
     *
     *  @param       dockNum The index of the ModDock in which to connect the two ModUnits.
     *
@@ -746,13 +746,13 @@ public:
     *
     *************************************************************************************************/
     
-    virtual bool isMaster_Seg(seg_t segNum, index_t dockNum, index_t index) const;
+    virtual bool isMaster_Segment(segment_t segmentNum, index_t dockNum, index_t index) const;
     
     /*********************************************************************************************//*!
     *
     *  @brief       Whether or not a certain ModUnit in a segment's Moddock is a slave.
     *
-    *  @param       segNum The segment index in the sequence to do this for.
+    *  @param       segmentNum The segment index in the sequence to do this for.
     *
     *  @param       dockNum The index of the ModDock in which to connect the two ModUnits.
     *
@@ -762,13 +762,13 @@ public:
     *
     *************************************************************************************************/
     
-    virtual bool isSlave_Seg(seg_t segNum, index_t dockNum, index_t index) const;
+    virtual bool isSlave_Segment(segment_t segmentNum, index_t dockNum, index_t index) const;
     
     /*********************************************************************************************//*!
     *
     *  @brief       Returns the size of a segment's ModDock.
     *
-    *  @param       segNum The segment index in the sequence to do this for.
+    *  @param       segmentNum The segment index in the sequence to do this for.
     *
     *  @param       dockNum The index of the ModDock
     *
@@ -776,65 +776,65 @@ public:
     *
     *************************************************************************************************/
     
-    virtual unsigned long dockSize_Seg(seg_t segNum, index_t dockNum) const;
+    virtual unsigned long dockSize_Segment(segment_t segmentNum, index_t dockNum) const;
     
 protected:
     
     /*! Sets the ModDock base value for a segment. */
-    void setSegModDockBaseValue(seg_t segNum, index_t dockNum, double value);
+    void setSegmentModDockBaseValue(segment_t segmentNum, index_t dockNum, double value);
     
     /*! Returns the ModDock base value for a segment. */
-    double getSegModDockBaseValue(seg_t segNum, index_t dockNum) const;
+    double getSegmentModDockBaseValue(segment_t segmentNum, index_t dockNum) const;
 };
 
 /******************************************************************************//*!
  *
- *  @brief      An Extension to the ModEnvSegSeq for flexible segment lengths.
+ *  @brief      An Extension to the ModEnvelopeSegmentSequence for flexible segment lengths.
  *
- *  @details    Neither the EnvSegSeq nor the ModEnvSegSeq classes allow for
+ *  @details    Neither the EnvelopeSegmentSequence nor the ModEnvelopeSegmentSequence classes allow for
  *              the adjustment of segments' length because some classes that
- *              inherit from them, like LFOSeq, don't let the user adjust the
- *              lengths of individual segments. This class extends ModEnvSegSeq
+ *              inherit from them, like LFOSequence, don't let the user adjust the
+ *              lengths of individual segments. This class extends ModEnvelopeSegmentSequence
  *              and implements two methods for getting and setting an individual
  *              segment's length.
  *
  *********************************************************************************/
 
-class ModEnvSegSeqFlexible : public ModEnvSegSeq
+class ModEnvelopeSegmentSequenceFlexible : public ModEnvelopeSegmentSequence
 {
     
 public:
     
-    /*! @copydoc ModEnvSegSeq::ModEnvSegSeq() */
-    ModEnvSegSeqFlexible(seg_t numSegs,
-                         seg_t numDocks = 0,
+    /*! @copydoc ModEnvelopeSegmentSequence::ModEnvelopeSegmentSequence() */
+    ModEnvelopeSegmentSequenceFlexible(segment_t numSegments,
+                         segment_t numDocks = 0,
                          double masterAmp = 1);
     
-    virtual ~ModEnvSegSeqFlexible() { }
+    virtual ~ModEnvelopeSegmentSequenceFlexible() { }
     
     /******************************************************************************//*!
     *
     *  @brief       Sets the length of a segment.
     *
-    *  @param       seg The segment in the sequence.
+    *  @param       segment The segment in the sequence.
     *
     *  @param       ms The new length of the segment, in milliseconds.
     *
     *********************************************************************************/
     
-    virtual void setSegLen(seg_t seg, unsigned long ms);
+    virtual void setSegmentLength(segment_t segment, unsigned long ms);
     
     /******************************************************************************//*!
     *
     *  @brief      Returns the current length of a segment.
     *
-    *  @param     seg The segment, of which to get the length.
+    *  @param     segment The segment, of which to get the length.
     *
     *  @return     The length of a segment.
     *
     *********************************************************************************/
     
-    virtual unsigned long getSegLen(seg_t seg) const;
+    virtual unsigned long getSegmentLength(segment_t segment) const;
 };
 
-#endif /* defined(__Anthem__EnvSeg__) */
+#endif /* defined(__Anthem__EnvelopeSegment__) */

@@ -30,7 +30,7 @@ struct Echo : public Delay
     *
     *  @brief       Constructs an Echo object.
     *
-    *  @param       delayLen The length of the delay in seconds.
+    *  @param       delayLength The length of the delay in seconds.
     *
     *  @param       decayTime The time for the signal to fade out after the impulse stops.
     *
@@ -42,7 +42,7 @@ struct Echo : public Delay
     *
     *************************************************************************************************/
     
-    Echo(double delayLen = 1,
+    Echo(double delayLength = 1,
          double decayTime = 4,
          double decayRate = 0.01,
          double feedbackLevel = 1,

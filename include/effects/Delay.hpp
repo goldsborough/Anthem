@@ -43,7 +43,7 @@ public:
     *
     *  @brief       Constructs a Delay object.
     *
-    *  @param       delayLen The length of the delay line, in seconds.
+    *  @param       delayLength The length of the delay line, in seconds.
     *
     *  @param       decayTime The time for the attenuation of the delay to reach inaudible levels.
     *
@@ -55,7 +55,7 @@ public:
     *
     **************************************************************************************************/
     
-    Delay(double delayLen = 1,
+    Delay(double delayLength = 1,
           double decayTime = 4,
           double decayRate = 0.001,
           double feedbackLevel = 0,
@@ -230,11 +230,11 @@ protected:
 
 struct AllPassDelay : public Delay
 {
-    AllPassDelay(const double& delayLen = 1,
+    AllPassDelay(const double& delayLength = 1,
                  const double& decayTime = 4,
                  const double& decayRate = 0.001,
                  const double& feedbackLevel = 1)
-    : Delay(delayLen,decayTime,decayRate,feedbackLevel)
+    : Delay(delayLength,decayTime,decayRate,feedbackLevel)
     { }
     
     /*! @copydoc Delay::process() */

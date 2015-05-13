@@ -13,32 +13,31 @@
 #include "ModDock.hpp"
 
 Envelope::Envelope(bool sustainEnabled)
-
-: ModEnvSegSeqFlexible(7,1), sustainEnabled_(sustainEnabled),
+: ModEnvelopeSegmentSequenceFlexible(7,1),
+  sustainEnabled_(sustainEnabled),
   lastTick_(0)
-
 {
-    currSeg_ = segs_.begin() + DEL;
+    currSegment_ = segments_.begin() + Segments::DELAY;
     
     // Set the hidden connector length to a 40th of the
     // samplerate, at 44.1 Khz that's 1102 samples. Not
     // too long to be noticed too much but just enough
     // to prevent transitions between loops from being
     // too abrupt
-    segs_[CONNECTOR].setLen(Global::samplerate / 40.0);
+    segments_[CONNECTOR].setLength(Global::samplerate / 40.0);
     
     // Initial settings
-    setSegLevel(ATK, 0.8);
-    setSegLen(ATK, 500);
-    setSegRate(ATK, 1.2);
+    setSegmentLevel(Segments::ATTACK, 0.8);
+    setSegmentLength(Segments::ATTACK, 500);
+    setSegmentRate(Segments::ATTACK, 1.2);
     
-    setSegLevel(SEG_A, 0.5);
-    setSegLen(SEG_A, 500);
-    setSegRate(SEG_A, 1.2);
+    setSegmentLevel(Segments::A, 0.5);
+    setSegmentLength(Segments::A, 500);
+    setSegmentRate(Segments::A, 1.2);
     
-    setSegStartLevel(REL, 0.5);
-    setSegRate(REL, 0.6);
-    setSegLen(REL, 500);
+    setSegmentStartLevel(Segments::RELEASE, 0.5);
+    setSegmentRate(Segments::RELEASE, 0.6);
+    setSegmentLength(Segments::RELEASE, 500);
 
     mods_[AMP].setHigherBoundary(1);
     mods_[AMP].setLowerBoundary(0);
@@ -65,86 +64,90 @@ double Envelope::getAmp() const
     else return amp_;
 }
 
-void Envelope::changeSeg_(segItr seg)
+void Envelope::changeSegment_(segmentItr segment)
 {
-    currSeg_ = seg;
+    currSegment_ = segment;
     
     currSample_ = 0;
 
-    currSegNum_ = std::distance(segs_.begin(), seg);
+    currSegmentNum_ = std::distance(segments_.begin(), segment);
     
-    // If we just changed to the release segment
-    // set the start level of the segment to the
+    // If we just changed to the release segmentment
+    // set the start level of the segmentment to the
     // last ticked value, (because note-off could be
     // abrupt)
-    if (currSegNum_ == REL)
+    if (currSegmentNum_ == Segments::RELEASE)
     {
-        currSeg_->setStartLevel(lastTick_);
+        currSegment_->setStartLevel(lastTick_);
     }
     
 }
 
 void Envelope::resetLoop_()
 {
-    // Reset all segments
-    for(segItr itr = loopStart_, end = loopEnd_ + 1;
+    // Reset all segmentments
+    for(segmentItr itr = loopStart_, end = loopEnd_ + 1;
         itr != end;
         ++itr)
     {
         itr->reset();
     }
     
-    // no need for connecting segment if the amplitude
+    // no need for connecting segmentment if the amplitude
     // is the same e.g. for the constant sustain
     if (loopEnd_->getEndLevel() == loopStart_->getStartLevel())
     {
-        changeSeg_(loopStart_);
+        changeSegment_(loopStart_);
     }
     
     else
     {
         // Update values
-        changeSeg_(segs_.begin() + CONNECTOR);
+        changeSegment_(segments_.begin() + CONNECTOR);
         
-        // Reset the connector segment first
-        currSeg_->reset();
+        // Reset the connector segmentment first
+        currSegment_->reset();
     }
 }
 
 double Envelope::tick_()
 {
-    if (currSample_ >= currSeg_->getLen())
+    if (currSample_ >= currSegment_->getLength())
     {
-        if (currSegNum_ == REL) return 0;
+        if (currSegmentNum_ == Segments::RELEASE) return 0;
         
-        // If this is the end of the connecting segment,
+        // If this is the end of the connecting segmentment,
         // change back to the loop start
-        else if (currSegNum_ == CONNECTOR)
+        else if (currSegmentNum_ == Hidden::CONNECTOR)
         {
-            changeSeg_(loopStart_);
+            changeSegment_(loopStart_);
         }
         
-        // If we reached the loop end segment and there are more loops to go
+        // If we reached the loop end segmentment and there are more loops to go
         // through, reset the loop
-        else if (currSeg_ == loopEnd_ && (loopInf_ || loopCount_++ < loopMax_))
-        { resetLoop_(); }
+        else if (currSegment_ == loopEnd_ && (loopInf_ || loopCount_++ < loopMax_))
+        {
+            resetLoop_();
+        }
         
-        // if we reached the end of segment c and the sustain is set to infinity
+        // if we reached the end of segmentment c and the sustain is set to infinity
         // return the last tick
-        else if (currSegNum_ == SEG_C && sustainEnabled_)
-        { return lastTick_; }
+        else if (currSegmentNum_ == Segments::C && sustainEnabled_)
+        {
+            return lastTick_;
+        }
         
         else
         {
-            // Change to next segment
-            changeSeg_(++currSeg_);
+            // Change to next segmentment
+            changeSegment_(++currSegment_);
             
-            // Return last tick if the new segment has no length
-            if (! currSeg_->getLen()) return lastTick_;
+            // Return last tick if the new segmentment has no length
+            if (! currSegment_->getLength()) return lastTick_;
         }
     }
     
-    lastTick_ = currSeg_->tick();
+    lastTick_ = currSegment_->tick();
     
     return lastTick_;
 }
@@ -160,90 +163,91 @@ double Envelope::modulate(double sample, double depth, double maximum)
     return sample + (maximum * tick_() * depth * amp_);
 }
 
-void Envelope::setLoopStart(seg_t seg)
+void Envelope::setLoopStart(segment_t segment)
 {
-    if (seg >= REL)
-    { throw std::invalid_argument("Cannot loop release segment!"); }
+    if (segment >= Segments::RELEASE)
+    { throw std::invalid_argument("Cannot loop release segmentment!"); }
     
-    loopStart_ = segs_.begin() + seg;
+    loopStart_ = segments_.begin() + segment;
     
-    segs_[CONNECTOR].setEndLevel(loopStart_->getStartLevel());
+    segments_[CONNECTOR].setEndLevel(loopStart_->getStartLevel());
 
     if (loopStart_ > loopEnd_)
     { loopEnd_ = loopStart_; }
 }
 
-void Envelope::setLoopEnd(seg_t seg)
+void Envelope::setLoopEnd(segment_t segment)
 {
-    if (seg >= REL)
-    { throw std::invalid_argument("Invalid loop segment, can only loop from Segments ATK to SEG_C!"); }
+    if (segment >= Segments::RELEASE)
+    { throw std::invalid_argument("Invalid loop segmentment, can only loop from\
+                                  Segments Segments::ATTACK to Segments::C!"); }
     
-    loopEnd_ = segs_.begin() + seg;
+    loopEnd_ = segments_.begin() + segment;
     
-    segs_[CONNECTOR].setStartLevel(loopEnd_->getEndLevel());
+    segments_[CONNECTOR].setStartLevel(loopEnd_->getEndLevel());
     
     if (loopEnd_ < loopStart_)
     { loopStart_ = loopEnd_; }
 }
 
-void Envelope::setSegRate(seg_t seg, double rate)
+void Envelope::setSegmentRate(segment_t segment, double rate)
 {
-    if (seg < ATK || seg > REL)
-    { throw std::invalid_argument("Invalid segment!"); }
+    if (segment < Segments::ATTACK || segment > Segments::RELEASE)
+    { throw std::invalid_argument("Invalid segmentment!"); }
     
-    segs_[seg].setRate(rate);
+    segments_[segment].setRate(rate);
     
-    setSegModDockBaseValue(seg, EnvSeg::RATE, rate);
+    setSegmentModDockBaseValue(segment, EnvelopeSegment::RATE, rate);
 }
 
-double Envelope::getSegRate(seg_t seg) const
+double Envelope::getSegmentRate(segment_t segment) const
 {
-    if (seg < ATK || seg > REL)
-    { throw std::invalid_argument("Invalid segment!"); }
+    if (segment < Segments::ATTACK || segment > Segments::RELEASE)
+    { throw std::invalid_argument("Invalid segmentment!"); }
     
-    if (segs_[seg].dockInUse(EnvSeg::RATE))
+    if (segments_[segment].dockInUse(EnvelopeSegment::RATE))
     {
-        return getSegModDockBaseValue(seg, EnvSeg::RATE);
+        return getSegmentModDockBaseValue(segment, EnvelopeSegment::RATE);
     }
     
-    else return segs_[seg].getRate();
+    else return segments_[segment].getRate();
 }
 
-void Envelope::setSegLevel(seg_t seg, double lv)
+void Envelope::setSegmentLevel(segment_t segment, double lv)
 {
-    if (seg >= REL)
-    { throw std::invalid_argument("Invalid segment for setting the level!"); }
+    if (segment >= Segments::RELEASE)
+    { throw std::invalid_argument("Invalid segmentment for setting the level!"); }
     
     // Delay is always sustain so also set start level
-    if (seg == DEL)
+    if (segment == Segments::DELAY)
     {
-        segs_[DEL].setStartLevel(lv);
+        segments_[Segments::DELAY].setStartLevel(lv);
     }
     
     // Set new linked levels
-    EnvSegSeq::setLinkedLevel(seg, lv);
+    EnvelopeSegmentSequence::setLinkedLevel(segment, lv);
     
-    setSegModDockBaseValue(seg, EnvSeg::END_LEVEL, lv);
-    setSegModDockBaseValue(seg + 1, EnvSeg::START_LEVEL, lv);
+    setSegmentModDockBaseValue(segment, EnvelopeSegment::END_LEVEL, lv);
+    setSegmentModDockBaseValue(segment + 1, EnvelopeSegment::START_LEVEL, lv);
 }
 
-double Envelope::getSegLevel(seg_t seg) const
+double Envelope::getSegmentLevel(segment_t segment) const
 {
-    if (segs_[seg].dockInUse(EnvSeg::END_LEVEL))
+    if (segments_[segment].dockInUse(EnvelopeSegment::END_LEVEL))
     {
-        return getSegModDockBaseValue(seg, EnvSeg::END_LEVEL);
+        return getSegmentModDockBaseValue(segment, EnvelopeSegment::END_LEVEL);
     }
     
-    else return segs_[seg].getEndLevel();
+    else return segments_[segment].getEndLevel();
 }
 
 void Envelope::noteOff()
 {
-    // If we aren't already in the release segment
-    if (currSegNum_ != REL)
+    // If we aren't already in the release segmentment
+    if (currSegmentNum_ != Segments::RELEASE)
     {
-        // Switch to release segment
-        changeSeg_(segs_.begin() + REL);
+        // Switch to release segmentment
+        changeSegment_(segments_.begin() + Segments::RELEASE);
     }
 }
 
@@ -252,203 +256,203 @@ void Envelope::setSustainEnabled(bool sustainEnabled)
     sustainEnabled_ = sustainEnabled;
 }
 
-bool Envelope::sustainEnabled() const
+bool Envelope::sustainIsEnabled() const
 {
     return sustainEnabled_;
 }
 
-void Envelope::setModUnitDepth_Seg(seg_t segNum,
+void Envelope::setModUnitDepth_Segment(segment_t segmentNum,
                                    index_t dockNum,
                                    index_t modNum,
                                    double depth)
 {
-    if (segNum >= segs_.size())
+    if (segmentNum >= segments_.size())
     { throw std::invalid_argument("Segment index out of range!"); }
     
     if (dockNum == SEG_LEVEL)
     {
-        segs_[segNum].setModUnitDepth(EnvSeg::END_LEVEL, modNum, depth);
+        segments_[segmentNum].setModUnitDepth(EnvelopeSegment::END_LEVEL, modNum, depth);
         
-        if (segNum < segs_.size() - 1)
+        if (segmentNum < segments_.size() - 1)
         {
-            segs_[segNum + 1].setModUnitDepth(EnvSeg::START_LEVEL, modNum, depth);
+            segments_[segmentNum + 1].setModUnitDepth(EnvelopeSegment::START_LEVEL, modNum, depth);
         }
     }
     
     else
     {
-        segs_[segNum].setModUnitDepth(dockNum,modNum, depth);
+        segments_[segmentNum].setModUnitDepth(dockNum,modNum, depth);
     }
 }
 
-double Envelope::getModUnitDepth_Seg(seg_t segNum,
+double Envelope::getModUnitDepth_Segment(segment_t segmentNum,
                                      index_t dockNum,
                                      index_t modNum) const
 {
-    if (segNum >= segs_.size())
+    if (segmentNum >= segments_.size())
     { throw std::invalid_argument("Segment index out of range!"); }
     
     if (dockNum == SEG_LEVEL)
     {
-        return segs_[segNum].getModUnitDepth(EnvSeg::END_LEVEL, modNum);
+        return segments_[segmentNum].getModUnitDepth(EnvelopeSegment::END_LEVEL, modNum);
     }
     
-    else return segs_[segNum].getModUnitDepth(dockNum, modNum);
+    else return segments_[segmentNum].getModUnitDepth(dockNum, modNum);
 }
 
-void Envelope::attachMod_Seg(seg_t segNum,
+void Envelope::attachMod_Segment(segment_t segmentNum,
                              index_t dockNum,
                              ModUnit *mod)
 {
-    if (segNum >= segs_.size())
+    if (segmentNum >= segments_.size())
     { throw std::invalid_argument("Segment index out of range!"); }
     
     // Set linked modulator if SEG_LEVEL
     if (dockNum == SEG_LEVEL)
     {
-        segs_[segNum].attachMod(EnvSeg::END_LEVEL, mod);
+        segments_[segmentNum].attachMod(EnvelopeSegment::END_LEVEL, mod);
         
-        // If last segment chosen, no next segment to set start level for
-        if (segNum < segs_.size() - 1)
+        // If last segmentment chosen, no next segmentment to set start level for
+        if (segmentNum < segments_.size() - 1)
         {
-            segs_[segNum + 1].attachMod(EnvSeg::START_LEVEL, mod);
+            segments_[segmentNum + 1].attachMod(EnvelopeSegment::START_LEVEL, mod);
         }
     }
     
     else
     {
-        segs_[segNum].attachMod(dockNum, mod);
+        segments_[segmentNum].attachMod(dockNum, mod);
     }
 }
 
-void Envelope::detachMod_Seg(seg_t segNum,
+void Envelope::detachMod_Segment(segment_t segmentNum,
                              index_t dockNum,
                              index_t modNum)
 {
-    if (segNum >= segs_.size())
+    if (segmentNum >= segments_.size())
     { throw std::invalid_argument("Segment index out of range!"); }
     
     if (dockNum == SEG_LEVEL)
     {
-        segs_[segNum].detachMod(dockNum, modNum);
+        segments_[segmentNum].detachMod(dockNum, modNum);
         
-        // If last segment chosen, no next segment to set start level for
-        if (segNum < segs_.size() - 1)
+        // If last segmentment chosen, no next segmentment to set start level for
+        if (segmentNum < segments_.size() - 1)
         {
-            segs_[segNum + 1].detachMod(dockNum, modNum);
+            segments_[segmentNum + 1].detachMod(dockNum, modNum);
         }
     }
     
     else
     {
-        segs_[segNum].detachMod(dockNum, modNum);
+        segments_[segmentNum].detachMod(dockNum, modNum);
     }
 }
 
-void Envelope::setSidechain_Seg(seg_t segNum,
+void Envelope::setSidechain_Segment(segment_t segmentNum,
                                 index_t dockNum,
                                 index_t master,
                                 index_t slave)
 {
-    if (segNum >= segs_.size())
+    if (segmentNum >= segments_.size())
     { throw std::invalid_argument("Segment index out of range!"); }
     
     if (dockNum == SEG_LEVEL)
     {
-        segs_[segNum].setSidechain(EnvSeg::END_LEVEL, master, slave);
+        segments_[segmentNum].setSidechain(EnvelopeSegment::END_LEVEL, master, slave);
         
-        if (segNum < segs_.size() - 1)
+        if (segmentNum < segments_.size() - 1)
         {
-            segs_[segNum + 1].setSidechain(EnvSeg::START_LEVEL, master, slave);
+            segments_[segmentNum + 1].setSidechain(EnvelopeSegment::START_LEVEL, master, slave);
         }
     }
     
     else
     {
-        segs_[segNum].setSidechain(dockNum, master, slave);
+        segments_[segmentNum].setSidechain(dockNum, master, slave);
     }
 }
 
-void Envelope::unSidechain_Seg(seg_t segNum,
+void Envelope::unSidechain_Segment(segment_t segmentNum,
                                index_t dockNum,
                                index_t master,
                                index_t slave)
 {
-    if (segNum >= segs_.size())
+    if (segmentNum >= segments_.size())
     { throw std::invalid_argument("Segment index out of range!"); }
     
     if (dockNum == SEG_LEVEL)
     {
-        segs_[segNum].unSidechain(EnvSeg::END_LEVEL, master, slave);
+        segments_[segmentNum].unSidechain(EnvelopeSegment::END_LEVEL, master, slave);
         
-        if (segNum < segs_.size() - 1)
+        if (segmentNum < segments_.size() - 1)
         {
-            segs_[segNum + 1].unSidechain(EnvSeg::START_LEVEL, master, slave);
+            segments_[segmentNum + 1].unSidechain(EnvelopeSegment::START_LEVEL, master, slave);
         }
     }
     
     else
     {
-        segs_[segNum].unSidechain(dockNum, master, slave);
+        segments_[segmentNum].unSidechain(dockNum, master, slave);
     }
 }
 
-bool Envelope::isSidechain_Seg(seg_t segNum,
+bool Envelope::isSidechain_Segment(segment_t segmentNum,
                                index_t dockNum,
                                index_t master,
                                index_t slave) const
 {
-    if (segNum >= segs_.size())
+    if (segmentNum >= segments_.size())
     { throw std::invalid_argument("Segment index out of range!"); }
     
     if (dockNum == SEG_LEVEL)
     {
-        // Only need this segment here, segNum + 1 is the same for START_LEVEL
-        return segs_[segNum].isSidechain(EnvSeg::END_LEVEL, master, slave);
+        // Only need this segmentment here, segmentNum + 1 is the same for START_LEVEL
+        return segments_[segmentNum].isSidechain(EnvelopeSegment::END_LEVEL, master, slave);
     }
     
-    else return segs_[segNum].isSidechain(dockNum, master, slave);
+    else return segments_[segmentNum].isSidechain(dockNum, master, slave);
 }
 
-bool Envelope::isMaster_Seg(seg_t segNum,
+bool Envelope::isMaster_Segment(segment_t segmentNum,
                             index_t dockNum,
                             index_t index) const
 {
-    if (segNum >= segs_.size())
+    if (segmentNum >= segments_.size())
     { throw std::invalid_argument("Segment index out of range!"); }
     
     if (dockNum == SEG_LEVEL)
     {
-        return segs_[segNum].isMaster(EnvSeg::END_LEVEL, index);
+        return segments_[segmentNum].isMaster(EnvelopeSegment::END_LEVEL, index);
     }
     
-    else return segs_[segNum].isMaster(dockNum, index);
+    else return segments_[segmentNum].isMaster(dockNum, index);
 }
 
-bool Envelope::isSlave_Seg(seg_t segNum,
+bool Envelope::isSlave_Segment(segment_t segmentNum,
                            index_t dockNum,
                            index_t index) const
 {
-    if (segNum >= segs_.size())
+    if (segmentNum >= segments_.size())
     { throw std::invalid_argument("Segment index out of range!"); }
     
     if (dockNum == SEG_LEVEL)
     {
-        return segs_[segNum].isSlave(EnvSeg::END_LEVEL, index);
+        return segments_[segmentNum].isSlave(EnvelopeSegment::END_LEVEL, index);
     }
     
-    else return segs_[segNum].isSlave(dockNum, index);
+    else return segments_[segmentNum].isSlave(dockNum, index);
 }
 
-unsigned long Envelope::dockSize_Seg(seg_t segNum, index_t dockNum) const
+unsigned long Envelope::dockSize_Segment(segment_t segmentNum, index_t dockNum) const
 {
-    if (segNum >= segs_.size())
+    if (segmentNum >= segments_.size())
     { throw std::invalid_argument("Segment index out of range!"); }
     
     if (dockNum == SEG_LEVEL)
     {
-        return segs_[segNum].dockSize(EnvSeg::END_LEVEL);
+        return segments_[segmentNum].dockSize(EnvelopeSegment::END_LEVEL);
     }
     
-    else return segs_[segNum].dockSize(dockNum);
+    else return segments_[segmentNum].dockSize(dockNum);
 }

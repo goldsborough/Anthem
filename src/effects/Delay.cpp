@@ -21,7 +21,7 @@
 
 
 
-Delay::Delay(double delayLen,
+Delay::Delay(double delayLength,
              double decayTime,
              double decayRate,
              double feedbackLevel,
@@ -33,7 +33,7 @@ Delay::Delay(double delayLen,
     
     setFeedback(feedbackLevel);
     setDecayRate(decayRate);
-    setDelayTime(delayLen);
+    setDelayTime(delayLength);
     setDecayTime(decayTime);
     
     // Initialize mod docks
@@ -153,7 +153,7 @@ void Delay::setDelayTime(double delayTime)
     // Cast to int
     readIntegral_ = delayTime;
     
-    // delayLen is double so get the fractional part
+    // delayLength is double so get the fractional part
     // by subtracting the integer part
     readFractional_ = delayTime - readIntegral_;
     

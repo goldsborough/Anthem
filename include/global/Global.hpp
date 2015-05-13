@@ -46,10 +46,10 @@ namespace Global
     *
     *  @param       smplr The samplerate.
     *
-    *  @param       wavetableLen The wavetable length.
+    *  @param       wavetableLength The wavetable length.
     *
     *****************************************************************************************************/
-    extern void init(const unsigned int smplr = 48000, const unsigned int wavetableLen = 4095);
+    extern void init(const unsigned int smplr = 48000, const unsigned int wavetableLength = 4095);
 };
 
 #endif /* defined(__Anthem__Globals__) */
