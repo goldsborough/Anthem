@@ -1,15 +1,17 @@
-$black: #27272B
-$red: #DC4850
-$white: #F7FDFA
-$turquoise: #43D4B4
-$gray: #56595C
-$gold: #FBB829
+$second: #27272B
+$first: #DC4850
+$third: #F7FDFA
+$fourth: #43D4B4
+
+// Just not to forget them
+//$gray: #56595C
+//$gold: #FBB829
 
 $windowWidth: 1020px
 $windowHeight: 680px
 
 AnthemUi
-    background: $black
+    background: $second
     min-width: $windowWidth
     max-width: $windowWidth
     min-height: $windowHeight
@@ -18,34 +20,84 @@ AnthemUi
 
 AlgorithmUi
     background: transparent
-    border: 2px solid $black
+    border: 2px solid $second
     outline: none
     & QLabel
-        background: $red
-        color: $black
+        background: $first
+        color: $second
         font-size: 20px
         font-family: DIN
-        border: 2px solid $black
+        border: 2px solid $second
         min-width: 24px
         max-width: 24px
         min-height: 30px
         max-height: 30px
         &:enabled
-            background: $black
-            color: $red
+            background: $second
+            color: $first
 
-BrowserUi
-    min-width: 300px
-    max-width: 300px
-    & QLineEdit  
-        border-top: 2px solid $black
-        border-left: 2px solid $black
-        border-right: 2px solid $black
-        font-size: 16px
-        qproperty-alignment: AlignCenter
-        padding-right: 10px
-        padding-left: 10px
-        min-height: 30px
+
+BrowserUi[isExpanded = "false"]
+    min-width: 270px
+    border: 2px solid $second
+    & QLineEdit
+        font-size: 14px
+        padding-right: 5px
+        padding-left: 5px
+        min-height: 28px
+    & CustomMessageBox
+        min-width: 375px
+        min-height: 200px
+        & QLabel
+            font-size: 24px
+            margin-bottom: 10px
+        & QPushButton
+            font-size: 20px
+            min-width: 150px
+    & PopupLine
+        min-width: 400px
+        min-height: 50px
+        max-height: 50px
+        & QLineEdit
+            border: none
+            font-size: 24px
+    & QMenu::item
+        padding-right: 25px
+    & QTreeView
+        border: 2px solid $second
+
+BrowserUi[isExpanded = "true"]
+    @extend BrowserUi[isExpanded = "false"]
+    border: none
+    & QTreeView
+        border: none
+        border-top: 2px solid $second
+
+
+#BrowserExpandButton
+    min-width: 28px
+    min-height: 28px
+    max-height: 28px
+    font-size: 26px
+    border: none
+    border-left: 2px solid $second
+
+#CaseSensitivityButton
+    min-width: 28px
+    max-width: 28px
+    min-height: 28px
+    max-height: 28px
+    font-size: 18px
+    border: none
+    border-left: 2px solid $second
+    color: $second
+
+    &:hover
+        color: $first
+        background: $second
+
+    &:open
+        color: $first
 
 CustomComboBox QMenu
     margin: 0px
@@ -55,15 +107,18 @@ CustomComboBox QMenu
 CustomDial
     background: transparent
     font-family: "DIN"
-    color: $black
-    qproperty-arcColor: $black
+    color: $second
+    qproperty-arcColor: $second
     qproperty-arcWidth: 3
 
 CustomMessageBox
     & QLabel
-        color: $black
+        color: $second
         font-family: "Proxima Nova"
         font-size: 30px
+
+#Details
+    font-size: 20px
 
 IconButton
     background: none
@@ -77,20 +132,20 @@ Menubar
     min-height: $menuHeight + 20
     max-height: $menuHeight + 20
     & #CopyDock
-        border: $borderWidth solid $red
+        border: $borderWidth solid $first
         min-width: $fitted
         min-height: $fitted
         max-width: $fitted
         max-height: $fitted
-        background: $black
+        background: $second
         font-size: 30px
         font-family: DIN
-        color: $red
+        color: $first
         &:enabled
-            background: $red
-            color: $black
+            background: $first
+            color: $second
     & IconButton
-        border: $borderWidth solid $red
+        border: $borderWidth solid $first
         min-width: $fitted
         min-height: $fitted
         max-width: $fitted
@@ -102,10 +157,18 @@ Menubar
         min-height: $menuHeight
         max-width: $menuHeight
         max-height: $menuHeight
-    Projectbar
-        background: $red
-        min-width: 500px
-        max-width: 500px
+    & PopupLine
+        min-width: 400px
+        max-width: 400px
+        min-height: 55px
+        max-height: 55px
+
+        & QPushButton
+            background: $first
+            border: none
+            &:hover
+                background: $first
+                border: none
 
 #MenuButton
     qproperty-iconWidth: 30
@@ -117,17 +180,17 @@ Menubar
 
 ModDial
     @extend CustomDial
-    qproperty-displayedArcColor: $white
+    qproperty-displayedArcColor: $third
     qproperty-arcPadding: 4
     font-size: 16px
     min-width: 120
     min-height: 120
 
 ModItemUi
-    background: $red
-    qproperty-borderColor: $black
+    background: $first
+    qproperty-borderColor: $second
     qproperty-borderWidth: 4
-    color: $black
+    color: $second
     font-family: DIN
     font-size: 14px
     min-width: 35px
@@ -136,12 +199,12 @@ ModItemUi
         padding-right: 30px
 
 MasterPage
-    background: $red
+    background: $first
     & ModDial
         font-size: 16px
 
 OperatorPage
-    background: $red
+    background: $first
     & QTabBar::tab
         min-width: 250px
         min-height: 40px
@@ -149,30 +212,27 @@ OperatorPage
         font-size: 30px
 
 OperatorUi
-    border: 2px solid $black
+    border: 2px solid $second
     min-width: 480px
     min-height: 220px
     & QPushButton
         font-size: 20px
-        border-top: 0px solid $black
-        border-bottom: 2px solid $black
-        border-right: 1px solid $black 
-        border-left: 1px solid $black
+        border-bottom: 2px solid $second
+        border-right: 1px solid $second
+        border-left: 1px solid $second
         min-width: 40px
         min-height: 32px
         &:open
-            background: $black
-            color: $white
+            background: $second
+            color: $third
         &::hover
-            background: $black
-            color: $red
-
+            background: $second
+            color: $first
     & QTabWidget QTabBar::tab
         font-size: 20px
         min-width: 120px
         min-height: 30px
-        border-bottom: 2px solid $black
-
+        border-bottom: 2px solid $second
 
 PanUi, MacroUi, #VolumeUi
     @extend OperatorUi
@@ -190,8 +250,19 @@ PanUi, MacroUi, #VolumeUi
 #Save
     font-size: 35px
 
+PopupLine
+    border: none
+    & QLineEdit
+        font-size: 24px
+        padding-right: 10px
+        padding-left: 10px
+    & IconButton
+        background: $first
+        &:hover
+            background: $first
+
 #ProjectLabel
-    color: $black
+    color: $second
     font-family: DIN
     font-size: 30px
     min-width: 350px
@@ -207,70 +278,69 @@ PanUi, MacroUi, #VolumeUi
 #PreviousButton
     padding-right: 5px
 
-PopupLine QPushButton
-    border: none
-    &:hover
-        background: none
+Projectbar
+    background: $first
+    min-width: 500px
+    max-width: 500px
 
 QLabel
     qproperty-alignment: AlignCenter
-    color: $white
+    color: $third
 
 QMenu
-    background: $red
+    background: $first
     margin: 15px
     &::item
-        color: $black
+        color: $second
         padding: 15px
         font-size: 16px
         &::selected
-            background: $black
-            color: $red
+            background: $second
+            color: $first
         &::checked
-            background: $black
-            color: $red
+            background: $second
+            color: $first
             padding-left: 30px
 
 QDialog
-    background: $red
+    background: $first
     & QPushButton
         font-size: 18px
         font-family: "Proxima Nova"
-        border: 1px solid $black
+        border: 1px solid $second
         min-height: 50px
         &:hover
-            background: $black
-            color: $red
+            background: $second
+            color: $first
 
 QLineEdit
-    font-size: 30px
     border: none
     qproperty-frame: false
     background: transparent
-    color: $black
+    color: $second
 
 QComboBox
     background: transparent
-    color: $black
+    color: $second
     font-size: 20px
     font-family: "Proxima Nova"
-    border: 1px solid $black
+    border: 1px solid $second
     min-height: 50px
     padding-left: 34px
     &::drop-down
         border: none
     &:hover
-        background: $black
-        color: $red
+        background: $second
+        color: $first
     & QListView
-        background: $red
-        color: $black
+        background: $first
+        color: $second
 
 QPushButton
     outline: none
     background: transparent
     border: none
-    color: $black
+    color: $second
     font-family: "DIN"
     qproperty-flat: true
 
@@ -283,9 +353,9 @@ QTabWidget
         max-width: 0px
         border-width: 0px
     & QTabBar::tab
-        background: $black
+        background: $second
         font-size: 30px
-        color: $white
+        color: $third
         font-family: "DIN Light"
         border: none
         outline: none
@@ -295,18 +365,29 @@ QTabWidget
         max-height: 50px
         padding-top: 5px
         &:selected, &:hover
-            background: $red
-            color: $black
+            background: $first
+            color: $second
+
+QTreeView
+    background: $first
+    font-size: 14px
+    color: $second
+    &::item:selected
+        background: $first
+        color: $second
+    &::branch
+        border-image: none
+        background: $first
 
 RecordUi
-    border: 2px solid $black
+    border: 2px solid $second
     & QPushButton
         font-size: 30px
         min-height: 100px
         max-height: 100px
         &:open
-            background: $black
-            color: $red
+            background: $second
+            color: $first
     & QLineEdit
         padding-left: 20px
         padding-right: 20px
@@ -314,15 +395,15 @@ RecordUi
         border: none
         qproperty-frame: false
         background: transparent
-        color: $black
+        color: $second
 
 SettingsDialog
     @extend QDialog
     & QLabel
-        color: $black
+        color: $second
         font-family: "Proxima Nova"
         font-size: 20px
 
 WavetableUi
-    color: $black
-    background-color: $red
+    color: $second
+    background-color: $first

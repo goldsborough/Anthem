@@ -13,6 +13,9 @@ void UnitPage::setupUi()
 {
 	QGridLayout* layout = new QGridLayout(this);
 
+	//layout->setSpacing(0);
+	//layout->setContentsMargins(10, 0, 10, 0);
+
 	for (size_t i = A; i <= D; ++i)
 	{
 		operators_.append(new OperatorUi(this));

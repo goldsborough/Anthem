@@ -37,14 +37,14 @@ void OperatorUi::setupUi()
 	top->setContentsMargins(0,0,0,0);
 
 
-	QPushButton* settings = new QPushButton("Sine", this);
+	QPushButton* toggle = new QPushButton("Sine", this);
 
-	settings->setSizePolicy(QSizePolicy::Expanding,
-							QSizePolicy::Maximum);
+	toggle->setSizePolicy(QSizePolicy::Expanding,
+						  QSizePolicy::Maximum);
 
-	settings->setCursor(Qt::PointingHandCursor);
+	toggle->setCursor(Qt::PointingHandCursor);
 
-	top->addWidget(settings);
+	top->addWidget(toggle);
 
 
 	QPushButton* activityButton = new QPushButton(QString(title++), this);
@@ -118,6 +118,9 @@ void OperatorUi::setupUi()
 
 	BrowserUi* browser = new BrowserUi(this);
 
+	connect(browser, &BrowserUi::wavetableSelected,
+			[=] (const QString& id) { toggle->setText(id); });
+
 	waveLayout->addWidget(browser);
 
 
@@ -154,7 +157,7 @@ void OperatorUi::setupUi()
 
 	secondary->hide();
 
-	connect(settings, &QPushButton::clicked,
+	connect(toggle, &QPushButton::clicked,
 			[=] (bool)
 	{
 		if (primary->isHidden())

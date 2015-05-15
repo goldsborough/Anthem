@@ -7,7 +7,7 @@
 
 class QPushButton;
 class QGridLayout;
-class QIcon;
+class QLabel;
 
 class CustomMessageBox : public QDialog
 {
@@ -15,14 +15,37 @@ class CustomMessageBox : public QDialog
 
 public:
 
-    CustomMessageBox(const QString& title = QString(),
-                     const QString& message = QString(),
-                     QWidget* parent = nullptr,
-                     QIcon* icon = nullptr);
+	CustomMessageBox(QWidget* parent = nullptr);
 
-    void paintEvent(QPaintEvent* event);
+	CustomMessageBox(const QString& title,
+					 const QString& message,
+					 QWidget* parent = nullptr);
 
-    void addButton(QPushButton* button);
+	CustomMessageBox(const QString& title,
+					 const QString& message,
+					 const QString& details,
+					 QWidget* parent = nullptr);
+
+
+	QPushButton* ask();
+
+
+	void setTitle(const QString& title);
+
+	QString getTitle() const;
+
+
+	void setMessage(const QString& message);
+
+	QString getMessage() const;
+
+
+	void setDetails(const QString& details);
+
+	QString getDetails() const;
+
+
+	void addButton(QPushButton* button);
 
     void addButton(QPushButton* button,
                    int row,
@@ -31,18 +54,28 @@ public:
                    int colStretch = 1,
                    QFlags<Qt::AlignmentFlag> align = Qt::AlignCenter);
 
-    QPushButton* lastButtonPressed() const;
+
+	QPushButton* lastButtonPressed() const;
 
 private slots:
 
-    void updateLastButton_();
+	void update_();
 
 private:
+
+	void setupUi();
+
+	void paintEvent(QPaintEvent* event);
+
 
     QGridLayout* layout_;
 
     QPushButton* lastButton_;
 
+
+	QLabel* message_;
+
+	QLabel* details_;
 };
 
 

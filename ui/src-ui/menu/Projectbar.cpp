@@ -211,10 +211,11 @@ void Projectbar::changeDirectory()
     {
         dir_->cd(path);
 
-        if(dir_->entryInfoList().isEmpty())
+		if(dir_->entryInfoList().isEmpty())
         {
             CustomMessageBox message("Invalid directory",
-                                     "The directory you chose does not\n contain any Anthem project files!",
+									 "The directory you chose does not\n"
+									 " contain any Anthem project files!",
                                      this
                                      );
 
@@ -287,7 +288,7 @@ void Projectbar::newProject()
     connect(icon, &IconButton::clicked,
             this, &Projectbar::changeDirectory);
 
-    PopupLine popup(this, icon);
+	PopupLine popup(icon, QString(), this);
 
     QString fileName;
 
@@ -314,7 +315,7 @@ void Projectbar::newProject()
     if (dir_->exists(fileName))
     {
         CustomMessageBox message("Project already exists",
-                                 "A project with that name already\n exists in the current directory!",
+								 "A project with that name already\n exists in the current directory!",
                                  this
                                  );
 

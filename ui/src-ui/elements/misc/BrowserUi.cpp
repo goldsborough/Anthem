@@ -1,28 +1,139 @@
 #include "BrowserUi.hpp"
+#include "CustomMessageBox.hpp"
+#include "PopupLine.hpp"
 
 #include <QPainter>
 #include <QStyleOption>
 #include <QLineEdit>
 #include <QVBoxLayout>
+#include <QHBoxLayout>
 #include <QTreeView>
-#include <QFileSystemModel>
 #include <QDir>
 #include <QHeaderView>
-
+#include <QPushButton>
+#include <QMenu>
 
 #include <QDebug>
 
+QIcon IconProvider::icon(IconType type) const
+{
+	/*
+	if (type == QFileIconProvider::File)
+	{
+		return QIcon();
+	}
 
+	else if (type == QFileIconProvider::Folder)
+	{
+		return  QIcon(":/icons/folder.png");
+	}
 
-BrowserUi::BrowserUi(QWidget* parent)
-: QWidget(parent)
+	else*/ return QFileIconProvider::icon(type);
+}
+
+QIcon IconProvider::icon(const QFileInfo &item) const
+{
+	/*
+	if (item.isFile())
+	{
+		return QIcon();
+	}
+
+	else if (item.isDir())
+	{
+		return  QIcon(":/icons/folder.png");
+	}
+
+	else*/ return QFileIconProvider::icon(item);
+}
+
+FileModel::FileModel(QWidget *parent)
+: QFileSystemModel(parent)
+{ }
+
+QVariant FileModel::data(const QModelIndex &index, int role) const
+{
+	auto variant = QFileSystemModel::data(index, role);
+
+	if (role == Qt::DisplayRole && ! QFileSystemModel::isDir(index))
+	{
+		// Get rid of the extension. Cannot use QFileSystemModel::filePath
+		// because it seems to access data() itself so that would be a
+		// recursive call. Just remove everything after and the last dot.
+		auto file = variant.toString();
+
+		int dot = file.lastIndexOf('.');
+
+		file.remove(dot, file.size() - dot);
+
+		return file;
+	}
+
+	else if (role == Qt::ToolTipRole && QFileSystemModel::isDir(index))
+	{
+		int count = QDir(QFileSystemModel::filePath(index)).entryList(QDir::Files).count();
+
+		if (! count) return "Empty";
+
+		else return QString::number(count) + " wavetables";
+	}
+
+	else return variant;
+}
+
+Proxy::Proxy(QWidget *parent)
+: QSortFilterProxyModel(parent)
+{ }
+
+bool Proxy::filterAcceptsRow(int source_row,
+							 const QModelIndex &source_parent) const
+{
+	auto source = dynamic_cast<QFileSystemModel*>(QSortFilterProxyModel::sourceModel());
+
+	// Only filter_ indices under the root path
+	if (source_parent == source->index(source->rootPath()))
+	{
+		return QSortFilterProxyModel::filterAcceptsRow(source_row, source_parent);
+	}
+
+	return true;
+}
+
+BrowserUi::BrowserUi(QWidget *parent)
+: QWidget(parent),
+  isExpanded_(false)
+{
+	setupUi();
+}
+
+BrowserUi::BrowserUi(bool isExpanded, QWidget *parent)
+: QWidget(parent),
+  isExpanded_(isExpanded)
 {
 	setupUi();
 }
 
 void BrowserUi::setupUi()
 {
-	QVBoxLayout* layout = new QVBoxLayout(this);
+	QWidget::setProperty("isExpanded", isExpanded_);
+
+	QWidget::style()->unpolish(this);
+
+	QWidget::style()->polish(this);
+
+	QWidget::update();
+
+
+	setupBar();
+
+	setupModel();
+
+	setupView();
+
+	setupContextMenu();
+
+
+	auto layout = new QVBoxLayout(this);
 
 	layout->setMargin(0);
 
@@ -31,71 +142,348 @@ void BrowserUi::setupUi()
 	layout->setContentsMargins(0,0,0,0);
 
 
-	QLineEdit* search = new QLineEdit(this);
+	layout->addLayout(bar_);
 
-	search->setPlaceholderText("...");
+	layout->addWidget(view_);
+}
+
+void BrowserUi::setupBar()
+{
+	bar_ = new QHBoxLayout;
+
+	bar_->setMargin(0);
+
+	bar_->setSpacing(0);
+
+	bar_->setContentsMargins(0,0,0,0);
+
+
+	setupFilter();
+
+	bar_->addWidget(filter_);
+
+	bar_->addWidget(caseSensitivity_);
+
+
+	if (! isExpanded_)
+	{
+		setupExpansion();
+
+		bar_->addWidget(expandButton_);
+
+		QWidget::setSizePolicy(QSizePolicy::Maximum,
+							   QSizePolicy::Preferred);
+	}
+}
+
+void BrowserUi::setupExpansion()
+{
+	expandButton_ = new QPushButton("⌝", this);
+
+	expandButton_->setSizePolicy(QSizePolicy::Fixed,
+								 QSizePolicy::Fixed);
+
+	expandButton_->setObjectName("BrowserExpandButton");
+
+	expandButton_->setCursor(Qt::PointingHandCursor);
+
+
+	expandedDialog_ = new QDialog(this);
+
+	expandedDialog_->setWindowTitle("Wavetable Browser");
+
+	auto layout = new QGridLayout(expandedDialog_);
+
+	layout->setSpacing(0);
+
+	layout->setContentsMargins(0, 0, 0, 0);
+
+	layout->setMargin(0);
+
+	// Create new BrowserUi with expansion disabled
+	auto browser = new BrowserUi(true, expandedDialog_);
+
+	browser->filter_->setText(filter_->text());
+
+	browser->setSizePolicy(QSizePolicy::Expanding,
+						   QSizePolicy::Expanding);
+
+	layout->addWidget(browser);
+
+	connect(expandButton_, &QPushButton::clicked,
+			[=] (bool) { expandedDialog_->show(); });
+}
+
+void BrowserUi::setupFilter()
+{
+	filter_ = new QLineEdit(this);
+
+	filter_->setSizePolicy(QSizePolicy::Expanding,
+						   QSizePolicy::Maximum);
+
+	filter_->setPlaceholderText("Filter");
 
 	// Removes focus rectangle
-	search->setAttribute(Qt::WA_MacShowFocusRect, false);
-
-	layout->addWidget(search);
+	filter_->setAttribute(Qt::WA_MacShowFocusRect, false);
 
 
-	QFileSystemModel* model = new QFileSystemModel(this);
+	// There's an overload so can't connect directly
+	connect(filter_, &QLineEdit::textChanged,
+			[=] (const QString& text)
+			{ proxy_->setFilterRegExp(QRegExp(text, proxy_->filterCaseSensitivity())); });
 
-	model->setReadOnly(true);
+	caseSensitivity_ = new QPushButton("Aa", this);
 
-	model->setRootPath("/Users/petergoldsborough/Documents");
+	caseSensitivity_->setSizePolicy(QSizePolicy::Fixed,
+								   QSizePolicy::Fixed);
 
-	model->setNameFilters({".wavetable"});
+	caseSensitivity_->setObjectName("CaseSensitivityButton");
+
+	caseSensitivity_->setCursor(Qt::PointingHandCursor);
+
+	caseSensitivity_->setCheckable(true);
+
+	caseSensitivity_->setToolTip("Case Sensitvity");
+
+	connect(caseSensitivity_, &QPushButton::clicked,
+			[=] (bool checked)
+			{
+				auto cs = checked ? Qt::CaseSensitive : Qt::CaseInsensitive;
+
+				// Re-filter
+				proxy_->setFilterRegExp(QRegExp(proxy_->filterRegExp().pattern(), cs));
+			});
+
+}
+
+void BrowserUi::setupModel()
+{
+	model_ = new FileModel(this);
+
+	model_->setReadOnly(false);
+
+	model_->setRootPath("/Users/petergoldsborough/Documents/Anthem/rsc/wavetables");
+
+	model_->setNameFilters({"*.wavetable"});
+
+	model_->setNameFilterDisables(false);
+
+	model_->setIconProvider(new IconProvider);
 
 
-	QTreeView* view = new QTreeView(this);
+	proxy_ = new Proxy(this);
 
-	QHeaderView* header = view->header();
+	proxy_->setSourceModel(model_);
 
-	header->setSectionResizeMode(QHeaderView::ResizeToContents);
+	proxy_->setFilterCaseSensitivity(Qt::CaseInsensitive);
+}
 
-	header->hideSection(1);
+void BrowserUi::setupView()
+{
+	view_ = new QTreeView;
 
-	header->hideSection(2);
+	view_->setSizePolicy(QSizePolicy::Expanding,
+						 QSizePolicy::Expanding);
 
-	header->hideSection(3);
+	view_->setCursor(Qt::PointingHandCursor);
 
-	//header->hide();
+	view_->setAttribute(Qt::WA_MacShowFocusRect, false);
 
-	view->setAttribute(Qt::WA_MacShowFocusRect, false);
+	view_->setModel(proxy_);
 
-	view->setModel(model);
+	view_->hideColumn(1);
 
-	layout->addWidget(view);
+	view_->hideColumn(2);
 
-/*
+	view_->hideColumn(3);
 
-	const QList<QString> names = {"Sine",
-								  "Ramp",
-								  "Square",
-								  "Sawtooth",
-								  "Triangle"};
+	view_->header()->hide();
 
-	for (const auto& wave : names)
+	view_->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+	view_->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+
+
+	auto index = model_->index("/Users/petergoldsborough/Documents/Anthem/rsc/wavetables");
+
+	view_->setRootIndex(proxy_->mapFromSource(index));
+
+	// Editable via context-menu, but no other edit triggers
+	view_->setEditTriggers(QTreeView::NoEditTriggers);
+
+	view_->setRootIsDecorated(false);
+
+	view_->setSortingEnabled(true);
+
+	// Expands directories and selects Wavetables
+	connect(view_, &QTreeView::clicked,
+			[=] (const QModelIndex& index)
+			{
+				if (model_->isDir(proxy_->mapToSource(index)))
+				{
+					view_->setExpanded(index, ! view_->isExpanded(index));
+				}
+
+				else emit wavetableSelected(index.data().toString());
+			});
+}
+
+void BrowserUi::setupContextMenu()
+{
+	QWidget::setContextMenuPolicy(Qt::CustomContextMenu);
+
+	context_ = new QMenu(this);
+
+	connect(this, &QWidget::customContextMenuRequested,
+			[=] (const QPoint& pos)
+			{ context_->popup(QWidget::mapToGlobal(pos)); });
+
+
+	connect(context_->addAction("Rename"), &QAction::triggered,
+			this, &BrowserUi::renameAction_);
+
+	connect(context_->addAction("Delete"), &QAction::triggered,
+			this, &BrowserUi::deleteAction_);
+
+
+	context_->addSeparator();
+
+	connect(context_->addAction("New folder"), &QAction::triggered,
+		   this, &BrowserUi::newFolderAction_);
+}
+
+void BrowserUi::renameAction_()
+{
+	auto index = proxy_->mapToSource(view_->indexAt(view_->mapFromGlobal(context_->pos())));
+
+	auto file = model_->fileInfo(index);
+
+	PopupLine line(this);
+
+	line.setText(file.baseName());
+
+	for( /* inf */ ; /* in */ ; /* ity */ )
 	{
-		for (int bits = 2; bits <= 64; bits *= 2)
+		auto name = line.ask();
+
+		if (name.isEmpty() || name == file.baseName()) break;
+
+		auto entries = file.dir().entryList(QDir::Dirs | QDir::Files);
+
+		if (file.isFile()) name += ".wavetable";
+
+		if (! entries.contains(name))
 		{
-			QListWidgetItem* item = new QListWidgetItem(wave + QString::number(bits));
+			file.dir().rename(file.fileName(), name);
 
-			item->setTextAlignment(Qt::AlignCenter);
-
-			browser->addItem(item);
+			break;
 		}
+
+		CustomMessageBox error("Duplicate",
+							   "A file or folder with that\n name already exists!",
+							   this);
+
+		auto again = new QPushButton("Try again", &error);
+
+		again->setShortcut(Qt::Key_Enter);
+
+		error.addButton(again, 0, 0);
+
+		// No shortcut needed here
+		error.addButton(new QPushButton("Give up", &error), 0, 1);
+
+		error.setFixedSize(error.sizeHint());
+
+		if (error.ask() != again) break;
+	}
+}
+
+void BrowserUi::deleteAction_()
+{
+	CustomMessageBox confirm("Confirm permanent obliteration",
+							 "Like, for ever and stuff.",
+							 this);
+
+	auto yes = new QPushButton("Yes", &confirm);
+
+	yes->setShortcut(Qt::Key_Enter);
+
+	confirm.addButton(yes, 0, 0);
+
+	confirm.addButton(new QPushButton("No", &confirm), 0, 1);
+
+	auto index = proxy_->mapToSource(view_->indexAt(view_->mapFromGlobal(context_->pos())));
+
+	auto name = model_->fileName(index);
+
+	if (model_->isDir(index))
+	{
+		confirm.setMessage("Do you really want to delete all\n"
+							"Wavetables in the folder "
+							+ name + "?");
 	}
 
-	browser->setCursor(Qt::PointingHandCursor);
+	else
+	{
+		confirm.setMessage("Do you really want to\n"
+							"delete the Wavetable "
+							+ name + "?");
+	}
 
-	browser->setCurrentRow(0);*/
+	confirm.setFixedSize(confirm.sizeHint());
 
-	//connect(browser, &QListWidget::currentTextChanged,
-		//	[=] (const QString& text) { settings->setText(text); });
+	auto button = confirm.ask();
+
+	if(button && button->text() == "Yes")
+	{
+		qDebug() << "Deleting " << name;
+
+		if (model_->isDir(index)) model_->rmdir(index);
+
+		else model_->remove(index);
+	}
+}
+
+void BrowserUi::newFolderAction_()
+{
+	PopupLine line("Enter a name for the new folder", this);
+
+	auto index = proxy_->mapToSource(view_->indexAt(view_->mapFromGlobal(context_->pos())));
+
+	auto dir = model_->fileInfo(index).dir();
+
+	for( /* inf */ ; /* in */ ; /* ity */ )
+	{
+		auto name = line.ask();
+
+		if (name.isEmpty()) break;
+
+		if (! dir.entryList().contains(name))
+		{
+			// Get index for directory and mkdir there
+			model_->mkdir(model_->index(dir.path()), name);
+
+			break;
+		}
+
+		CustomMessageBox error("Duplicate",
+							   "A folder with that name already\n"
+							   "exists at this location!",
+							   this);
+
+		auto again = new QPushButton("Try again", &error);
+
+		again->setShortcut(Qt::Key_Enter);
+
+		error.addButton(again, 0, 0);
+
+		// No shortcut needed here
+		error.addButton(new QPushButton("Give up", &error), 0, 1);
+
+		error.setFixedSize(error.sizeHint());
+
+		if (error.ask() != again) break;
+	}
 }
 
 void BrowserUi::paintEvent(QPaintEvent*)

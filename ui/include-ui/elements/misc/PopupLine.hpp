@@ -14,22 +14,35 @@ class PopupLine : public QDialog
 
 public:
 
-    PopupLine(QWidget* parent,
-              IconButton* icon = nullptr,
-              const QString& placeholderText = QString(),
-              const QSize& size = QSize(500,55));
+	PopupLine(QWidget* parent = nullptr);
+
+	PopupLine(const QString& placeholderText,
+			  QWidget* parent = nullptr);
+
+	PopupLine(IconButton* icon,
+			  const QString& placeholderText,
+			  QWidget* parent = nullptr);
+
+
+	QString ask();
+
 
     void setIconButton(IconButton* icon);
 
-    IconButton* getIconButton() const;
+	IconButton* getIconButton() const;
 
-    void setText(const QString& text);
 
-    QString getText() const;
+	void setText(const QString& text);
 
-    void setPlaceholderText(const QString& text);
+	QString getText() const;
 
-    QString getPlaceholderText() const;
+
+	void setPlaceholderText(const QString& text);
+
+	QString getPlaceholderText() const;
+
+
+	void reset();
 
 signals:
 
@@ -40,6 +53,7 @@ private:
     void keyPressEvent(QKeyEvent* event);
 
     void paintEvent(QPaintEvent* event);
+
 
     IconButton* icon_;
 

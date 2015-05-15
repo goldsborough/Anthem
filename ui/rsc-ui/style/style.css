@@ -24,18 +24,63 @@ AlgorithmUi {
       background: #27272B;
       color: #DC4850; }
 
-BrowserUi {
-  min-width: 300px;
-  max-width: 300px; }
-  BrowserUi QLineEdit {
-    border-top: 2px solid #27272B;
-    border-left: 2px solid #27272B;
-    border-right: 2px solid #27272B;
-    font-size: 16px;
-    qproperty-alignment: AlignCenter;
-    padding-right: 10px;
-    padding-left: 10px;
-    min-height: 30px; }
+BrowserUi[isExpanded="false"], BrowserUi[isExpanded="true"] {
+  min-width: 270px;
+  border: 2px solid #27272B; }
+  BrowserUi[isExpanded="false"] QLineEdit, BrowserUi[isExpanded="true"] QLineEdit {
+    font-size: 14px;
+    padding-right: 5px;
+    padding-left: 5px;
+    min-height: 28px; }
+  BrowserUi[isExpanded="false"] CustomMessageBox, BrowserUi[isExpanded="true"] CustomMessageBox {
+    min-width: 375px;
+    min-height: 200px; }
+    BrowserUi[isExpanded="false"] CustomMessageBox QLabel, BrowserUi[isExpanded="true"] CustomMessageBox QLabel {
+      font-size: 24px;
+      margin-bottom: 10px; }
+    BrowserUi[isExpanded="false"] CustomMessageBox QPushButton, BrowserUi[isExpanded="true"] CustomMessageBox QPushButton {
+      font-size: 20px;
+      min-width: 150px; }
+  BrowserUi[isExpanded="false"] PopupLine, BrowserUi[isExpanded="true"] PopupLine {
+    min-width: 400px;
+    min-height: 50px;
+    max-height: 50px; }
+    BrowserUi[isExpanded="false"] PopupLine QLineEdit, BrowserUi[isExpanded="true"] PopupLine QLineEdit {
+      border: none;
+      font-size: 24px; }
+  BrowserUi[isExpanded="false"] QMenu::item, BrowserUi[isExpanded="true"] QMenu::item {
+    padding-right: 25px; }
+  BrowserUi[isExpanded="false"] QTreeView, BrowserUi[isExpanded="true"] QTreeView {
+    border: 2px solid #27272B; }
+
+BrowserUi[isExpanded="true"] {
+  border: none; }
+  BrowserUi[isExpanded="true"] QTreeView {
+    border: none;
+    border-top: 2px solid #27272B; }
+
+#BrowserExpandButton {
+  min-width: 28px;
+  min-height: 28px;
+  max-height: 28px;
+  font-size: 26px;
+  border: none;
+  border-left: 2px solid #27272B; }
+
+#CaseSensitivityButton {
+  min-width: 28px;
+  max-width: 28px;
+  min-height: 28px;
+  max-height: 28px;
+  font-size: 18px;
+  border: none;
+  border-left: 2px solid #27272B;
+  color: #27272B; }
+  #CaseSensitivityButton:hover {
+    color: #DC4850;
+    background: #27272B; }
+  #CaseSensitivityButton:open {
+    color: #DC4850; }
 
 CustomComboBox QMenu {
   margin: 0px; }
@@ -53,6 +98,9 @@ CustomMessageBox QLabel {
   color: #27272B;
   font-family: "Proxima Nova";
   font-size: 30px; }
+
+#Details {
+  font-size: 20px; }
 
 IconButton {
   background: none;
@@ -88,10 +136,17 @@ Menubar {
     min-height: 60px;
     max-width: 60px;
     max-height: 60px; }
-  Menubar Projectbar {
-    background: #DC4850;
-    min-width: 500px;
-    max-width: 500px; }
+  Menubar PopupLine {
+    min-width: 400px;
+    max-width: 400px;
+    min-height: 55px;
+    max-height: 55px; }
+    Menubar PopupLine QPushButton {
+      background: #DC4850;
+      border: none; }
+      Menubar PopupLine QPushButton:hover {
+        background: #DC4850;
+        border: none; }
 
 #MenuButton {
   qproperty-iconWidth: 30;
@@ -139,7 +194,6 @@ OperatorUi, PanUi, MacroUi, #VolumeUi {
   min-height: 220px; }
   OperatorUi QPushButton, PanUi QPushButton, MacroUi QPushButton, #VolumeUi QPushButton {
     font-size: 20px;
-    border-top: 0px solid #27272B;
     border-bottom: 2px solid #27272B;
     border-right: 1px solid #27272B;
     border-left: 1px solid #27272B;
@@ -172,6 +226,17 @@ PanUi, MacroUi, #VolumeUi {
 #Save {
   font-size: 35px; }
 
+PopupLine {
+  border: none; }
+  PopupLine QLineEdit {
+    font-size: 24px;
+    padding-right: 10px;
+    padding-left: 10px; }
+  PopupLine IconButton {
+    background: #DC4850; }
+    PopupLine IconButton:hover {
+      background: #DC4850; }
+
 #ProjectLabel {
   color: #27272B;
   font-family: DIN;
@@ -189,10 +254,10 @@ PanUi, MacroUi, #VolumeUi {
 #PreviousButton {
   padding-right: 5px; }
 
-PopupLine QPushButton {
-  border: none; }
-  PopupLine QPushButton:hover {
-    background: none; }
+Projectbar {
+  background: #DC4850;
+  min-width: 500px;
+  max-width: 500px; }
 
 QLabel {
   qproperty-alignment: AlignCenter;
@@ -225,7 +290,6 @@ QDialog, SettingsDialog {
       color: #DC4850; }
 
 QLineEdit {
-  font-size: 30px;
   border: none;
   qproperty-frame: false;
   background: transparent;
@@ -278,6 +342,17 @@ QTabWidget QTabBar::tab {
   QTabWidget QTabBar::tab:selected, QTabWidget QTabBar::tab:hover {
     background: #DC4850;
     color: #27272B; }
+
+QTreeView {
+  background: #DC4850;
+  font-size: 14px;
+  color: #27272B; }
+  QTreeView::item:selected {
+    background: #DC4850;
+    color: #27272B; }
+  QTreeView::branch {
+    border-image: none;
+    background: #DC4850; }
 
 RecordUi {
   border: 2px solid #27272B; }

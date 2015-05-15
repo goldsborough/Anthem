@@ -1,40 +1,110 @@
 #include "CustomMessageBox.hpp"
 
 #include <QGridLayout>
+#include <QVBoxLayout>
 #include <QLabel>
 #include <QStyleOption>
 #include <QPainter>
 #include <QPushButton>
 #include <QIcon>
 
+
+#include <QDebug>
+
+
+
+CustomMessageBox::CustomMessageBox(QWidget *parent)
+: QDialog(parent)
+{ }
+
+CustomMessageBox::CustomMessageBox(const QString &title,
+								   const QString &message,
+								   QWidget *parent)
+: CustomMessageBox(title,
+				   message,
+				   QString(),
+				   parent)
+{ }
+
 CustomMessageBox::CustomMessageBox(const QString& title,
                                    const QString& message,
-                                   QWidget* parent,
-                                   QIcon* icon)
-: QDialog(parent), lastButton_(nullptr)
+								   const QString& details,
+								   QWidget* parent)
+: QDialog(parent),
+  layout_(new QGridLayout),
+  lastButton_(nullptr),
+  message_(new QLabel(message, this)),
+  details_(new QLabel(details, this))
 {
-    QDialog::setWindowTitle(title);
+	QDialog::setWindowTitle(title);
 
-	layout_ = new QGridLayout;
+	// Otherwise there'll be some extra padding
+	if (details.isEmpty()) details_->hide();
 
-    if (icon)
-    {
-        QLabel* iconLabel = new QLabel(this);
+	setupUi();
+}
 
-        iconLabel->setFixedSize(QSize(100,100));
-
-        iconLabel->setPixmap(icon->pixmap(QSize(100,100)));
-
-        layout_->addWidget(iconLabel,0,0,Qt::AlignCenter);
-    }
+void CustomMessageBox::setupUi()
+{
+	QVBoxLayout* main = new QVBoxLayout(this);
 
 
-	QLabel* messageLabel = new QLabel(message,this);
+	message_->setWordWrap(true);
 
-    layout_->addWidget(messageLabel);
+	message_->setObjectName("Message");
+
+	main->addWidget(message_);
 
 
-	QDialog::setLayout(layout_);
+	details_->setWordWrap(true);
+
+	details_->setObjectName("Details");
+
+	main->addWidget(details_);
+
+
+	main->addLayout(layout_);
+}
+
+QPushButton* CustomMessageBox::ask()
+{
+	QDialog::exec();
+
+	return lastButtonPressed();
+}
+
+void CustomMessageBox::setTitle(const QString& title)
+{
+	QDialog::setWindowTitle(title);
+}
+
+QString CustomMessageBox::getTitle() const
+{
+	return QDialog::windowTitle();
+}
+
+
+void CustomMessageBox::setMessage(const QString& message)
+{
+	message_->setText(message);
+}
+
+QString CustomMessageBox::getMessage() const
+{
+	return message_->text();
+}
+
+
+void CustomMessageBox::setDetails(const QString& details)
+{
+	details_->setText(details);
+
+	if (! details.isEmpty()) details_->show();
+}
+
+QString CustomMessageBox::getDetails() const
+{
+	return details_->text();
 }
 
 QPushButton* CustomMessageBox::lastButtonPressed() const
@@ -50,12 +120,12 @@ void CustomMessageBox::addButton(QPushButton* button)
     connect(button,&QPushButton::clicked, this, &CustomMessageBox::close);
 
     connect(button, &QPushButton::clicked,
-            this, &CustomMessageBox::updateLastButton_);
+			this, &CustomMessageBox::update_);
 
     layout_->addWidget(button);
 }
 
-void CustomMessageBox::updateLastButton_()
+void CustomMessageBox::update_()
 {
     lastButton_ = dynamic_cast<QPushButton*>(QObject::sender());
 }
@@ -73,12 +143,14 @@ void CustomMessageBox::addButton(QPushButton* button,
     connect(button,&QPushButton::clicked, this, &CustomMessageBox::close);
 
     connect(button, &QPushButton::clicked,
-            this, &CustomMessageBox::updateLastButton_);
+			this, &CustomMessageBox::update_);
 
-    // Icon and message are 0 and 1
+	// Message Details are 0 and 1
     layout_->addWidget(button,
-                       row,column,
-                       rowStretch,colStretch,
+					   row,
+					   column,
+					   rowStretch,
+					   colStretch,
                        align);
 }
 

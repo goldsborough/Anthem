@@ -5,32 +5,60 @@
 #include <QKeyEvent>
 #include <QStyleOption>
 #include <QPainter>
+#include <QHBoxLayout>
 
-PopupLine::PopupLine(QWidget* parent,
-                     IconButton* icon,
+PopupLine::PopupLine(QWidget *parent)
+: PopupLine(QString(), parent)
+{ }
+
+PopupLine::PopupLine(const QString &placeholderText,
+					 QWidget *parent)
+: PopupLine(nullptr,
+			placeholderText,
+			parent)
+{ }
+
+PopupLine::PopupLine(IconButton* icon,
                      const QString& placeholderText,
-                     const QSize& size)
+					 QWidget* parent)
 
-: QDialog(parent), line_(new QLineEdit(this))
-
+: QDialog(parent),
+  icon_(icon),
+  line_(new QLineEdit(this))
 {
-    QDialog::setFixedSize(size);
+	QDialog::setSizePolicy(QSizePolicy::Fixed,
+						   QSizePolicy::Fixed);
 
-    line_->setFixedSize(QSize(size.width() * 0.9, size.height()));
+	QHBoxLayout* layout = new QHBoxLayout(this);
 
-    line_->move(size.width() * 0.05,0);
+	layout->setSpacing(0);
 
-    // Removes focus rectangle around line edit
-    line_->setAttribute(Qt::WA_MacShowFocusRect, false);
+	layout->setMargin(0);
 
-    line_->setPlaceholderText(placeholderText);
+	layout->setContentsMargins(0, 0, 0, 0);
 
-    if (icon)
-    {
-        icon->setParent(this);
+	// Removes focus rectangle around line edit
+	line_->setAttribute(Qt::WA_MacShowFocusRect, false);
 
-        setIconButton(icon);
-    }
+	line_->setPlaceholderText(placeholderText);
+
+	layout->addWidget(line_);
+
+	if (icon)
+	{
+		icon = icon_;
+
+		icon_->setParent(this);
+
+		layout->addWidget(icon_);
+	}
+}
+
+QString PopupLine::ask()
+{
+	QDialog::exec();
+
+	return line_->text();
 }
 
 void PopupLine::keyPressEvent(QKeyEvent* event)
@@ -58,13 +86,7 @@ void PopupLine::keyPressEvent(QKeyEvent* event)
 
 void PopupLine::setIconButton(IconButton *icon)
 {
-    QSize size = QDialog::size();
-
-    QDialog::setFixedWidth(size.width() * 1.1);
-
-    icon_ = icon;
-
-    icon_->move(size.width() * 0.97, 3);
+	icon_ = icon;
 }
 
 IconButton* PopupLine::getIconButton() const
@@ -74,24 +96,28 @@ IconButton* PopupLine::getIconButton() const
 
 void PopupLine::setText(const QString& text)
 {
-    line_->setText(text);
+	line_->setText(text);
 }
 
 QString PopupLine::getText() const
 {
-    return line_->text();
+	return line_->text();
 }
 
 void PopupLine::setPlaceholderText(const QString& text)
 {
-    line_->setPlaceholderText(text);
+	line_->setPlaceholderText(text);
 }
 
 QString PopupLine::getPlaceholderText() const
 {
-    return line_->placeholderText();
+	return line_->placeholderText();
 }
 
+void PopupLine::reset()
+{
+	line_->clear();
+}
 
 void PopupLine::paintEvent(QPaintEvent*)
 {
