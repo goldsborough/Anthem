@@ -210,6 +210,10 @@ OperatorUi, PanUi, MacroUi, #VolumeUi {
     min-width: 120px;
     min-height: 30px;
     border-bottom: 2px solid #27272B; }
+  OperatorUi QLabel, PanUi QLabel, MacroUi QLabel, #VolumeUi QLabel {
+    color: #27272B;
+    font-size: 14px;
+    min-height: 28px; }
 
 PanUi, MacroUi, #VolumeUi {
   max-height: 215px;
@@ -259,42 +263,6 @@ Projectbar {
   min-width: 500px;
   max-width: 500px; }
 
-QLabel {
-  qproperty-alignment: AlignCenter;
-  color: #F7FDFA; }
-
-QMenu {
-  background: #DC4850;
-  margin: 15px; }
-  QMenu::item {
-    color: #27272B;
-    padding: 15px;
-    font-size: 16px; }
-    QMenu::item::selected {
-      background: #27272B;
-      color: #DC4850; }
-    QMenu::item::checked {
-      background: #27272B;
-      color: #DC4850;
-      padding-left: 30px; }
-
-QDialog, SettingsDialog {
-  background: #DC4850; }
-  QDialog QPushButton, SettingsDialog QPushButton {
-    font-size: 18px;
-    font-family: "Proxima Nova";
-    border: 1px solid #27272B;
-    min-height: 50px; }
-    QDialog QPushButton:hover, SettingsDialog QPushButton:hover {
-      background: #27272B;
-      color: #DC4850; }
-
-QLineEdit {
-  border: none;
-  qproperty-frame: false;
-  background: transparent;
-  color: #27272B; }
-
 QComboBox {
   background: transparent;
   color: #27272B;
@@ -311,6 +279,42 @@ QComboBox {
   QComboBox QListView {
     background: #DC4850;
     color: #27272B; }
+
+QDialog, SettingsDialog {
+  background: #DC4850; }
+  QDialog QPushButton, SettingsDialog QPushButton {
+    font-size: 18px;
+    font-family: "Proxima Nova";
+    border: 1px solid #27272B;
+    min-height: 50px; }
+    QDialog QPushButton:hover, SettingsDialog QPushButton:hover {
+      background: #27272B;
+      color: #DC4850; }
+
+QLabel {
+  qproperty-alignment: AlignCenter;
+  color: #F7FDFA; }
+
+QLineEdit {
+  border: none;
+  qproperty-frame: false;
+  background: transparent;
+  color: #27272B; }
+
+QMenu {
+  background: #DC4850;
+  margin: 15px; }
+  QMenu::item {
+    color: #27272B;
+    padding: 15px;
+    font-size: 16px; }
+    QMenu::item::selected {
+      background: #27272B;
+      color: #DC4850; }
+    QMenu::item::checked {
+      background: #27272B;
+      color: #DC4850;
+      padding-left: 30px; }
 
 QPushButton {
   outline: none;
@@ -378,7 +382,13 @@ SettingsDialog QLabel {
   font-size: 20px; }
 
 WavetableUi {
-  color: #27272B;
-  background-color: #DC4850; }
+  qproperty-lineColor: #DC4850;
+  qproperty-backgroundColor: #27272B;
+  qproperty-lineWidth: 2;
+  qproperty-gridShown: true;
+  qproperty-gridWidth: 1;
+  qproperty-gridColor: #56595C;
+  qproperty-zeroColor: #FBB829;
+  qproperty-zeroWidth: 1; }
 
 /*# sourceMappingURL=style.css.map */

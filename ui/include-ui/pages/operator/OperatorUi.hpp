@@ -4,6 +4,10 @@
 #include <QWidget>
 
 class Operator;
+class QVBoxLayout;
+class QWidget;
+class QTabWidget;
+class QPushButton;
 
 class OperatorUi : public QWidget
 {
@@ -15,9 +19,27 @@ public:
 
 private:
 
-	void setupUi();
+	void setupBar();
+
+	void setupPrimary();
+
+	void setupSecondary();
+
+	void setupWavesTab();
+
+	void setupCustomTab();
+
 
 	void paintEvent(QPaintEvent* paintEvent);
+
+
+	QVBoxLayout* layout_;
+
+	QWidget* primary_;
+
+	QTabWidget* secondary_;
+
+	QPushButton* toggle_;
 
 };
 

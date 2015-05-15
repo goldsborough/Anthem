@@ -85,11 +85,9 @@ private:
 	void newFolderAction_();
 
 
-	QHBoxLayout* bar_;
+	QHBoxLayout* barLayout_;
 
 	QLineEdit* filter_;
-
-	QPushButton* caseSensitivity_;
 
 	FileModel* model_;
 

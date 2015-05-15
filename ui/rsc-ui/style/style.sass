@@ -4,8 +4,8 @@ $third: #F7FDFA
 $fourth: #43D4B4
 
 // Just not to forget them
-//$gray: #56595C
-//$gold: #FBB829
+$gray: #56595C
+$gold: #FBB829
 
 $windowWidth: 1020px
 $windowHeight: 680px
@@ -233,6 +233,11 @@ OperatorUi
         min-width: 120px
         min-height: 30px
         border-bottom: 2px solid $second
+    & QLabel
+        color: $second
+        font-size: 14px
+        min-height: 28px
+
 
 PanUi, MacroUi, #VolumeUi
     @extend OperatorUi
@@ -283,42 +288,6 @@ Projectbar
     min-width: 500px
     max-width: 500px
 
-QLabel
-    qproperty-alignment: AlignCenter
-    color: $third
-
-QMenu
-    background: $first
-    margin: 15px
-    &::item
-        color: $second
-        padding: 15px
-        font-size: 16px
-        &::selected
-            background: $second
-            color: $first
-        &::checked
-            background: $second
-            color: $first
-            padding-left: 30px
-
-QDialog
-    background: $first
-    & QPushButton
-        font-size: 18px
-        font-family: "Proxima Nova"
-        border: 1px solid $second
-        min-height: 50px
-        &:hover
-            background: $second
-            color: $first
-
-QLineEdit
-    border: none
-    qproperty-frame: false
-    background: transparent
-    color: $second
-
 QComboBox
     background: transparent
     color: $second
@@ -335,6 +304,42 @@ QComboBox
     & QListView
         background: $first
         color: $second
+
+QDialog
+    background: $first
+    & QPushButton
+        font-size: 18px
+        font-family: "Proxima Nova"
+        border: 1px solid $second
+        min-height: 50px
+        &:hover
+            background: $second
+            color: $first
+
+QLabel
+    qproperty-alignment: AlignCenter
+    color: $third
+
+QLineEdit
+    border: none
+    qproperty-frame: false
+    background: transparent
+    color: $second
+
+QMenu
+    background: $first
+    margin: 15px
+    &::item
+        color: $second
+        padding: 15px
+        font-size: 16px
+        &::selected
+            background: $second
+            color: $first
+        &::checked
+            background: $second
+            color: $first
+            padding-left: 30px
 
 QPushButton
     outline: none
@@ -405,5 +410,11 @@ SettingsDialog
         font-size: 20px
 
 WavetableUi
-    color: $second
-    background-color: $first
+    qproperty-lineColor: $first
+    qproperty-backgroundColor: $second
+    qproperty-lineWidth: 2
+    qproperty-gridShown: true
+    qproperty-gridWidth: 1
+    qproperty-gridColor: $gray
+    qproperty-zeroColor: $gold
+    qproperty-zeroWidth: 1

@@ -13,8 +13,6 @@
 #include <QPushButton>
 #include <QMenu>
 
-#include <QDebug>
-
 QIcon IconProvider::icon(IconType type) const
 {
 	/*
@@ -142,34 +140,30 @@ void BrowserUi::setupUi()
 	layout->setContentsMargins(0,0,0,0);
 
 
-	layout->addLayout(bar_);
+	layout->addLayout(barLayout_);
 
 	layout->addWidget(view_);
 }
 
 void BrowserUi::setupBar()
 {
-	bar_ = new QHBoxLayout;
+	barLayout_ = new QHBoxLayout;
 
-	bar_->setMargin(0);
+	barLayout_->setMargin(0);
 
-	bar_->setSpacing(0);
+	barLayout_->setSpacing(0);
 
-	bar_->setContentsMargins(0,0,0,0);
+	barLayout_->setContentsMargins(0,0,0,0);
 
 
 	setupFilter();
-
-	bar_->addWidget(filter_);
-
-	bar_->addWidget(caseSensitivity_);
 
 
 	if (! isExpanded_)
 	{
 		setupExpansion();
 
-		bar_->addWidget(expandButton_);
+		barLayout_->addWidget(expandButton_);
 
 		QWidget::setSizePolicy(QSizePolicy::Maximum,
 							   QSizePolicy::Preferred);
@@ -232,20 +226,20 @@ void BrowserUi::setupFilter()
 			[=] (const QString& text)
 			{ proxy_->setFilterRegExp(QRegExp(text, proxy_->filterCaseSensitivity())); });
 
-	caseSensitivity_ = new QPushButton("Aa", this);
+	auto caseSensitivity = new QPushButton("Aa", this);
 
-	caseSensitivity_->setSizePolicy(QSizePolicy::Fixed,
+	caseSensitivity->setSizePolicy(QSizePolicy::Fixed,
 								   QSizePolicy::Fixed);
 
-	caseSensitivity_->setObjectName("CaseSensitivityButton");
+	caseSensitivity->setObjectName("CaseSensitivityButton");
 
-	caseSensitivity_->setCursor(Qt::PointingHandCursor);
+	caseSensitivity->setCursor(Qt::PointingHandCursor);
 
-	caseSensitivity_->setCheckable(true);
+	caseSensitivity->setCheckable(true);
 
-	caseSensitivity_->setToolTip("Case Sensitvity");
+	caseSensitivity->setToolTip("Case Sensitvity");
 
-	connect(caseSensitivity_, &QPushButton::clicked,
+	connect(caseSensitivity, &QPushButton::clicked,
 			[=] (bool checked)
 			{
 				auto cs = checked ? Qt::CaseSensitive : Qt::CaseInsensitive;
@@ -253,6 +247,10 @@ void BrowserUi::setupFilter()
 				// Re-filter
 				proxy_->setFilterRegExp(QRegExp(proxy_->filterRegExp().pattern(), cs));
 			});
+
+	barLayout_->addWidget(filter_);
+
+	barLayout_->addWidget(caseSensitivity);
 
 }
 
@@ -436,8 +434,6 @@ void BrowserUi::deleteAction_()
 
 	if(button && button->text() == "Yes")
 	{
-		qDebug() << "Deleting " << name;
-
 		if (model_->isDir(index)) model_->rmdir(index);
 
 		else model_->remove(index);

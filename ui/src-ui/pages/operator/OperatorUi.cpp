@@ -12,6 +12,7 @@
 #include <QPushButton>
 #include <QListWidget>
 #include <QTabWidget>
+#include <QLabel>
 #include <cmath>
 
 #include <QDebug>
@@ -19,16 +20,31 @@
 OperatorUi::OperatorUi(QWidget* parent)
 : QWidget(parent)
 {
-    setupUi();
+	layout_ = new QVBoxLayout(this);
+
+	layout_->setMargin(0);
+
+	layout_->setSpacing(0);
+
+	layout_->setContentsMargins(0,0,0,0);
+
+
+	setupBar();
+
+	setupPrimary();
+
+	setupSecondary();
+
+	QWidget::setSizePolicy(QSizePolicy::Maximum,
+						   QSizePolicy::Maximum);
 }
 
-void OperatorUi::setupUi()
+void OperatorUi::setupBar()
 {
 	static char title = 'A';
 
-	/* ==================== Top Bar ==================== */
 
-	QHBoxLayout* top = new QHBoxLayout;
+	auto top = new QHBoxLayout;
 
 	top->setMargin(0);
 
@@ -37,17 +53,34 @@ void OperatorUi::setupUi()
 	top->setContentsMargins(0,0,0,0);
 
 
-	QPushButton* toggle = new QPushButton("Sine", this);
+	toggle_ = new QPushButton("Sine", this);
 
-	toggle->setSizePolicy(QSizePolicy::Expanding,
+	toggle_->setSizePolicy(QSizePolicy::Expanding,
 						  QSizePolicy::Maximum);
 
-	toggle->setCursor(Qt::PointingHandCursor);
+	toggle_->setCursor(Qt::PointingHandCursor);
 
-	top->addWidget(toggle);
+	top->addWidget(toggle_);
 
 
-	QPushButton* activityButton = new QPushButton(QString(title++), this);
+	connect(toggle_, &QPushButton::clicked,
+			[=] (bool)
+	{
+		if (primary_->isHidden())
+		{
+			secondary_->hide();
+			primary_->show();
+		}
+
+		else
+		{
+			primary_->hide();
+			secondary_->show();
+		}
+	});
+
+
+	auto activityButton = new QPushButton(QString(title++), this);
 
 	activityButton->setSizePolicy(QSizePolicy::Maximum,
 								  QSizePolicy::Maximum);
@@ -64,11 +97,15 @@ void OperatorUi::setupUi()
 	top->addWidget(activityButton);
 
 
-	/* ==================== Primary Widget ==================== */
+	layout_->addLayout(top);
+}
 
-	QWidget* primary = new QWidget(this);
+void OperatorUi::setupPrimary()
+{
+	primary_ = new QWidget(this);
 
-	QHBoxLayout* primaryLayout = new QHBoxLayout(primary);
+
+	auto primaryLayout = new QHBoxLayout(primary_);
 
 	primaryLayout->setMargin(0);
 
@@ -77,101 +114,95 @@ void OperatorUi::setupUi()
 	primaryLayout->setContentsMargins(0,0,0,0);
 
 
-	ModControl* level = new ModControl("LEVEL", 3, 3, primary);
+	ModControl* level = new ModControl("LEVEL", 3, 3, primary_);
 
 	primaryLayout->addWidget(level);
 
 
-	ModControl* offset = new ModControl("OFFS", 3, 3, primary);
+	ModControl* offset = new ModControl("OFFS", 3, 3, primary_);
 
 	primaryLayout->addWidget(offset);
 
 
-	ModControl* ratio = new ModControl("RATIO", 3, 3, primary);
+	ModControl* ratio = new ModControl("RATIO", 3, 3, primary_);
 
 	primaryLayout->addWidget(ratio);
 
 
-	/* ==================== Secondary Widget ==================== */
+	layout_->addWidget(primary_);
+}
 
-	QTabWidget* secondary = new QTabWidget(this);
+void OperatorUi::setupSecondary()
+{
+	secondary_ = new QTabWidget(this);
 
-	secondary->setMovable(true);
+	secondary_->setMovable(true);
 
-	secondary->tabBar()->setCursor(Qt::PointingHandCursor);
+	secondary_->tabBar()->setCursor(Qt::PointingHandCursor);
 
-	secondary->setTabPosition(QTabWidget::South);
+	secondary_->setTabPosition(QTabWidget::South);
 
 
-	QWidget* waves = new QWidget(secondary);
+	setupWavesTab();
+
+	setupCustomTab();
+
+
+	layout_->addWidget(secondary_);
+
+	secondary_->hide();
+}
+
+void OperatorUi::setupWavesTab()
+{
+	auto waves = new QWidget(secondary_);
 
 	waves->setObjectName("Waves");
 
-	secondary->addTab(waves, "Waves");
-
-	QHBoxLayout* waveLayout = new QHBoxLayout(waves);
-
-	waveLayout->setMargin(10);
-
-	waveLayout->setSpacing(0);
+	secondary_->addTab(waves, "Waves");
 
 
-	BrowserUi* browser = new BrowserUi(this);
+	auto layout = new QGridLayout(waves);
+
+	layout->setMargin(10);
+
+	//layout->setSpacing(0);
+
+
+	auto browser = new BrowserUi(this);
 
 	connect(browser, &BrowserUi::wavetableSelected,
-			[=] (const QString& id) { toggle->setText(id); });
+			[=] (const QString& id) { toggle_->setText(id); });
 
-	waveLayout->addWidget(browser);
-
-
-	WavetableUi* wavetable = new WavetableUi(waves);
-
-	waveLayout->addWidget(wavetable);
+	layout->addWidget(browser, 0, 0, 2, 1);
 
 
-	QWidget* custom = new QWidget(this);
+	auto wavetable = new WavetableUi(waves);
 
-	secondary->addTab(custom, "Custom");
+	wavetable->setSizePolicy(QSizePolicy::Expanding,
+							 QSizePolicy::Expanding);
 
-
-	/* ==================== OperatorUi Settings ==================== */
-
-
-	QWidget::setSizePolicy(QSizePolicy::Maximum,
-						   QSizePolicy::Maximum);
-
-	QVBoxLayout* layout = new QVBoxLayout(this);
-
-	layout->setMargin(0);
-
-	layout->setSpacing(0);
-
-	layout->setContentsMargins(0,0,0,0);
+	layout->addWidget(wavetable, 0, 1);
 
 
-	layout->addLayout(top);
+	auto phase = new QLabel("-", this);
 
-	layout->addWidget(primary);
+	phase->setSizePolicy(QSizePolicy::Expanding,
+						 QSizePolicy::Maximum);
 
-	layout->addWidget(secondary);
+	layout->addWidget(phase, 1, 1);
 
-	secondary->hide();
+	connect(wavetable, &WavetableUi::phaseChanged,
+			[=] (double degrees)
+			{ phase->setText(QString::number(degrees, 'g', 2)); });
 
-	connect(toggle, &QPushButton::clicked,
-			[=] (bool)
-	{
-		if (primary->isHidden())
-		{
-			secondary->hide();
-			primary->show();
-		}
+}
 
-		else
-		{
-			primary->hide();
-			secondary->show();
-		}
-	});
+void OperatorUi::setupCustomTab()
+{
+	auto custom = new QWidget(this);
+
+	secondary_->addTab(custom, "Custom");
 }
 
 void OperatorUi::paintEvent(QPaintEvent*)
