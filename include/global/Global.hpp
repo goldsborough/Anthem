@@ -25,20 +25,20 @@ namespace Global
     /*! 2π */
     const double twoPi = 6.28318530717958;
     
-    /*! Square root of two */
+    /*! Square root of two. */
     const double sqrt2 = 1.41421356237309;
     
-    /*! The samplerate used, usually 44100 Hz */
+    /*! The samplerate used, usually 44100 Hz. */
     extern unsigned int samplerate;
     
-    /*! The nyquist sampling limit, half the sampling rate */
+    /*! The nyquist sampling limit, half the sampling rate. */
     extern unsigned int nyquistLimit;
     
-    /*! The wavetable length */
+    /*! The wavetable length. */
     extern unsigned short wavetableLength;
     
-    /*! The fundamental tale increment: wavetableLength/samplerate*/
-    extern double tableIncr;
+    /*! The fundamental table increment = wavetableLength/samplerate. */
+    extern double tableIncrement;
     
     /*************************************************************************************************//*!
     *
@@ -49,7 +49,8 @@ namespace Global
     *  @param       wavetableLength The wavetable length.
     *
     *****************************************************************************************************/
-    extern void init(const unsigned int smplr = 48000, const unsigned int wavetableLength = 4095);
+    extern void init(const unsigned int smplr = 48000,
+                     const unsigned int wavetableLength = 4095);
 };
 
 #endif /* defined(__Anthem__Globals__) */

@@ -13,7 +13,7 @@
 #include <QListWidget>
 #include <QTabWidget>
 #include <QLabel>
-#include <cmath>
+#include <QToolTip>
 
 #include <QDebug>
 
@@ -162,7 +162,7 @@ void OperatorUi::setupWavesTab()
 	secondary_->addTab(waves, "Waves");
 
 
-	auto layout = new QGridLayout(waves);
+	auto layout = new QHBoxLayout(waves);
 
 	layout->setMargin(10);
 
@@ -174,7 +174,7 @@ void OperatorUi::setupWavesTab()
 	connect(browser, &BrowserUi::wavetableSelected,
 			[=] (const QString& id) { toggle_->setText(id); });
 
-	layout->addWidget(browser, 0, 0, 2, 1);
+	layout->addWidget(browser);
 
 
 	auto wavetable = new WavetableUi(waves);
@@ -182,19 +182,16 @@ void OperatorUi::setupWavesTab()
 	wavetable->setSizePolicy(QSizePolicy::Expanding,
 							 QSizePolicy::Expanding);
 
-	layout->addWidget(wavetable, 0, 1);
-
-
-	auto phase = new QLabel("-", this);
-
-	phase->setSizePolicy(QSizePolicy::Expanding,
-						 QSizePolicy::Maximum);
-
-	layout->addWidget(phase, 1, 1);
+	layout->addWidget(wavetable);
 
 	connect(wavetable, &WavetableUi::phaseChanged,
-			[=] (double degrees)
-			{ phase->setText(QString::number(degrees, 'g', 2)); });
+			[=] (int degrees)
+			{
+				QToolTip::showText(wavetable->cursor().pos(),
+								   ((degrees > 0) ? "+" : "") +
+								   QString::number(degrees)   +
+								   QString(0x00B0));
+			});
 
 }
 

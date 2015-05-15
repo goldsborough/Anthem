@@ -127,7 +127,7 @@ double Operator::getLevel() const
 
 void Operator::modulateFrequency(double value)
 {
-    modOffset_ = Global::tableIncr * value;
+    modOffset_ = Global::tableIncrement * value;
 }
 
 void Operator::setNote(note_t note)
@@ -144,7 +144,7 @@ void Operator::setNote(note_t note)
     
     if (mode_ == Mode::FM) amp_ = level_ * realFreq_;
     
-    incr_ = Global::tableIncr * freq_;
+    incr_ = Global::tableIncrement * freq_;
     
     semitoneOffset_ = Util::freqToSemitones(freq_, realFreq_);
     
@@ -164,7 +164,7 @@ void Operator::setFrequencyOffset(double Hz)
     
     if (mode_ == Mode::FM) amp_ = level_ * realFreq_;
     
-    indexOffset_ = Global::tableIncr * freqOffset_;
+    indexOffset_ = Global::tableIncrement * freqOffset_;
     
     semitoneOffset_ = Util::freqToSemitones(freq_, realFreq_);
 }
@@ -190,7 +190,7 @@ void Operator::setSemitoneOffset(double semitones)
     
     if (mode_ == Mode::FM) amp_ = level_ * realFreq_;
     
-    indexOffset_ = Global::tableIncr * freqOffset_;
+    indexOffset_ = Global::tableIncrement * freqOffset_;
     
     semitoneOffset_ = semitones;
 }
@@ -213,7 +213,7 @@ void Operator::setRatio(double ratio)
     
     if (mode_ == Mode::FM) amp_ = level_ * realFreq_;
     
-    incr_ = Global::tableIncr * freq_;
+    incr_ = Global::tableIncrement * freq_;
     
     semitoneOffset_ = Util::freqToSemitones(freq_, realFreq_);
 }

@@ -26,7 +26,6 @@
 #include "qcustomplot.h"
 
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////// QCPPainter
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -12528,9 +12527,18 @@ void QCPAxisRect::mouseMoveEvent(QMouseEvent *event)
       if (QCPAxis *rangeDragHorzAxis = mRangeDragHorzAxis.data())
       {
         if (rangeDragHorzAxis->mScaleType == QCPAxis::stLinear)
-        {
+        {			
           double diff = rangeDragHorzAxis->pixelToCoord(mDragStart.x()) - rangeDragHorzAxis->pixelToCoord(event->pos().x());
           rangeDragHorzAxis->setRange(mDragStartHorzRange.lower+diff, mDragStartHorzRange.upper+diff);
+
+
+
+		  //qDebug() << diff;
+
+
+
+
+
         } else if (rangeDragHorzAxis->mScaleType == QCPAxis::stLogarithmic)
         {
           double diff = rangeDragHorzAxis->pixelToCoord(mDragStart.x()) / rangeDragHorzAxis->pixelToCoord(event->pos().x());

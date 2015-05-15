@@ -12,6 +12,11 @@
 #include <QHeaderView>
 #include <QPushButton>
 #include <QMenu>
+#include <QToolTip>
+
+
+#include <QDebug>
+
 
 QIcon IconProvider::icon(IconType type) const
 {
@@ -65,15 +70,6 @@ QVariant FileModel::data(const QModelIndex &index, int role) const
 		file.remove(dot, file.size() - dot);
 
 		return file;
-	}
-
-	else if (role == Qt::ToolTipRole && QFileSystemModel::isDir(index))
-	{
-		int count = QDir(QFileSystemModel::filePath(index)).entryList(QDir::Files).count();
-
-		if (! count) return "Empty";
-
-		else return QString::number(count) + " wavetables";
 	}
 
 	else return variant;
@@ -315,15 +311,26 @@ void BrowserUi::setupView()
 
 	// Expands directories and selects Wavetables
 	connect(view_, &QTreeView::clicked,
-			[=] (const QModelIndex& index)
-			{
-				if (model_->isDir(proxy_->mapToSource(index)))
-				{
-					view_->setExpanded(index, ! view_->isExpanded(index));
-				}
+			this, &BrowserUi::itemClicked);
+}
 
-				else emit wavetableSelected(index.data().toString());
-			});
+void BrowserUi::itemClicked(const QModelIndex &index)
+{
+	static QFlags<QDir::Filter> filter(QDir::AllEntries | QDir::NoDotAndDotDot);
+
+	auto mapped = proxy_->mapToSource(index);
+
+	if (model_->isDir(mapped))
+	{
+		if (QDir(model_->filePath(mapped)).entryList(filter).count())
+		{
+			view_->setExpanded(index, ! view_->isExpanded(index));
+		}
+
+		else QToolTip::showText(QWidget::cursor().pos(), "Empty", nullptr, { }, 400);
+	}
+
+	else emit wavetableSelected(index.data().toString());
 }
 
 void BrowserUi::setupContextMenu()

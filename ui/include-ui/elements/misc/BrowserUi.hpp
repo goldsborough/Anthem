@@ -56,6 +56,10 @@ signals:
 
 	void wavetableSelected(const QString& id) const;
 
+private slots:
+
+	void itemClicked(const QModelIndex& index);
+
 private:
 
 	BrowserUi(bool isExpanded, QWidget* parent);

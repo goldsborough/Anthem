@@ -26,7 +26,7 @@ namespace Global
     
     unsigned short wavetableLength = 0;
     
-    double tableIncr = 0;
+    double tableIncrement = 0;
     
     void init(const unsigned int smplr, const unsigned int wavetableLen)
     {
@@ -35,7 +35,7 @@ namespace Global
         
         wavetableLength = wavetableLen;
         
-        tableIncr = static_cast<double>(wavetableLength) / smplr;
+        tableIncrement = static_cast<double>(wavetableLength) / smplr;
         
         wavetableDatabase.init();
     }

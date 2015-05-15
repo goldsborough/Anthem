@@ -14,6 +14,10 @@ class WavetableUi : public QWidget
 {
 	Q_OBJECT
 
+
+	Q_PROPERTY(double margin READ getMargin WRITE setMargin)
+
+
 	Q_PROPERTY(QColor backgroundColor READ getBackgroundColor WRITE setBackgroundColor)
 
 
@@ -41,6 +45,11 @@ public:
 	void setWavetable(const QString& id);
 
 	QString getWavetableId() const;
+
+
+	void setMargin(double margin);
+
+	double getMargin() const;
 
 
 	void setBackgroundColor(const QColor& color);
@@ -87,7 +96,7 @@ public:
 
 signals:
 
-	void phaseChanged(double degrees) const;
+	void phaseChanged(int degrees) const;
 
 private:
 
@@ -104,6 +113,10 @@ private:
 	QCPGraph* graph_;
 
 	bool gridShown_;
+
+	double margin_;
+
+	double conversion_;
 
 
 	QSharedPointer<QVector<double>> y_;

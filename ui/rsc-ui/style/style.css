@@ -347,6 +347,13 @@ QTabWidget QTabBar::tab {
     background: #DC4850;
     color: #27272B; }
 
+QToolTip {
+  background: #DC4850;
+  font-family: "DIN";
+  color: #27272B;
+  font-size: 16px;
+  padding: 2px; }
+
 QTreeView {
   background: #DC4850;
   font-size: 14px;
@@ -382,13 +389,14 @@ SettingsDialog QLabel {
   font-size: 20px; }
 
 WavetableUi {
-  qproperty-lineColor: #DC4850;
+  qproperty-lineColor: #43D4B4;
   qproperty-backgroundColor: #27272B;
   qproperty-lineWidth: 2;
   qproperty-gridShown: true;
   qproperty-gridWidth: 1;
   qproperty-gridColor: #56595C;
-  qproperty-zeroColor: #FBB829;
-  qproperty-zeroWidth: 1; }
+  qproperty-zeroColor: #DC4850;
+  qproperty-zeroWidth: 1;
+  qproperty-margin: 15; }
 
 /*# sourceMappingURL=style.css.map */

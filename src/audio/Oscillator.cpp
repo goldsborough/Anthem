@@ -72,7 +72,7 @@ void Oscillator::setFrequency(double Hz)
     
     freq_ = Hz;
     
-    incr_ = Global::tableIncr * Hz;
+    incr_ = Global::tableIncrement * Hz;
 }
 
 double Oscillator::getFrequency() const
