@@ -297,9 +297,9 @@ public:
     *
     *****************************************************************************************************/
     
-    Wavetable(double* data = 0,
-              index_t wavetableLength = 0,
-              const std::string& id = std::string());
+    Wavetable(double* data,
+              index_t wavetableLength,
+              const std::string& id);
     
     /*************************************************************************************************//*!
     *
@@ -317,7 +317,7 @@ public:
     
     Wavetable(MathematicalWaveform waveform,
               index_t wavetableLength,
-              const std::string& id = std::string());
+              const std::string& id);
     
 private:
     

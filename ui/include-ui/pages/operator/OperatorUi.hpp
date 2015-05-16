@@ -27,7 +27,7 @@ private:
 
 	void setupWavesTab();
 
-	void setupCustomTab();
+	void setupCreateTab();
 
 
 	void paintEvent(QPaintEvent* paintEvent);

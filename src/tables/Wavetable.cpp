@@ -18,7 +18,9 @@ Wavetable::Wavetable(double* data,
                      index_t length,
                      const std::string& id)
 : LookupTable<double>(data, length, id)
-{ }
+{
+    // Perform FFT here
+}
 
 Wavetable::Wavetable(MathematicalWaveform waveform,
                      index_t length,

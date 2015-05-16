@@ -17,6 +17,9 @@ AnthemUi
     min-height: $windowHeight
     max-height: $windowHeight
     font-family: "DIN"
+    & QTabWidget QTabBar::tab
+        min-width: $windowWidth / 5
+        min-height: 50px
 
 AlgorithmUi
     background: transparent
@@ -37,7 +40,7 @@ AlgorithmUi
             color: $first
 
 
-BrowserUi[isExpanded = "false"]
+Browser[isExpanded = "false"]
     min-width: 270px
     border: 2px solid $second
     & QLineEdit
@@ -45,6 +48,12 @@ BrowserUi[isExpanded = "false"]
         padding-right: 5px
         padding-left: 5px
         min-height: 28px
+    & QPushButton
+        min-width: 28px
+        min-height: 28px
+        font-size: 26px
+        border: none
+        border-left: 2px solid $second
     & CustomMessageBox
         min-width: 375px
         min-height: 200px
@@ -66,21 +75,12 @@ BrowserUi[isExpanded = "false"]
     & QTreeView
         border: 2px solid $second
 
-BrowserUi[isExpanded = "true"]
-    @extend BrowserUi[isExpanded = "false"]
+Browser[isExpanded = "true"]
+    @extend Browser[isExpanded = "false"]
     border: none
     & QTreeView
         border: none
         border-top: 2px solid $second
-
-
-#BrowserExpandButton
-    min-width: 28px
-    min-height: 28px
-    max-height: 28px
-    font-size: 26px
-    border: none
-    border-left: 2px solid $second
 
 #CaseSensitivityButton
     min-width: 28px
@@ -91,18 +91,33 @@ BrowserUi[isExpanded = "true"]
     border: none
     border-left: 2px solid $second
     color: $second
-
     &:hover
         color: $first
         background: $second
-
     &:open
         color: $first
 
-CustomComboBox QMenu
-    margin: 0px
-    &::item
-        padding: 40px
+ComboBox
+    qproperty-alignment: AlignCenter
+    qproperty-direction: 1 // Down
+    & QListView
+        background: $first
+        color: $second
+        &::item
+            padding: 15px
+            &:selected, &:hover
+                background: $second
+                color: $first
+
+Creator QPushButton
+    min-width: 30px
+    font-size: 18px
+    border-right: 2px solid $second
+    border-bottom: 2px solid $second
+    border-left: 2px solid $second
+
+#CreatorGenerateButton
+    font-size: 24px
 
 CustomDial
     background: transparent
@@ -203,9 +218,17 @@ MasterPage
     & ModDial
         font-size: 16px
 
+#OperatorBar QPushButton
+    border-bottom: 2px solid $second
+    border-right: 1px solid $second
+    border-left: 1px solid $second
+    min-width: 40px
+    min-height: 32px
+    font-size: 20px
+
 OperatorPage
     background: $first
-    & QTabBar::tab
+    & QTabWidget QTabBar::tab
         min-width: 250px
         min-height: 40px
         padding-top: 10px
@@ -216,12 +239,6 @@ OperatorUi
     min-width: 480px
     min-height: 220px
     & QPushButton
-        font-size: 20px
-        border-bottom: 2px solid $second
-        border-right: 1px solid $second
-        border-left: 1px solid $second
-        min-width: 40px
-        min-height: 32px
         &:open
             background: $second
             color: $third
@@ -237,7 +254,6 @@ OperatorUi
         color: $second
         font-size: 14px
         min-height: 28px
-
 
 PanUi, MacroUi, #VolumeUi
     @extend OperatorUi
@@ -288,30 +304,12 @@ Projectbar
     min-width: 500px
     max-width: 500px
 
-QComboBox
-    background: transparent
-    color: $second
-    font-size: 20px
-    font-family: "Proxima Nova"
-    border: 1px solid $second
-    min-height: 50px
-    padding-left: 34px
-    &::drop-down
-        border: none
-    &:hover
-        background: $second
-        color: $first
-    & QListView
-        background: $first
-        color: $second
-
 QDialog
     background: $first
     & QPushButton
         font-size: 18px
         font-family: "Proxima Nova"
         border: 1px solid $second
-        min-height: 50px
         &:hover
             background: $second
             color: $first
@@ -364,10 +362,6 @@ QTabWidget
         font-family: "DIN Light"
         border: none
         outline: none
-        min-width: $windowWidth / 5
-        max-width: $windowWidth / 5
-        min-height: 50px
-        max-height: 50px
         padding-top: 5px
         &:selected, &:hover
             background: $first
@@ -415,6 +409,11 @@ SettingsDialog
         color: $second
         font-family: "Proxima Nova"
         font-size: 20px
+    & ComboBox
+        min-height: 50px
+        max-height: 50px
+        & QListView
+            font-size: 16px
 
 WavetableUi
     qproperty-lineColor: $fourth

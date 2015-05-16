@@ -1,4 +1,4 @@
-#include "CustomMessageBox.hpp"
+#include "MessageBox.hpp"
 
 #include <QGridLayout>
 #include <QVBoxLayout>
@@ -13,23 +13,23 @@
 
 
 
-CustomMessageBox::CustomMessageBox(QWidget *parent)
+MessageBox::MessageBox(QWidget *parent)
 : QDialog(parent)
 { }
 
-CustomMessageBox::CustomMessageBox(const QString &title,
-								   const QString &message,
-								   QWidget *parent)
-: CustomMessageBox(title,
+MessageBox::MessageBox(const QString &title,
+					   const QString &message,
+					   QWidget *parent)
+: MessageBox(title,
 				   message,
 				   QString(),
 				   parent)
 { }
 
-CustomMessageBox::CustomMessageBox(const QString& title,
-                                   const QString& message,
-								   const QString& details,
-								   QWidget* parent)
+MessageBox::MessageBox(const QString& title,
+					   const QString& message,
+					   const QString& details,
+					   QWidget* parent)
 : QDialog(parent),
   layout_(new QGridLayout),
   lastButton_(nullptr),
@@ -44,7 +44,7 @@ CustomMessageBox::CustomMessageBox(const QString& title,
 	setupUi();
 }
 
-void CustomMessageBox::setupUi()
+void MessageBox::setupUi()
 {
 	QVBoxLayout* main = new QVBoxLayout(this);
 
@@ -66,71 +66,71 @@ void CustomMessageBox::setupUi()
 	main->addLayout(layout_);
 }
 
-QPushButton* CustomMessageBox::ask()
+QPushButton* MessageBox::ask()
 {
 	QDialog::exec();
 
 	return lastButtonPressed();
 }
 
-void CustomMessageBox::setTitle(const QString& title)
+void MessageBox::setTitle(const QString& title)
 {
 	QDialog::setWindowTitle(title);
 }
 
-QString CustomMessageBox::getTitle() const
+QString MessageBox::getTitle() const
 {
 	return QDialog::windowTitle();
 }
 
 
-void CustomMessageBox::setMessage(const QString& message)
+void MessageBox::setMessage(const QString& message)
 {
 	message_->setText(message);
 }
 
-QString CustomMessageBox::getMessage() const
+QString MessageBox::getMessage() const
 {
 	return message_->text();
 }
 
 
-void CustomMessageBox::setDetails(const QString& details)
+void MessageBox::setDetails(const QString& details)
 {
 	details_->setText(details);
 
 	if (! details.isEmpty()) details_->show();
 }
 
-QString CustomMessageBox::getDetails() const
+QString MessageBox::getDetails() const
 {
 	return details_->text();
 }
 
-QPushButton* CustomMessageBox::lastButtonPressed() const
+QPushButton* MessageBox::lastButtonPressed() const
 {
     return lastButton_;
 }
 
-void CustomMessageBox::addButton(QPushButton* button)
+void MessageBox::addButton(QPushButton* button)
 {
     button->setCursor(Qt::PointingHandCursor);
 
     // All button clicks end up in the current window being closed
-    connect(button,&QPushButton::clicked, this, &CustomMessageBox::close);
+	connect(button,&QPushButton::clicked, this, &MessageBox::close);
 
     connect(button, &QPushButton::clicked,
-			this, &CustomMessageBox::update_);
+			this, &MessageBox::update_);
 
     layout_->addWidget(button);
 }
 
-void CustomMessageBox::update_()
+void MessageBox::update_()
 {
     lastButton_ = dynamic_cast<QPushButton*>(QObject::sender());
 }
 
-void CustomMessageBox::addButton(QPushButton* button,
+void MessageBox::addButton(QPushButton* button,
                                  int row,
                                  int column,
                                  int rowStretch,
@@ -140,10 +140,10 @@ void CustomMessageBox::addButton(QPushButton* button,
     button->setCursor(Qt::PointingHandCursor);
 
     // All button clicks end up in the current window being closed
-    connect(button,&QPushButton::clicked, this, &CustomMessageBox::close);
+	connect(button,&QPushButton::clicked, this, &MessageBox::close);
 
     connect(button, &QPushButton::clicked,
-			this, &CustomMessageBox::update_);
+			this, &MessageBox::update_);
 
 	// Message Details are 0 and 1
     layout_->addWidget(button,
@@ -154,7 +154,7 @@ void CustomMessageBox::addButton(QPushButton* button,
                        align);
 }
 
-void CustomMessageBox::paintEvent(QPaintEvent*)
+void MessageBox::paintEvent(QPaintEvent*)
 {
     QStyleOption opt;
     opt.init(this);

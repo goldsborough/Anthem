@@ -1,9 +1,10 @@
 #include "OperatorUi.hpp"
 #include "ModControl.hpp"
-#include "CustomDial.hpp"
+#include "Dial.hpp"
 #include "ModDial.hpp"
 #include "WavetableUi.hpp"
-#include "BrowserUi.hpp"
+#include "Browser.hpp"
+#include "Creator.hpp"
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -44,13 +45,19 @@ void OperatorUi::setupBar()
 	static char title = 'A';
 
 
-	auto top = new QHBoxLayout;
+	// Pack into widget for CSS styling
+	auto bar = new QWidget(this);
 
-	top->setMargin(0);
+	bar->setObjectName("OperatorBar");
 
-	top->setSpacing(0);
 
-	top->setContentsMargins(0,0,0,0);
+	auto layout = new QHBoxLayout(bar);
+
+	layout->setMargin(0);
+
+	layout->setSpacing(0);
+
+	layout->setContentsMargins(0,0,0,0);
 
 
 	toggle_ = new QPushButton("Sine", this);
@@ -60,7 +67,7 @@ void OperatorUi::setupBar()
 
 	toggle_->setCursor(Qt::PointingHandCursor);
 
-	top->addWidget(toggle_);
+	layout->addWidget(toggle_);
 
 
 	connect(toggle_, &QPushButton::clicked,
@@ -82,6 +89,8 @@ void OperatorUi::setupBar()
 
 	auto activityButton = new QPushButton(QString(title++), this);
 
+	activityButton->setObjectName("ActivityButton");
+
 	activityButton->setSizePolicy(QSizePolicy::Maximum,
 								  QSizePolicy::Maximum);
 
@@ -94,10 +103,10 @@ void OperatorUi::setupBar()
 	connect(activityButton, &QPushButton::toggled,
 			[=] (bool) { });
 
-	top->addWidget(activityButton);
+	layout->addWidget(activityButton);
 
 
-	layout_->addLayout(top);
+	layout_->addWidget(bar);
 }
 
 void OperatorUi::setupPrimary()
@@ -145,7 +154,7 @@ void OperatorUi::setupSecondary()
 
 	setupWavesTab();
 
-	setupCustomTab();
+	setupCreateTab();
 
 
 	layout_->addWidget(secondary_);
@@ -157,8 +166,6 @@ void OperatorUi::setupWavesTab()
 {
 	auto waves = new QWidget(secondary_);
 
-	waves->setObjectName("Waves");
-
 	secondary_->addTab(waves, "Waves");
 
 
@@ -166,12 +173,10 @@ void OperatorUi::setupWavesTab()
 
 	layout->setMargin(10);
 
-	//layout->setSpacing(0);
 
+	auto browser = new Browser(waves);
 
-	auto browser = new BrowserUi(this);
-
-	connect(browser, &BrowserUi::wavetableSelected,
+	connect(browser, &Browser::wavetableSelected,
 			[=] (const QString& id) { toggle_->setText(id); });
 
 	layout->addWidget(browser);
@@ -186,20 +191,20 @@ void OperatorUi::setupWavesTab()
 
 	connect(wavetable, &WavetableUi::phaseChanged,
 			[=] (int degrees)
-			{
-				QToolTip::showText(wavetable->cursor().pos(),
-								   ((degrees > 0) ? "+" : "") +
-								   QString::number(degrees)   +
-								   QString(0x00B0));
-			});
+	{
+		QToolTip::showText(wavetable->cursor().pos(),
+						   ((degrees > 0) ? "+" : "") +
+						   QString::number(degrees)   +
+						   QString(0x00B0));
+	});
 
 }
 
-void OperatorUi::setupCustomTab()
+void OperatorUi::setupCreateTab()
 {
-	auto custom = new QWidget(this);
+	auto creator = new Creator(this);
 
-	secondary_->addTab(custom, "Custom");
+	secondary_->addTab(creator, "Create");
 }
 
 void OperatorUi::paintEvent(QPaintEvent*)

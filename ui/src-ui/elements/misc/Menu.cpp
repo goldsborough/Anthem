@@ -1,30 +1,30 @@
-#include "CustomMenu.hpp"
+#include "Menu.hpp"
 
 #include <QPushButton>
 #include <QPoint>
 #include <QDebug>
 
-CustomMenu::CustomMenu(QWidget* parent,
-                       const Position& pos)
+Menu::Menu(QWidget* parent,
+		   Position pos)
 : QMenu(parent),
   pos_(pos)
 {
 	QMenu::setCursor(Qt::PointingHandCursor);
 }
 
-CustomMenu::~CustomMenu() = default;
+Menu::~Menu() = default;
 
-void CustomMenu::setPosition(const Position& pos)
+void Menu::setPosition(Position pos)
 {
     pos_ = pos;
 }
 
-CustomMenu::Position CustomMenu::getPosition() const
+Menu::Position Menu::getPosition() const
 {
     return pos_;
 }
 
-void CustomMenu::popup()
+void Menu::popup()
 {
 	QPoint pos = QMenu::parentWidget()->pos();
 

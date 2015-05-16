@@ -1,0 +1,4 @@
+#ifndef PARTIALSUI_HPP
+#define PARTIALSUI_HPP
+
+#endif // PARTIALSUI_HPP

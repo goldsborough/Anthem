@@ -9,7 +9,7 @@ class QColor;
 class QRectF;
 class QPen;
 
-class CustomDial : public QDial
+class Dial : public QDial
 {
     Q_OBJECT
 
@@ -21,9 +21,9 @@ class CustomDial : public QDial
 
 public:
 
-    explicit CustomDial(QWidget* parent = nullptr);
+	explicit Dial(QWidget* parent = nullptr);
 
-    CustomDial(const QString& text,
+	Dial(const QString& text,
 			   QWidget * parent = nullptr,
 			   double factor = 0.001,
 			   int minimum = 0,
@@ -31,7 +31,7 @@ public:
 			   bool setBaseTwo = false);
 
 
-    virtual ~CustomDial();
+	virtual ~Dial();
 
 
 	virtual void setArcColor(const QColor& color);

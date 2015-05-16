@@ -5,6 +5,9 @@ AnthemUi {
   min-height: 680px;
   max-height: 680px;
   font-family: "DIN"; }
+  AnthemUi QTabWidget QTabBar::tab {
+    min-width: 204px;
+    min-height: 50px; }
 
 AlgorithmUi {
   background: transparent;
@@ -24,48 +27,46 @@ AlgorithmUi {
       background: #27272B;
       color: #DC4850; }
 
-BrowserUi[isExpanded="false"], BrowserUi[isExpanded="true"] {
+Browser[isExpanded="false"], Browser[isExpanded="true"] {
   min-width: 270px;
   border: 2px solid #27272B; }
-  BrowserUi[isExpanded="false"] QLineEdit, BrowserUi[isExpanded="true"] QLineEdit {
+  Browser[isExpanded="false"] QLineEdit, Browser[isExpanded="true"] QLineEdit {
     font-size: 14px;
     padding-right: 5px;
     padding-left: 5px;
     min-height: 28px; }
-  BrowserUi[isExpanded="false"] CustomMessageBox, BrowserUi[isExpanded="true"] CustomMessageBox {
+  Browser[isExpanded="false"] QPushButton, Browser[isExpanded="true"] QPushButton {
+    min-width: 28px;
+    min-height: 28px;
+    font-size: 26px;
+    border: none;
+    border-left: 2px solid #27272B; }
+  Browser[isExpanded="false"] CustomMessageBox, Browser[isExpanded="true"] CustomMessageBox {
     min-width: 375px;
     min-height: 200px; }
-    BrowserUi[isExpanded="false"] CustomMessageBox QLabel, BrowserUi[isExpanded="true"] CustomMessageBox QLabel {
+    Browser[isExpanded="false"] CustomMessageBox QLabel, Browser[isExpanded="true"] CustomMessageBox QLabel {
       font-size: 24px;
       margin-bottom: 10px; }
-    BrowserUi[isExpanded="false"] CustomMessageBox QPushButton, BrowserUi[isExpanded="true"] CustomMessageBox QPushButton {
+    Browser[isExpanded="false"] CustomMessageBox QPushButton, Browser[isExpanded="true"] CustomMessageBox QPushButton {
       font-size: 20px;
       min-width: 150px; }
-  BrowserUi[isExpanded="false"] PopupLine, BrowserUi[isExpanded="true"] PopupLine {
+  Browser[isExpanded="false"] PopupLine, Browser[isExpanded="true"] PopupLine {
     min-width: 400px;
     min-height: 50px;
     max-height: 50px; }
-    BrowserUi[isExpanded="false"] PopupLine QLineEdit, BrowserUi[isExpanded="true"] PopupLine QLineEdit {
+    Browser[isExpanded="false"] PopupLine QLineEdit, Browser[isExpanded="true"] PopupLine QLineEdit {
       border: none;
       font-size: 24px; }
-  BrowserUi[isExpanded="false"] QMenu::item, BrowserUi[isExpanded="true"] QMenu::item {
+  Browser[isExpanded="false"] QMenu::item, Browser[isExpanded="true"] QMenu::item {
     padding-right: 25px; }
-  BrowserUi[isExpanded="false"] QTreeView, BrowserUi[isExpanded="true"] QTreeView {
+  Browser[isExpanded="false"] QTreeView, Browser[isExpanded="true"] QTreeView {
     border: 2px solid #27272B; }
 
-BrowserUi[isExpanded="true"] {
+Browser[isExpanded="true"] {
   border: none; }
-  BrowserUi[isExpanded="true"] QTreeView {
+  Browser[isExpanded="true"] QTreeView {
     border: none;
     border-top: 2px solid #27272B; }
-
-#BrowserExpandButton {
-  min-width: 28px;
-  min-height: 28px;
-  max-height: 28px;
-  font-size: 26px;
-  border: none;
-  border-left: 2px solid #27272B; }
 
 #CaseSensitivityButton {
   min-width: 28px;
@@ -82,10 +83,27 @@ BrowserUi[isExpanded="true"] {
   #CaseSensitivityButton:open {
     color: #DC4850; }
 
-CustomComboBox QMenu {
-  margin: 0px; }
-  CustomComboBox QMenu::item {
-    padding: 40px; }
+ComboBox {
+  qproperty-alignment: AlignCenter;
+  qproperty-direction: 1; }
+  ComboBox QListView {
+    background: #DC4850;
+    color: #27272B; }
+    ComboBox QListView::item {
+      padding: 15px; }
+      ComboBox QListView::item:selected, ComboBox QListView::item:hover {
+        background: #27272B;
+        color: #DC4850; }
+
+Creator QPushButton {
+  min-width: 30px;
+  font-size: 18px;
+  border-right: 2px solid #27272B;
+  border-bottom: 2px solid #27272B;
+  border-left: 2px solid #27272B; }
+
+#CreatorGenerateButton {
+  font-size: 24px; }
 
 CustomDial, ModDial {
   background: transparent;
@@ -180,9 +198,17 @@ MasterPage {
   MasterPage ModDial {
     font-size: 16px; }
 
+#OperatorBar QPushButton {
+  border-bottom: 2px solid #27272B;
+  border-right: 1px solid #27272B;
+  border-left: 1px solid #27272B;
+  min-width: 40px;
+  min-height: 32px;
+  font-size: 20px; }
+
 OperatorPage {
   background: #DC4850; }
-  OperatorPage QTabBar::tab {
+  OperatorPage QTabWidget QTabBar::tab {
     min-width: 250px;
     min-height: 40px;
     padding-top: 10px;
@@ -192,19 +218,12 @@ OperatorUi, PanUi, MacroUi, #VolumeUi {
   border: 2px solid #27272B;
   min-width: 480px;
   min-height: 220px; }
-  OperatorUi QPushButton, PanUi QPushButton, MacroUi QPushButton, #VolumeUi QPushButton {
-    font-size: 20px;
-    border-bottom: 2px solid #27272B;
-    border-right: 1px solid #27272B;
-    border-left: 1px solid #27272B;
-    min-width: 40px;
-    min-height: 32px; }
-    OperatorUi QPushButton:open, PanUi QPushButton:open, MacroUi QPushButton:open, #VolumeUi QPushButton:open {
-      background: #27272B;
-      color: #F7FDFA; }
-    OperatorUi QPushButton::hover, PanUi QPushButton::hover, MacroUi QPushButton::hover, #VolumeUi QPushButton::hover {
-      background: #27272B;
-      color: #DC4850; }
+  OperatorUi QPushButton:open, PanUi QPushButton:open, MacroUi QPushButton:open, #VolumeUi QPushButton:open {
+    background: #27272B;
+    color: #F7FDFA; }
+  OperatorUi QPushButton::hover, PanUi QPushButton::hover, MacroUi QPushButton::hover, #VolumeUi QPushButton::hover {
+    background: #27272B;
+    color: #DC4850; }
   OperatorUi QTabWidget QTabBar::tab, PanUi QTabWidget QTabBar::tab, MacroUi QTabWidget QTabBar::tab, #VolumeUi QTabWidget QTabBar::tab {
     font-size: 20px;
     min-width: 120px;
@@ -263,30 +282,12 @@ Projectbar {
   min-width: 500px;
   max-width: 500px; }
 
-QComboBox {
-  background: transparent;
-  color: #27272B;
-  font-size: 20px;
-  font-family: "Proxima Nova";
-  border: 1px solid #27272B;
-  min-height: 50px;
-  padding-left: 34px; }
-  QComboBox::drop-down {
-    border: none; }
-  QComboBox:hover {
-    background: #27272B;
-    color: #DC4850; }
-  QComboBox QListView {
-    background: #DC4850;
-    color: #27272B; }
-
 QDialog, SettingsDialog {
   background: #DC4850; }
   QDialog QPushButton, SettingsDialog QPushButton {
     font-size: 18px;
     font-family: "Proxima Nova";
-    border: 1px solid #27272B;
-    min-height: 50px; }
+    border: 1px solid #27272B; }
     QDialog QPushButton:hover, SettingsDialog QPushButton:hover {
       background: #27272B;
       color: #DC4850; }
@@ -338,10 +339,6 @@ QTabWidget QTabBar::tab {
   font-family: "DIN Light";
   border: none;
   outline: none;
-  min-width: 204px;
-  max-width: 204px;
-  min-height: 50px;
-  max-height: 50px;
   padding-top: 5px; }
   QTabWidget QTabBar::tab:selected, QTabWidget QTabBar::tab:hover {
     background: #DC4850;
@@ -387,6 +384,11 @@ SettingsDialog QLabel {
   color: #27272B;
   font-family: "Proxima Nova";
   font-size: 20px; }
+SettingsDialog ComboBox {
+  min-height: 50px;
+  max-height: 50px; }
+  SettingsDialog ComboBox QListView {
+    font-size: 16px; }
 
 WavetableUi {
   qproperty-lineColor: #43D4B4;

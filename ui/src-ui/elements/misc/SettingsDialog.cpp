@@ -1,7 +1,8 @@
 #include "SettingsDialog.hpp"
-#include "CustomComboBox.hpp"
+#include "ComboBox.hpp"
 
 #include <QPushButton>
+#include <QComboBox>
 #include <QGridLayout>
 #include <QLabel>
 
@@ -15,19 +16,21 @@ void SettingsDialog::setupUi()
 {
     QGridLayout* layout = new QGridLayout(this);
 
-    /* --------- Samplerate -------- */
+	/* --------- Samplerate -------- */
 
     QLabel* samplerateLabel = new QLabel("Samplerate", this);
 
     layout->addWidget(samplerateLabel, 0, 0);
 
-    CustomComboBox* samplerateComboBox = new CustomComboBox(this);
 
-    samplerateComboBox->addItems({"44100", "48000", "92000"});
+	auto samplerateComboBox = new ComboBox(this);
 
-    layout->addWidget(samplerateComboBox, 0, 1);
+	samplerateComboBox->addItems({"44100", "48000"});
 
-    /* --------- Default directory -------- */
+	layout->addWidget(samplerateComboBox, 0, 1);
+
+
+	/* --------- Default directory -------- */
 
     QLabel* defaultDirectoryLabel = new QLabel("Default directory", this);
 
@@ -39,7 +42,7 @@ void SettingsDialog::setupUi()
 
     layout->addWidget(defaultDirectoryButton, 1, 1);
 
-    /* --------- OK PushButton -------- */
+	/* --------- OK PushButton -------- */
 
     QPushButton* okButton = new QPushButton("OK", this);
 
@@ -50,9 +53,9 @@ void SettingsDialog::setupUi()
     connect(okButton, &QPushButton::clicked,
             this, &SettingsDialog::saveSettings_);
 
-    /* --------- This Window -------- */
+	/* --------- This Window -------- */
 
-    QDialog::setFixedSize(QDialog::sizeHint());
+	//QDialog::setFixedSize(QDialog::sizeHint());
 
     QDialog::setLayout(layout);
 }

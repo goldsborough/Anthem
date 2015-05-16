@@ -1,4 +1,4 @@
-#include "CustomDial.hpp"
+#include "Dial.hpp"
 
 #include <QPainter>
 #include <QColor>
@@ -11,11 +11,11 @@
 #include <QDebug>
 
 
-CustomDial::CustomDial(QWidget* parent)
+Dial::Dial(QWidget* parent)
 : QDial(parent)
 { }
 
-CustomDial::CustomDial(const QString& text,
+Dial::Dial(const QString& text,
 					   QWidget* parent,
                        double factor,
 					   int minimum,
@@ -39,14 +39,14 @@ CustomDial::CustomDial(const QString& text,
 	setupUi();
 }
 
-CustomDial::~CustomDial() = default;
+Dial::~Dial() = default;
 
-void CustomDial::setupUi()
+void Dial::setupUi()
 {
 	QDial::setCursor(Qt::PointingHandCursor);
 
 	connect(this, &QDial::valueChanged,
-			this, &CustomDial::updateValue);
+			this, &Dial::updateValue);
 
 	setMinimumSize(100,100);
 
@@ -57,7 +57,7 @@ void CustomDial::setupUi()
 	updateValue();
 }
 
-void CustomDial::paintEvent(QPaintEvent*)
+void Dial::paintEvent(QPaintEvent*)
 {
     QPainter painter(this);
 
@@ -96,7 +96,7 @@ void CustomDial::paintEvent(QPaintEvent*)
 
 }
 
-void CustomDial::resizeEvent(QResizeEvent* event)
+void Dial::resizeEvent(QResizeEvent* event)
 {
 	QDial::setMinimumSize(event->size());
 
@@ -121,7 +121,7 @@ void CustomDial::resizeEvent(QResizeEvent* event)
 	}
 }
 
-void CustomDial::updateValue()
+void Dial::updateValue()
 {
 	int value = QDial::value();
 
@@ -138,7 +138,7 @@ void CustomDial::updateValue()
 	emit scaledValueChanged(value * factor_);
 }
 
-void CustomDial::setArcWidth(double px)
+void Dial::setArcWidth(double px)
 {
     arcWidth_ = px;
 
@@ -150,90 +150,90 @@ void CustomDial::setArcWidth(double px)
     arcPen_->setWidth(arcWidth_);
 }
 
-void CustomDial::setBaseTwo(bool state)
+void Dial::setBaseTwo(bool state)
 {
 	baseTwo_ = state;
 }
 
-bool CustomDial::isBaseTwo() const
+bool Dial::isBaseTwo() const
 {
 	return baseTwo_;
 }
 
-void CustomDial::setValueShown(bool state)
+void Dial::setValueShown(bool state)
 {
 	valueShown_ = state;
 
 	QDial::update();
 }
 
-bool CustomDial::valueIsShown() const
+bool Dial::valueIsShown() const
 {
 	return valueShown_;
 }
 
-double CustomDial::getScaledValue() const
+double Dial::getScaledValue() const
 {
 	return QDial::value() * factor_;
 }
 
-void CustomDial::setFactor(double factor)
+void Dial::setFactor(double factor)
 {
     factor_ = factor;
 }
 
-double CustomDial::getFactor() const
+double Dial::getFactor() const
 {
     return factor_;
 }
 
-void CustomDial::setText(const QString& text)
+void Dial::setText(const QString& text)
 {
     text_ = text;
 }
 
-QString CustomDial::getText() const
+QString Dial::getText() const
 {
     return text_;
 }
 
-double CustomDial::getArcWidth() const
+double Dial::getArcWidth() const
 {
     return arcWidth_;
 }
 
-void CustomDial::setMaximumAngle(double angle)
+void Dial::setMaximumAngle(double angle)
 {
 	maximumAngleSpan_ = angle * 16;
 
 	endAngle_ = startAngle_ + maximumAngleSpan_;
 }
 
-double CustomDial::getMaximumAngle() const
+double Dial::getMaximumAngle() const
 {
 	return maximumAngleSpan_ / 16;
 }
 
-void CustomDial::setStartAngle(double angle)
+void Dial::setStartAngle(double angle)
 {
     startAngle_ = angle * 16;
 
 	endAngle_ = startAngle_ + maximumAngleSpan_;
 }
 
-double CustomDial::getStartAngle() const
+double Dial::getStartAngle() const
 {
     return startAngle_ / 16;
 }
 
-void CustomDial::setArcColor(const QColor& color)
+void Dial::setArcColor(const QColor& color)
 {
 	*arcColor_ = color;
 
     arcPen_->setColor(*arcColor_);
 }
 
-QColor CustomDial::getArcColor() const
+QColor Dial::getArcColor() const
 {
 	return *arcColor_;
 }

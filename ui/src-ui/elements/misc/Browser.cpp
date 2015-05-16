@@ -1,5 +1,5 @@
-#include "BrowserUi.hpp"
-#include "CustomMessageBox.hpp"
+#include "Browser.hpp"
+#include "MessageBox.hpp"
 #include "PopupLine.hpp"
 
 #include <QPainter>
@@ -93,21 +93,21 @@ bool Proxy::filterAcceptsRow(int source_row,
 	return true;
 }
 
-BrowserUi::BrowserUi(QWidget *parent)
+Browser::Browser(QWidget *parent)
 : QWidget(parent),
   isExpanded_(false)
 {
 	setupUi();
 }
 
-BrowserUi::BrowserUi(bool isExpanded, QWidget *parent)
+Browser::Browser(bool isExpanded, QWidget *parent)
 : QWidget(parent),
   isExpanded_(isExpanded)
 {
 	setupUi();
 }
 
-void BrowserUi::setupUi()
+void Browser::setupUi()
 {
 	QWidget::setProperty("isExpanded", isExpanded_);
 
@@ -139,9 +139,10 @@ void BrowserUi::setupUi()
 	layout->addLayout(barLayout_);
 
 	layout->addWidget(view_);
+
 }
 
-void BrowserUi::setupBar()
+void Browser::setupBar()
 {
 	barLayout_ = new QHBoxLayout;
 
@@ -166,21 +167,17 @@ void BrowserUi::setupBar()
 	}
 }
 
-void BrowserUi::setupExpansion()
+void Browser::setupExpansion()
 {
 	expandButton_ = new QPushButton("⌝", this);
 
 	expandButton_->setSizePolicy(QSizePolicy::Fixed,
 								 QSizePolicy::Fixed);
 
-	expandButton_->setObjectName("BrowserExpandButton");
-
 	expandButton_->setCursor(Qt::PointingHandCursor);
 
 
 	expandedDialog_ = new QDialog(this);
-
-	expandedDialog_->setWindowTitle("Wavetable Browser");
 
 	auto layout = new QGridLayout(expandedDialog_);
 
@@ -190,8 +187,8 @@ void BrowserUi::setupExpansion()
 
 	layout->setMargin(0);
 
-	// Create new BrowserUi with expansion disabled
-	auto browser = new BrowserUi(true, expandedDialog_);
+	// Create new Browser with expansion disabled
+	auto browser = new Browser(true, expandedDialog_);
 
 	browser->filter_->setText(filter_->text());
 
@@ -204,7 +201,7 @@ void BrowserUi::setupExpansion()
 			[=] (bool) { expandedDialog_->show(); });
 }
 
-void BrowserUi::setupFilter()
+void Browser::setupFilter()
 {
 	filter_ = new QLineEdit(this);
 
@@ -224,8 +221,8 @@ void BrowserUi::setupFilter()
 
 	auto caseSensitivity = new QPushButton("Aa", this);
 
-	caseSensitivity->setSizePolicy(QSizePolicy::Fixed,
-								   QSizePolicy::Fixed);
+	caseSensitivity->setSizePolicy(QSizePolicy::Maximum,
+								   QSizePolicy::Maximum);
 
 	caseSensitivity->setObjectName("CaseSensitivityButton");
 
@@ -250,7 +247,7 @@ void BrowserUi::setupFilter()
 
 }
 
-void BrowserUi::setupModel()
+void Browser::setupModel()
 {
 	model_ = new FileModel(this);
 
@@ -272,7 +269,7 @@ void BrowserUi::setupModel()
 	proxy_->setFilterCaseSensitivity(Qt::CaseInsensitive);
 }
 
-void BrowserUi::setupView()
+void Browser::setupView()
 {
 	view_ = new QTreeView;
 
@@ -311,10 +308,10 @@ void BrowserUi::setupView()
 
 	// Expands directories and selects Wavetables
 	connect(view_, &QTreeView::clicked,
-			this, &BrowserUi::itemClicked);
+			this, &Browser::itemClicked);
 }
 
-void BrowserUi::itemClicked(const QModelIndex &index)
+void Browser::itemClicked(const QModelIndex &index)
 {
 	static QFlags<QDir::Filter> filter(QDir::AllEntries | QDir::NoDotAndDotDot);
 
@@ -333,7 +330,7 @@ void BrowserUi::itemClicked(const QModelIndex &index)
 	else emit wavetableSelected(index.data().toString());
 }
 
-void BrowserUi::setupContextMenu()
+void Browser::setupContextMenu()
 {
 	QWidget::setContextMenuPolicy(Qt::CustomContextMenu);
 
@@ -341,23 +338,23 @@ void BrowserUi::setupContextMenu()
 
 	connect(this, &QWidget::customContextMenuRequested,
 			[=] (const QPoint& pos)
-			{ context_->popup(QWidget::mapToGlobal(pos)); });
+	{ context_->popup(QWidget::mapToGlobal(pos)); });
 
 
 	connect(context_->addAction("Rename"), &QAction::triggered,
-			this, &BrowserUi::renameAction_);
+			this, &Browser::renameAction_);
 
 	connect(context_->addAction("Delete"), &QAction::triggered,
-			this, &BrowserUi::deleteAction_);
+			this, &Browser::deleteAction_);
 
 
 	context_->addSeparator();
 
 	connect(context_->addAction("New folder"), &QAction::triggered,
-		   this, &BrowserUi::newFolderAction_);
+		   this, &Browser::newFolderAction_);
 }
 
-void BrowserUi::renameAction_()
+void Browser::renameAction_()
 {
 	auto index = proxy_->mapToSource(view_->indexAt(view_->mapFromGlobal(context_->pos())));
 
@@ -384,7 +381,7 @@ void BrowserUi::renameAction_()
 			break;
 		}
 
-		CustomMessageBox error("Duplicate",
+		MessageBox error("Duplicate",
 							   "A file or folder with that\n name already exists!",
 							   this);
 
@@ -403,9 +400,9 @@ void BrowserUi::renameAction_()
 	}
 }
 
-void BrowserUi::deleteAction_()
+void Browser::deleteAction_()
 {
-	CustomMessageBox confirm("Confirm permanent obliteration",
+	MessageBox confirm("Confirm permanent obliteration",
 							 "Like, for ever and stuff.",
 							 this);
 
@@ -447,7 +444,7 @@ void BrowserUi::deleteAction_()
 	}
 }
 
-void BrowserUi::newFolderAction_()
+void Browser::newFolderAction_()
 {
 	PopupLine line("Enter a name for the new folder", this);
 
@@ -469,7 +466,7 @@ void BrowserUi::newFolderAction_()
 			break;
 		}
 
-		CustomMessageBox error("Duplicate",
+		MessageBox error("Duplicate",
 							   "A folder with that name already\n"
 							   "exists at this location!",
 							   this);
@@ -489,7 +486,7 @@ void BrowserUi::newFolderAction_()
 	}
 }
 
-void BrowserUi::paintEvent(QPaintEvent*)
+void Browser::paintEvent(QPaintEvent*)
 {
 	QStyleOption option;
 

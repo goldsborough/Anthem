@@ -7,6 +7,10 @@
 #include <QTabBar>
 #include <QVBoxLayout>
 
+
+#include <QDebug>
+
+
 AnthemUi::AnthemUi()
 {
 	QVBoxLayout* layout = new QVBoxLayout(this);
@@ -25,6 +29,7 @@ AnthemUi::AnthemUi()
 
 
 	QTabWidget* pages = new QTabWidget(this);
+
 
 	pages->setMovable(true);
 

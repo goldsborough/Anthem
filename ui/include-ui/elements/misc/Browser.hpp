@@ -44,13 +44,13 @@ public:
 								  const QModelIndex &source_parent) const override;
 };
 
-class BrowserUi : public QWidget
+class Browser : public QWidget
 {
 	Q_OBJECT
 
 public:
 
-	BrowserUi(QWidget* parent = nullptr);
+	Browser(QWidget* parent = nullptr);
 
 signals:
 
@@ -62,7 +62,7 @@ private slots:
 
 private:
 
-	BrowserUi(bool isExpanded, QWidget* parent);
+	Browser(bool isExpanded, QWidget* parent);
 
 
 	virtual void paintEvent(QPaintEvent*) override;

@@ -9,19 +9,19 @@ class QPushButton;
 class QGridLayout;
 class QLabel;
 
-class CustomMessageBox : public QDialog
+class MessageBox : public QDialog
 {
     Q_OBJECT
 
 public:
 
-	CustomMessageBox(QWidget* parent = nullptr);
+	MessageBox(QWidget* parent = nullptr);
 
-	CustomMessageBox(const QString& title,
+	MessageBox(const QString& title,
 					 const QString& message,
 					 QWidget* parent = nullptr);
 
-	CustomMessageBox(const QString& title,
+	MessageBox(const QString& title,
 					 const QString& message,
 					 const QString& details,
 					 QWidget* parent = nullptr);

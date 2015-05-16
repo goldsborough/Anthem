@@ -7,6 +7,10 @@
 #include <QHBoxLayout>
 #include <QString>
 
+
+
+#include <QDebug>
+
 Menubar::Menubar(QWidget* parent)
 : QWidget(parent)
 {
@@ -56,7 +60,8 @@ void Menubar::setupUi()
 
     settingsButton->setObjectName("SettingsButton");
 
-    SettingsDialog* settings = new SettingsDialog(this);
+
+	auto settings = new SettingsDialog(this);
 
     connect(settingsButton, &IconButton::clicked,
             settings, &SettingsDialog::show);

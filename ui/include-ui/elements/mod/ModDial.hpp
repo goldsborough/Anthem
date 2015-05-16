@@ -1,7 +1,7 @@
 #ifndef MODDIAL_HPP
 #define MODDIAL_HPP
 
-#include "CustomDial.hpp"
+#include "Dial.hpp"
 
 #include <QVector>
 #include <QSharedPointer>
@@ -10,7 +10,7 @@ struct ModUnitUi;
 class QRectF;
 class QPoint;
 
-class ModDial : public CustomDial
+class ModDial : public Dial
 {
 
 	Q_OBJECT

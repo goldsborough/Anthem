@@ -1,8 +1,8 @@
 #include "Projectbar.hpp"
 #include "IconButton.hpp"
-#include "CustomMessageBox.hpp"
+#include "MessageBox.hpp"
 #include "PopupLine.hpp"
-#include "CustomMenu.hpp"
+#include "Menu.hpp"
 
 #include <QtWidgets>
 #include <QtCore>
@@ -82,10 +82,10 @@ void Projectbar::setupUi()
 
 
 
-	CustomMenu* menu = new CustomMenu(menuButton);
+	Menu* menu = new Menu(menuButton);
 
 	connect(menuButton, &IconButton::clicked,
-			menu, &CustomMenu::popup);
+			menu, &Menu::popup);
 
     /* --------- Refresh Action -------- */
 
@@ -213,7 +213,7 @@ void Projectbar::changeDirectory()
 
 		if(dir_->entryInfoList().isEmpty())
         {
-            CustomMessageBox message("Invalid directory",
+			MessageBox message("Invalid directory",
 									 "The directory you chose does not\n"
 									 " contain any Anthem project files!",
                                      this
@@ -241,7 +241,7 @@ void Projectbar::changeDirectory()
             message.addButton(stayInCurrentButton);
 
             connect(chooseDifferentButton, &QPushButton::clicked,
-                    &message, &CustomMessageBox::close);
+					&message, &MessageBox::close);
 
             message.exec();
 
@@ -314,7 +314,7 @@ void Projectbar::newProject()
 
     if (dir_->exists(fileName))
     {
-        CustomMessageBox message("Project already exists",
+		MessageBox message("Project already exists",
 								 "A project with that name already\n exists in the current directory!",
                                  this
                                  );
@@ -324,7 +324,7 @@ void Projectbar::newProject()
         message.addButton(overwriteButton);
 
         connect(overwriteButton, &QPushButton::clicked,
-                &message, &CustomMessageBox::close);
+				&message, &MessageBox::close);
 
         QPushButton* tryAgainButton = new QPushButton("Try again",this);
 
