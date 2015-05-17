@@ -18,6 +18,10 @@ class ComboBox : public QWidget
 
 	Q_PROPERTY(int direction READ getDirection WRITE setDirection)
 
+	Q_PROPERTY(int widthOffset READ getWidthOffset WRITE setWidthOffset)
+
+	Q_PROPERTY(int heightOffset READ getHeightOffset WRITE setHeightOffset)
+
 public:
 
 	using index_t = unsigned short;
@@ -52,6 +56,21 @@ public:
 	Qt::Alignment getAlignment() const;
 
 
+	void setHeightOffset(int offset);
+
+	int getHeightOffset() const;
+
+
+	void setWidthOffset(int offset);
+
+	int getWidthOffset() const;
+
+signals:
+
+	void currentChanged(const QString& text);
+
+	void currentIndexChanged(index_t index);
+
 private slots:
 
 	void popup();
@@ -62,6 +81,10 @@ private:
 
 	void resizeEvent(QResizeEvent* event) override;
 
+
+	int widthOffset_;
+
+	int heightOffset_;
 
 	index_t current_;
 

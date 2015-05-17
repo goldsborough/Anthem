@@ -19,6 +19,8 @@ class ModItemUi : public QAbstractSlider
 
     Q_PROPERTY(double borderWidth READ getBorderWidth WRITE setBorderWidth)
 
+	Q_PROPERTY(int step READ getStep WRITE setStep)
+
 public:
 
     enum Side { LEFT, RIGHT, TOP, BOTTOM };
@@ -27,7 +29,7 @@ public:
 			  double factor = 0.001,
 			  int minimum = -999,
 			  int maximum = 999,
-			  int dialSpeed = 20);
+			  int step = 20);
 
 
 	void insertModUnitUi(const ModUnitUi& mod);
@@ -58,9 +60,9 @@ public:
     double getBorderRatio(Side side) const;
 
 
-	void setDialSpeed(int speed);
+	void setStep(int step);
 
-	int getDialSpeed() const;
+	int getStep() const;
 
 signals:
 
@@ -116,7 +118,7 @@ private:
 
 	double factor_;
 
-	int speed_;
+	int step_;
 };
 
 #endif /* MODDOCKITEM_HPP */

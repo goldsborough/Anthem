@@ -18909,6 +18909,7 @@ QPolygonF QCPBars::getBarPolygon(double key, double value) const
     result << QPointF(valuePixel, keyPixel+upperPixelWidth);
     result << QPointF(basePixel, keyPixel+upperPixelWidth);
   }
+
   return result;
 }
 

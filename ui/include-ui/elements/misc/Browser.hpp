@@ -28,7 +28,7 @@ class FileModel : public QFileSystemModel
 
 public:
 
-	FileModel(QWidget* parent = nullptr);
+	explicit FileModel(QWidget* parent = nullptr);
 
 	virtual QVariant data (const QModelIndex & index,
 						   int role = Qt::DisplayRole) const override;
@@ -38,7 +38,7 @@ class Proxy : public QSortFilterProxyModel
 {
 public:
 
-	Proxy(QWidget* parent = nullptr);
+	explicit Proxy(QWidget* parent = nullptr);
 
 	virtual bool filterAcceptsRow(int source_row,
 								  const QModelIndex &source_parent) const override;
@@ -50,7 +50,7 @@ class Browser : public QWidget
 
 public:
 
-	Browser(QWidget* parent = nullptr);
+	explicit Browser(QWidget* parent = nullptr);
 
 signals:
 

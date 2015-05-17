@@ -11,15 +11,11 @@
 #include <QDrag>
 #include <QMimeData>
 
-
-#include <QDebug>
-
-
 ModItemUi::ModItemUi(QWidget* parent,
 					 double factor,
 					 int minimum,
 					 int maximum,
-					 int dialSpeed)
+					 int step)
 : QAbstractSlider(parent),
   mod_(nullptr),
   borderPen_(new QPen), // no make_shared, sorry
@@ -28,7 +24,7 @@ ModItemUi::ModItemUi(QWidget* parent,
   ratios_(4),
   borderWidth_(0),
   factor_(factor),
-  speed_(dialSpeed)
+  step_(step)
 {
 	for (int i = 0; i < 4; ++i)
 	{
@@ -105,7 +101,7 @@ void ModItemUi::mouseMoveEvent(QMouseEvent* event)
 				// A positive distance means the mouse moved
 				// downwards from the origin, so the dial value
 				// must decrease and vice-versa
-				QAbstractSlider::setValue(value + ((distance > 0) ? -speed_ : speed_));
+				QAbstractSlider::setValue(value + ((distance > 0) ? -step_ : step_));
 
 				// New value here, must call QAbstractSlider::value()
 				emit depthChanged(QAbstractSlider::value() * factor_);
@@ -299,12 +295,12 @@ void ModItemUi::removeModUnitUi()
 	}
 }
 
-void ModItemUi::setDialSpeed(int speed)
+void ModItemUi::setStep(int step)
 {
-	speed_ = speed;
+	step_ = step;
 }
 
-int ModItemUi::getDialSpeed() const
+int ModItemUi::getStep() const
 {
-	return speed_;
+	return step_;
 }

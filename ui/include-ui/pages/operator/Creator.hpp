@@ -4,7 +4,11 @@
 #include <QWidget>
 
 class QHBoxLayout;
-class QTabWidget;
+class QVBoxLayout;
+class QPushButton;
+class Wavetable;
+class ComboBox;
+class Plot;
 
 class Creator : public QWidget
 {
@@ -12,24 +16,33 @@ class Creator : public QWidget
 
 public:
 
-	Creator(QWidget* parent = nullptr);
+	explicit Creator(QWidget* parent = nullptr);
 
-private:
+	virtual ~Creator();
 
-	void paintEvent(QPaintEvent*) override;
 
-	void setupContainer();
+signals:
 
-	void setupMenu();
+	void wavetableGenerated(const Wavetable& wavetable) const;
 
-	void setupPartials();
+protected:
 
-	void setupDraw();
+	virtual void setupMenu();
+
+	virtual void setupPlot() = 0;
 
 
 	QHBoxLayout* layout_;
 
-	QTabWidget* container_;
+	QVBoxLayout* menu_;
+
+	QPushButton* generate_;
+
+	QPushButton* save_;
+
+	Plot* plot_;
+
+	ComboBox* bits_;
 };
 
 #endif // CREATOR_HPP

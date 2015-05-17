@@ -1,121 +1,78 @@
 #include "Creator.hpp"
+#include "ComboBox.hpp"
+#include "Plot.hpp"
 
-#include <QPainter>
-#include <QStyleOption>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
-#include <QComboBox>
 #include <QPushButton>
+
+#include <QDebug>
+
 
 Creator::Creator(QWidget *parent)
 : QWidget(parent),
   layout_(new QHBoxLayout(this)),
-  container_(new QTabWidget(this))
+  menu_(new QVBoxLayout),
+  plot_(new Plot(this))
 {
 	layout_->setSpacing(0);
 
-	layout_->setContentsMargins(0, 0, 0, 0);
-
 	layout_->setMargin(0);
 
+	layout_->setContentsMargins({0, 0, 0, 0});
 
-	setupMenu();
+	layout_->addLayout(menu_);
 
-	setupContainer();
-
-	setupPartials();
-
-	setupDraw();
+	layout_->addWidget(plot_);
 }
 
-void Creator::setupContainer()
-{
-	container_->setTabPosition(QTabWidget::East);
-
-	container_->tabBar()->setSizePolicy(QSizePolicy::Maximum,
-										QSizePolicy::Maximum);
-
-	container_->tabBar()->setCursor(Qt::PointingHandCursor);
-
-	layout_->addWidget(container_);
-}
+Creator::~Creator() = default;
 
 void Creator::setupMenu()
 {
-	auto menu = new QVBoxLayout;
+	menu_->setSpacing(0);
 
-	menu->setSpacing(0);
+	menu_->setContentsMargins(0, 0, 0, 0);
 
-	menu->setContentsMargins(0, 0, 0, 0);
-
-	menu->setMargin(0);
+	menu_->setMargin(0);
 
 
-	auto generate = new QPushButton("+", this);
+	generate_ = new QPushButton("+", this);
 
-	generate->setObjectName("CreatorGenerateButton");
+	generate_->setToolTip("Generate Wavetable");
 
-	generate->setSizePolicy(QSizePolicy::Maximum,
+	generate_->setObjectName("CreatorGenerateButton");
+
+	generate_->setSizePolicy(QSizePolicy::Maximum,
 							QSizePolicy::Expanding);
 
-	generate->setCursor(Qt::PointingHandCursor);
+	generate_->setCursor(Qt::PointingHandCursor);
 
-	menu->addWidget(generate);
+	menu_->addWidget(generate_);
 
 
-	auto save = new QPushButton(QString(0x2193), this);
+	save_ = new QPushButton(QString(0x2193), this);
 
-	save->setSizePolicy(QSizePolicy::Maximum,
+	save_->setToolTip("Save Wavetable");
+
+	save_->setSizePolicy(QSizePolicy::Maximum,
 						QSizePolicy::Expanding);
 
-	save->setCursor(Qt::PointingHandCursor);
+	save_->setCursor(Qt::PointingHandCursor);
 
-	menu->addWidget(save);
+	menu_->addWidget(save_);
 
 
-	auto bits = new QPushButton("16", this);
+	bits_ = new ComboBox(this);
 
-	bits->setSizePolicy(QSizePolicy::Maximum,
+	bits_->setToolTip("Bitwidth");
+
+	bits_->setSizePolicy(QSizePolicy::Maximum,
 						QSizePolicy::Expanding);
 
-	bits->setCursor(Qt::PointingHandCursor);
+	bits_->setCursor(Qt::PointingHandCursor);
 
-	//bits->addItems({"4", "8", "16"});
+	bits_->addItems({"4", "8", "16"});
 
-	menu->addWidget(bits);
-
-
-	auto partials = new QPushButton("64", this);//QComboBox(this);
-
-	partials->setSizePolicy(QSizePolicy::Maximum,
-							QSizePolicy::Expanding);
-
-	partials->setCursor(Qt::PointingHandCursor);
-
-	//partials->addItems({"8", "16", "32", "64"});
-
-	menu->addWidget(partials);
-
-	connect(container_, &QTabWidget::currentChanged,
-		   [=] (int) { partials->setVisible(! partials->isVisible()); });
-
-	layout_->addLayout(menu);
-}
-
-void Creator::setupPartials()
-{
-	container_->addTab(new QWidget(this), "P");
-}
-
-void Creator::setupDraw()
-{
-	container_->addTab(new QWidget(this), "D");
-}
-
-void Creator::paintEvent(QPaintEvent*)
-{
-	QStyleOption opt;
-	opt.init(this);
-	QPainter p(this);
-	style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
+	menu_->addWidget(bits_);
 }

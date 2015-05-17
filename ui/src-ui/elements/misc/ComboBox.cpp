@@ -16,6 +16,8 @@ ComboBox::ComboBox(QWidget* parent,
 				   Direction direction,
 				   Qt::Alignment alignment)
 : QWidget(parent),
+  widthOffset_(0),
+  heightOffset_(0),
   current_(0),
   button_(new QPushButton(this)),
   view_(new QListView(this)),
@@ -38,16 +40,31 @@ ComboBox::ComboBox(QWidget* parent,
 
 	view_->setModel(model_);
 
+	view_->setCursor(Qt::PointingHandCursor);
+
 	view_->setWindowFlags(Qt::Popup);
+
+	view_->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+	view_->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
 	view_->hide();
 
 	connect(view_, &QListView::clicked,
 			[=] (const QModelIndex& index)
 	{
-		button_->setText(index.data().toString());
+		auto text = index.data().toString();
+
+		button_->setText(text);
+
 		current_ = index.row();
+
 		view_->hide();
+
+		emit currentChanged(text);
+
+		emit currentIndexChanged(current_);
+
 	});
 
 	setDirection(direction);
@@ -65,12 +82,16 @@ void ComboBox::popup()
 		{
 			pos.ry() -= (view_->sizeHintForRow(0) * model_->rowCount());
 
+			pos.rx() -= widthOffset_;
+
 			break;
 		}
 
 		case Direction::DOWN:
 		{
 			pos.ry() += button_->height();
+
+			pos.rx() -= widthOffset_;
 
 			break;
 		}
@@ -79,6 +100,8 @@ void ComboBox::popup()
 		{
 			pos.rx() += button_->width();
 
+			pos.ry() -= heightOffset_;
+
 			break;
 		}
 
@@ -86,13 +109,18 @@ void ComboBox::popup()
 		{
 			pos.rx() -= (view_->sizeHintForColumn(0) * model_->rowCount());
 
+			pos.ry() -= heightOffset_;
+
 			break;
 		}
 	}
 
-	view_->move(pos);
+	// Please don't ask why. Please don't.
+	view_->move(0, 0);
 
 	view_->show();
+
+	view_->move(pos);
 }
 
 ComboBox::index_t ComboBox::addItem(const QString& text)
@@ -214,7 +242,7 @@ void ComboBox::resizeEvent(QResizeEvent *event)
 		case Direction::UP:
 		case Direction::DOWN:
 		{
-			view_->setFixedWidth(event->size().width());
+			view_->setFixedWidth(event->size().width() + widthOffset_);
 
 			break;
 		}
@@ -222,11 +250,32 @@ void ComboBox::resizeEvent(QResizeEvent *event)
 		case Direction::RIGHT:
 		case Direction::LEFT:
 		{
-			view_->setFixedHeight(event->size().height());
+			view_->setFixedHeight(event->size().height() + heightOffset_);
 
 			break;
 		}
 	}
+}
+
+void ComboBox::setHeightOffset(int offset)
+{
+	heightOffset_ = offset;
+}
+
+int ComboBox::getHeightOffset() const
+{
+	return heightOffset_;
+}
+
+
+void ComboBox::setWidthOffset(int offset)
+{
+	widthOffset_ = offset;
+}
+
+int ComboBox::getWidthOffset() const
+{
+	return widthOffset_;
 }
 
 void ComboBox::paintEvent(QPaintEvent *)

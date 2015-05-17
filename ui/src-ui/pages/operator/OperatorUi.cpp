@@ -4,7 +4,8 @@
 #include "ModDial.hpp"
 #include "WavetableUi.hpp"
 #include "Browser.hpp"
-#include "Creator.hpp"
+#include "PartialsUi.hpp"
+#include "Draw.hpp"
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -89,6 +90,8 @@ void OperatorUi::setupBar()
 
 	auto activityButton = new QPushButton(QString(title++), this);
 
+	activityButton->setToolTip("Activate / Deactivate");
+
 	activityButton->setObjectName("ActivityButton");
 
 	activityButton->setSizePolicy(QSizePolicy::Maximum,
@@ -152,7 +155,7 @@ void OperatorUi::setupSecondary()
 	secondary_->setTabPosition(QTabWidget::South);
 
 
-	setupWavesTab();
+	setupSelectTab();
 
 	setupCreateTab();
 
@@ -162,19 +165,19 @@ void OperatorUi::setupSecondary()
 	secondary_->hide();
 }
 
-void OperatorUi::setupWavesTab()
+void OperatorUi::setupSelectTab()
 {
-	auto waves = new QWidget(secondary_);
+	auto select = new QWidget(secondary_);
 
-	secondary_->addTab(waves, "Waves");
+	secondary_->addTab(select, "Select");
 
 
-	auto layout = new QHBoxLayout(waves);
+	auto layout = new QHBoxLayout(select);
 
 	layout->setMargin(10);
 
 
-	auto browser = new Browser(waves);
+	auto browser = new Browser(select);
 
 	connect(browser, &Browser::wavetableSelected,
 			[=] (const QString& id) { toggle_->setText(id); });
@@ -182,7 +185,7 @@ void OperatorUi::setupWavesTab()
 	layout->addWidget(browser);
 
 
-	auto wavetable = new WavetableUi(waves);
+	auto wavetable = new WavetableUi(select);
 
 	wavetable->setSizePolicy(QSizePolicy::Expanding,
 							 QSizePolicy::Expanding);
@@ -202,9 +205,14 @@ void OperatorUi::setupWavesTab()
 
 void OperatorUi::setupCreateTab()
 {
-	auto creator = new Creator(this);
+	auto partials = new PartialsUi(this);
 
-	secondary_->addTab(creator, "Create");
+	secondary_->addTab(partials, "Partials");
+
+
+	auto draw = new Draw(this);
+
+	secondary_->addTab(draw, "Draw");
 }
 
 void OperatorUi::paintEvent(QPaintEvent*)

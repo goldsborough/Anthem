@@ -41,7 +41,7 @@ AlgorithmUi
 
 
 Browser[isExpanded = "false"]
-    min-width: 270px
+    min-width: 250px
     border: 2px solid $second
     & QLineEdit
         font-size: 14px
@@ -98,23 +98,36 @@ Browser[isExpanded = "true"]
         color: $first
 
 ComboBox
-    qproperty-alignment: AlignCenter
-    qproperty-direction: 1 // Down
     & QListView
+        font-family: "DIN"
         background: $first
         color: $second
         &::item
-            padding: 15px
             &:selected, &:hover
                 background: $second
                 color: $first
 
-Creator QPushButton
-    min-width: 30px
-    font-size: 18px
-    border-right: 2px solid $second
-    border-bottom: 2px solid $second
-    border-left: 2px solid $second
+Creator
+    min-height: 140px
+    max-height: 140px
+    & QPushButton
+        background: $second
+        color: $third
+        min-width: 30px
+        font-size: 18px
+        border: none
+    & ComboBox
+        background: $second
+        color: $third
+        qproperty-heightOffset: 2
+        qproperty-direction: 2 // Right
+        & QListView
+            font-size: 18px
+            &::item
+                min-width: 35px
+                max-width: 35px
+    & Plot
+        qproperty-gridShown: true
 
 #CreatorGenerateButton
     font-size: 24px
@@ -248,7 +261,8 @@ OperatorUi
     & QTabWidget QTabBar::tab
         font-size: 20px
         min-width: 120px
-        min-height: 30px
+        min-height: 20px
+        padding-bottom: 1px
         border-bottom: 2px solid $second
     & QLabel
         color: $second
@@ -270,6 +284,29 @@ PanUi, MacroUi, #VolumeUi
 
 #Save
     font-size: 35px
+
+PartialsUi
+    qproperty-barColor: $first
+    qproperty-barWidth: 30//px
+    qproperty-displayFactor: 100
+    qproperty-step: 5
+    qproperty-topOffset: 10
+    qproperty-baseValue: 10
+    & Plot
+        qproperty-gridShown: true
+        qproperty-lineWidth: 0//px
+        qproperty-zeroColor: $gray
+
+Plot
+    qproperty-lineColor: $fourth
+    qproperty-backgroundColor: $second
+    qproperty-lineWidth: 2//px
+    qproperty-gridShown: true
+    qproperty-gridWidth: 1//px
+    qproperty-gridStyle: 3 // Dots
+    qproperty-gridColor: $gray
+    qproperty-zeroColor: $first
+    qproperty-zeroWidth: 1//px
 
 PopupLine
     border: none
@@ -414,14 +451,10 @@ SettingsDialog
         max-height: 50px
         & QListView
             font-size: 16px
+            &::item
+                padding: 15px
 
 WavetableUi
-    qproperty-lineColor: $fourth
-    qproperty-backgroundColor: $second
-    qproperty-lineWidth: 2
-    qproperty-gridShown: true
-    qproperty-gridWidth: 1
-    qproperty-gridColor: $gray
     qproperty-zeroColor: $first
     qproperty-zeroWidth: 1
     qproperty-margin: 15

@@ -15,7 +15,7 @@ class OperatorUi : public QWidget
 
 public:
 
-    OperatorUi(QWidget* parent = nullptr);
+	explicit OperatorUi(QWidget* parent = nullptr);
 
 private:
 
@@ -25,7 +25,7 @@ private:
 
 	void setupSecondary();
 
-	void setupWavesTab();
+	void setupSelectTab();
 
 	void setupCreateTab();
 

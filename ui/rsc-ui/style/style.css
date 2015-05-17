@@ -28,7 +28,7 @@ AlgorithmUi {
       color: #DC4850; }
 
 Browser[isExpanded="false"], Browser[isExpanded="true"] {
-  min-width: 270px;
+  min-width: 250px;
   border: 2px solid #27272B; }
   Browser[isExpanded="false"] QLineEdit, Browser[isExpanded="true"] QLineEdit {
     font-size: 14px;
@@ -83,24 +83,35 @@ Browser[isExpanded="true"] {
   #CaseSensitivityButton:open {
     color: #DC4850; }
 
-ComboBox {
-  qproperty-alignment: AlignCenter;
-  qproperty-direction: 1; }
-  ComboBox QListView {
-    background: #DC4850;
-    color: #27272B; }
-    ComboBox QListView::item {
-      padding: 15px; }
-      ComboBox QListView::item:selected, ComboBox QListView::item:hover {
-        background: #27272B;
-        color: #DC4850; }
+ComboBox QListView {
+  font-family: "DIN";
+  background: #DC4850;
+  color: #27272B; }
+  ComboBox QListView::item:selected, ComboBox QListView::item:hover {
+    background: #27272B;
+    color: #DC4850; }
 
-Creator QPushButton {
-  min-width: 30px;
-  font-size: 18px;
-  border-right: 2px solid #27272B;
-  border-bottom: 2px solid #27272B;
-  border-left: 2px solid #27272B; }
+Creator {
+  min-height: 140px;
+  max-height: 140px; }
+  Creator QPushButton {
+    background: #27272B;
+    color: #F7FDFA;
+    min-width: 30px;
+    font-size: 18px;
+    border: none; }
+  Creator ComboBox {
+    background: #27272B;
+    color: #F7FDFA;
+    qproperty-heightOffset: 2;
+    qproperty-direction: 2; }
+    Creator ComboBox QListView {
+      font-size: 18px; }
+      Creator ComboBox QListView::item {
+        min-width: 35px;
+        max-width: 35px; }
+  Creator Plot {
+    qproperty-gridShown: true; }
 
 #CreatorGenerateButton {
   font-size: 24px; }
@@ -227,7 +238,8 @@ OperatorUi, PanUi, MacroUi, #VolumeUi {
   OperatorUi QTabWidget QTabBar::tab, PanUi QTabWidget QTabBar::tab, MacroUi QTabWidget QTabBar::tab, #VolumeUi QTabWidget QTabBar::tab {
     font-size: 20px;
     min-width: 120px;
-    min-height: 30px;
+    min-height: 20px;
+    padding-bottom: 1px;
     border-bottom: 2px solid #27272B; }
   OperatorUi QLabel, PanUi QLabel, MacroUi QLabel, #VolumeUi QLabel {
     color: #27272B;
@@ -248,6 +260,29 @@ PanUi, MacroUi, #VolumeUi {
 
 #Save {
   font-size: 35px; }
+
+PartialsUi {
+  qproperty-barColor: #DC4850;
+  qproperty-barWidth: 30;
+  qproperty-displayFactor: 100;
+  qproperty-step: 5;
+  qproperty-topOffset: 10;
+  qproperty-baseValue: 10; }
+  PartialsUi Plot {
+    qproperty-gridShown: true;
+    qproperty-lineWidth: 0;
+    qproperty-zeroColor: #56595C; }
+
+Plot {
+  qproperty-lineColor: #43D4B4;
+  qproperty-backgroundColor: #27272B;
+  qproperty-lineWidth: 2;
+  qproperty-gridShown: true;
+  qproperty-gridWidth: 1;
+  qproperty-gridStyle: 3;
+  qproperty-gridColor: #56595C;
+  qproperty-zeroColor: #DC4850;
+  qproperty-zeroWidth: 1; }
 
 PopupLine {
   border: none; }
@@ -389,14 +424,10 @@ SettingsDialog ComboBox {
   max-height: 50px; }
   SettingsDialog ComboBox QListView {
     font-size: 16px; }
+    SettingsDialog ComboBox QListView::item {
+      padding: 15px; }
 
 WavetableUi {
-  qproperty-lineColor: #43D4B4;
-  qproperty-backgroundColor: #27272B;
-  qproperty-lineWidth: 2;
-  qproperty-gridShown: true;
-  qproperty-gridWidth: 1;
-  qproperty-gridColor: #56595C;
   qproperty-zeroColor: #DC4850;
   qproperty-zeroWidth: 1;
   qproperty-margin: 15; }
