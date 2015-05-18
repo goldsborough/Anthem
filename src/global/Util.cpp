@@ -27,15 +27,10 @@ namespace Util
         return date;
     }
     
-    void round(double& val, unsigned int bitWidth)
+    void round(double& val, unsigned int bins)
     {
-        if (val < -0.9)
-        {
-            
-        }
-        
         // the rounding factor
-        double factor = 1.0 / bitWidth;
+        double factor = 1.0 / bins;
         
         double n = val / factor;
         

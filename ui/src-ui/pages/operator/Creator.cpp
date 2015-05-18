@@ -1,6 +1,6 @@
 #include "Creator.hpp"
 #include "ComboBox.hpp"
-#include "WavetableUi.hpp"
+#include "AdditiveWavetableUi.hpp"
 #include "PartialsUi.hpp"
 
 #include <QHBoxLayout>
@@ -14,13 +14,10 @@ Creator::Creator(QWidget *parent)
 : QWidget(parent),
   layout_(new QHBoxLayout(this)),
   menu_(new QVBoxLayout),
-  wavetable_(new WavetableUi(this, 3, false)),
+  wavetable_(new AdditiveWavetableUi(this)),
   partials_(new PartialsUi(this))
 {
 	setupMenu();
-
-	QWidget::setSizePolicy(QSizePolicy::Expanding,
-						   QSizePolicy::Maximum);
 
 	layout_->setSpacing(0);
 
@@ -29,6 +26,9 @@ Creator::Creator(QWidget *parent)
 	layout_->addLayout(menu_);
 
 
+	QWidget::setSizePolicy(QSizePolicy::Expanding,
+						   QSizePolicy::Maximum);
+
 	auto plots = new QVBoxLayout;
 
 	partials_->setSizePolicy(QSizePolicy::Expanding,
@@ -36,13 +36,15 @@ Creator::Creator(QWidget *parent)
 
 	plots->addWidget(partials_);
 
-
 	wavetable_->setSizePolicy(QSizePolicy::Expanding,
 							  QSizePolicy::Expanding);
 
 	plots->addWidget(wavetable_);
 
 	layout_->addLayout(plots);
+
+
+	setupConnections();
 }
 
 void Creator::setupMenu()
@@ -119,12 +121,34 @@ void Creator::setupMenu()
 
 	number_->addItems({"8", "16", "32", "64"});
 
+	menu_->addWidget(number_);
+}
+
+void Creator::setupConnections()
+{
+	connect(generate_, &QPushButton::clicked,
+			wavetable_, &AdditiveWavetableUi::generate);
+
+	connect(save_, &QPushButton::clicked,
+			wavetable_, &AdditiveWavetableUi::save);
+
+	connect(sigma_, &QPushButton::clicked,
+			wavetable_, &AdditiveWavetableUi::setSigmaApproximationEnabled);
+
+	connect(bits_, &ComboBox::currentChanged,
+			[=] (const QString& text)
+	{ wavetable_->setBitwidth(text.toInt()); });
+
 	connect(number_, &ComboBox::currentChanged,
 			[=] (const QString& text)
 	{ partials_->setNumberOfPartials(text.toInt()); });
 
+	connect(partials_, &PartialsUi::amplitudeChanged,
+			wavetable_, &AdditiveWavetableUi::setPartialAmplitude);
 
-	menu_->addWidget(number_);
+	connect(partials_, &PartialsUi::allAmplitudesCleared,
+			wavetable_, &AdditiveWavetableUi::clear);
+
 }
 
 void Creator::paintEvent(QPaintEvent*)

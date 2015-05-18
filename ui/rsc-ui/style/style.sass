@@ -9,6 +9,11 @@ $gold: #FBB829
 $windowWidth: 1020px
 $windowHeight: 680px
 
+AdditiveWavetableUi
+    qproperty-margin: 10
+    qproperty-xGridShown: false
+    qproperty-yGridShown: false
+
 AnthemUi
     background: $second
     min-width: $windowWidth
@@ -126,9 +131,6 @@ Creator
             &::item
                 min-width: 35px
                 max-width: 35px
-    & WavetableUi
-        qproperty-margin: 10
-        qproperty-gridStyle: 0 // No grid
 
 #CreatorGenerateButton
     font-size: 24px
@@ -287,7 +289,7 @@ PanUi, MacroUi, #VolumeUi
     font-size: 35px
 
 PartialsUi
-    min-height: 350px
+    min-height: 300px
     qproperty-barColor: transparent
     qproperty-barWidth: 30//px
     qproperty-displayFactor: 100

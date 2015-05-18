@@ -76,6 +76,12 @@ public:
 	double getBaseValue();
 
 
+signals:
+
+	void amplitudeChanged(int number, double amplitude) const;
+
+	void allAmplitudesCleared() const;
+
 private:
 
 	struct Partial : public QCPBars
@@ -119,8 +125,6 @@ private:
 	void setupConnections();
 
 
-	QSharedPointer<QVector<Partial*>> partials_;
-
 	QSharedPointer<QPoint> lastPosition_;
 
 	QSharedPointer<QColor> barColor_;
@@ -128,6 +132,8 @@ private:
 	QPointer<Partial> activePartial_;
 
 	QPointer<Partial> lastShown_;
+
+	QVector<Partial*> partials_;
 
 	bool hasMovedAway_;
 

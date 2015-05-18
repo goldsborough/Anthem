@@ -3,10 +3,10 @@
 
 #include <QWidget>
 
+class AdditiveWavetableUi;
 class QHBoxLayout;
 class QVBoxLayout;
 class QPushButton;
-class WavetableUi;
 class PartialsUi;
 class ComboBox;
 
@@ -27,6 +27,8 @@ protected:
 
 	void setupMenu();
 
+	void setupConnections();
+
 
 	QHBoxLayout* layout_;
 
@@ -43,7 +45,7 @@ protected:
 	ComboBox* bits_;
 
 
-	WavetableUi* wavetable_;
+	AdditiveWavetableUi* wavetable_;
 
 	PartialsUi* partials_;
 };

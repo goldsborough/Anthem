@@ -6,8 +6,6 @@
 #include <QString>
 #include <QVector>
 
-#include <QDebug>
-
 QSharedPointer<QCPRange> PartialsUi::Partial::zero(new QCPRange);
 
 double PartialsUi::Partial::displayFactor = 100;
@@ -34,15 +32,18 @@ void PartialsUi::Partial::setAmplitude(double amp)
 
 	else if (amp < -1) amp = -1;
 
-	amplitude = amp;
+	if(! amp || amplitude != amp)
+	{
+		amplitude = amp;
 
-	*string = QString::number(amp * displayFactor, 'f', precision);
+		*string = QString::number(amp * displayFactor, 'f', precision);
 
-	if (amp >= 0) amp += baseValue;
+		if (amp >= 0) amp += baseValue;
 
-	else amp -= baseValue;
+		else amp -= baseValue;
 
-	QCPBars::setData({number}, {amp});
+		QCPBars::setData({number}, {amp});
+	}
 }
 
 void PartialsUi::Partial::setAmplitude(const QPoint& pos)
@@ -67,10 +68,10 @@ void PartialsUi::Partial::updateRange()
 
 PartialsUi::PartialsUi(QWidget* parent)
 : Plot(parent),
-  partials_(new QVector<Partial*>(64)),
   barColor_(new QColor),
   activePartial_(nullptr),
   lastShown_(nullptr),
+  partials_(64),
   hasMovedAway_(true),
   sideOffset_(0),
   barWidth_(10),
@@ -80,7 +81,7 @@ PartialsUi::PartialsUi(QWidget* parent)
 
 	double x = 1;
 
-	for (auto& partial : *partials_)
+	for (auto& partial : partials_)
 	{
 		partial = new Partial(x++, Plot::xAxis, Plot::yAxis);
 
@@ -100,13 +101,23 @@ void PartialsUi::setupConnections()
 	connect(this, &Plot::mouseDoubleClick,
 			[=] (QMouseEvent* event)
 	{
-		auto object = Plot::plottableAt(event->pos());
+		auto partial = dynamic_cast<Partial*>(Plot::plottableAt(event->pos()));
 
 		// Reset only the partial that was double clicked
-		if (object) dynamic_cast<Partial*>(object)->setAmplitude(0);
+		if (partial)
+		{
+			partial->setAmplitude(0);
+
+			emit amplitudeChanged(partial->number, 0);
+		}
 
 		// Reset all partials
-		else for (auto& p : *partials_) p->setAmplitude(0);
+		else
+		{
+			for (auto& p : partials_) p->setAmplitude(0);
+
+			emit allAmplitudesCleared();
+		}
 	});
 
 	connect(this, &Plot::mousePress,
@@ -133,7 +144,7 @@ void PartialsUi::resizeEvent(QResizeEvent *event)
 {
 	Plot::resizeEvent(event);
 
-	partials_->front()->updateRange();
+	partials_.front()->updateRange();
 }
 
 void PartialsUi::handleMouseMove(QMouseEvent *event)
@@ -147,6 +158,9 @@ void PartialsUi::handleMouseMove(QMouseEvent *event)
 		activePartial_->setAmplitude(event->pos());
 
 		Plot::replot();
+
+		emit amplitudeChanged(activePartial_->number,
+							  activePartial_->amplitude);
 
 		QToolTip::showText(event->globalPos(), *activePartial_->string);
 	}
@@ -193,7 +207,7 @@ void PartialsUi::setNumberOfPartials(int number)
 
 	double factor = 8.0 / number_;
 
-	for (auto& p : *partials_) p->setWidth(barWidth_ * factor);
+	for (auto& p : partials_) p->setWidth(barWidth_ * factor);
 
 	Plot::xAxis->setRangeUpper(sideOffset_ + number_);
 
@@ -209,7 +223,7 @@ void PartialsUi::setBarColor(const QColor& color)
 {
 	*barColor_ = color;
 
-	for (auto& p : *partials_)
+	for (auto& p : partials_)
 	{
 		p->setBrush({color});
 
@@ -226,7 +240,7 @@ void PartialsUi::setBarWidth(double width)
 {
 	barWidth_ = width;
 
-	for(auto& p : *partials_) p->setWidth(width);
+	for(auto& p : partials_) p->setWidth(width);
 }
 
 double PartialsUi::getBarWidth() const
@@ -259,9 +273,7 @@ void PartialsUi::setBaseValue(double value)
 {
 	value /= Partial::displayFactor;
 
-	qDebug() << value;
-
-	for (auto& partial : *partials_)
+	for (auto& partial : partials_)
 	{
 		if (partial->amplitude == Partial::baseValue)
 		{
@@ -271,7 +283,7 @@ void PartialsUi::setBaseValue(double value)
 
 	Partial::baseValue = value;
 
-	partials_->front()->updateRange();
+	partials_.front()->updateRange();
 }
 
 double PartialsUi::getBaseValue()

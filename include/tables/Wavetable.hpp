@@ -226,17 +226,15 @@ public:
         // possible values the samples can assume
         bits = pow(2, bits - 1);
         
-        // the fundamental increment of one period in radians
-        static double fundIncr = Global::twoPi / length;
-        
         // fill the arrays with the respective partial values
         for (index_t p = 0; begin != end; ++p, ++begin)
         {
             // initial phase
             phase[p] = begin->phaseOffset;
             
-            // fundIncr is two π / tablelength
-            increment[p] = fundIncr * begin->number;
+            // tableIncrement is two π / tablelength,
+            // multiplying by number changes the frequency
+            increment[p] = Global::tableIncrement * begin->number;
             
             // reduce amplitude if necessary
             amplitude[p] = begin->amp * master;
@@ -262,7 +260,9 @@ public:
                 phase[p] += increment[p];
                 
                 if (phase[p] >= Global::twoPi)
-                { phase[p] -= Global::twoPi; }
+                {
+                    phase[p] -= Global::twoPi;
+                }
             }
             
             // Round to nearest value according to bitwidth

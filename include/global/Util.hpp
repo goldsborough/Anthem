@@ -23,8 +23,8 @@ namespace Util
     /*! Converts a MIDI note (0-127) to a frequency in Hertz. */
     extern double noteToFreq(unsigned short note);
 
-    /*! Rounds a value to the nearest bitwidth. */
-    extern void round(double& val, unsigned int bitWidth);
+    /*! Rounds a value to the nearest bin. */
+    extern void round(double& val, unsigned int bins);
     
     /*! Converts a frequency to the nearest MIDI note (0-127). */
     extern unsigned short freqToNote(double freq);
