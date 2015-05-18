@@ -3,7 +3,7 @@
 
 #include "Creator.hpp"
 
-class Draw : public Creator
+class Draw : public QWidget
 {
 	Q_OBJECT
 

@@ -3,7 +3,6 @@ $first: #DC4850
 $third: #F7FDFA
 $fourth: #43D4B4
 
-// Just not to forget them
 $gray: #56595C
 $gold: #FBB829
 
@@ -108,14 +107,15 @@ ComboBox
                 color: $first
 
 Creator
-    min-height: 140px
-    max-height: 140px
     & QPushButton
         background: $second
         color: $third
-        min-width: 30px
+        min-width: 40px
         font-size: 18px
         border: none
+        &:hover, &:open
+            background: $first
+            color: $second
     & ComboBox
         background: $second
         color: $third
@@ -126,8 +126,9 @@ Creator
             &::item
                 min-width: 35px
                 max-width: 35px
-    & Plot
-        qproperty-gridShown: true
+    & WavetableUi
+        qproperty-margin: 10
+        qproperty-gridStyle: 0 // No grid
 
 #CreatorGenerateButton
     font-size: 24px
@@ -252,7 +253,7 @@ OperatorUi
     min-width: 480px
     min-height: 220px
     & QPushButton
-        &:open
+        &:open // i.e. 'checked'
             background: $second
             color: $third
         &::hover
@@ -286,22 +287,23 @@ PanUi, MacroUi, #VolumeUi
     font-size: 35px
 
 PartialsUi
-    qproperty-barColor: $first
+    min-height: 350px
+    qproperty-barColor: transparent
     qproperty-barWidth: 30//px
     qproperty-displayFactor: 100
-    qproperty-step: 5
-    qproperty-topOffset: 10
+    qproperty-margin: 10
+    qproperty-padding: 5
+    qproperty-gridStyle: 1
     qproperty-baseValue: 10
-    & Plot
-        qproperty-gridShown: true
-        qproperty-lineWidth: 0//px
-        qproperty-zeroColor: $gray
+    qproperty-lineWidth: 1//px
+    qproperty-lineColor: $fourth
+    qproperty-zeroColor: $gray
 
 Plot
+    background: transparent
     qproperty-lineColor: $fourth
     qproperty-backgroundColor: $second
     qproperty-lineWidth: 2//px
-    qproperty-gridShown: true
     qproperty-gridWidth: 1//px
     qproperty-gridStyle: 3 // Dots
     qproperty-gridColor: $gray
@@ -457,4 +459,4 @@ SettingsDialog
 WavetableUi
     qproperty-zeroColor: $first
     qproperty-zeroWidth: 1
-    qproperty-margin: 15
+    qproperty-padding: 0.15

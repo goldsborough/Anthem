@@ -13,12 +13,24 @@ class WavetableUi : public Plot
 
 public:
 
-	explicit WavetableUi(QWidget* parent = nullptr);
+	explicit WavetableUi(QWidget* parent = nullptr,
+						 int frequency = 1,
+						 bool phaseShiftEnabled = true);
 
 
 	void setWavetable(const QString& id);
 
 	QString getWavetableId() const;
+
+
+	void setFrequency(int number);
+
+	int getFrequency() const;
+
+
+	void setPhaseShiftingEnabled(bool enabled);
+
+	bool phaseShiftingEnabled() const;
 
 signals:
 
@@ -26,19 +38,20 @@ signals:
 
 private:
 
+	static const double conversion_;
+
 	static QSharedPointer<QVector<double>> x_;
 
 	static QSharedPointer<QVector<double>> initializeX();
 
 
-	void setupPlot();
+	int frequency_;
 
-
-	double conversion_;
-
-	QSharedPointer<QVector<double>> y_;
+	bool phaseShiftingEnabled_;
 
 	QSharedPointer<QString> id_;
+
+	QSharedPointer<QVector<double>> y_;
 };
 
 #endif // WAVETABLEUI_HPP

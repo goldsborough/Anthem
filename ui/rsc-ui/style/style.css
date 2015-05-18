@@ -91,27 +91,28 @@ ComboBox QListView {
     background: #27272B;
     color: #DC4850; }
 
-Creator {
-  min-height: 140px;
-  max-height: 140px; }
-  Creator QPushButton {
-    background: #27272B;
-    color: #F7FDFA;
-    min-width: 30px;
-    font-size: 18px;
-    border: none; }
-  Creator ComboBox {
-    background: #27272B;
-    color: #F7FDFA;
-    qproperty-heightOffset: 2;
-    qproperty-direction: 2; }
-    Creator ComboBox QListView {
-      font-size: 18px; }
-      Creator ComboBox QListView::item {
-        min-width: 35px;
-        max-width: 35px; }
-  Creator Plot {
-    qproperty-gridShown: true; }
+Creator QPushButton {
+  background: #27272B;
+  color: #F7FDFA;
+  min-width: 40px;
+  font-size: 18px;
+  border: none; }
+  Creator QPushButton:hover, Creator QPushButton:open {
+    background: #DC4850;
+    color: #27272B; }
+Creator ComboBox {
+  background: #27272B;
+  color: #F7FDFA;
+  qproperty-heightOffset: 2;
+  qproperty-direction: 2; }
+  Creator ComboBox QListView {
+    font-size: 18px; }
+    Creator ComboBox QListView::item {
+      min-width: 35px;
+      max-width: 35px; }
+Creator WavetableUi {
+  qproperty-margin: 10;
+  qproperty-gridStyle: 0; }
 
 #CreatorGenerateButton {
   font-size: 24px; }
@@ -262,22 +263,23 @@ PanUi, MacroUi, #VolumeUi {
   font-size: 35px; }
 
 PartialsUi {
-  qproperty-barColor: #DC4850;
+  min-height: 350px;
+  qproperty-barColor: transparent;
   qproperty-barWidth: 30;
   qproperty-displayFactor: 100;
-  qproperty-step: 5;
-  qproperty-topOffset: 10;
-  qproperty-baseValue: 10; }
-  PartialsUi Plot {
-    qproperty-gridShown: true;
-    qproperty-lineWidth: 0;
-    qproperty-zeroColor: #56595C; }
+  qproperty-margin: 10;
+  qproperty-padding: 5;
+  qproperty-gridStyle: 1;
+  qproperty-baseValue: 10;
+  qproperty-lineWidth: 1;
+  qproperty-lineColor: #43D4B4;
+  qproperty-zeroColor: #56595C; }
 
 Plot {
+  background: transparent;
   qproperty-lineColor: #43D4B4;
   qproperty-backgroundColor: #27272B;
   qproperty-lineWidth: 2;
-  qproperty-gridShown: true;
   qproperty-gridWidth: 1;
   qproperty-gridStyle: 3;
   qproperty-gridColor: #56595C;
@@ -430,6 +432,6 @@ SettingsDialog ComboBox {
 WavetableUi {
   qproperty-zeroColor: #DC4850;
   qproperty-zeroWidth: 1;
-  qproperty-margin: 15; }
+  qproperty-padding: 0.15; }
 
 /*# sourceMappingURL=style.css.map */

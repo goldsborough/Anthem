@@ -5,7 +5,6 @@
 #include "WavetableUi.hpp"
 #include "Browser.hpp"
 #include "PartialsUi.hpp"
-#include "Draw.hpp"
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -146,38 +145,17 @@ void OperatorUi::setupPrimary()
 
 void OperatorUi::setupSecondary()
 {
-	secondary_ = new QTabWidget(this);
-
-	secondary_->setMovable(true);
-
-	secondary_->tabBar()->setCursor(Qt::PointingHandCursor);
-
-	secondary_->setTabPosition(QTabWidget::South);
-
-
-	setupSelectTab();
-
-	setupCreateTab();
-
-
-	layout_->addWidget(secondary_);
+	secondary_ = new QWidget(this);
 
 	secondary_->hide();
-}
-
-void OperatorUi::setupSelectTab()
-{
-	auto select = new QWidget(secondary_);
-
-	secondary_->addTab(select, "Select");
 
 
-	auto layout = new QHBoxLayout(select);
+	auto layout = new QHBoxLayout(secondary_);
 
 	layout->setMargin(10);
 
 
-	auto browser = new Browser(select);
+	auto browser = new Browser(secondary_);
 
 	connect(browser, &Browser::wavetableSelected,
 			[=] (const QString& id) { toggle_->setText(id); });
@@ -185,7 +163,7 @@ void OperatorUi::setupSelectTab()
 	layout->addWidget(browser);
 
 
-	auto wavetable = new WavetableUi(select);
+	auto wavetable = new WavetableUi(secondary_);
 
 	wavetable->setSizePolicy(QSizePolicy::Expanding,
 							 QSizePolicy::Expanding);
@@ -201,18 +179,8 @@ void OperatorUi::setupSelectTab()
 						   QString(0x00B0));
 	});
 
-}
 
-void OperatorUi::setupCreateTab()
-{
-	auto partials = new PartialsUi(this);
-
-	secondary_->addTab(partials, "Partials");
-
-
-	auto draw = new Draw(this);
-
-	secondary_->addTab(draw, "Draw");
+	layout_->addWidget(secondary_);
 }
 
 void OperatorUi::paintEvent(QPaintEvent*)

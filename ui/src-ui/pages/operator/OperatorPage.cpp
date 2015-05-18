@@ -2,6 +2,8 @@
 #include "UnitPage.hpp"
 #include "AlgorithmPage.hpp"
 
+#include "Creator.hpp"
+
 #include <QGridLayout>
 #include <QStyleOption>
 #include <QPainter>
@@ -18,18 +20,25 @@ OperatorPage::OperatorPage(QWidget* parent)
 
 void OperatorPage::setupUi()
 {
-	UnitPage* unit = new UnitPage(this);
+	auto unit = new UnitPage(this);
 
 	QTabWidget::addTab(unit, "Units");
 
+	QTabWidget::setMovable(true);
 
-	AlgorithmPage* alg = new AlgorithmPage(this);
+
+	auto alg = new AlgorithmPage(this);
 
 	connect(alg, &AlgorithmPage::algorithmChanged,
 			[=] (AlgorithmPage::index_t index)
 			{ qDebug() << index; });
 
 	QTabWidget::addTab(alg, "Algorithms");
+
+
+	auto creator = new Creator(this);
+
+	QTabWidget::addTab(creator, "Create");
 
 
 	QTabWidget::setTabPosition(QTabWidget::South);

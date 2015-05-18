@@ -12,7 +12,9 @@ class Plot : public QCustomPlot
 {
 	Q_OBJECT
 
-	Q_PROPERTY(double margin READ getMargin WRITE setMargin)
+	Q_PROPERTY(int margin READ getMargin WRITE setMargin)
+
+	Q_PROPERTY(double padding READ getPadding WRITE setPadding)
 
 	Q_PROPERTY(QColor backgroundColor READ getBackgroundColor WRITE setBackgroundColor)
 
@@ -22,7 +24,10 @@ class Plot : public QCustomPlot
 	Q_PROPERTY(double lineWidth READ getLineWidth WRITE setLineWidth)
 
 
-	Q_PROPERTY(bool gridShown READ getGridShown WRITE setGridShown)
+	Q_PROPERTY(bool xGridShown READ xGridShown WRITE setXGridShown)
+
+	Q_PROPERTY(bool yGridShown READ yGridShown WRITE setYGridShown)
+
 
 	Q_PROPERTY(QColor gridColor READ getGridColor WRITE setGridColor)
 
@@ -43,9 +48,14 @@ public:
 	virtual ~Plot();
 
 
-	virtual void setMargin(double margin);
+	virtual void setMargin(int margin);
 
-	virtual double getMargin() const;
+	virtual int getMargin() const;
+
+
+	virtual void setPadding(double padding);
+
+	virtual double getPadding() const;
 
 
 	virtual void setBackgroundColor(const QColor& color);
@@ -63,9 +73,14 @@ public:
 	virtual double getLineWidth() const;
 
 
-	virtual void setGridShown(bool shown);
+	virtual void setXGridShown(bool shown);
 
-	virtual bool getGridShown() const;
+	virtual bool xGridShown() const;
+
+
+	virtual void setYGridShown(bool shown);
+
+	virtual bool yGridShown() const;
 
 
 	virtual void setGridColor(const QColor& color);
@@ -94,12 +109,9 @@ public:
 
 protected:
 
-	virtual void setupPlot();
-
-
-	bool gridShown_;
-
 	double margin_;
+
+	double padding_;
 
 
 	QSharedPointer<QPen> zero_;

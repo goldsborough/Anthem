@@ -25,10 +25,6 @@ private:
 
 	void setupSecondary();
 
-	void setupSelectTab();
-
-	void setupCreateTab();
-
 
 	void paintEvent(QPaintEvent* paintEvent);
 
@@ -37,7 +33,7 @@ private:
 
 	QWidget* primary_;
 
-	QTabWidget* secondary_;
+	QWidget* secondary_;
 
 	QPushButton* toggle_;
 

@@ -1,6 +1,4 @@
 #include "PartialsUi.hpp"
-#include "ComboBox.hpp"
-#include "Plot.hpp"
 
 #include <QToolTip>
 #include <QColor>
@@ -10,126 +8,99 @@
 
 #include <QDebug>
 
+QSharedPointer<QCPRange> PartialsUi::Partial::zero(new QCPRange);
 
 double PartialsUi::Partial::displayFactor = 100;
 
 double PartialsUi::Partial::baseValue = 0.1;
 
-double PartialsUi::Partial::step = 0.02;
-
 int PartialsUi::Partial::precision = 0;
+
+double PartialsUi::Partial::range = 0;
 
 PartialsUi::Partial::Partial(unsigned short num,
 						   QCPAxis *x,
 						   QCPAxis *y)
 : QCPBars(x, y),
   number(num),
-  amplitude(0),
   string(new QString("0"))
-{ }
+{
+	setAmplitude(0);
+}
 
 void PartialsUi::Partial::setAmplitude(double amp)
-{
+{	
 	if (amp > 1) amp = 1;
 
-	else if (amp < 0) amp = 0;
+	else if (amp < -1) amp = -1;
 
 	amplitude = amp;
 
-	// Otherwise we get -0
-	if (! amp) *string = QString("0");
+	*string = QString::number(amp * displayFactor, 'f', precision);
 
-	else *string = QString::number(amp * displayFactor, 'f', precision);
+	if (amp >= 0) amp += baseValue;
 
-	QCPBars::setData({number}, {amp + baseValue});
+	else amp -= baseValue;
+
+	QCPBars::setData({number}, {amp});
 }
 
-void PartialsUi::Partial::up()
+void PartialsUi::Partial::setAmplitude(const QPoint& pos)
 {
-	setAmplitude(amplitude + step);
+	if (pos.y() <= zero->lower || pos.y() >= zero->upper)
+	{
+		double y = (pos.y() <= zero->lower) ? zero->lower - pos.y() :
+											  zero->upper - pos.y();
+
+		setAmplitude(y / range);
+	}
 }
 
-void PartialsUi::Partial::down()
+void PartialsUi::Partial::updateRange()
 {
-	setAmplitude(amplitude - step);
+	zero->upper = QCPBars::coordsToPixels(number, -baseValue).y();
+
+	zero->lower = range = QCPBars::coordsToPixels(number, baseValue).y();
+
+	range -= QCPBars::coordsToPixels(number, baseValue + 1).y();
 }
 
-
-PartialsUi::PartialsUi(QWidget *parent)
-: Creator(parent),
+PartialsUi::PartialsUi(QWidget* parent)
+: Plot(parent),
   partials_(new QVector<Partial*>(64)),
-  lastPosition_(new QPoint),
   barColor_(new QColor),
   activePartial_(nullptr),
   lastShown_(nullptr),
   hasMovedAway_(true),
   sideOffset_(0),
-  topOffset_(0),
   barWidth_(10),
   number_(8)
 {
-	setupMenu();
-
-	setupPlot();
-}
-
-void PartialsUi::setupMenu()
-{
-	Creator::setupMenu();
-
-	auto numberBox = new ComboBox(this);
-
-	numberBox->setToolTip("PartialsUi");
-
-	numberBox->setSizePolicy(QSizePolicy::Maximum,
-							QSizePolicy::Expanding);
-
-	numberBox->setCursor(Qt::PointingHandCursor);
-
-	numberBox->addItems({"8", "16", "32", "64"});
-
-	connect(numberBox, &ComboBox::currentChanged,
-			[=] (const QString& text)
-	{
-		number_ = text.toInt();
-
-		double factor = 8.0 / number_;
-
-		for (auto& p : *partials_) p->setWidth(barWidth_ * factor);
-
-		plot_->xAxis->setRangeUpper(sideOffset_ + number_);
-
-		plot_->replot();
-	});
-
-
-	menu_->addWidget(numberBox);
-}
-
-void PartialsUi::setupPlot()
-{
 	setSideOffset(0.5);
-
-	setTopOffset(0.1);
 
 	double x = 1;
 
 	for (auto& partial : *partials_)
 	{
-		partial = new Partial(x, plot_->xAxis, plot_->yAxis);
+		partial = new Partial(x++, Plot::xAxis, Plot::yAxis);
 
-		partial->addData({x++}, {Partial::baseValue});
-
-		plot_->addPlottable(partial);
+		Plot::addPlottable(partial);
 
 		// Sets width to be in pixels and not graph coordinates
 		partial->setWidthType(QCPBars::WidthType::wtAbsolute);
 	}
 
-	connect(plot_, &Plot::mouseDoubleClick,
+	Plot::yAxis->setRange(-1, 1);
+
+	setupConnections();
+}
+
+void PartialsUi::setupConnections()
+{
+	connect(this, &Plot::mouseDoubleClick,
 			[=] (QMouseEvent* event)
 	{
-		auto object = plot_->plottableAt(event->pos());
+		auto object = Plot::plottableAt(event->pos());
 
 		// Reset only the partial that was double clicked
 		if (object) dynamic_cast<Partial*>(object)->setAmplitude(0);
@@ -138,24 +109,31 @@ void PartialsUi::setupPlot()
 		else for (auto& p : *partials_) p->setAmplitude(0);
 	});
 
-	connect(plot_, &Plot::mousePress,
+	connect(this, &Plot::mousePress,
 			[=] (QMouseEvent* event)
 	{
-		*lastPosition_ = event->pos();
+		activePartial_ = dynamic_cast<Partial*>(Plot::plottableAt(event->pos()));
 
-		activePartial_ = dynamic_cast<Partial*>(plot_->plottableAt(event->pos()));
+		Plot::setCursor(Qt::ClosedHandCursor);
 	});
 
-	connect(plot_, &Plot::mouseRelease,
+	connect(this, &Plot::mouseRelease,
 			[=] (QMouseEvent*)
 	{
 		activePartial_ = nullptr;
 
-		Creator::setCursor(Qt::ArrowCursor);
+		Plot::setCursor(Qt::ArrowCursor);
 	});
 
-	connect(plot_, &Plot::mouseMove,
+	connect(this, &Plot::mouseMove,
 			this, &PartialsUi::handleMouseMove);
+}
+
+void PartialsUi::resizeEvent(QResizeEvent *event)
+{
+	Plot::resizeEvent(event);
+
+	partials_->front()->updateRange();
 }
 
 void PartialsUi::handleMouseMove(QMouseEvent *event)
@@ -165,33 +143,19 @@ void PartialsUi::handleMouseMove(QMouseEvent *event)
 	// event->buttons() == Qt::LeftButton and
 	// don't need the check.
 	if (activePartial_)
-	{
-		double distance = event->pos().y() - lastPosition_->y();
+	{	
+		activePartial_->setAmplitude(event->pos());
 
-		if (distance > 0 && activePartial_->amplitude > 0)
-		{
-			activePartial_->down();
-		}
-
-		else if (distance < 0 && activePartial_->amplitude < 1)
-		{
-			activePartial_->up();
-		}
-
-		plot_->replot();
-
-		*lastPosition_ = event->pos();
-
-		Creator::setCursor(Qt::ClosedHandCursor);
+		Plot::replot();
 
 		QToolTip::showText(event->globalPos(), *activePartial_->string);
 	}
 
-	else if (plot_->plottableAt(event->pos()))
+	else if (Plot::plottableAt(event->pos()))
 	{
-		Creator::setCursor(Qt::OpenHandCursor);
+		Plot::setCursor(Qt::OpenHandCursor);
 
-		auto partial = dynamic_cast<Partial*>(plot_->plottableAt(event->pos()));
+		auto partial = dynamic_cast<Partial*>(Plot::plottableAt(event->pos()));
 
 		// The tool tip should only be shown once for each
 		// hover, so we check here if the partial currently
@@ -217,10 +181,28 @@ void PartialsUi::handleMouseMove(QMouseEvent *event)
 
 	else
 	{
-		Creator::setCursor(Qt::ArrowCursor);
+		Plot::setCursor(Qt::ArrowCursor);
 
 		hasMovedAway_ = true;
 	}
+}
+
+void PartialsUi::setNumberOfPartials(int number)
+{
+	number_ = number;
+
+	double factor = 8.0 / number_;
+
+	for (auto& p : *partials_) p->setWidth(barWidth_ * factor);
+
+	Plot::xAxis->setRangeUpper(sideOffset_ + number_);
+
+	Plot::replot();
+}
+
+int PartialsUi::getNumberOfPartials() const
+{
+	return number_;
 }
 
 void PartialsUi::setBarColor(const QColor& color)
@@ -252,15 +234,6 @@ double PartialsUi::getBarWidth() const
 	return barWidth_;
 }
 
-void PartialsUi::setStep(double step)
-{
-	Partial::step = step / Partial::displayFactor;
-}
-
-double PartialsUi::getStep()
-{
-	return Partial::step * Partial::displayFactor;
-}
 
 void PartialsUi::setPrecision(int precision)
 {
@@ -286,6 +259,8 @@ void PartialsUi::setBaseValue(double value)
 {
 	value /= Partial::displayFactor;
 
+	qDebug() << value;
+
 	for (auto& partial : *partials_)
 	{
 		if (partial->amplitude == Partial::baseValue)
@@ -295,6 +270,8 @@ void PartialsUi::setBaseValue(double value)
 	}
 
 	Partial::baseValue = value;
+
+	partials_->front()->updateRange();
 }
 
 double PartialsUi::getBaseValue()
@@ -306,7 +283,7 @@ void PartialsUi::setSideOffset(double offset)
 {
 	sideOffset_ = offset;
 
-	plot_->xAxis->setRange(offset, number_ + offset);
+	Plot::xAxis->setRange(offset, number_ + offset);
 }
 
 double PartialsUi::getSideOffset() const
@@ -314,23 +291,16 @@ double PartialsUi::getSideOffset() const
 	return sideOffset_;
 }
 
-void PartialsUi::setTopOffset(double offset)
+void PartialsUi::setPadding(double padding)
 {
-	topOffset_ = offset / Partial::displayFactor;
+	padding_ = padding / Partial::displayFactor;
 
-	plot_->yAxis->setRange(0, Partial::baseValue + 1 + topOffset_);
+	auto range = Partial::baseValue + 1 + padding_;
+
+	Plot::yAxis->setRange(-range, range);
 }
 
-double PartialsUi::getTopOffset() const
+double PartialsUi::getPadding() const
 {
-	return topOffset_ * Partial::displayFactor;
-}
-
-
-void PartialsUi::paintEvent(QPaintEvent*)
-{
-	QStyleOption opt;
-	opt.init(this);
-	QPainter p(this);
-	style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
+	return padding_ * Partial::displayFactor;
 }

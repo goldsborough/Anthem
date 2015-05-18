@@ -6,9 +6,9 @@
 class QHBoxLayout;
 class QVBoxLayout;
 class QPushButton;
-class Wavetable;
+class WavetableUi;
+class PartialsUi;
 class ComboBox;
-class Plot;
 
 class Creator : public QWidget
 {
@@ -18,18 +18,14 @@ public:
 
 	explicit Creator(QWidget* parent = nullptr);
 
-	virtual ~Creator();
-
 
 signals:
 
-	void wavetableGenerated(const Wavetable& wavetable) const;
-
 protected:
 
-	virtual void setupMenu();
+	virtual void paintEvent(QPaintEvent *) override;
 
-	virtual void setupPlot() = 0;
+	void setupMenu();
 
 
 	QHBoxLayout* layout_;
@@ -40,9 +36,16 @@ protected:
 
 	QPushButton* save_;
 
-	Plot* plot_;
+	QPushButton* sigma_;
+
+	ComboBox* number_;
 
 	ComboBox* bits_;
+
+
+	WavetableUi* wavetable_;
+
+	PartialsUi* partials_;
 };
 
 #endif // CREATOR_HPP

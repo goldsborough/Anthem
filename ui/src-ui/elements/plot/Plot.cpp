@@ -6,19 +6,11 @@
 
 Plot::Plot(QWidget *parent)
 : QCustomPlot(parent),
-  gridShown_(true),
-  margin_(0),
+  padding_(0),
   zero_(new QPen),
   line_(new QPen),
   grid_(new QPen),
   background_(new QColor)
-{
-	setupPlot();
-}
-
-Plot::~Plot() = default;
-
-void Plot::setupPlot()
 {
 	QCustomPlot::xAxis->setTicks(false);
 
@@ -30,22 +22,35 @@ void Plot::setupPlot()
 
 	QCustomPlot::axisRect()->setAutoMargins(QCP::MarginSide::msNone);
 
-	QCustomPlot::axisRect()->setMargins({0, 0, 0, 0});
+	setMargin(0);
 }
 
-void Plot::setMargin(double margin)
+Plot::~Plot() = default;
+
+void Plot::setMargin(int margin)
 {
 	margin_ = margin;
 
-	margin /= 100;
-
-	QCustomPlot::yAxis->setRange(-1 - margin, 1 + margin);
+	QCustomPlot::axisRect()->setMargins({margin, margin, margin, margin});
 }
 
-double Plot::getMargin() const
+int Plot::getMargin() const
 {
 	return margin_;
 }
+
+void Plot::setPadding(double padding)
+{
+	padding_ = padding;
+
+	QCustomPlot::yAxis->setRange(-1 - padding, 1 + padding);
+}
+
+double Plot::getPadding() const
+{
+	return padding_;
+}
+
 
 void  Plot::setBackgroundColor(const QColor& color)
 {
@@ -66,8 +71,6 @@ void Plot::setLineColor(const QColor& color)
 	for (int i = 0; i < Plot::plottableCount(); ++i)
 	{
 		Plot::plottable(i)->setPen(*line_);
-
-		Plot::plottable()->setSelectedPen(*line_);
 	}
 }
 
@@ -85,8 +88,6 @@ void Plot::setLineWidth(double width)
 	for (int i = 0; i < Plot::plottableCount(); ++i)
 	{
 		Plot::plottable(i)->setPen(*line_);
-
-		Plot::plottable()->setSelectedPen(*line_);
 	}
 }
 
@@ -96,18 +97,24 @@ double Plot::getLineWidth() const
 }
 
 
-void Plot::setGridShown(bool shown)
+void Plot::setXGridShown(bool shown)
 {
-	gridShown_ = shown;
-
 	QCustomPlot::xAxis->grid()->setVisible(shown);
+}
 
+bool Plot::xGridShown() const
+{
+	return  QCustomPlot::xAxis->grid()->visible();
+}
+
+void Plot::setYGridShown(bool shown)
+{
 	QCustomPlot::yAxis->grid()->setVisible(shown);
 }
 
-bool Plot::getGridShown() const
+bool Plot::yGridShown() const
 {
-	return gridShown_;
+	return QCustomPlot::yAxis->grid()->visible();
 }
 
 
