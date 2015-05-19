@@ -30,7 +30,7 @@ namespace Util
     void round(double& val, unsigned int bins)
     {
         // the rounding factor
-        double factor = 1.0 / bins;
+        double factor = 2.0 / bins;
         
         double n = val / factor;
         
@@ -49,9 +49,9 @@ namespace Util
         if (fractional >= 0.5)
         {
             // Next value depends on sign
-            double add = (n > 0) ? 1 : -1;
+            double next = (n > 0) ? 1 : -1;
             
-            val = (nFloor + add) * factor;
+            val = (nFloor + next) * factor;
         }
         
         else val = nFloor * factor;

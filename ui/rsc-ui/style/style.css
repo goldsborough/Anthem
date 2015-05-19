@@ -140,14 +140,14 @@ IconButton {
   border: none; }
 
 Menubar {
-  min-height: 80px;
-  max-height: 80px; }
+  min-height: 70px;
+  max-height: 70px; }
   Menubar #CopyDock {
     border: 3px solid #DC4850;
-    min-width: 54px;
-    min-height: 54px;
-    max-width: 54px;
-    max-height: 54px;
+    min-width: 44px;
+    min-height: 44px;
+    max-width: 44px;
+    max-height: 44px;
     background: #27272B;
     font-size: 30px;
     font-family: DIN;
@@ -157,17 +157,17 @@ Menubar {
       color: #27272B; }
   Menubar IconButton {
     border: 3px solid #DC4850;
-    min-width: 54px;
-    min-height: 54px;
-    max-width: 54px;
-    max-height: 54px;
+    min-width: 44px;
+    min-height: 44px;
+    max-width: 44px;
+    max-height: 44px;
     qproperty-iconWidth: 35;
     qproperty-iconHeight: 35; }
   Menubar #VolumeLabel {
-    min-width: 60px;
-    min-height: 60px;
-    max-width: 60px;
-    max-height: 60px; }
+    min-width: 50px;
+    min-height: 50px;
+    max-width: 50px;
+    max-height: 50px; }
   Menubar PopupLine {
     min-width: 400px;
     max-width: 400px;
@@ -272,7 +272,7 @@ PartialsUi {
   qproperty-margin: 10;
   qproperty-padding: 5;
   qproperty-gridStyle: 1;
-  qproperty-baseValue: 10;
+  qproperty-baseValue: 8;
   qproperty-lineWidth: 1;
   qproperty-lineColor: #43D4B4;
   qproperty-zeroColor: #56595C; }

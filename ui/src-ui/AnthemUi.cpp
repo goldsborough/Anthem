@@ -30,7 +30,6 @@ AnthemUi::AnthemUi()
 
 	QTabWidget* pages = new QTabWidget(this);
 
-
 	pages->setMovable(true);
 
 	pages->tabBar()->setCursor(Qt::PointingHandCursor);

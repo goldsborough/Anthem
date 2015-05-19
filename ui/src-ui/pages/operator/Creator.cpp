@@ -107,6 +107,8 @@ void Creator::setupMenu()
 
 	bits_->addItems({"4", "8", "16"});
 
+	bits_->setCurrent(2);
+
 	menu_->addWidget(bits_);
 
 
@@ -141,10 +143,16 @@ void Creator::setupConnections()
 
 	connect(number_, &ComboBox::currentChanged,
 			[=] (const QString& text)
-	{ partials_->setNumberOfPartials(text.toInt()); });
+	{
+		int number = text.toInt();
+
+		partials_->setNumberOfPartials(number);
+
+		wavetable_->setActivePartials(number);
+	});
 
 	connect(partials_, &PartialsUi::amplitudeChanged,
-			wavetable_, &AdditiveWavetableUi::setPartialAmplitude);
+			wavetable_, &AdditiveWavetableUi::setAmplitude);
 
 	connect(partials_, &PartialsUi::allAmplitudesCleared,
 			wavetable_, &AdditiveWavetableUi::clear);

@@ -91,7 +91,8 @@ PartialsUi::PartialsUi(QWidget* parent)
 		partial->setWidthType(QCPBars::WidthType::wtAbsolute);
 	}
 
-	Plot::yAxis->setRange(-1, 1);
+	Plot::yAxis->setRange(-Partial::baseValue - 1,
+						   Partial::baseValue + 1);
 
 	setupConnections();
 }
@@ -205,7 +206,7 @@ void PartialsUi::setNumberOfPartials(int number)
 {
 	number_ = number;
 
-	double factor = 8.0 / number_;
+	const double factor = 8.0 / number_;
 
 	for (auto& p : partials_) p->setWidth(barWidth_ * factor);
 
@@ -271,17 +272,13 @@ double PartialsUi::getDisplayFactor()
 
 void PartialsUi::setBaseValue(double value)
 {
-	value /= Partial::displayFactor;
+	Partial::baseValue = value / Partial::displayFactor;
 
 	for (auto& partial : partials_)
 	{
-		if (partial->amplitude == Partial::baseValue)
-		{
-			partial->amplitude = value;
-		}
+		// Will make the change in baseValue visible
+		partial->setAmplitude(partial->amplitude);
 	}
-
-	Partial::baseValue = value;
 
 	partials_.front()->updateRange();
 }

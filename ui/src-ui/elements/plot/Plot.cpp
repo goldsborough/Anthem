@@ -6,7 +6,7 @@
 
 Plot::Plot(QWidget *parent)
 : QCustomPlot(parent),
-  padding_(0),
+  padding_(0.2),
   zero_(new QPen),
   line_(new QPen),
   grid_(new QPen),

@@ -5,8 +5,9 @@
 
 #include <QSharedPointer>
 #include <QVector>
+#include <QMap>
 
-class QColor;
+class QPen;
 
 class AdditiveWavetableUi : public Plot
 {
@@ -14,41 +15,42 @@ class AdditiveWavetableUi : public Plot
 
 	Q_PROPERTY(int frequency READ getFrequency WRITE setFrequency)
 
+	Q_PROPERTY(QColor separatorColor READ getSeparatorColor WRITE setSeparatorColor)
+
+	Q_PROPERTY(double separatorWidth READ getSeparatorWidth WRITE setSeparatorWidth)
+
 public:
 
-	using number_t = unsigned short;
+	using size_t = unsigned short;
 
 
 	explicit AdditiveWavetableUi(QWidget* parent = nullptr,
-								 number_t numberOfPartials = 64,
-								 number_t frequency = 3,
-								 double masterAmplitude = 1,
-								 number_t bitwidth = 16,
+								 size_t samples = 1000,
+								 double frequency = 3,
+								 size_t numberOfPartials = 64,
+								 size_t bitwidth = 16,
 								 bool sigmaApproximationEnabled = false);
 
 	void generate();
 
 	void save();
 
-
-	void setFrequency(number_t frequency);
-
-	number_t getFrequency() const;
+	void clear();
 
 
-	void setNumberOfPartials(number_t number);
+	void setActivePartials(size_t number);
 
-	number_t getNumberOfPartials() const;
-
-
-	void setPartialAmplitude(number_t number, double amplitude);
-
-	double getPartialAmplitude(number_t number) const;
+	size_t getActivePartials(); // non-const
 
 
-	void setMasterAmplitude(double amplitude);
+	void setFrequency(size_t frequency);
 
-	double getMasterAmplitude() const;
+	size_t getFrequency() const;
+
+
+	void setAmplitude(size_t number, double amplitude);
+
+	double getAmplitude(size_t number) const;
 
 
 	void setSigmaApproximationEnabled(bool enabled);
@@ -56,35 +58,63 @@ public:
 	bool sigmaApproximationEnabled() const;
 
 
-	void setBitwidth(number_t bits);
+	void setBitwidth(size_t bits);
 
-	number_t getBitWidth() const;
+	size_t getBitWidth() const;
 
 
-	void clear();
+	void setSeparatorColor(const QColor& color);
+
+	QColor getSeparatorColor() const;
+
+
+	void setSeparatorWidth(double width);
+
+	double getSeparatorWidth() const;
+
 
 private:
 
 	struct Partial
 	{
+		size_t number;
+
 		double sigma;
 
 		double amplitude;
 
 		double increment;
+
+		double phase;
 	};
 
-	QSharedPointer<QColor> overflowColor_;
+	void recompute_(bool recomputeSigma = false,
+					bool changeSigma = false);
+
+	void reinitialize_(Partial& partial,
+					   bool recomputeSigma,
+					   bool changeSigma);
+
+	double round_(double value);
+
+	void display_(double max);
+
+
+	QSharedPointer<QPen> separator_;
+
+	double approximationConstant_;
+
+	QMap<size_t, double> data_;
 
 	QVector<Partial> partials_;
 
-	number_t frequency_;
+	double frequency_;
 
-	number_t bitwidth_;
+	size_t bitwidth_;
 
-	QCPDataMap* data_;
+	size_t samples_;
 
-	double master_;
+	size_t active_;
 
 	double bins_;
 
