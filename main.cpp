@@ -12,37 +12,20 @@ int main(int argc, const char * argv[])
     
     anthem.operators[Anthem::D].setActive(true);
     
-    anthem.operators[Anthem::D].setLevel(0);
+    anthem.operators[Anthem::D].setLevel(1);
     
     
-    anthem.envelopes[Anthem::A].setActive(true);
+    anthem.lfos[Anthem::A].setMode(LFOUnit::Mode::LFO);
+    
+    anthem.lfos[Anthem::A].setActive(true);
+    
+    anthem.lfos[Anthem::A].lfos(Anthem::A).setAmp(1);
+    
+    anthem.operators[Anthem::D].attachMod(Operator::LEVEL, &anthem.lfos[Anthem::A]);
     
     
-    anthem.envelopes[Anthem::A].setSegmentLength(Envelope::Segments::ATTACK, 1000);
     
-    anthem.envelopes[Anthem::A].setSegmentRate(Envelope::Segments::ATTACK, 2);
-    
-    anthem.envelopes[Anthem::A].setSegmentStartLevel(Envelope::Segments::ATTACK, 0);
-    
-    anthem.envelopes[Anthem::A].setSegmentEndLevel(Envelope::Segments::ATTACK, 1);
-    
-    
-    anthem.envelopes[Anthem::A].setSegmentLength(Envelope::Segments::A, 1000);
-    
-    anthem.envelopes[Anthem::A].setSegmentBothLevels(Envelope::Segments::A, 1);
-    
-    
-    anthem.envelopes[Anthem::A].setSegmentLength(Envelope::Segments::B, 1000);
-
-    anthem.envelopes[Anthem::A].setSegmentRate(Envelope::Segments::B, 2);
-    
-    anthem.envelopes[Anthem::A].setSegmentStartLevel(Envelope::Segments::B, 1);
-    
-    anthem.envelopes[Anthem::A].setSegmentEndLevel(Envelope::Segments::B, 0);
-    
-    
-    anthem.operators[Anthem::D].attachMod(Operator::LEVEL, &anthem.envelopes[Anthem::A]);
-    
+    anthem.mixer.setMasterAmp(1);
      
     anthem.setNote(69, true);
     

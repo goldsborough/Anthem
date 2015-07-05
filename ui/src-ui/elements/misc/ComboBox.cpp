@@ -37,35 +37,7 @@ ComboBox::ComboBox(QWidget* parent,
 
 	layout->addWidget(button_);
 
-
-	view_->setModel(model_);
-
-	view_->setCursor(Qt::PointingHandCursor);
-
-	view_->setWindowFlags(Qt::Popup);
-
-	view_->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
-	view_->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
-	view_->hide();
-
-	connect(view_, &QListView::clicked,
-			[=] (const QModelIndex& index)
-	{
-		auto text = index.data().toString();
-
-		button_->setText(text);
-
-		current_ = index.row();
-
-		view_->hide();
-
-		emit currentChanged(text);
-
-		emit currentIndexChanged(current_);
-
-	});
+	setupView();
 
 	setDirection(direction);
 
@@ -232,6 +204,38 @@ Qt::Alignment ComboBox::getAlignment() const
 	return alignment_;
 }
 
+
+void ComboBox::setupView()
+{
+	view_->setModel(model_);
+
+	view_->setCursor(Qt::PointingHandCursor);
+
+	view_->setWindowFlags(Qt::Popup);
+
+	view_->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+	view_->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+	view_->hide();
+
+	connect(view_, &QListView::clicked,
+			[=] (const QModelIndex& index)
+	{
+		auto text = index.data().toString();
+
+		button_->setText(text);
+
+		current_ = index.row();
+
+		view_->hide();
+
+		emit currentChanged(text);
+
+		emit currentIndexChanged(current_);
+
+	});
+}
 
 void ComboBox::resizeEvent(QResizeEvent *event)
 {

@@ -22,6 +22,11 @@ public:
 	QString getWavetableId() const;
 
 
+	virtual void setZeroColor(const QColor& color) override;
+
+	virtual void setZeroWidth(double width) override;
+
+
 signals:
 
 	void phaseChanged(int degrees) const;

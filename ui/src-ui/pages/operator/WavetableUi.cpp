@@ -50,6 +50,8 @@ WavetableUi::WavetableUi(QWidget *parent)
 
 	Plot::xAxis->setRange(1, Global::wavetableLength);
 
+	Plot::yAxis->grid()->setZeroLinePen(Qt::NoPen);
+
 	Plot::axisRect()->setRangeDrag(Qt::Horizontal);
 
 	// Wow so short amaze such concise
@@ -74,6 +76,20 @@ WavetableUi::WavetableUi(QWidget *parent)
 			});
 
 	setWavetable(QString());
+}
+
+void WavetableUi::setZeroColor(const QColor &color)
+{
+	zero_->setColor(color);
+
+	Plot::xAxis->grid()->setZeroLinePen(*zero_);
+}
+
+void WavetableUi::setZeroWidth(double width)
+{
+	zero_->setWidthF(width);
+
+	QCustomPlot::xAxis->grid()->setZeroLinePen(*zero_);
 }
 
 void WavetableUi::setWavetable(const QString &id)

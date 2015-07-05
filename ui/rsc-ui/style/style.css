@@ -254,6 +254,18 @@ PanUi, MacroUi, #VolumeUi {
   min-height: 215px;
   min-width: 145px;
   max-width: 145px; }
+  PanUi QPushButton, MacroUi QPushButton, #VolumeUi QPushButton {
+    font-size: 20px;
+    padding-top: 3px;
+    border-bottom: 2px solid #27272B; }
+  PanUi ComboBox, MacroUi ComboBox, #VolumeUi ComboBox {
+    min-height: 35px;
+    max-height: 35px; }
+    PanUi ComboBox QListView, MacroUi ComboBox QListView, #VolumeUi ComboBox QListView {
+      font-size: 20px; }
+      PanUi ComboBox QListView::item, MacroUi ComboBox QListView::item, #VolumeUi ComboBox QListView::item {
+        min-height: 35px;
+        max-height: 35px; }
 
 #Record {
   font-size: 30px; }

@@ -10,22 +10,26 @@
 #include <QApplication>
 #include <QDrag>
 #include <QMimeData>
+#include <QToolTip>
 
 ModItemUi::ModItemUi(QWidget* parent,
+					 bool tooltipEnabled,
 					 double factor,
 					 int minimum,
 					 int maximum,
 					 int step)
 : QAbstractSlider(parent),
-  mod_(nullptr),
-  borderPen_(new QPen), // no make_shared, sorry
-  lastPosition_(new QPoint),
   borders_(4),
+  lastPosition_(new QPoint),
+  mod_(nullptr),
+  borderPen_(new QPen),
   ratios_(4),
   borderWidth_(0),
   factor_(factor),
   step_(step)
 {
+	setTooltipEnabled(tooltipEnabled);
+
 	for (int i = 0; i < 4; ++i)
 	{
 		borders_[i].reset(new QLineF);
@@ -33,21 +37,12 @@ ModItemUi::ModItemUi(QWidget* parent,
 
 	QAbstractSlider::setRange(minimum, maximum);
 
-	setupUi();
-}
-
-void ModItemUi::setupUi()
-{
 	QAbstractSlider::setTracking(true);
 
 	QAbstractSlider::setAcceptDrops(true);
 
 	QAbstractSlider::setSizePolicy(QSizePolicy::Fixed,
 								   QSizePolicy::Fixed);
-
-	// Display current value as tooltip
-	connect(this, &QAbstractSlider::valueChanged,
-			[=] (int value) { QAbstractSlider::setToolTip(QString::number(value)); });
 
 	QMenu* context = new QMenu(this);
 
@@ -303,4 +298,33 @@ void ModItemUi::setStep(int step)
 int ModItemUi::getStep() const
 {
 	return step_;
+}
+
+void ModItemUi::setTooltipEnabled(bool enabled)
+{
+	if (! tooltipEnabled_ && enabled)
+	{
+		// Display current value as tooltip
+		connect(this, &QAbstractSlider::valueChanged,
+				[=] (int value)
+		{
+			auto string = QString::number(value);
+
+			QToolTip::showText(QAbstractSlider::cursor().pos(), string);
+
+			QAbstractSlider::setToolTip(string);
+		});
+	}
+
+	else if (tooltipEnabled_ && ! enabled)
+	{
+		disconnect(this, &QAbstractSlider::valueChanged, 0, 0);
+	}
+
+	tooltipEnabled_ = enabled;
+}
+
+bool ModItemUi::tooltipIsEnabled() const
+{
+	return tooltipEnabled_;
 }

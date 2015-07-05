@@ -77,6 +77,8 @@ private slots:
 
 private:
 
+	void setupView();
+
 	void paintEvent(QPaintEvent*) override;
 
 	void resizeEvent(QResizeEvent* event) override;

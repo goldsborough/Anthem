@@ -117,7 +117,7 @@ void Creator::setupMenu()
 	number_->setToolTip("Partials");
 
 	number_->setSizePolicy(QSizePolicy::Maximum,
-							QSizePolicy::Expanding);
+						   QSizePolicy::Expanding);
 
 	number_->setCursor(Qt::PointingHandCursor);
 

@@ -30,7 +30,7 @@ void OperatorPage::setupUi()
 	auto alg = new AlgorithmPage(this);
 
 	connect(alg, &AlgorithmPage::algorithmChanged,
-			[=] (AlgorithmPage::index_t index)
+			[] (AlgorithmPage::index_t index)
 			{ qDebug() << index; });
 
 	QTabWidget::addTab(alg, "Algorithms");

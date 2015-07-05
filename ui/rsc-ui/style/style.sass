@@ -1,5 +1,5 @@
-$second: #27272B
 $first: #DC4850
+$second: #27272B
 $third: #F7FDFA
 $fourth: #43D4B4
 
@@ -278,6 +278,18 @@ PanUi, MacroUi, #VolumeUi
     min-height: 215px
     min-width: 145px
     max-width: 145px
+    & QPushButton
+        font-size: 20px
+        padding-top: 3px
+        border-bottom: 2px solid $second
+    & ComboBox
+        min-height: 35px
+        max-height: 35px
+        & QListView
+            font-size: 20px
+            &::item
+                min-height: 35px
+                max-height: 35px
 
 #Record
     font-size: 30px

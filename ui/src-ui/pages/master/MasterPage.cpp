@@ -26,17 +26,17 @@ void MasterPage::setupUi()
 	connect(volume, &ModControl::controlChanged,
 			[=] (double value) { emit volumeChanged(value); });
 
-	layout->addWidget(volume, 0, 0);
+	layout->addWidget(volume, 0, 1);
 
 
 	PanUi* pan = new PanUi(this);
 
-	layout->addWidget(pan, 0, 1);
+	layout->addWidget(pan, 0, 2);
 
 
-	RecordUi* record = new RecordUi(this);
+	//RecordUi* record = new RecordUi(this);
 
-	layout->addWidget(record, 0, 2, 1, 2);
+	//layout->addWidget(record, 0, 2, 1, 2);
 
 
 	for (int i = 0; i < 4; ++i)

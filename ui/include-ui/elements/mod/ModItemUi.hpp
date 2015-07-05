@@ -19,6 +19,8 @@ class ModItemUi : public QAbstractSlider
 
     Q_PROPERTY(double borderWidth READ getBorderWidth WRITE setBorderWidth)
 
+	Q_PROPERTY(bool tooltipEnabled READ tooltipIsEnabled WRITE setTooltipEnabled)
+
 	Q_PROPERTY(int step READ getStep WRITE setStep)
 
 public:
@@ -26,6 +28,7 @@ public:
     enum Side { LEFT, RIGHT, TOP, BOTTOM };
 
 	ModItemUi(QWidget* parent = nullptr,
+			  bool tooltipEnabled = true,
 			  double factor = 0.001,
 			  int minimum = -999,
 			  int maximum = 999,
@@ -64,6 +67,11 @@ public:
 
 	int getStep() const;
 
+
+	void setTooltipEnabled(bool enabled);
+
+	bool tooltipIsEnabled() const;
+
 signals:
 
 	void sidechainEvent(QObject* slave, bool enable) const;
@@ -97,22 +105,22 @@ private:
 	virtual void dropEvent(QDropEvent* event) override;
 
 
-	void setupUi();
-
 	void showContextMenu() const;
 
+
+	QVector<QSharedPointer<QLineF>> borders_;
+
+	QSharedPointer<QPoint> lastPosition_;
 
     QSharedPointer<ModUnitUi> mod_;
 
     QSharedPointer<QPen> borderPen_;
 
-	QSharedPointer<QPoint> lastPosition_;
-
-	QVector<QSharedPointer<QLineF>> borders_;
+	QVector<QObject*> slaves_;
 
     QVector<double> ratios_;
 
-	QVector<QObject*> slaves_;
+	bool tooltipEnabled_;
 
     double borderWidth_;
 

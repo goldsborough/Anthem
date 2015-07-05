@@ -14,11 +14,11 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 
 void SettingsDialog::setupUi()
 {
-    QGridLayout* layout = new QGridLayout(this);
+	auto layout = new QGridLayout(this);
 
 	/* --------- Samplerate -------- */
 
-    QLabel* samplerateLabel = new QLabel("Samplerate", this);
+	auto samplerateLabel = new QLabel("Samplerate", this);
 
     layout->addWidget(samplerateLabel, 0, 0);
 
@@ -32,11 +32,11 @@ void SettingsDialog::setupUi()
 
 	/* --------- Default directory -------- */
 
-    QLabel* defaultDirectoryLabel = new QLabel("Default directory", this);
+	auto defaultDirectoryLabel = new QLabel("Default directory", this);
 
-    layout->addWidget(defaultDirectoryLabel,1,0);
+	layout->addWidget(defaultDirectoryLabel, 1,0);
 
-    QPushButton* defaultDirectoryButton = new QPushButton("/Users/petergoldsborough/Documents", this);
+	auto defaultDirectoryButton = new QPushButton("/Users/petergoldsborough/Documents", this);
 
     defaultDirectoryButton->setCursor(Qt::PointingHandCursor);
 
@@ -44,7 +44,7 @@ void SettingsDialog::setupUi()
 
 	/* --------- OK PushButton -------- */
 
-    QPushButton* okButton = new QPushButton("OK", this);
+	auto okButton = new QPushButton("OK", this);
 
     okButton->setCursor(Qt::PointingHandCursor);
 
