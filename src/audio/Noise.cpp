@@ -16,27 +16,27 @@
 #include <stdexcept>
 
 Noise::Noise(unsigned short color, double amp)
-: GenUnit(1,amp), filter_(new Filter(Filter::LOW_PASS,1,0.1)),
-  dist_(-1,1)
+: GenUnit(1,amp), _filter(new Filter(Filter::LOW_PASS,1,0.1)),
+  _dist(-1,1)
 {
     // Seed random number generator
-    rgen_.seed((unsigned)time(0));
+    _rgen.seed((unsigned)time(0));
     
     setColor(color);
     
-    mods_[AMP].setHigherBoundary(1);
-    mods_[AMP].setLowerBoundary(0);
-    mods_[AMP].setBaseValue(amp);
+    _mods[AMP].setHigherBoundary(1);
+    _mods[AMP].setLowerBoundary(0);
+    _mods[AMP].setBaseValue(amp);
 }
 
 Noise::Noise(const Noise& other)
 : GenUnit(other),
-  dist_(other.dist_), color_(other.color_),
-  filter_(new Filter(*other.filter_)),
-  rval_(other.rval_)
+  _dist(other._dist), _color(other._color),
+  _filter(new Filter(*other._filter)),
+  _rval(other._rval)
 {
     // Seed random number generator
-    rgen_.seed((unsigned)time(0));
+    _rgen.seed((unsigned)time(0));
 }
 
 Noise& Noise::operator= (const Noise& other)
@@ -45,15 +45,15 @@ Noise& Noise::operator= (const Noise& other)
     {
         GenUnit::operator=(other);
         
-        dist_ = other.dist_;
+        _dist = other._dist;
         
-        color_ = other.color_;
+        _color = other._color;
         
-        rgen_ = other.rgen_;
+        _rgen = other._rgen;
         
-        rval_ = other.rval_;
+        _rval = other._rval;
         
-        *filter_ = *other.filter_;
+        *_filter = *other._filter;
     }
     
     return *this;
@@ -65,17 +65,17 @@ void Noise::setAmp(double amp)
     // member setting
     GenUnit::setAmp(amp);
 
-    mods_[AMP].setBaseValue(amp);
+    _mods[AMP].setBaseValue(amp);
 }
 
 double Noise::getAmp() const
 {
-    if (mods_[AMP].inUse())
+    if (_mods[AMP].inUse())
     {
-        return mods_[AMP].getBaseValue();
+        return _mods[AMP].getBaseValue();
     }
     
-    else return amp_;
+    else return _amp;
 }
 
 void Noise::setColor(unsigned short color)
@@ -92,9 +92,9 @@ void Noise::setColor(unsigned short color)
         {
             // Pink noise has a decrease of 3dB/Octave
             
-            filter_->setMode(Filter::LOW_PASS);
-            filter_->setCutoff(10000);
-            filter_->setGain(6);
+            _filter->setMode(Filter::LOW_PASS);
+            _filter->setCutoff(10000);
+            _filter->setGain(6);
             
             break;
         }
@@ -103,9 +103,9 @@ void Noise::setColor(unsigned short color)
         {
             // Red noise has a decrease of 6dB/Octave
             
-            filter_->setMode(Filter::LOW_PASS);
-            filter_->setCutoff(1500);
-            filter_->setGain(14);
+            _filter->setMode(Filter::LOW_PASS);
+            _filter->setCutoff(1500);
+            _filter->setGain(14);
             
             break;
         }
@@ -114,10 +114,10 @@ void Noise::setColor(unsigned short color)
         {
             // Blue noise has an increase of 3dB/Octave
             
-            filter_->setMode(Filter::HIGH_PASS);
-            filter_->setCutoff(1000);
-            filter_->setQ(0.2);
-            filter_->setGain(-3);
+            _filter->setMode(Filter::HIGH_PASS);
+            _filter->setCutoff(1000);
+            _filter->setQ(0.2);
+            _filter->setGain(-3);
             
             break;
         }
@@ -126,43 +126,43 @@ void Noise::setColor(unsigned short color)
         {
             // Violet noise has an increase of 6dB/Octave
             
-            filter_->setMode(Filter::HIGH_PASS);
-            filter_->setCutoff(6000);
-            filter_->setQ(0.2);
-            filter_->setGain(3);
+            _filter->setMode(Filter::HIGH_PASS);
+            _filter->setCutoff(6000);
+            _filter->setQ(0.2);
+            _filter->setGain(3);
         }
             
         default:
             break;
     }
     
-    color_ = color;
+    _color = color;
 }
 
 unsigned short Noise::getColor() const
 {
-    return color_;
+    return _color;
 }
 
 void Noise::update()
 {
     // Get random value
-    rval_ = dist_(rgen_);
+    _rval = _dist(_rgen);
     
     // All noise colors except white noise are filtered
-    if (color_ != WHITE)
+    if (_color != WHITE)
     {
-        rval_  = filter_->process(rval_);
+        _rval  = _filter->process(_rval);
     }
 }
 
 double Noise::tick()
 {
     // Check modulation dock for the amplitude parameter
-    if (mods_[AMP].inUse())
+    if (_mods[AMP].inUse())
     {
-        amp_ = mods_[AMP].tick();
+        _amp = _mods[AMP].tick();
     }
     
-    return rval_ * amp_;
+    return _rval * _amp;
 }

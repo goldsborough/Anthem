@@ -153,16 +153,16 @@ public:
 private:
     
     /*! Center delay time around which modulation occurs. */
-    double center_;
+    double _center;
     
     /*! Feedback level, controls coloration of sound. */
-    double feedback_;
+    double _feedback;
     
     /*! LFO to modulate center value. */
-    std::unique_ptr<LFO> lfo_;
+    std::unique_ptr<LFO> _lfo;
     
     /*! The delay line to produce the effect. */
-    std::unique_ptr<Delay> delay_;
+    std::unique_ptr<Delay> _delay;
 };
 
 #endif

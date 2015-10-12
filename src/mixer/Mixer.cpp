@@ -17,26 +17,26 @@
 Mixer::Mixer(double amp)
 
 : Unit(2),
-  masterAmp_(amp), recording_(false),
-  pan_(new CrossfadeUnit)
+  _masterAmp(amp), _recording(false),
+  _pan(new CrossfadeUnit)
 
 {
     // Initialize ModDocks
-    mods_[MASTER_AMP].setHigherBoundary(1);
-    mods_[MASTER_AMP].setLowerBoundary(0);
-    mods_[MASTER_AMP].setBaseValue(amp);
+    _mods[MASTER_AMP].setHigherBoundary(1);
+    _mods[MASTER_AMP].setLowerBoundary(0);
+    _mods[MASTER_AMP].setBaseValue(amp);
     
-    mods_[PAN].setHigherBoundary(100);
-    mods_[PAN].setLowerBoundary(-100);
-    mods_[PAN].setBaseValue(0);
+    _mods[PAN].setHigherBoundary(100);
+    _mods[PAN].setLowerBoundary(-100);
+    _mods[PAN].setBaseValue(0);
 }
 
 Mixer::Mixer(const Mixer& other)
 : Unit(other),
-  masterAmp_(other.masterAmp_),
-  recording_(other.recording_),
-  pan_(new CrossfadeUnit(*other.pan_)),
-  wavefile_(other.wavefile_)
+  _masterAmp(other._masterAmp),
+  _recording(other._recording),
+  _pan(new CrossfadeUnit(*other._pan)),
+  _wavefile(other._wavefile)
 { }
 
 Mixer& Mixer::operator= (const Mixer& other)
@@ -45,13 +45,13 @@ Mixer& Mixer::operator= (const Mixer& other)
     {
         Unit::operator=(other);
         
-        masterAmp_ = other.masterAmp_;
+        _masterAmp = other._masterAmp;
         
-        recording_ = other.recording_;
+        _recording = other._recording;
         
-        *pan_ = *other.pan_;
+        *_pan = *other._pan;
         
-        wavefile_ = other.wavefile_;
+        _wavefile = other._wavefile;
     }
     
     return *this;
@@ -60,27 +60,27 @@ Mixer& Mixer::operator= (const Mixer& other)
 Sample Mixer::process(Sample sample)
 {
     // Modulate panning value
-    if (mods_[PAN].inUse())
+    if (_mods[PAN].inUse())
     {
-        pan_->setValue(mods_[PAN].tick());
+        _pan->setValue(_mods[PAN].tick());
     }
     
-    if (mods_[MASTER_AMP].inUse())
+    if (_mods[MASTER_AMP].inUse())
     {
-        masterAmp_ = mods_[MASTER_AMP].tick();
+        _masterAmp = _mods[MASTER_AMP].tick();
     }
     
     // Attenuate samples with panning
-    sample.left *= pan_->left();
-    sample.right *= pan_->right();
+    sample.left *= _pan->left();
+    sample.right *= _pan->right();
     
     // Apply master amplitude
-    sample *= masterAmp_;
+    sample *= _masterAmp;
     
     // Send to wavefile if recording
-    if (recording_)
+    if (_recording)
     {
-        wavefile_.process(sample);
+        _wavefile.process(sample);
     }
     
     return sample;
@@ -93,75 +93,75 @@ void Mixer::setMasterAmp(double amp)
         throw std::invalid_argument("Amplitude must be between 0 and 1!");
     }
     
-    mods_[MASTER_AMP].setBaseValue(amp);
+    _mods[MASTER_AMP].setBaseValue(amp);
     
-    masterAmp_ = amp;
+    _masterAmp = amp;
 }
 
 double Mixer::getMasterAmp() const
 {
-    if (mods_[MASTER_AMP].inUse())
+    if (_mods[MASTER_AMP].inUse())
     {
-        return mods_[MASTER_AMP].getBaseValue();
+        return _mods[MASTER_AMP].getBaseValue();
     }
     
-    else return masterAmp_;
+    else return _masterAmp;
 }
 
 void Mixer::setPanValue(double pan)
 {
     // Set value to pan object and
     // do boundary checking there
-    pan_->setValue(pan);
+    _pan->setValue(pan);
 
-    mods_[PAN].setBaseValue(pan);
+    _mods[PAN].setBaseValue(pan);
 }
 
 double Mixer::getPanValue() const
 {
-    if (mods_[PAN].inUse())
+    if (_mods[PAN].inUse())
     {
-        return mods_[PAN].getBaseValue();
+        return _mods[PAN].getBaseValue();
     }
     
-    else return pan_->getValue();
+    else return _pan->getValue();
 }
 
 void Mixer::setPanType(unsigned short type)
 {
-    pan_->setType(type);
+    _pan->setType(type);
 }
 
 unsigned short Mixer::getPanType() const
 {
-    return pan_->getType();
+    return _pan->getType();
 }
 
 bool Mixer::isRecording() const
 {
-    return recording_;
+    return _recording;
 }
 
 void Mixer::startRecording()
 {
-    recording_ = true;
+    _recording = true;
 }
 
 void Mixer::pauseRecording()
 {
-    recording_ = false;
+    _recording = false;
 }
 
 void Mixer::stopRecording()
 {
-    recording_ = false;
+    _recording = false;
     
-    wavefile_.flush();
+    _wavefile.flush();
 }
 
 void Mixer::saveRecording()
 {
-    recording_ = false;
+    _recording = false;
     
-    wavefile_.write();
+    _wavefile.write();
 }

@@ -141,16 +141,16 @@ private:
         
         uint32_t waveSize; // byte total
         
-    } header_;
+    } _header;
     
     /*! The sample buffer */
-    std::deque<std::unique_ptr<Sample>> buffer_;
+    std::deque<std::unique_ptr<Sample>> _buffer;
     
     /*! The file name */
-    std::string fname_;
+    std::string _fname;
     
     /*! Wavefile stream object */
-    std::ofstream file_;
+    std::ofstream _file;
 };
 
 #endif

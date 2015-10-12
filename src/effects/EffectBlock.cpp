@@ -8,16 +8,16 @@
 #include <stdexcept>
 
 EffectBlock::EffectBlock(unsigned short effect)
-: reverb_(new Reverb),
-  delay_(new Delay),
-  echo_(new Echo),
-  flanger_(new Flanger),
-  active_(false)
+: _reverb(new Reverb),
+  _delay(new Delay),
+  _echo(new Echo),
+  _flanger(new Flanger),
+  _active(false)
 {
-    delay_->setActive(true);
-    echo_->setActive(true);
-    reverb_->setActive(true);
-    flanger_->setActive(true);
+    _delay->setActive(true);
+    _echo->setActive(true);
+    _reverb->setActive(true);
+    _flanger->setActive(true);
 }
 
 EffectBlock::~EffectBlock()
@@ -25,42 +25,42 @@ EffectBlock::~EffectBlock()
 
 double EffectBlock::process(double sample)
 {
-    if (! active_) return sample;
+    if (! _active) return sample;
     
-    if (! curr_)
+    if (! _curr)
     { throw std::invalid_argument("Effect is currently NONE!"); }
     
-    return curr_->process(sample);
+    return _curr->process(sample);
 }
 
 Delay& EffectBlock::delay() const
 {
-    return *delay_;
+    return *_delay;
 }
 
 Echo& EffectBlock::echo() const
 {
-    return *echo_;
+    return *_echo;
 }
 
 Reverb& EffectBlock::reverb() const
 {
-    return *reverb_;
+    return *_reverb;
 }
 
 Flanger& EffectBlock::flanger() const
 {
-    return *flanger_;
+    return *_flanger;
 }
 
 void EffectBlock::setActive(bool state)
 {
-    active_ = state;
+    _active = state;
 }
 
 bool EffectBlock::isActive() const
 {
-    return active_;
+    return _active;
 }
 
 void EffectBlock::setEffectType(unsigned short effectType)
@@ -68,30 +68,30 @@ void EffectBlock::setEffectType(unsigned short effectType)
     switch (effectType)
     {
         case NONE:
-            curr_ = nullptr;
+            _curr = nullptr;
             break;
             
         case DELAY:
-            curr_ = &(*delay_);
+            _curr = &(*_delay);
             break;
             
         case ECHO:
-            curr_ = &(*echo_);
+            _curr = &(*_echo);
             break;
             
         case REVERB:
-            curr_ = &(*reverb_);
+            _curr = &(*_reverb);
             break;
             
         case FLANGER:
-            curr_ = &(*flanger_);
+            _curr = &(*_flanger);
             break;
     }
     
-    effectType_ = effectType;
+    _effectType = effectType;
 }
 
 unsigned short EffectBlock::getEffectType() const
 {
-    return effectType_;
+    return _effectType;
 }

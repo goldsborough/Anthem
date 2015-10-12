@@ -237,38 +237,38 @@ public:
 private:
     
     /*! Current mode - FM or ADDITIVE */
-    Mode mode_;
+    Mode _mode;
     
     /*! The max/min boundary for the current mode. */
-    double boundary_;
+    double _boundary;
     
     /*! The current fm modulation level */
-    double level_;
+    double _level;
     
     /*! The frequency ratio of the Operator
         relative to the current note */
-    double ratio_;
+    double _ratio;
     
     /*! Index increment offset from frequency modulaton */
-    double modOffset_;
+    double _modOffset;
     
     /*! Current frequency offset value in table index increment */
-    double indexOffset_;
+    double _indexOffset;
     
     /*! Current frequency offset value in Hertz */
-    double freqOffset_;
+    double _freqOffset;
     
     /*! Current frequency offset value in semitones */
-    double semitoneOffset_;
+    double _semitoneOffset;
     
-    /*! The real current frequency, freq_ (which is noteFreq_ * ratio_) + freqOffset_*/
-    double realFreq_;
+    /*! The real current frequency, _freq (which is _noteFreq * _ratio) + _freqOffset*/
+    double _realFreq;
     
     /*! The frequency of the original note, without any ratio */
-    double noteFreq_;
+    double _noteFreq;
     
     /*! The MIDI note that was originally input, without any ratio */
-    note_t note_;
+    note_t _note;
 };
 
 #endif /* defined(__Anthem__Operator__) */

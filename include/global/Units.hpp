@@ -264,13 +264,13 @@ public:
 protected:
     
     /*! Whether or not the Unit is active. */
-    bool active_;
+    bool _active;
     
     /*! The number of docks used. */
-    index_t numDocks_;
+    index_t _numDocks;
     
     /*! The array of modulation docks. */
-    std::unique_ptr<ModDock[]> mods_;
+    std::unique_ptr<ModDock[]> _mods;
 };
 
 /*********************************************************************************************//*!
@@ -338,16 +338,16 @@ public:
 protected:
     
     /*! Method that controls the dry/wet content of the signal */
-    double dryWet_(double originalSample,
+    double _dryWet(double originalSample,
                    double processedSample);
     
-    /*! Overloaded version of dryWet_ for setting a custom dryWet value */
-    double dryWet_(double originalSample,
+    /*! Overloaded version of _dryWet for setting a custom dryWet value */
+    double _dryWet(double originalSample,
                    double processedSample,
                    double dryWetValue);
     
     /*! Dry/wet level */
-    double dw_;
+    double _dw;
 };
 
 /*********************************************************************************************//*!
@@ -356,7 +356,7 @@ protected:
 *
 *  @details     This is the base class for all Units that generate samples, such as Oscillators,
 *               Operators, Envelopes and more. Its members are a pure virtual method for generating
-*               a sample, tick(), as well as an amplitude member, amp_, along with a method to
+*               a sample, tick(), as well as an amplitude member, _amp, along with a method to
 *               set the amplitude.
 *
 *  @see         EffectUnit
@@ -423,7 +423,7 @@ public:
 protected:
     
     /*! The current amplitude value */
-    double amp_;
+    double _amp;
 };
 
 class ModUnit : public Unit
@@ -484,7 +484,7 @@ public:
 protected:
     
     /*! The amplitude value */
-    double amp_;
+    double _amp;
 };
 
 #endif /* defined(__Anthem__Units__) */

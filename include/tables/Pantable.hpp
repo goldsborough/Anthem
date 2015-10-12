@@ -73,7 +73,7 @@ public:
 private:
     
     /*! Array of pantables. */
-    std::vector<std::shared_ptr<Pantable>> tables_;
+    std::vector<std::shared_ptr<Pantable>> _tables;
 };
 
 extern PantableDatabase pantableDatabase;

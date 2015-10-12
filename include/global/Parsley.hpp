@@ -69,7 +69,7 @@ class TextParsley
 public:
     
     TextParsley()
-    : closed_(0)
+    : _closed(0)
     { }
     
     /*************************************************************************//*!
@@ -118,7 +118,7 @@ public:
     ****************************************************************************/
     
     std::string currWord()
-    { return *currWord_; }
+    { return *_currWord; }
     
     
     /*************************************************************************//*!
@@ -218,7 +218,7 @@ public:
     ****************************************************************************/
     
     void toLineStart()
-    { currWord_ = currLine_->begin(); }
+    { _currWord = _currLine->begin(); }
     
     
     /*************************************************************************//*!
@@ -229,8 +229,8 @@ public:
     
     void toFileStart()
     {
-        currLine_ = file_.begin();
-        currWord_ = currLine_->begin();
+        _currLine = _file.begin();
+        _currWord = _currLine->begin();
     }
     
     
@@ -241,7 +241,7 @@ public:
     ****************************************************************************/
     
     void toLineEnd()
-    { currWord_ = currLine_->end() - 1; }
+    { _currWord = _currLine->end() - 1; }
     
     
     /*************************************************************************//*!
@@ -252,8 +252,8 @@ public:
     
     void toFileEnd()
     {
-        currLine_ = file_.end() - 1;
-        currWord_ = currLine_->begin();
+        _currLine = _file.end() - 1;
+        _currWord = _currLine->begin();
     }
     
     
@@ -266,7 +266,7 @@ public:
     ****************************************************************************/
     
     void moveWord(int count)
-    { std::advance(currWord_, count); }
+    { std::advance(_currWord, count); }
     
     
     /*************************************************************************//*!
@@ -278,7 +278,7 @@ public:
     ****************************************************************************/
     
     void moveLine(int count)
-    { std::advance(currLine_, count); }
+    { std::advance(_currLine, count); }
     
     
     /*************************************************************************//*!
@@ -309,14 +309,14 @@ private:
     typedef wordVec::iterator wordItr;
     typedef lineVec::iterator lineItr;
     
-    lineVec file_;
+    lineVec _file;
     
-    wordItr currWord_;
-    lineItr currLine_;
+    wordItr _currWord;
+    lineItr _currLine;
     
-    std::string fname_;
+    std::string _fname;
     
-    bool closed_;
+    bool _closed;
 };
 
 /*************************************************************************//*!
@@ -842,30 +842,30 @@ private:
     
     typedef StrVec::const_iterator StrVec_cItr;
     
-    ParsleyNode * makeNode_(Str_cItr begin, Str_cItr end, bool docHead = false);
+    ParsleyNode * _makeNode(Str_cItr begin, Str_cItr end, bool docHead = false);
     
-    StrVec_cItr makeNodeTree_(StrVec_cItr itr, StrVec_cItr end, ParsleyNode * parent);
+    StrVec_cItr _makeNodeTree(StrVec_cItr itr, StrVec_cItr end, ParsleyNode * parent);
     
-    std::vector<std::string> parse_(Str_cItr begin, Str_cItr end);
+    std::vector<std::string> _parse(Str_cItr begin, Str_cItr end);
     
-    bool isSelfClosing_(Str_cItr begin, Str_cItr end) const;
+    bool _isSelfClosing(Str_cItr begin, Str_cItr end) const;
     
-    bool isTag_(Str_cItr begin, Str_cItr end) const;
+    bool _isTag(Str_cItr begin, Str_cItr end) const;
     
-    bool isComment_(Str_cItr begin, Str_cItr end) const;
+    bool _isComment(Str_cItr begin, Str_cItr end) const;
     
-    bool isHeader_(Str_cItr begin, Str_cItr end);
+    bool _isHeader(Str_cItr begin, Str_cItr end);
     
-    ParsleyNode::AttrMap getAttrs_(Str_cItr begin, Str_cItr end) const;
+    ParsleyNode::AttrMap _getAttrs(Str_cItr begin, Str_cItr end) const;
     
     template <class T>
-    T lastNonSpace_(T begin, T end);
+    T _lastNonSpace(T begin, T end);
     
-    std::string nodeToString_(const ParsleyNode * node,
+    std::string _nodeToString(const ParsleyNode * node,
                               std::string indent = "",
                               bool docHead = false) const;
     
-    std::string treeToString_(const ParsleyNode * root,
+    std::string _treeToString(const ParsleyNode * root,
                               std::string& str,
                               std::string indent = "") const;
 };

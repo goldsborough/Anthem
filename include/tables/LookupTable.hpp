@@ -26,18 +26,18 @@ public:
     LookupTable(T* data,
                 std::size_t size,
                 const std::string& id) noexcept
-    : id_(id),
-      data_(data, data + size)
+    : _id(id),
+      _data(data, data + size)
     { }
     
     LookupTable(const LookupTable& other) noexcept
-    : id_(other.id_),
-      data_(other.data_)
+    : _id(other._id),
+      _data(other._data)
     { }
     
     LookupTable(LookupTable&& other) noexcept
-    : id_(std::move(other.id_)),
-      data_(std::move(other.data_))
+    : _id(std::move(other._id)),
+      _data(std::move(other._data))
     { }
 
     LookupTable& operator= (LookupTable other) noexcept
@@ -55,9 +55,9 @@ public:
         // Enable ADL
         using std::swap;
         
-        swap(data_, other.data_);
+        swap(_data, other._data);
         
-        swap(id_, other.id_);
+        swap(_id, other._id);
     }
     
     friend inline void swap(const LookupTable& left,
@@ -88,8 +88,8 @@ public:
         double fractional = index - integral;
         
         // Grab the two items in-between which the actual value lies
-        T lower = data_[integral];
-        T upper = data_[integral+1];
+        T lower = _data[integral];
+        T upper = _data[integral+1];
     
         // Perform interpolation
         return lower + ((upper - lower) * fractional);
@@ -97,44 +97,44 @@ public:
     
     virtual inline const T& operator[] (std::size_t index) const
     {
-        return data_[index];
+        return _data[index];
     }
     
     /*! Returns a const LookupTable's data pointer. */
     virtual inline const T* data() const
     {
-        return data_.data();
+        return _data.data();
     }
     
     /*! Returns the LookupTable's data pointer. */
     virtual inline T* data()
     {
-        return data_.data();
+        return _data.data();
     }
     
     /*! Returns the LookupTable's size. */
     virtual inline std::size_t size() const
     {
-        return data_.size();
+        return _data.size();
     }
     
     /*! Returns the LookupTable's id. */
     virtual inline std::string id() const
     {
-        return id_;
+        return _id;
     }
     
 protected:
     
     LookupTable(std::size_t size, const std::string& id)
-    : id_(id), data_(size)
+    : _id(id), _data(size)
     { }
     
     /*! The LookupTable's data. */
-    std::vector<T> data_;
+    std::vector<T> _data;
     
     /*! A descriptive ID for the LookupTable. */
-    std::string id_;
+    std::string _id;
 };
 
 #endif /* LOOKUP_TABLE_HPP */

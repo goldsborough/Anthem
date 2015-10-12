@@ -19,10 +19,10 @@ FM::FM(Operator* a,
        Operator* d,
        index_t alg)
 {
-    operators_[A] = a;
-    operators_[B] = b;
-    operators_[C] = c;
-    operators_[D] = d;
+    _operators[A] = a;
+    _operators[B] = b;
+    _operators[C] = c;
+    _operators[D] = d;
     
     setAlgorithm(alg);
 }
@@ -32,9 +32,9 @@ void FM::setAlgorithm(unsigned short alg)
     if (alg > 11)
     { throw std::invalid_argument("Algorithm number must be between 0 and 11!"); }
     
-    alg_ = alg;
+    _alg = alg;
     
-    switch (alg_)
+    switch (_alg)
     {
         case 0:
         case 1:
@@ -42,10 +42,10 @@ void FM::setAlgorithm(unsigned short alg)
         case 3:
         case 6:
         {
-            operators_[A]->setMode(Operator::Mode::FM);
-            operators_[B]->setMode(Operator::Mode::FM);
-            operators_[C]->setMode(Operator::Mode::FM);
-            operators_[D]->setMode(Operator::Mode::ADDITIVE);
+            _operators[A]->setMode(Operator::Mode::FM);
+            _operators[B]->setMode(Operator::Mode::FM);
+            _operators[C]->setMode(Operator::Mode::FM);
+            _operators[D]->setMode(Operator::Mode::ADDITIVE);
             
             break;
         }
@@ -54,10 +54,10 @@ void FM::setAlgorithm(unsigned short alg)
         case 5:
         case 7:
         {
-            operators_[A]->setMode(Operator::Mode::FM);
-            operators_[B]->setMode(Operator::Mode::FM);
-            operators_[C]->setMode(Operator::Mode::ADDITIVE);
-            operators_[D]->setMode(Operator::Mode::ADDITIVE);
+            _operators[A]->setMode(Operator::Mode::FM);
+            _operators[B]->setMode(Operator::Mode::FM);
+            _operators[C]->setMode(Operator::Mode::ADDITIVE);
+            _operators[D]->setMode(Operator::Mode::ADDITIVE);
             
             break;
         }
@@ -66,20 +66,20 @@ void FM::setAlgorithm(unsigned short alg)
         case 9:
         case 10:
         {
-            operators_[A]->setMode(Operator::Mode::FM);
-            operators_[B]->setMode(Operator::Mode::ADDITIVE);
-            operators_[C]->setMode(Operator::Mode::ADDITIVE);
-            operators_[D]->setMode(Operator::Mode::ADDITIVE);
+            _operators[A]->setMode(Operator::Mode::FM);
+            _operators[B]->setMode(Operator::Mode::ADDITIVE);
+            _operators[C]->setMode(Operator::Mode::ADDITIVE);
+            _operators[D]->setMode(Operator::Mode::ADDITIVE);
             
             break;
         }
             
         case 11:
         {
-            operators_[A]->setMode(Operator::Mode::ADDITIVE);
-            operators_[B]->setMode(Operator::Mode::ADDITIVE);
-            operators_[C]->setMode(Operator::Mode::ADDITIVE);
-            operators_[D]->setMode(Operator::Mode::ADDITIVE);
+            _operators[A]->setMode(Operator::Mode::ADDITIVE);
+            _operators[B]->setMode(Operator::Mode::ADDITIVE);
+            _operators[C]->setMode(Operator::Mode::ADDITIVE);
+            _operators[D]->setMode(Operator::Mode::ADDITIVE);
             
             break;
         }
@@ -88,83 +88,83 @@ void FM::setAlgorithm(unsigned short alg)
 
 unsigned short FM::getAlgorithm() const
 {
-    return alg_;
+    return _alg;
 }
 
-double FM::tickIfActive_(index_t index)
+double FM::_tickIfActive(index_t index)
 {
-    return (operators_[index]->isActive()) ? operators_[index]->tick() : 0;
+    return (_operators[index]->isActive()) ? _operators[index]->tick() : 0;
 }
 
-double FM::modulate_(index_t carrier, double value)
+double FM::_modulate(index_t carrier, double value)
 {
-    if (! operators_[carrier]->isActive()) return 0;
+    if (! _operators[carrier]->isActive()) return 0;
     
-    operators_[carrier]->modulateFrequency(value);
+    _operators[carrier]->modulateFrequency(value);
     
-    return operators_[carrier]->tick();
+    return _operators[carrier]->tick();
 }
 
-double FM::add_(index_t carrier, double value)
+double FM::_add(index_t carrier, double value)
 {
-    if (! operators_[carrier]->isActive()) return 0;
+    if (! _operators[carrier]->isActive()) return 0;
     
-    return operators_[carrier]->tick() + value;
+    return _operators[carrier]->tick() + value;
 }
 
 double FM::tick()
 {
-    const double aTick = tickIfActive_(A);
+    const double aTick = _tickIfActive(A);
     
-    switch (alg_)
+    switch (_alg)
     {
         case 0:
-            return modulate_(D, modulate_(C, modulate_(B, aTick)));
+            return _modulate(D, _modulate(C, _modulate(B, aTick)));
             
         case 1:
-            return modulate_(D, modulate_(C, add_(B, aTick)));
+            return _modulate(D, _modulate(C, _add(B, aTick)));
             
         case 2:
-            return modulate_(D, add_(C, modulate_(B, aTick)));
+            return _modulate(D, _add(C, _modulate(B, aTick)));
             
         case 3:
-            return modulate_(D, modulate_(B, aTick) + modulate_(C, aTick));
+            return _modulate(D, _modulate(B, aTick) + _modulate(C, aTick));
             
         case 4:
         {
-            double temp = modulate_(B, aTick);
+            double temp = _modulate(B, aTick);
             
-            return modulate_(D, temp) + modulate_(C, temp);
+            return _modulate(D, temp) + _modulate(C, temp);
         }
             
         case 5:
-            return add_(D, modulate_(C, modulate_(B, aTick)));
+            return _add(D, _modulate(C, _modulate(B, aTick)));
             
         case 6:
         {
-            double bTick = tickIfActive_(B);
+            double bTick = _tickIfActive(B);
             
-            return modulate_(D, add_(C, aTick + bTick));
+            return _modulate(D, _add(C, aTick + bTick));
         }
             
         case 7:
         {
-            double bTick = tickIfActive_(B);
+            double bTick = _tickIfActive(B);
             
-            return modulate_(C, aTick) + modulate_(D, bTick);
+            return _modulate(C, aTick) + _modulate(D, bTick);
         }
             
         case 8:
-            return modulate_(D, aTick) + modulate_(C, aTick) + modulate_(B, aTick);
+            return _modulate(D, aTick) + _modulate(C, aTick) + _modulate(B, aTick);
             
         case 9:
-            return add_(D, add_(C, modulate_(B, aTick)));
+            return _add(D, _add(C, _modulate(B, aTick)));
             
         case 10:
-            return add_(D, modulate_(C, aTick) + modulate_(B, aTick));
+            return _add(D, _modulate(C, aTick) + _modulate(B, aTick));
             
         case 11:
         default:
-            return add_(D, add_(C, add_(B, aTick)));
+            return _add(D, _add(C, _add(B, aTick)));
     }
 }

@@ -15,17 +15,17 @@
 #include <stdexcept>
 
 Unit::Unit(index_t numDocks)
-: mods_(new ModDock [numDocks]),
-  numDocks_(numDocks), active_(false)
+: _mods(new ModDock [numDocks]),
+  _numDocks(numDocks), _active(false)
 { }
 
 Unit::Unit(const Unit& other)
-: mods_(new ModDock [other.numDocks_]),
-  active_(other.active_)
+: _mods(new ModDock [other._numDocks]),
+  _active(other._active)
 {
-    for (index_t i = 0; i < other.numDocks_; ++i)
+    for (index_t i = 0; i < other._numDocks; ++i)
     {
-        mods_[i] = other.mods_[i];
+        _mods[i] = other._mods[i];
     }
 }
 
@@ -33,13 +33,13 @@ Unit& Unit::operator=(const Unit& other)
 {
     if (this != &other)
     {
-        active_ = true;
+        _active = true;
         
-        mods_.reset(new ModDock [other.numDocks_]);
+        _mods.reset(new ModDock [other._numDocks]);
         
-        for (index_t i = 0; i < other.numDocks_; ++i)
+        for (index_t i = 0; i < other._numDocks; ++i)
         {
-            mods_[i] = other.mods_[i];
+            _mods[i] = other._mods[i];
         }
     }
     
@@ -50,14 +50,14 @@ Unit::~Unit() { }
 
 Unit::index_t Unit::numDocks() const
 {
-    return numDocks_;
+    return _numDocks;
 }
 
 void Unit::setModUnitDepth(index_t dockNum,
                            index_t modNum,
                            double depth)
 {
-    if (dockNum >= numDocks_)
+    if (dockNum >= _numDocks)
     {
         throw std::invalid_argument("Dock index out of range!");
     }
@@ -67,12 +67,12 @@ void Unit::setModUnitDepth(index_t dockNum,
         throw std::invalid_argument("Depth value must be between -1 and 1!");
     }
     
-    mods_[dockNum].setDepth(modNum, depth);
+    _mods[dockNum].setDepth(modNum, depth);
 }
 
 double Unit::getModUnitDepth(index_t dockNum, index_t modNum) const
 {
-    return mods_[dockNum].getDepth(modNum);
+    return _mods[dockNum].getDepth(modNum);
 }
 
 void Unit::attachMod(index_t dockNum,
@@ -83,95 +83,95 @@ void Unit::attachMod(index_t dockNum,
         throw std::invalid_argument("Unit cannot modulate itself!");
     }
     
-    if (dockNum >= numDocks_)
+    if (dockNum >= _numDocks)
     {
         throw std::invalid_argument("Dock index out of range!");
     }
     
-    mods_[dockNum].attach(mod);
+    _mods[dockNum].attach(mod);
 }
 
 void Unit::detachMod(index_t dockNum,
                      index_t modNum)
 {
-    if (dockNum >= numDocks_)
+    if (dockNum >= _numDocks)
     {
         throw std::invalid_argument("Dock index out of range!");
     }
     
-    mods_[dockNum].detach(modNum);
+    _mods[dockNum].detach(modNum);
 }
 
 bool Unit::dockInUse(index_t dockNum) const
 {
-    return mods_[dockNum].inUse();
+    return _mods[dockNum].inUse();
 }
 
 void Unit::setSidechain(index_t dockNum, index_t master, index_t slave)
 {
-    if (dockNum >= numDocks_)
+    if (dockNum >= _numDocks)
     {
         throw std::invalid_argument("Dock index out of range!");
     }
     
-    mods_[dockNum].setSidechain(master, slave);
+    _mods[dockNum].setSidechain(master, slave);
 }
 
 void Unit::unSidechain(index_t dockNum, index_t master, index_t slave)
 {
-    if (dockNum >= numDocks_)
+    if (dockNum >= _numDocks)
     { throw std::invalid_argument("Dock index out of range!"); }
     
-    mods_[dockNum].unSidechain(master, slave);
+    _mods[dockNum].unSidechain(master, slave);
 }
 
 bool Unit::isSidechain(index_t dockNum, index_t master, index_t slave) const
 {
-    if (dockNum >= numDocks_)
+    if (dockNum >= _numDocks)
     {
         throw std::invalid_argument("Dock index out of range!");
     }
     
-    return mods_[dockNum].isSidechain(master,slave);
+    return _mods[dockNum].isSidechain(master,slave);
 }
 
 bool Unit::isMaster(index_t dockNum, index_t index) const
 {
-    if (dockNum >= numDocks_)
+    if (dockNum >= _numDocks)
     {
         throw std::invalid_argument("Dock index out of range!");
     }
     
-    return mods_[dockNum].isMaster(index);
+    return _mods[dockNum].isMaster(index);
 }
 
 bool Unit::isSlave(index_t dockNum, index_t index) const
 {
-    if (dockNum >= numDocks_)
+    if (dockNum >= _numDocks)
     {
         throw std::invalid_argument("Dock index out of range!");
     }
     
-    return mods_[dockNum].isSlave(index);
+    return _mods[dockNum].isSlave(index);
 }
 
 unsigned long Unit::dockSize(index_t dockNum) const
 {
-    return mods_[dockNum].size();
+    return _mods[dockNum].size();
 }
 
 void Unit::setActive(bool state)
 {
-    active_ = state;
+    _active = state;
 }
 
 bool Unit::isActive() const
 {
-    return active_;
+    return _active;
 }
 
 EffectUnit::EffectUnit(unsigned short numDocks, double dryWet)
-: dw_(dryWet), Unit(numDocks)
+: _dw(dryWet), Unit(numDocks)
 { }
 
 void EffectUnit::setDryWet(double dw)
@@ -181,26 +181,26 @@ void EffectUnit::setDryWet(double dw)
         throw std::invalid_argument("Dry/wet level must be between 0 and 1!");
     }
     
-    dw_ = dw;
+    _dw = dw;
 }
 
 double EffectUnit::getDryWet() const
 {
-    return dw_;
+    return _dw;
 }
 
-double EffectUnit::dryWet_(double originalSample, double processedSample)
+double EffectUnit::_dryWet(double originalSample, double processedSample)
 {
-    return (originalSample * (1 - dw_)) + (processedSample * dw_);
+    return (originalSample * (1 - _dw)) + (processedSample * _dw);
 }
 
-double EffectUnit::dryWet_(double originalSample, double processedSample, double dryWet)
+double EffectUnit::_dryWet(double originalSample, double processedSample, double dryWet)
 {
     return (originalSample * (1 - dryWet)) + (processedSample * dryWet);
 }
 
 GenUnit::GenUnit(unsigned short numDocks, double amp)
-: Unit(numDocks), amp_(amp)
+: Unit(numDocks), _amp(amp)
 { }
 
 void GenUnit::setAmp(double amp)
@@ -210,16 +210,16 @@ void GenUnit::setAmp(double amp)
         throw std::invalid_argument("Amplitude must be between 0 and 1!");
     }
     
-    amp_ = amp;
+    _amp = amp;
 }
 
 double GenUnit::getAmp() const
 {
-    return amp_;
+    return _amp;
 }
 
 ModUnit::ModUnit(unsigned short numDocks, double amp)
-: Unit(numDocks), amp_(amp)
+: Unit(numDocks), _amp(amp)
 { }
 
 void ModUnit::setAmp(double amp)
@@ -229,10 +229,10 @@ void ModUnit::setAmp(double amp)
         throw std::invalid_argument("Amplitude must be between 0 and 1!");
     }
     
-    amp_ = amp;
+    _amp = amp;
 }
 
 double ModUnit::getAmp() const
 {
-    return amp_;
+    return _amp;
 }

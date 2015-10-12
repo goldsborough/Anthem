@@ -28,21 +28,21 @@ CrossfadeUnit::CrossfadeUnit(unsigned short type,
 }
 
 CrossfadeUnit::CrossfadeUnit(const CrossfadeUnit& other)
-: type_(other.type_), scalingEnabled_(other.scalingEnabled_),
-  index_(other.index_), table_(other.table_)
+: _type(other._type), _scalingEnabled(other._scalingEnabled),
+  _index(other._index), _table(other._table)
 { }
 
 CrossfadeUnit& CrossfadeUnit::operator=(const CrossfadeUnit &other)
 {
     if (this != &other)
     {
-        type_ = other.type_;
+        _type = other._type;
         
-        scalingEnabled_ = other.scalingEnabled_;
+        _scalingEnabled = other._scalingEnabled;
         
-        index_ = other.index_;
+        _index = other._index;
         
-        table_ = other.table_;
+        _table = other._table;
     }
     
     return *this;
@@ -58,19 +58,19 @@ void CrossfadeUnit::setType(unsigned short type)
                                      use enableScaling() and a non-scaled type.");
     }
     
-    type_ = type;
+    _type = type;
     
     // Unscaled types are 0,1,2 and scaled
     // types are 3,4 so + 2 is the scaled
     // variant of an unscaled type
-    if (scalingEnabled_) type += 2;
+    if (_scalingEnabled) type += 2;
     
-    table_ = pantableDatabase[type];
+    _table = pantableDatabase[type];
 }
 
 unsigned short CrossfadeUnit::getType() const
 {
-    return type_;
+    return _type;
 }
 
 void CrossfadeUnit::setValue(double value)
@@ -78,44 +78,44 @@ void CrossfadeUnit::setValue(double value)
     if (value < -100 || value > 100)
         throw std::invalid_argument("Crossfade value must be between -100 and 100");
     
-    index_ = value + 100;
+    _index = value + 100;
     
-    curr_ = table_->interpolate(index_);
+    _curr = _table->interpolate(_index);
 }
 
 double CrossfadeUnit::getValue() const
 {
     // From index to value
-    return index_ - 100;
+    return _index - 100;
 }
 
 void CrossfadeUnit::enableScaling(bool scalingEnabled)
 {
     // Nothing to do if same state
-    if (scalingEnabled_ == scalingEnabled) return;
+    if (_scalingEnabled == scalingEnabled) return;
     
     // Unscaled types are 0,1,2 and scaled
     // types are 3,4 so + 2 is the scaled
-    // variant type_ and to get the unscaled
-    // type we just use type_
-    table_ = (scalingEnabled) ? pantableDatabase[type_] : pantableDatabase[type_ + 2];
+    // variant _type and to get the unscaled
+    // type we just use _type
+    _table = (scalingEnabled) ? pantableDatabase[_type] : pantableDatabase[_type + 2];
     
-    scalingEnabled_ = scalingEnabled;
+    _scalingEnabled = scalingEnabled;
 }
 
 bool CrossfadeUnit::scalingEnabled() const
 {
-    return scalingEnabled_;
+    return _scalingEnabled;
 }
 
 double CrossfadeUnit::left() const
 {
-    return curr_.left;
+    return _curr.left;
 }
 
 double CrossfadeUnit::right() const
 {
-    return curr_.right;
+    return _curr.right;
 }
 
 Crossfader::Crossfader(unsigned short type,
@@ -125,27 +125,27 @@ Crossfader::Crossfader(unsigned short type,
                        ModUnit* right)
 
 : CrossfadeUnit(type,scalingEnabled,offset),
-  leftUnit_(left), rightUnit_(right),
+  _leftUnit(left), _rightUnit(right),
   ModUnit(1,1)
 {
     // Initialize ModDocks
-    mods_[VALUE].setHigherBoundary(100);
-    mods_[VALUE].setLowerBoundary(-100);
-    mods_[VALUE].setBaseValue(offset);
+    _mods[VALUE].setHigherBoundary(100);
+    _mods[VALUE].setLowerBoundary(-100);
+    _mods[VALUE].setBaseValue(offset);
 }
 
 void Crossfader::setValue(double value)
 {
     CrossfadeUnit::setValue(value);
     
-    mods_[VALUE].setBaseValue(value);
+    _mods[VALUE].setBaseValue(value);
 }
 
 double Crossfader::getValue() const
 {
-    if (mods_[VALUE].inUse())
+    if (_mods[VALUE].inUse())
     {
-        return mods_[VALUE].getBaseValue();
+        return _mods[VALUE].getBaseValue();
     }
     
     else return CrossfadeUnit::getValue();
@@ -154,37 +154,37 @@ double Crossfader::getValue() const
 double Crossfader::modulate(double sample, double depth, double maximum)
 {
     // Modulate value
-    if (mods_[VALUE].inUse())
+    if (_mods[VALUE].inUse())
     {
-        index_ = mods_[VALUE].tick() + 100;
+        _index = _mods[VALUE].tick() + 100;
     }
     
     // Get left and right ticks (if a ModUnit is available) and fade them appropriately to current
     // crossfading values (left() and right())
-    double left = (leftUnit_) ? leftUnit_->modulate(sample, depth, maximum) * this->left() : 0;
+    double left = (_leftUnit) ? _leftUnit->modulate(sample, depth, maximum) * this->left() : 0;
     
-    double right = (rightUnit_) ? rightUnit_->modulate(sample, depth, maximum) * this->right() : 0;
+    double right = (_rightUnit) ? _rightUnit->modulate(sample, depth, maximum) * this->right() : 0;
     
     // Return the combined value 
-    return (left + right) * amp_;
+    return (left + right) * _amp;
 }
 
 void Crossfader::setLeftUnit(ModUnit* unit)
 {
-    leftUnit_ = unit;
+    _leftUnit = unit;
 }
 
 void Crossfader::setRightUnit(ModUnit* unit)
 {
-    rightUnit_ = unit;
+    _rightUnit = unit;
 }
 
 ModUnit* Crossfader::getLeftUnit() const
 {
-    return leftUnit_;
+    return _leftUnit;
 }
 
 ModUnit* Crossfader::getRightUnit() const
 {
-    return rightUnit_;
+    return _rightUnit;
 }

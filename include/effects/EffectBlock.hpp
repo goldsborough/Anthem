@@ -134,25 +134,25 @@ public:
 private:
     
     /*! Whether or not the EffectBlock is active. */
-    bool active_;
+    bool _active;
     
     /*! The polymorphic pointer to the currently selected EffectUnit. */
-    EffectUnit* curr_;
+    EffectUnit* _curr;
     
     /*! The currently selected EffectType. */
-    unsigned short effectType_;
+    unsigned short _effectType;
     
     /*! Smart pointer to Delay object. */
-    std::unique_ptr<Delay> delay_;
+    std::unique_ptr<Delay> _delay;
     
     /*! Smart pointer to Echo object. */
-    std::unique_ptr<Echo> echo_;
+    std::unique_ptr<Echo> _echo;
     
     /*! Smart pointer to Reverb object. */
-    std::unique_ptr<Reverb> reverb_;
+    std::unique_ptr<Reverb> _reverb;
     
     /*! Smart pointer to Flanger object. */
-    std::unique_ptr<Flanger> flanger_;
+    std::unique_ptr<Flanger> _flanger;
 };
 
 #endif

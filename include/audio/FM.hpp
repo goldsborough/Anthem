@@ -83,19 +83,19 @@ public:
 private:
     
     /*! Returns an Operator's tick if active, else 0. */
-    double tickIfActive_(index_t index);
+    double _tickIfActive(index_t index);
     
     /*! The four Operators used for synthesis. */
-    Operator* operators_ [4];
+    Operator* _operators [4];
     
     /*! Frequency modulates an Operator with a value. */
-    double modulate_(index_t carrier, double value);
+    double _modulate(index_t carrier, double value);
     
     /*! Performs additive synthesis for a carrier Operator and a value. */
-    double add_(index_t carrier, double value);
+    double _add(index_t carrier, double value);
     
     /*! The current algorithm in use.  */
-    index_t alg_;
+    index_t _alg;
     
 };
 

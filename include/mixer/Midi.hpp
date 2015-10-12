@@ -117,18 +117,18 @@ private:
         
         std::string name;
         
-    } port_;
+    } _port;
     
     /*! Callback function for MIDI input. */
-    static void callback_(double timestamp,
+    static void _callback(double timestamp,
                           std::vector<byte_t>*,
                           void* userData);
     
     /*! The pointer to an Anthem object to send note-on/off signals to. */
-    static Anthem* anthem_;
+    static Anthem* _anthem;
     
     /*! The wrapped around midi api object from RtMidi. */
-    RtMidiIn midi_;
+    RtMidiIn _midi;
 };
 
 #endif /* defined(__Anthem__Midi__) */

@@ -20,50 +20,50 @@ EnvelopeSegment::EnvelopeSegment(double startLevel,
                length_t len,
                double rate)
 
-: startLevel_(startLevel),
-  endLevel_(endLevel),
-  rate_(rate),
-  curr_(0),
-  len_(len),
+: _startLevel(startLevel),
+  _endLevel(endLevel),
+  _rate(rate),
+  _curr(0),
+  _len(len),
   GenUnit(3) // three ModDocks
 
 {
-    mods_[RATE].setHigherBoundary(10);
-    mods_[RATE].setLowerBoundary(0);
-    mods_[RATE].setBaseValue(rate);
+    _mods[RATE].setHigherBoundary(10);
+    _mods[RATE].setLowerBoundary(0);
+    _mods[RATE].setBaseValue(rate);
     
-    mods_[START_LEVEL].setHigherBoundary(1);
-    mods_[START_LEVEL].setLowerBoundary(0);
-    mods_[START_LEVEL].setBaseValue(startLevel);
+    _mods[START_LEVEL].setHigherBoundary(1);
+    _mods[START_LEVEL].setLowerBoundary(0);
+    _mods[START_LEVEL].setBaseValue(startLevel);
     
-    mods_[END_LEVEL].setHigherBoundary(1);
-    mods_[END_LEVEL].setLowerBoundary(0);
-    mods_[END_LEVEL].setBaseValue(endLevel);
+    _mods[END_LEVEL].setHigherBoundary(1);
+    _mods[END_LEVEL].setLowerBoundary(0);
+    _mods[END_LEVEL].setBaseValue(endLevel);
     
-    calculateRange_();
-    calculateIncr_();
+    _calculateRange();
+    _calculateIncr();
 }
 
 void EnvelopeSegment::reset()
 {
-    curr_ = 0;
+    _curr = 0;
 }
 
-void EnvelopeSegment::calculateRange_()
+void EnvelopeSegment::_calculateRange()
 {
     // The range between start and end
-    range_ = endLevel_ - startLevel_;
+    _range = _endLevel - _startLevel;
 }
 
-void EnvelopeSegment::calculateIncr_()
+void EnvelopeSegment::_calculateIncr()
 {
-    incr_ = (len_) ? 1.0/len_ : 0;
+    _incr = (_len) ? 1.0/_len : 0;
 }
 
 void EnvelopeSegment::update()
 {
-    // Increment curr_
-    curr_ += incr_;
+    // Increment _curr
+    _curr += _incr;
 }
 
 double EnvelopeSegment::tick()
@@ -72,45 +72,45 @@ double EnvelopeSegment::tick()
     // tick after reaching the end amplitude
     // just return the end amplitude
     
-    if (curr_ >= 1 || ! len_) return endLevel_;
+    if (_curr >= 1 || ! _len) return _endLevel;
     
     // Modulate members
-    // All together so we only call calculateRange_ once
-    if (mods_[RATE].inUse()        ||
-        mods_[START_LEVEL].inUse() ||
-        mods_[END_LEVEL].inUse())
+    // All together so we only call _calculateRange once
+    if (_mods[RATE].inUse()        ||
+        _mods[START_LEVEL].inUse() ||
+        _mods[END_LEVEL].inUse())
     {
-        if (mods_[RATE].inUse())
+        if (_mods[RATE].inUse())
         {
-            rate_ = mods_[RATE].tick();
+            _rate = _mods[RATE].tick();
         }
         
-        if (mods_[START_LEVEL].inUse())
+        if (_mods[START_LEVEL].inUse())
         {
-            startLevel_ = mods_[START_LEVEL].tick();
+            _startLevel = _mods[START_LEVEL].tick();
         }
         
-        if (mods_[END_LEVEL].inUse())
+        if (_mods[END_LEVEL].inUse())
         {
-            endLevel_ = mods_[END_LEVEL].tick();
+            _endLevel = _mods[END_LEVEL].tick();
         }
         
-        calculateRange_();
+        _calculateRange();
     }
     
-    return range_ * std::pow(curr_, rate_) + startLevel_;
+    return _range * std::pow(_curr, _rate) + _startLevel;
 }
 
 void EnvelopeSegment::setLength(EnvelopeSegment::length_t sampleLength)
 {
-    len_ = sampleLength;
+    _len = sampleLength;
     
-    calculateIncr_();
+    _calculateIncr();
 }
 
 EnvelopeSegment::length_t EnvelopeSegment::getLength() const
 {
-    return len_;
+    return _len;
 }
 
 void EnvelopeSegment::setStartLevel(double lv)
@@ -118,21 +118,21 @@ void EnvelopeSegment::setStartLevel(double lv)
     if (lv > 1 || lv < 0)
     { throw std::invalid_argument("Level must be between 0 and 1"); }
     
-    startLevel_ = lv;
+    _startLevel = lv;
     
-    mods_[START_LEVEL].setBaseValue(startLevel_);
+    _mods[START_LEVEL].setBaseValue(_startLevel);
     
-    calculateRange_();
+    _calculateRange();
 }
 
 double EnvelopeSegment::getStartLevel() const
 {
-    if (mods_[START_LEVEL].inUse())
+    if (_mods[START_LEVEL].inUse())
     {
-        return mods_[START_LEVEL].getBaseValue();
+        return _mods[START_LEVEL].getBaseValue();
     }
     
-    else return startLevel_;
+    else return _startLevel;
 }
 
 void EnvelopeSegment::setEndLevel(double lv)
@@ -140,21 +140,21 @@ void EnvelopeSegment::setEndLevel(double lv)
     if (lv > 1 || lv < 0)
     { throw std::invalid_argument("Level must be between 0 and 1"); }
     
-    endLevel_ = lv;
+    _endLevel = lv;
     
-    mods_[END_LEVEL].setBaseValue(endLevel_);
+    _mods[END_LEVEL].setBaseValue(_endLevel);
     
-    calculateRange_();
+    _calculateRange();
 }
 
 double EnvelopeSegment::getEndLevel() const
 {
-    if (mods_[END_LEVEL].inUse())
+    if (_mods[END_LEVEL].inUse())
     {
-        return mods_[END_LEVEL].getBaseValue();
+        return _mods[END_LEVEL].getBaseValue();
     }
     
-    else return endLevel_;
+    else return _endLevel;
 }
 
 void EnvelopeSegment::setBothLevels(double lv)
@@ -168,71 +168,71 @@ void EnvelopeSegment::setRate(double rate)
     if (rate > 10 || rate < 0)
     { throw std::invalid_argument("Rate must be between 0 and 10"); }
     
-    rate_ = rate;
+    _rate = rate;
     
-    mods_[RATE].setBaseValue(rate_);
+    _mods[RATE].setBaseValue(_rate);
 }
 
 double EnvelopeSegment::getRate() const
 {
-    if (mods_[RATE].inUse())
+    if (_mods[RATE].inUse())
     {
-        return mods_[RATE].getBaseValue();
+        return _mods[RATE].getBaseValue();
     }
     
-    else return rate_;
+    else return _rate;
 }
 
 EnvelopeSegmentSequence::EnvelopeSegmentSequence(EnvelopeSegmentSequence::segment_t seqLength)
-: segments_(seqLength), currSample_(0), loopCount_(0),
-  loopMax_(0), loopInf_(false), currSegmentNum_(0)
+: _segments(seqLength), _currSample(0), _loopCount(0),
+  _loopMax(0), _loopInf(false), _currSegmentNum(0)
 {
-    loopStart_ = loopEnd_ = segments_.end();
+    _loopStart = _loopEnd = _segments.end();
     
-    currSegment_ = segments_.begin();
+    _currSegment = _segments.begin();
 }
 
 EnvelopeSegmentSequence::EnvelopeSegmentSequence(const EnvelopeSegmentSequence& other)
-: segments_(other.segments_), currSample_(other.currSample_),
-  currSegmentNum_(other.currSegmentNum_), loopCount_(other.loopCount_),
-  loopMax_(other.loopMax_), loopInf_(other.loopInf_)
+: _segments(other._segments), _currSample(other._currSample),
+  _currSegmentNum(other._currSegmentNum), _loopCount(other._loopCount),
+  _loopMax(other._loopMax), _loopInf(other._loopInf)
 {
-    currSegment_ = segments_.begin() + currSegmentNum_;
+    _currSegment = _segments.begin() + _currSegmentNum;
     
-    std::vector<EnvelopeSegment>::const_iterator itr = other.loopStart_;
+    std::vector<EnvelopeSegment>::const_iterator itr = other._loopStart;
     
-    loopStart_ = segments_.begin() + std::distance(other.segments_.begin(), itr);
+    _loopStart = _segments.begin() + std::distance(other._segments.begin(), itr);
     
-    itr = other.loopEnd_;
+    itr = other._loopEnd;
     
-    loopEnd_ = segments_.begin() + std::distance(other.segments_.begin(), itr);
+    _loopEnd = _segments.begin() + std::distance(other._segments.begin(), itr);
 }
 
 EnvelopeSegmentSequence& EnvelopeSegmentSequence::operator= (const EnvelopeSegmentSequence& other)
 {
     if (this != &other)
     {
-        segments_ = other.segments_;
+        _segments = other._segments;
         
-        currSample_ = other.currSample_;
+        _currSample = other._currSample;
         
-        currSegmentNum_ = other.currSegmentNum_;
+        _currSegmentNum = other._currSegmentNum;
         
-        loopCount_ = other.loopCount_;
+        _loopCount = other._loopCount;
         
-        loopMax_ = other.loopMax_;
+        _loopMax = other._loopMax;
         
-        loopInf_ = other.loopInf_;
+        _loopInf = other._loopInf;
         
-        currSegment_ = segments_.begin() + currSegmentNum_;
+        _currSegment = _segments.begin() + _currSegmentNum;
         
-        std::vector<EnvelopeSegment>::const_iterator itr = other.loopStart_;
+        std::vector<EnvelopeSegment>::const_iterator itr = other._loopStart;
         
-        loopStart_ = segments_.begin() + std::distance(other.segments_.begin(), itr);
+        _loopStart = _segments.begin() + std::distance(other._segments.begin(), itr);
         
-        itr = other.loopEnd_;
+        itr = other._loopEnd;
         
-        loopEnd_ = segments_.begin() + std::distance(other.segments_.begin(), itr);
+        _loopEnd = _segments.begin() + std::distance(other._segments.begin(), itr);
     }
     
     return *this;
@@ -240,46 +240,46 @@ EnvelopeSegmentSequence& EnvelopeSegmentSequence::operator= (const EnvelopeSegme
 
 void EnvelopeSegmentSequence::reset()
 {
-    for(segmentItr itr = segments_.begin(), end = segments_.end();
+    for(segmentItr itr = _segments.begin(), end = _segments.end();
         itr != end;
         ++itr)
     {
         itr->reset();
     }
     
-    changeSegment_(segments_.begin());
+    _changeSegment(_segments.begin());
 }
 
 void EnvelopeSegmentSequence::setSegmentRate(segment_t segment, double rate)
 {
-    segments_[segment].setRate(rate);
+    _segments[segment].setRate(rate);
 }
 
 double EnvelopeSegmentSequence::getSegmentRate(segment_t segment) const
 {
-    return segments_[segment].getRate();
+    return _segments[segment].getRate();
 }
 
 
 void EnvelopeSegmentSequence::setSegmentStartLevel(segment_t segment, double lv)
 {
-    segments_[segment].setStartLevel(lv);
+    _segments[segment].setStartLevel(lv);
 }
 
 double EnvelopeSegmentSequence::getSegmentStartLevel(segment_t segment) const
 {
-    return segments_[segment].getStartLevel();
+    return _segments[segment].getStartLevel();
 }
 
 
 void EnvelopeSegmentSequence::setSegmentEndLevel(segment_t segment, double lv)
 {
-    segments_[segment].setEndLevel(lv);
+    _segments[segment].setEndLevel(lv);
 }
 
 double EnvelopeSegmentSequence::getSegmentEndLevel(segment_t segment) const
 {
-    return segments_[segment].getEndLevel();
+    return _segments[segment].getEndLevel();
 }
 
 void EnvelopeSegmentSequence::setSegmentBothLevels(segment_t segment, double lv)
@@ -291,25 +291,25 @@ void EnvelopeSegmentSequence::setSegmentBothLevels(segment_t segment, double lv)
 
 void EnvelopeSegmentSequence::setLinkedLevel(segment_t segment, double lv)
 {
-    segments_[segment].setEndLevel(lv);
+    _segments[segment].setEndLevel(lv);
     
     // Set starting level of adjacent segment (unless
     // this is the last segment)
-    if (segment < segments_.size() - 1)
+    if (segment < _segments.size() - 1)
     {
-        segments_[segment + 1].setStartLevel(lv);
+        _segments[segment + 1].setStartLevel(lv);
     }
 }
 
 
 void EnvelopeSegmentSequence::setLoopStart(EnvelopeSegmentSequence::segment_t segment)
 {
-    loopStart_ = segments_.begin() + segment;
+    _loopStart = _segments.begin() + segment;
 }
 
 EnvelopeSegmentSequence::segment_t EnvelopeSegmentSequence::getLoopStart() const
 {
-    return loopStart_ - segments_.begin();
+    return _loopStart - _segments.begin();
 }
 
 
@@ -317,95 +317,95 @@ void EnvelopeSegmentSequence::setLoopEnd(EnvelopeSegmentSequence::segment_t segm
 {
     // Plus one because the end points to one after
     // the loop end segment
-    loopEnd_ = segments_.begin() + segment + 1;
+    _loopEnd = _segments.begin() + segment + 1;
 }
 
 EnvelopeSegmentSequence::segment_t EnvelopeSegmentSequence::getLoopEnd() const
 {
-    return loopEnd_ - segments_.begin();
+    return _loopEnd - _segments.begin();
 }
 
 
 void EnvelopeSegmentSequence::setLoopMax(unsigned short n)
 {
-    if (n > 64) loopInf_ = true;
+    if (n > 64) _loopInf = true;
     else
     {
-        loopInf_ = false;
-        loopMax_ = n;
+        _loopInf = false;
+        _loopMax = n;
     }
 }
 
 unsigned short EnvelopeSegmentSequence::getLoopMax() const
 {
-    return loopMax_;
+    return _loopMax;
 }
 
 
 void EnvelopeSegmentSequence::setLoopInf(bool state)
 {
-    loopInf_ = state;
+    _loopInf = state;
 }
 
 bool EnvelopeSegmentSequence::loopInf() const
 {
-    return loopInf_;
+    return _loopInf;
 }
 
 
 std::vector<EnvelopeSegment>::size_type EnvelopeSegmentSequence::size() const
 {
-    return segments_.size();
+    return _segments.size();
 }
 
-void EnvelopeSegmentSequence::changeSegment_(EnvelopeSegmentSequence::segmentItr segment)
+void EnvelopeSegmentSequence::_changeSegment(EnvelopeSegmentSequence::segmentItr segment)
 {
-    currSegmentNum_ = std::distance(segments_.begin(), segment);
+    _currSegmentNum = std::distance(_segments.begin(), segment);
     
-    currSample_ = 0;
+    _currSample = 0;
 }
 
-void EnvelopeSegmentSequence::resetLoop_()
+void EnvelopeSegmentSequence::_resetLoop()
 {
     // reset all the loop segments
-    for (segmentItr itr = loopStart_; itr != loopEnd_; ++itr)
+    for (segmentItr itr = _loopStart; itr != _loopEnd; ++itr)
     { itr->reset(); }
     
     // Set current segment to loop start
-    currSegment_ = loopStart_;
+    _currSegment = _loopStart;
     
-    // Change currSegmentNum_ and reset currSample
-    changeSegment_(loopStart_);
+    // Change _currSegmentNum and reset currSample
+    _changeSegment(_loopStart);
     
-    ++loopCount_;
+    ++_loopCount;
 }
 
 void EnvelopeSegmentSequence::update()
 {
-    currSample_++;
-    currSegment_->update();
+    _currSample++;
+    _currSegment->update();
 }
 
 double EnvelopeSegmentSequence::tick()
 {
-    if (currSample_ >= currSegment_->getLength())
+    if (_currSample >= _currSegment->getLength())
     {
         // Increment segment
-        currSegment_++;
+        _currSegment++;
         
         // Check if we need to reset the loop
-        if (currSegment_ == loopEnd_ && (loopInf_ || loopCount_ < loopMax_))
-        { resetLoop_(); }
+        if (_currSegment == _loopEnd && (_loopInf || _loopCount < _loopMax))
+        { _resetLoop(); }
         
         // If we've reached the end, go back to last segment
         // which will continue to tick its end amplitude value
-        else if (currSegment_ == segments_.end()) currSegment_--;
+        else if (_currSegment == _segments.end()) _currSegment--;
         
         // else change
-        else changeSegment_(currSegment_);
+        else _changeSegment(_currSegment);
     }
 
-    return currSegment_->tick();
+    return _currSegment->tick();
 }
 
 ModEnvelopeSegmentSequence::ModEnvelopeSegmentSequence(segment_t numSegments,
@@ -417,10 +417,10 @@ ModEnvelopeSegmentSequence::ModEnvelopeSegmentSequence(segment_t numSegments,
 
 std::vector<ModDock*>::size_type ModEnvelopeSegmentSequence::numDocks_Segment(segment_t segmentNum) const
 {
-    if (segmentNum >= segments_.size())
+    if (segmentNum >= _segments.size())
     { throw std::invalid_argument("segment index out of range!"); }
     
-    return segments_[segmentNum].numDocks();
+    return _segments[segmentNum].numDocks();
 }
 
 void ModEnvelopeSegmentSequence::setModUnitDepth_Segment(segment_t segmentNum,
@@ -428,101 +428,101 @@ void ModEnvelopeSegmentSequence::setModUnitDepth_Segment(segment_t segmentNum,
                                        index_t modNum,
                                        double depth)
 {
-    if (segmentNum >= segments_.size())
+    if (segmentNum >= _segments.size())
     { throw std::invalid_argument("segment index out of range!"); }
     
-    segments_[segmentNum].setModUnitDepth(dockNum,modNum, depth);
+    _segments[segmentNum].setModUnitDepth(dockNum,modNum, depth);
 }
 
 double ModEnvelopeSegmentSequence::getModUnitDepth_Segment(segment_t segmentNum, index_t dockNum, index_t modNum) const
 {
-    if (segmentNum >= segments_.size())
+    if (segmentNum >= _segments.size())
     { throw std::invalid_argument("segment index out of range!"); }
     
-    return segments_[segmentNum].getModUnitDepth(dockNum, modNum);
+    return _segments[segmentNum].getModUnitDepth(dockNum, modNum);
 }
 
 void ModEnvelopeSegmentSequence::attachMod_Segment(segment_t segmentNum,
                                  index_t dockNum,
                                  ModUnit *mod)
 {
-    if (segmentNum >= segments_.size())
+    if (segmentNum >= _segments.size())
     { throw std::invalid_argument("segment index out of range!"); }
     
-    segments_[segmentNum].attachMod(dockNum, mod);
+    _segments[segmentNum].attachMod(dockNum, mod);
 }
 
 void ModEnvelopeSegmentSequence::detachMod_Segment(segment_t segmentNum,
                                  index_t dockNum,
                                  index_t modNum)
 {
-    if (segmentNum >= segments_.size())
+    if (segmentNum >= _segments.size())
     { throw std::invalid_argument("segment index out of range!"); }
 
-    segments_[segmentNum].detachMod(dockNum, modNum);
+    _segments[segmentNum].detachMod(dockNum, modNum);
 }
 
 bool ModEnvelopeSegmentSequence::dockInUse_Segment(segment_t segmentNum, index_t dockNum) const
 {
-    return segments_[segmentNum].dockInUse(dockNum);
+    return _segments[segmentNum].dockInUse(dockNum);
 }
 
 void ModEnvelopeSegmentSequence::setSidechain_Segment(segment_t segmentNum, index_t dockNum, index_t master, index_t slave)
 {
-    if (segmentNum >= segments_.size())
+    if (segmentNum >= _segments.size())
     { throw std::invalid_argument("segment index out of range!"); }
     
-    segments_[segmentNum].setSidechain(dockNum, master, slave);
+    _segments[segmentNum].setSidechain(dockNum, master, slave);
 }
 
 void ModEnvelopeSegmentSequence::unSidechain_Segment(segment_t segmentNum, index_t dockNum, index_t master, index_t slave)
 {
-    if (segmentNum >= segments_.size())
+    if (segmentNum >= _segments.size())
     { throw std::invalid_argument("segment index out of range!"); }
     
-    segments_[segmentNum].unSidechain(dockNum, master, slave);
+    _segments[segmentNum].unSidechain(dockNum, master, slave);
 }
 
 bool ModEnvelopeSegmentSequence::isSidechain_Segment(segment_t segmentNum, index_t dockNum, index_t master, index_t slave) const
 {
-    if (segmentNum >= segments_.size())
+    if (segmentNum >= _segments.size())
     { throw std::invalid_argument("segment index out of range!"); }
     
-    return segments_[segmentNum].isSidechain(dockNum, master, slave);
+    return _segments[segmentNum].isSidechain(dockNum, master, slave);
 }
 
 bool ModEnvelopeSegmentSequence::isMaster_Segment(segment_t segmentNum, index_t dockNum, index_t index) const
 {
-    if (segmentNum >= segments_.size())
+    if (segmentNum >= _segments.size())
     { throw std::invalid_argument("segment index out of range!"); }
     
-    return segments_[segmentNum].isMaster(dockNum, index);
+    return _segments[segmentNum].isMaster(dockNum, index);
 }
 
 bool ModEnvelopeSegmentSequence::isSlave_Segment(segment_t segmentNum, index_t dockNum, index_t index) const
 {
-    if (segmentNum >= segments_.size())
+    if (segmentNum >= _segments.size())
     { throw std::invalid_argument("segment index out of range!"); }
     
-    return segments_[segmentNum].isSlave(dockNum, index);
+    return _segments[segmentNum].isSlave(dockNum, index);
 }
 
 unsigned long ModEnvelopeSegmentSequence::dockSize_Segment(segment_t segmentNum, index_t dockNum) const
 {
-    if (segmentNum >= segments_.size())
+    if (segmentNum >= _segments.size())
     { throw std::invalid_argument("segment index out of range!"); }
     
-    return segments_[segmentNum].dockSize(dockNum);
+    return _segments[segmentNum].dockSize(dockNum);
 }
 
 void ModEnvelopeSegmentSequence::setSegmentModDockBaseValue(segment_t segmentNum, index_t dockNum, double value)
 {
-    segments_[segmentNum].mods_[dockNum].setBaseValue(value);
+    _segments[segmentNum]._mods[dockNum].setBaseValue(value);
 }
 
 double ModEnvelopeSegmentSequence::getSegmentModDockBaseValue(segment_t segmentNum, index_t dockNum) const
 {
-    return segments_[segmentNum].mods_[dockNum].getBaseValue();
+    return _segments[segmentNum]._mods[dockNum].getBaseValue();
 }
 
 ModEnvelopeSegmentSequenceFlexible::ModEnvelopeSegmentSequenceFlexible(segment_t numSegments,
@@ -533,10 +533,10 @@ ModEnvelopeSegmentSequenceFlexible::ModEnvelopeSegmentSequenceFlexible(segment_t
 
 void ModEnvelopeSegmentSequenceFlexible::setSegmentLength(segment_t segment, unsigned long ms)
 {
-    segments_[segment].setLength(ms * (Global::samplerate/1000.0));
+    _segments[segment].setLength(ms * (Global::samplerate/1000.0));
 }
 
 unsigned long ModEnvelopeSegmentSequenceFlexible::getSegmentLength(segment_t segment) const
 {
-    return segments_[segment].getLength();
+    return _segments[segment].getLength();
 }

@@ -77,15 +77,15 @@ private:
     
     friend class AudioOutput;
     
-    Sample tick_();
+    Sample _tick();
     
-    void update_();
+    void _update();
     
-    note_t note_;
+    note_t _note;
     
-    bool active_;
+    bool _active;
     
-    count_t count_;
+    count_t _count;
     
 };
 

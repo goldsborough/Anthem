@@ -170,16 +170,16 @@ public:
 private:
     
     /*! The current master amplitude value */
-    double masterAmp_;
+    double _masterAmp;
     
     /*! Whether or not the mixer is currently recording */
-    bool recording_;
+    bool _recording;
     
     /*! CrossfadeUnit for panning */
-    std::unique_ptr<CrossfadeUnit> pan_;
+    std::unique_ptr<CrossfadeUnit> _pan;
     
     /*! Wavefile object to record */
-    Wavefile wavefile_;
+    Wavefile _wavefile;
 };
 
 #endif /* defined(__Anthem__Mixer__) */

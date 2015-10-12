@@ -19,9 +19,9 @@ Notetable::Notetable()
     
     // 128 MIDI notes. Number hasn't changed in the
     // last 30 years, probably wont't too soon.
-    data_.resize(128);
+    _data.resize(128);
     
-    for (auto& note : data_)
+    for (auto& note : _data)
     {
         file >> note;
     }

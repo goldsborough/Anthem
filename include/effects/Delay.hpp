@@ -189,34 +189,34 @@ protected:
     typedef Buffer::const_iterator const_iterator;
     
     /*! Calculates the _decayValue based on the decay rate, time and delay length*/
-    void calcDecay_();
+    void _calcDecay();
     
     /*! Increments and boundary checks the write pointer */
-    inline void writeAndIncrement_(double sample);
+    inline void _writeAndIncrement(double sample);
     
     /*! Integral part of the read position */
-    int readIntegral_;
+    int _readIntegral;
     
     /*! Fractional part of the read position */
-    double readFractional_;
+    double _readFractional;
     
     /*! The pointer to the write index */
-    iterator write_;
+    iterator _write;
     
     /*! The attenuation value with which to multiply the output */
-    double decayValue_;
+    double _decayValue;
     
     /*! The rate of decay, or fade-out of the delay signal */
-    double decayRate_;
+    double _decayRate;
     
     /*! The total decay time */
-    double decayTime_;
+    double _decayTime;
     
     /*! The value determining how much of the output signal is fed back into the delay line */
-    double feedback_;
+    double _feedback;
     
     /*! The delay line */
-    Buffer buffer_;
+    Buffer _buffer;
 };
 
 /************************************************************************************************//*!

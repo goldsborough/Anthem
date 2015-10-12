@@ -146,22 +146,22 @@ public:
 protected:
     
     /*! Increments the oscillator's index with value. */
-    void increment_(double value);
+    void _increment(double value);
     
     /*! The current frequency */
-    double freq_;
+    double _freq;
     
     /*! The current wavetable index */
-    double index_;
+    double _index;
     
     /*! The wavetable index increment per sample */
-    double incr_;
+    double _incr;
     
     /*! The current phase offset value */
-    double phaseOffset_;
+    double _phaseOffset;
     
     /*! The wavetable member currently in use */
-    std::shared_ptr<Wavetable> wavetable_;
+    std::shared_ptr<Wavetable> _wavetable;
 };
 
 #endif /* defined(__Anthem__Oscillator__) */

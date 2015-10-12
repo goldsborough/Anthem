@@ -153,19 +153,19 @@ public:
 private:
     
     /*! Filter that changes the noise color */
-    std::unique_ptr<Filter> filter_;
+    std::unique_ptr<Filter> _filter;
     
     /*! Current noise color */
-    unsigned short color_;
+    unsigned short _color;
     
     /*! Current random value */
-    double rval_;
+    double _rval;
     
     /*! Mersenne-twister random number generator */
-    std::mt19937 rgen_;
+    std::mt19937 _rgen;
     
     /*! Random number distribution (uniform) */
-    std::uniform_real_distribution<double> dist_;
+    std::uniform_real_distribution<double> _dist;
 };
 
 #endif /* defined(__Anthem__Noise__) */

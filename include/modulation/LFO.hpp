@@ -466,20 +466,20 @@ private:
     };
     
     /*! Vector of above Mod structs */
-    std::vector<LFOSequence_LFO> lfos_;
+    std::vector<LFOSequence_LFO> _lfos;
     
     /*! Calls getScaledModFreqValue() for seg */
-    void setScaledModFreq_(segment_t seg);
+    void _setScaledModFreq(segment_t seg);
     
     /*! Resets the length of all segments according 
         to the sequence's rate parameter */
-    void resizeSegmentsFromRate_(double rate);
+    void _resizeSegmentsFromRate(double rate);
     
     /*! The current rate of the sequence */
-    double rate_;
+    double _rate;
     
     /*! Length of the segments */
-    unsigned long segLen_;
+    unsigned long _segLen;
 };
 
 class Crossfader;
@@ -612,15 +612,15 @@ public:
 private:
     
     /*! The Crossfader that fades between the A and B units */
-    std::unique_ptr<Crossfader> fader_;
+    std::unique_ptr<Crossfader> _fader;
     
     /*! The step sequencer lfos, activated with setMode() and Modes::SEQ_MODE */
-    LFOSequence lfoSequences_ [2];
+    LFOSequence _lfoSequences [2];
     
     /*! The normal lfos, activated with setMode() and Modes::Mode::LFO */
-    LFO lfos_ [2];
+    LFO _lfos [2];
     
-    Mode mode_;
+    Mode _mode;
 };
 
 #endif /* defined(__Anthem__LFO__) */

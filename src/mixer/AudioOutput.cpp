@@ -13,7 +13,7 @@
 #include "Sample.hpp"
 #include "Anthem.hpp"
 
-Anthem* AudioOutput::anthem_ = 0;
+Anthem* AudioOutput::_anthem = 0;
 
 AudioOutput::AudioOutput()
 {
@@ -21,12 +21,12 @@ AudioOutput::AudioOutput()
     {
         if (getNumberOfDevices())
         {
-            id_ = audio_.getDefaultOutputDevice();
+            _id = _audio.getDefaultOutputDevice();
             
-            open(id_);
+            open(_id);
         }
         
-        api_ = audio_.getCurrentApi();
+        _api = _audio.getCurrentApi();
     }
     
     catch(RtAudioError& error)
@@ -34,12 +34,12 @@ AudioOutput::AudioOutput()
         error.printMessage();
     }
     
-    apiName_ = getApiName(api_);
+    _apiName = getApiName(_api);
 }
 
 void AudioOutput::init(Anthem *anthem)
 {
-    anthem_ = anthem;
+    _anthem = anthem;
 }
 
 std::string AudioOutput::getApiName(const RtAudio::Api &api)
@@ -79,7 +79,7 @@ bool AudioOutput::isStreaming()
 {
     try
     {
-        return audio_.isStreamRunning();
+        return _audio.isStreamRunning();
     }
     
     catch(RtAudioError& error)
@@ -94,7 +94,7 @@ bool AudioOutput::isOpen()
 {
     try
     {
-        return audio_.isStreamRunning();
+        return _audio.isStreamRunning();
     }
     
     catch(RtAudioError& error)
@@ -105,7 +105,7 @@ bool AudioOutput::isOpen()
     return false;
 }
 
-int AudioOutput::callback_(void *output,
+int AudioOutput::_callback(void *output,
                            void *input,
                            unsigned int numberOfFrames,
                            double streamTime,
@@ -116,12 +116,12 @@ int AudioOutput::callback_(void *output,
     
     for (unsigned int n = 0; n < numberOfFrames; ++n)
     {
-        Sample sample = anthem_->tick_();
+        Sample sample = _anthem->_tick();
         
         *outputBuffer++ = sample.left;
         *outputBuffer++ = sample.right;
         
-        anthem_->update_();
+        _anthem->_update();
     }
     
     return 0;
@@ -129,7 +129,7 @@ int AudioOutput::callback_(void *output,
 
 std::string AudioOutput::getApi() const
 {
-    return apiName_;
+    return _apiName;
 }
 
 void AudioOutput::open(id_t id, id_t channels, id_t frames)
@@ -140,24 +140,24 @@ void AudioOutput::open(id_t id, id_t channels, id_t frames)
     
     params.deviceId = id;
     
-    audio_.openStream(&params,
+    _audio.openStream(&params,
                       NULL,
                       RTAUDIO_FLOAT64,
                       Global::samplerate,
                       &frames,
-                      &callback_);
+                      &_callback);
     
-    id_ = id;
+    _id = id;
     
-    device_ = getDevice(id_);
+    _device = getDevice(_id);
 }
 
 void AudioOutput::close()
 {
     try
     {
-        audio_.abortStream();
-        audio_.closeStream();
+        _audio.abortStream();
+        _audio.closeStream();
         
     }
     
@@ -171,7 +171,7 @@ void AudioOutput::start()
 {
     try
     {
-        audio_.startStream();
+        _audio.startStream();
     }
     
     catch(RtAudioError& error)
@@ -184,7 +184,7 @@ void AudioOutput::stop()
 {
     try
     {
-        audio_.stopStream();
+        _audio.stopStream();
     }
     
     catch(RtAudioError& error)
@@ -197,7 +197,7 @@ AudioOutput::id_t AudioOutput::getNumberOfDevices()
 {
     try
     {
-        return audio_.getDeviceCount();
+        return _audio.getDeviceCount();
     }
     
     catch(RtAudioError& error)
@@ -212,7 +212,7 @@ AudioOutput::Device AudioOutput::getDevice(id_t id)
 {
     try
     {
-        return audio_.getDeviceInfo(id);
+        return _audio.getDeviceInfo(id);
     }
     
     catch(RtAudioError& error)
@@ -225,10 +225,10 @@ AudioOutput::Device AudioOutput::getDevice(id_t id)
 
 AudioOutput::id_t AudioOutput::getCurrentID() const
 {
-    return id_;
+    return _id;
 }
 
 AudioOutput::Device AudioOutput::getCurrentDevice() const
 {
-    return device_;
+    return _device;
 }

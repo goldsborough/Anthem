@@ -43,7 +43,7 @@ PantableDatabase::PantableDatabase()
             file >> data[i].left >> data[i].right;
         }
         
-        tables_.push_back(std::make_shared<Pantable>(data, tableLength, name));
+        _tables.push_back(std::make_shared<Pantable>(data, tableLength, name));
         
         file.close();
     }
@@ -51,15 +51,15 @@ PantableDatabase::PantableDatabase()
 
 std::shared_ptr<Pantable>& PantableDatabase::operator[] (index_t type)
 {
-    return tables_[type];
+    return _tables[type];
 }
 
 const std::shared_ptr<Pantable>& PantableDatabase::operator[] (index_t type) const
 {
-    return tables_[type];
+    return _tables[type];
 }
 
 PantableDatabase::index_t PantableDatabase::size() const
 {
-    return tables_.size();
+    return _tables.size();
 }

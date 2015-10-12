@@ -69,5 +69,5 @@ public:
 private:
     
     /*! The current value */
-    double value_;
+    double _value;
 };

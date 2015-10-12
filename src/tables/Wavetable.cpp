@@ -30,32 +30,32 @@ Wavetable::Wavetable(MathematicalWaveform waveform,
     switch (waveform)
     {
         case MathematicalWaveform::DIRECT_SAW:
-             mathematicalSaw_();
+             _mathematicalSaw();
              break;
         
         case MathematicalWaveform::DIRECT_SQUARE:
-             mathematicalSquare_();
+             _mathematicalSquare();
              break;
             
         case MathematicalWaveform::DIRECT_TRIANGLE:
-             mathematicalTriangle_();
+             _mathematicalTriangle();
              break;
             
         case MathematicalWaveform::SMOOTH_SAW:
-             smoothSaw_();
+             _smoothSaw();
              break;
             
         case MathematicalWaveform::SMOOTH_RAMP:
-             smoothRamp_();
+             _smoothRamp();
              break;
             
         case MathematicalWaveform::SMOOTH_SQUARE:
-             smoothSquare_();
+             _smoothSquare();
              break;
     }
 }
 
-void Wavetable::smoothSaw_()
+void Wavetable::_smoothSaw()
 {
     // First decrement from 1 to -1 in 9/10 of the cycle,
     // then go back up smoothly the last 1/10 of the cycle
@@ -72,7 +72,7 @@ void Wavetable::smoothSaw_()
     // Increment value for the time (1/10 of time)
     double valueIncrement = 0.1/(Global::wavetableLength * 0.1);
     
-    for (auto& sample : data_)
+    for (auto& sample : _data)
     {
         // The first part is calculated linearly so
         // that the amplitude simply decrements from
@@ -122,10 +122,10 @@ void Wavetable::smoothSaw_()
         }
     }
     
-    data_.push_back(data_.front());
+    _data.push_back(_data.front());
 }
 
-void Wavetable::smoothRamp_()
+void Wavetable::_smoothRamp()
 {
     // First decrement from 1 to -1 in 9/10 of the cycle,
     // then go back up smoothly the last 1/10 of the cycle
@@ -147,7 +147,7 @@ void Wavetable::smoothRamp_()
     // Increment value for the time
     double valueIncrement = 0.1/(Global::wavetableLength * 0.1);
     
-    for (auto& sample : data_)
+    for (auto& sample : _data)
     {
         if (amplitude < 1)
         {
@@ -168,16 +168,16 @@ void Wavetable::smoothRamp_()
         }
     }
     
-    data_.push_back(data_.front());
+    _data.push_back(_data.front());
 }
 
-void Wavetable::smoothSquare_()
+void Wavetable::_smoothSquare()
 {
     double value = 0;
     
     double incr = 1.0 / Global::wavetableLength;
     
-    for (auto& sample : data_)
+    for (auto& sample : _data)
     {
         double val;
         
@@ -205,10 +205,10 @@ void Wavetable::smoothSquare_()
         value += incr;
     }
     
-    data_.push_back(data_.front());
+    _data.push_back(_data.front());
 }
 
-void Wavetable::mathematicalSquare_()
+void Wavetable::_mathematicalSquare()
 {   
     // time for one sample
     double sampleTime = 1.0 / Global::wavetableLength;
@@ -219,17 +219,17 @@ void Wavetable::mathematicalSquare_()
     double value = 0;
     
     // fill the sample buffer
-    for (auto& sample : data_)
+    for (auto& sample : _data)
     {
         sample = (value < mid) ? -1 : 1;
         
         value += sampleTime;
     }
     
-    data_.push_back(data_.front());
+    _data.push_back(_data.front());
 }
 
-void Wavetable::mathematicalSaw_()
+void Wavetable::_mathematicalSaw()
 {
     // how much we must decrement the count
     // by at each iteration
@@ -238,17 +238,17 @@ void Wavetable::mathematicalSaw_()
     
     double value = 1;
     
-    for (auto& sample : data_)
+    for (auto& sample : _data)
     {
         sample = value;
         
         value -= incr;
     }
     
-    data_.push_back(data_.front());
+    _data.push_back(_data.front());
 }
 
-void Wavetable::mathematicalTriangle_()
+void Wavetable::_mathematicalTriangle()
 {
     double value = -1;
     
@@ -260,7 +260,7 @@ void Wavetable::mathematicalTriangle_()
     // Boolean to indicate direction
     bool reachedMid = false;
     
-    for (auto& sample : data_)
+    for (auto& sample : _data)
     {
         sample = value;
         
@@ -274,7 +274,7 @@ void Wavetable::mathematicalTriangle_()
         { reachedMid = !reachedMid; }
     }
     
-    data_.push_back(data_.front());
+    _data.push_back(_data.front());
 }
 
 void WavetableDatabase::init()
@@ -286,17 +286,17 @@ void WavetableDatabase::init()
     
     auto names = textParser.getAllWords();
     
-    tables_.resize(names.size());
+    _tables.resize(names.size());
     
     // Fetch all wavetable names and read their respective data files
     for (index_t i = 0; i < names.size(); ++i)
     {
-        // Read wavetables with i as their id and push them into the tables_ vector.
-        tables_[i] = std::make_shared<Wavetable>(readWavetable_(names[i]), Global::wavetableLength, names[i]);
+        // Read wavetables with i as their id and push them into the _tables vector.
+        _tables[i] = std::make_shared<Wavetable>(_readWavetable(names[i]), Global::wavetableLength, names[i]);
     }
 }
 
-double* WavetableDatabase::readWavetable_(const std::string &name) const
+double* WavetableDatabase::_readWavetable(const std::string &name) const
 {
     std::ifstream file("../../../rsc/wavetables/" + name + ".wavetable");
     
@@ -367,15 +367,15 @@ void WavetableDatabase::writeWavetable(const std::string &name,
 
 WavetableDatabase::index_t WavetableDatabase::size() const
 {
-    return tables_.size();
+    return _tables.size();
 }
 
 std::shared_ptr<Wavetable>& WavetableDatabase::operator[](index_t wavetable)
 {
-    return tables_[wavetable];
+    return _tables[wavetable];
 }
 
 const std::shared_ptr<Wavetable>& WavetableDatabase::operator[](index_t wavetable) const
 {
-    return tables_[wavetable];
+    return _tables[wavetable];
 }

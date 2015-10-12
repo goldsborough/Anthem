@@ -201,28 +201,28 @@ private:
     *
     ****************************************************************************/
     
-    void calcCoefs_();
+    void _calcCoefs();
     
     /*! The filter mode */
-    unsigned short mode_;
+    unsigned short _mode;
     
     /*! The cutoff frequency (frequency at which the filter starts acting) */
-    double cutoff_;
+    double _cutoff;
     
     /*! The Q factor */
-    double q_;
+    double _q;
     
     /*! The overall gain, in decibels */
-    double gain_;
+    double _gain;
     
     /*! The amplitude value obtained from the gain value */
-    double amp_;
+    double _amp;
     
-    /*! The first delay variable for x_{n-1}*/
-    double delayA_;
+    /*! The first delay variable for _x{n-1}*/
+    double _delayA;
     
-    /*! The second delay variable x_{n-2}*/
-    double delayB_;
+    /*! The second delay variable _x{n-2}*/
+    double _delayB;
     
     /*! The first output coefficient */
     double coefA1_;

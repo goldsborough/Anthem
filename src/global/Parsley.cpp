@@ -72,13 +72,13 @@ std::string join(Vec_Itr begin, Vec_Itr end, const std::string& str = " ")
 
 void TextParsley::close()
 {
-    if(closed_) return;
+    if(_closed) return;
     
-    std::ofstream f(fname_);
+    std::ofstream f(_fname);
     
     std::string output;
     
-    for(lineVec::const_iterator line = file_.begin(), lineEnd = file_.end();
+    for(lineVec::const_iterator line = _file.begin(), lineEnd = _file.end();
         line != lineEnd;
         ++line)
     {
@@ -94,40 +94,40 @@ void TextParsley::close()
     
     f << output;
     
-    file_.clear();
+    _file.clear();
     
-    closed_ = true;
+    _closed = true;
 }
 
 void TextParsley::insertInFile(const std::string& str)
 {
-    currLine_ = file_.insert(currLine_, split(str.begin(),str.end()));
+    _currLine = _file.insert(_currLine, split(str.begin(),str.end()));
 }
 
 void TextParsley::appendToFile(const std::string& str)
 {
-    file_.push_back(split(str.begin(), str.end()));
+    _file.push_back(split(str.begin(), str.end()));
     
     toFileEnd();
 }
 
 std::string TextParsley::currLine()
 {
-    return join(currLine_->begin(), currLine_->end());
+    return join(_currLine->begin(), _currLine->end());
 }
 
 void TextParsley::eraseWord()
 {
-    currWord_ = currLine_->erase(currWord_);
+    _currWord = _currLine->erase(_currWord);
     
-    if (currWord_ == currLine_->end()) moveWord(-1);
+    if (_currWord == _currLine->end()) moveWord(-1);
 }
 
 void TextParsley::eraseLine()
 {
-    currLine_ = file_.erase(currLine_);
+    _currLine = _file.erase(_currLine);
     
-    if (currLine_ == file_.end()) moveLine(-1);
+    if (_currLine == _file.end()) moveLine(-1);
 }
 
 void TextParsley::replaceLine(const std::string &str)
@@ -153,7 +153,7 @@ void TextParsley::insertInLine(const std::string& str)
          itr != end;
          ++itr)
     {
-        currWord_ = currLine_->insert(currWord_, *itr);
+        _currWord = _currLine->insert(_currWord, *itr);
     }
 }
 
@@ -169,7 +169,7 @@ void TextParsley::appendToLine(const std::string& str)
          itr != end;
          ++itr)
     {
-        currLine_->push_back(*itr);
+        _currLine->push_back(*itr);
     }
     
     // first new word
@@ -183,9 +183,9 @@ void TextParsley::open(const std::string& fname)
     if (! file.good())
         throw FileOpenError();
     
-    fname_ = fname;
+    _fname = fname;
     
-    currLine_ = file_.begin();
+    _currLine = _file.begin();
     
     if (file.is_open())
     {
@@ -193,11 +193,11 @@ void TextParsley::open(const std::string& fname)
         
         while (getline(file, s))
         {
-            file_.push_back(split(s.begin(), s.end()));
+            _file.push_back(split(s.begin(), s.end()));
         }
         
-        currLine_ = file_.begin();
-        currWord_ = currLine_->begin();
+        _currLine = _file.begin();
+        _currWord = _currLine->begin();
     }
 }
 
@@ -205,7 +205,7 @@ std::vector<std::string> TextParsley::getAllWords()
 {
     wordVec vec;
     
-    for (lineItr line = file_.begin(), fileEnd = file_.end();
+    for (lineItr line = _file.begin(), fileEnd = _file.end();
          line != fileEnd;
          ++line)
     {
@@ -235,7 +235,7 @@ std::vector<std::string> TextParsley::getAllLines()
 {
     wordVec vec;
     
-    for (lineItr line = file_.begin(), fileEnd = file_.end();
+    for (lineItr line = _file.begin(), fileEnd = _file.end();
          line != fileEnd;
          ++line)
     {
@@ -285,20 +285,20 @@ ParsleyNode * Parsley::parse(const std::string& fname)
     s += file.get();
     
     // see if it is an XML header
-    bool hasHeader = isHeader_(s.begin() + 1, s.end() - 1);
+    bool hasHeader = _isHeader(s.begin() + 1, s.end() - 1);
     
     if (!hasHeader) str += s;
     
     while (getline(file,s)) str += s;
     
-    vec = parse_(str.begin(), str.end());
+    vec = _parse(str.begin(), str.end());
     
-    // makeNodeTree_ needs a parent to be passed
+    // _makeNodeTree needs a parent to be passed
     // for the recursion to work, so pass this
     // "pseudo-parent"
     ParsleyNode* pseudo = new ParsleyNode;
     
-    makeNodeTree_(vec.begin(), vec.end(),pseudo);
+    _makeNodeTree(vec.begin(), vec.end(),pseudo);
     
     // the root is then the first child of this pseudo-parent
     ParsleyNode* ret = pseudo->firstChild;
@@ -310,7 +310,7 @@ ParsleyNode * Parsley::parse(const std::string& fname)
     return ret;
 }
 
-bool Parsley::isHeader_(Str_cItr begin, Str_cItr end)
+bool Parsley::_isHeader(Str_cItr begin, Str_cItr end)
 {
     std::string s = condense(begin, end);
     
@@ -318,7 +318,7 @@ bool Parsley::isHeader_(Str_cItr begin, Str_cItr end)
 }
 
 template <class T>
-T Parsley::lastNonSpace_(T begin, T end)
+T Parsley::_lastNonSpace(T begin, T end)
 {
     return (condense(begin, end)).end();
 }
@@ -463,7 +463,7 @@ bool ParsleyNode::removeChild(ParsleyNode* childOfThisNode)
     return true;
 }
 
-Parsley::StrVec Parsley::parse_(Str_cItr begin, Str_cItr end)
+Parsley::StrVec Parsley::_parse(Str_cItr begin, Str_cItr end)
 {
     StrVec vec;
     
@@ -536,7 +536,7 @@ void ParsleyNode::appendChild(ParsleyNode *node)
         firstChild = lastChild;
 }
 
-ParsleyNode::AttrMap Parsley::getAttrs_(Str_cItr begin, Str_cItr end) const
+ParsleyNode::AttrMap Parsley::_getAttrs(Str_cItr begin, Str_cItr end) const
 {
     ParsleyNode::AttrMap attrs;
     
@@ -578,14 +578,14 @@ ParsleyNode::AttrMap Parsley::getAttrs_(Str_cItr begin, Str_cItr end) const
     return attrs;
 }
 
-bool Parsley::isSelfClosing_(Str_cItr begin, Str_cItr end) const
+bool Parsley::_isSelfClosing(Str_cItr begin, Str_cItr end) const
 {
     while (end != begin && isspace(*end--));
     
     return *end == '/';
 }
 
-ParsleyNode * Parsley::makeNode_(Str_cItr begin, Str_cItr end, bool docHead)
+ParsleyNode * Parsley::_makeNode(Str_cItr begin, Str_cItr end, bool docHead)
 {
     Str_cItr i,j;
     
@@ -609,19 +609,19 @@ ParsleyNode * Parsley::makeNode_(Str_cItr begin, Str_cItr end, bool docHead)
     
     curr.erase(0,tag.size());
     
-    ParsleyNode::AttrMap attrs = getAttrs_(curr.begin(), curr.end());
+    ParsleyNode::AttrMap attrs = _getAttrs(curr.begin(), curr.end());
     
     ParsleyNode * node = new ParsleyNode;
     
     node->tag = tag;
     node->attrs = attrs;
     
-    node->selfClosed = isSelfClosing_(curr.begin(), curr.end());
+    node->selfClosed = _isSelfClosing(curr.begin(), curr.end());
     
     return node;
 }
 
-Parsley::StrVec_cItr Parsley::makeNodeTree_(StrVec_cItr itr, StrVec_cItr end, ParsleyNode * parent)
+Parsley::StrVec_cItr Parsley::_makeNodeTree(StrVec_cItr itr, StrVec_cItr end, ParsleyNode * parent)
 {
     if (std::find(itr->begin(), itr->end(), '<') == itr->end())
         parent->data += strip(itr->begin(), itr->end());
@@ -630,7 +630,7 @@ Parsley::StrVec_cItr Parsley::makeNodeTree_(StrVec_cItr itr, StrVec_cItr end, Pa
     {
         ParsleyNode* node;
         
-        node = makeNode_(itr->begin(), itr->end());
+        node = _makeNode(itr->begin(), itr->end());
         
         // check if the node is a closing tag
         bool isClosing = (node->tag.end() - node->tag.begin() > 2 &&
@@ -663,7 +663,7 @@ Parsley::StrVec_cItr Parsley::makeNodeTree_(StrVec_cItr itr, StrVec_cItr end, Pa
             
             while (! node->isClosed)
             {
-                itr = makeNodeTree_(++itr, end, node);
+                itr = _makeNodeTree(++itr, end, node);
                 
                 if (itr == end)
                     throw ParseError("Could not find matching closing tag!");
@@ -674,7 +674,7 @@ Parsley::StrVec_cItr Parsley::makeNodeTree_(StrVec_cItr itr, StrVec_cItr end, Pa
     return itr;
 }
 
-std::string Parsley::nodeToString_(const ParsleyNode *node, std::string indent, bool docHead) const
+std::string Parsley::_nodeToString(const ParsleyNode *node, std::string indent, bool docHead) const
 {
     std::string str;
     
@@ -708,16 +708,16 @@ std::string Parsley::nodeToString_(const ParsleyNode *node, std::string indent, 
     return str;
 }
 
-std::string Parsley::treeToString_(const ParsleyNode * root, std::string& str, std::string indent) const
+std::string Parsley::_treeToString(const ParsleyNode * root, std::string& str, std::string indent) const
 {
     if (root != 0)
     {
-        std::string nodeStr = nodeToString_(root,indent);
+        std::string nodeStr = _nodeToString(root,indent);
         
         str += nodeStr;
         
         if (root->hasChildren())
-            treeToString_(root->firstChild, str,indent + "\t");
+            _treeToString(root->firstChild, str,indent + "\t");
         
         if (! root->selfClosed)
         {
@@ -736,7 +736,7 @@ std::string Parsley::treeToString_(const ParsleyNode * root, std::string& str, s
         }
         
         if (root->parent && !root->isLastChild())
-            treeToString_(root->nextSibling, str,indent);
+            _treeToString(root->nextSibling, str,indent);
     }
     
     return str;
@@ -753,7 +753,7 @@ void Parsley::save(ParsleyNode* node,
     if (addHeader)
     { treeStr = headerStr; }
     
-    treeToString_(node,treeStr);
+    _treeToString(node,treeStr);
     
     std::ofstream outFile(fname);
     

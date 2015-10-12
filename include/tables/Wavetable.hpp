@@ -250,7 +250,7 @@ public:
         }
         
         // fill the wavetable
-        for (auto& sample : data_)
+        for (auto& sample : _data)
         {
             // do additive magic
             for (unsigned short p = 0; p < partials; p++)
@@ -276,7 +276,7 @@ public:
         // requires an adjacent value for
         // the last valid wavetable index,
         // so the first is re-used.
-        data_.push_back(*data_.begin());
+        _data.push_back(*_data.begin());
         
         delete [] phase;
         delete [] increment;
@@ -322,22 +322,22 @@ public:
 private:
     
     /*! Generates a sawavetableooth wave directly/mathematically */
-    void mathematicalSaw_();
+    void _mathematicalSaw();
     
     /*! Generates a square wave directly/mathematically */
-    void mathematicalSquare_();
+    void _mathematicalSquare();
     
     /*! Generates a triangle wave directly/mathematically */
-    void mathematicalTriangle_();
+    void _mathematicalTriangle();
     
     /*! Generates a smoothed sawavetableooth wave directly/mathematically */
-    void smoothSaw_();
+    void _smoothSaw();
     
     /*! Generates a smoothed ramp wave directly/mathematically */
-    void smoothRamp_();
+    void _smoothRamp();
     
     /*! Generates a smoothed square wave directly/mathematically */
-    void smoothSquare_();
+    void _smoothSquare();
 };
 
 /*********************************************************************************************//*!
@@ -442,10 +442,10 @@ private:
     *
     ****************************************************************************/
     
-    double* readWavetable_(const std::string& name) const;
+    double* _readWavetable(const std::string& name) const;
     
     /*! Vector of Wavetable objects */
-    std::vector<std::shared_ptr<Wavetable>> tables_;
+    std::vector<std::shared_ptr<Wavetable>> _tables;
 };
 
 extern WavetableDatabase wavetableDatabase;

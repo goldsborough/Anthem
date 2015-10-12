@@ -300,9 +300,9 @@ private:
     typedef std::vector<ModItem> modVec;
     
     // Not using iterators because they're invalidated when
-    // pushing back/erasing from modItems_ and not using
+    // pushing back/erasing from _modItems and not using
     // pointers to ModItems because then it's difficult
-    // to interact with modItems_
+    // to interact with _modItems
     typedef std::vector<modVec::size_type> indexVec;
     
     typedef indexVec::iterator indexVecItr;
@@ -325,31 +325,31 @@ private:
         /*! For sidechaining */
         double baseDepth;
         
-        /*! Vector of indices of all masters in modItems_*/
+        /*! Vector of indices of all masters in _modItems*/
         indexVec masters;
         
-        /* Vector of indices of slaves of this ModItem in modItems_ */
+        /* Vector of indices of slaves of this ModItem in _modItems */
         indexVec slaves;
     };
     
     /*! Indices of all ModItems that are masters for sidechaining
         and thus don't contribute to the ModDocks modulation value */
-    indexVec masterItems_;
+    indexVec _masterItems;
     
     /*! Pointer to all ModItems excluding sidechaining masters */
-    indexVec nonMasterItems_;
+    indexVec _nonMasterItems;
     
     /*! All ModItems */
-    modVec modItems_;
+    modVec _modItems;
     
     /*! This is the base value that the modulation happens around */
-    double baseValue_;
+    double _baseValue;
     
     /*! Lower boundary value to scale to when modulation trespasses it */
-    double lowerBoundary_;
+    double _lowerBoundary;
     
     /*! Higher boundary value to scale to when modulation trespasses it */
-    double higherBoundary_;
+    double _higherBoundary;
 };
 
 #endif /* defined(__Anthem__ModDock__) */

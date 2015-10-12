@@ -13,16 +13,16 @@
 
 #include <stdexcept>
 
-Anthem* Midi::anthem_ = 0;
+Anthem* Midi::_anthem = 0;
 
 Midi::Midi()
 {
     // Try to open default midi port if any
-    if (midi_.getPortCount())
+    if (_midi.getPortCount())
     {
         try
         {
-            midi_.openPort();
+            _midi.openPort();
         }
         
         catch(RtMidiError& error)
@@ -34,16 +34,16 @@ Midi::Midi()
 
 void Midi::init(Anthem *anthem)
 {
-    anthem_ = anthem;
+    _anthem = anthem;
     
-    midi_.setCallback(&callback_);
+    _midi.setCallback(&_callback);
 }
 
-void Midi::callback_(double timestamp,
+void Midi::_callback(double timestamp,
                      std::vector<byte_t>* message,
                      void* userData)
 {
-    anthem_->setNote((*message)[1], (*message)[2]);
+    _anthem->setNote((*message)[1], (*message)[2]);
 }
 
 void Midi::openPort(byte_t portID)
@@ -54,11 +54,11 @@ void Midi::openPort(byte_t portID)
     
     try
     {
-        midi_.openPort(portID);
+        _midi.openPort(portID);
         
-        port_.id = portID;
+        _port.id = portID;
         
-        port_.name = midi_.getPortName();
+        _port.name = _midi.getPortName();
     }
     
     catch(RtMidiError& error)
@@ -71,7 +71,7 @@ void Midi::closePort()
 {
     try
     {
-        midi_.closePort();
+        _midi.closePort();
     }
     
     catch(RtMidiError& error)
@@ -86,7 +86,7 @@ bool Midi::hasOpenPort() const
     
     try
     {
-        isOpen = midi_.isPortOpen();
+        isOpen = _midi.isPortOpen();
     }
     
     catch(RtMidiError& error)
@@ -101,7 +101,7 @@ Midi::byte_t Midi::getNumberOfPorts()
 {
     try
     {
-        return midi_.getPortCount();
+        return _midi.getPortCount();
     }
     
     catch(RtMidiError& error)
@@ -117,7 +117,7 @@ Midi::byte_t Midi::getCurrentPortID() const
     if (! hasOpenPort())
     { throw std::runtime_error("No port currently open!"); }
     
-    return port_.id;
+    return _port.id;
 }
 
 std::string Midi::getCurrentPortName() const
@@ -126,14 +126,14 @@ std::string Midi::getCurrentPortName() const
     { throw std::runtime_error("No port currently open!"); }
     
     // Faster than calling getPortName() again
-    return port_.name;
+    return _port.name;
 }
 
 std::string Midi::getAnyPortName(byte_t id)
 {
     try
     {
-        return midi_.getPortName(id);
+        return _midi.getPortName(id);
     }
     
     catch(RtMidiError& error)

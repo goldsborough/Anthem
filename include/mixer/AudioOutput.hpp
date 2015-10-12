@@ -120,7 +120,7 @@ public:
 private:
     
     /*! Callback function that fetches samples from Anthem. */
-    static int callback_(void* output,
+    static int _callback(void* output,
                      void* input,
                      unsigned int numberOfFrames,
                      double streamTime,
@@ -131,22 +131,22 @@ private:
     std::string getApiName(const RtAudio::Api& api);
 
     /*! Pointer to the Anthem object to retrieve samples from. */
-    static Anthem* anthem_;
+    static Anthem* _anthem;
 
     /*! The Device struct for the current device in use. */
-    Device device_;
+    Device _device;
 
     /*! The id of the current device. */
-    id_t id_;
+    id_t _id;
 
     /*! The audio output api currently in use. */
-    RtAudio::Api api_;
+    RtAudio::Api _api;
 
     /*! The name of the current api as string. */
-    std::string apiName_;
+    std::string _apiName;
 
     /*! The wrapped around audio api object from RtAudio. */
-    RtAudio audio_;
+    RtAudio _audio;
 };
 
 #endif /* defined(__Anthem__AudioOutput__) */

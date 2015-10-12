@@ -27,9 +27,9 @@ Delay::Delay(double delayLength,
              double feedbackLevel,
              double capacity)
 : EffectUnit(4,1),
-  buffer_(capacity * Global::samplerate,0)
+  _buffer(capacity * Global::samplerate,0)
 {
-    write_ = buffer_.begin();
+    _write = _buffer.begin();
     
     setFeedback(feedbackLevel);
     setDecayRate(decayRate);
@@ -37,39 +37,39 @@ Delay::Delay(double delayLength,
     setDecayTime(decayTime);
     
     // Initialize mod docks
-    mods_[DECAY_TIME].setHigherBoundary(buffer_.size());
-    mods_[DECAY_TIME].setLowerBoundary(0);
-    mods_[DECAY_TIME].setBaseValue(decayTime_);
+    _mods[DECAY_TIME].setHigherBoundary(_buffer.size());
+    _mods[DECAY_TIME].setLowerBoundary(0);
+    _mods[DECAY_TIME].setBaseValue(_decayTime);
     
-    mods_[DECAY_RATE].setHigherBoundary(1);
-    mods_[DECAY_RATE].setLowerBoundary(0);
-    mods_[DECAY_RATE].setBaseValue(decayRate_);
+    _mods[DECAY_RATE].setHigherBoundary(1);
+    _mods[DECAY_RATE].setLowerBoundary(0);
+    _mods[DECAY_RATE].setBaseValue(_decayRate);
     
-    mods_[FEEDBACK].setHigherBoundary(1);
-    mods_[FEEDBACK].setLowerBoundary(0);
-    mods_[FEEDBACK].setBaseValue(feedback_);
+    _mods[FEEDBACK].setHigherBoundary(1);
+    _mods[FEEDBACK].setLowerBoundary(0);
+    _mods[FEEDBACK].setBaseValue(_feedback);
     
-    mods_[DRYWET].setHigherBoundary(1);
-    mods_[DRYWET].setLowerBoundary(0);
-    mods_[DRYWET].setBaseValue(1);
+    _mods[DRYWET].setHigherBoundary(1);
+    _mods[DRYWET].setLowerBoundary(0);
+    _mods[DRYWET].setBaseValue(1);
 }
 
 Delay::Delay(const Delay& other)
 : EffectUnit(other),
-  buffer_(other.buffer_),
-  decayRate_(other.decayRate_),
-  decayTime_(other.decayTime_),
-  decayValue_(other.decayValue_),
-  readIntegral_(other.readIntegral_),
-  readFractional_(other.readFractional_),
-  feedback_(other.feedback_)
+  _buffer(other._buffer),
+  _decayRate(other._decayRate),
+  _decayTime(other._decayTime),
+  _decayValue(other._decayValue),
+  _readIntegral(other._readIntegral),
+  _readFractional(other._readFractional),
+  _feedback(other._feedback)
 {
-    buffer_.reserve(other.buffer_.capacity());
+    _buffer.reserve(other._buffer.capacity());
     
     // Convert iterator to const_iterator because other is const
-    const_iterator itr = other.write_;
+    const_iterator itr = other._write;
     
-    write_ = buffer_.begin() + std::distance(other.buffer_.begin(), itr);
+    _write = _buffer.begin() + std::distance(other._buffer.begin(), itr);
 }
 
 Delay& Delay::operator=(const Delay &other)
@@ -78,26 +78,26 @@ Delay& Delay::operator=(const Delay &other)
     {
         EffectUnit::operator=(other);
         
-        buffer_ = other.buffer_;
+        _buffer = other._buffer;
         
-        buffer_.reserve(other.buffer_.capacity());
+        _buffer.reserve(other._buffer.capacity());
         
-        decayRate_ = other.decayRate_;
+        _decayRate = other._decayRate;
         
-        decayTime_ = other.decayTime_;
+        _decayTime = other._decayTime;
         
-        decayValue_ = other.decayValue_;
+        _decayValue = other._decayValue;
         
-        readIntegral_ = other.readIntegral_;
+        _readIntegral = other._readIntegral;
         
-        readFractional_ = other.readFractional_;
+        _readFractional = other._readFractional;
         
-        feedback_ = other.feedback_;
+        _feedback = other._feedback;
         
         // Convert iterator to const_iterator because other is const
-        const_iterator itr = other.write_;
+        const_iterator itr = other._write;
         
-        write_ = buffer_.begin() + std::distance(other.buffer_.begin(), itr);
+        _write = _buffer.begin() + std::distance(other._buffer.begin(), itr);
     }
     
     return *this;
@@ -108,17 +108,17 @@ void Delay::setDryWet(double dw)
     // For error checking
     EffectUnit::setDryWet(dw);
 
-    mods_[DRYWET].setBaseValue(dw);
+    _mods[DRYWET].setBaseValue(dw);
 }
 
 double Delay::getDryWet() const
 {
-    if (mods_[DRYWET].inUse())
+    if (_mods[DRYWET].inUse())
     {
-        return mods_[DRYWET].getBaseValue();
+        return _mods[DRYWET].getBaseValue();
     }
     
-    else return dw_;
+    else return _dw;
 }
 
 void Delay::setDecayRate(double decayRate)
@@ -126,44 +126,44 @@ void Delay::setDecayRate(double decayRate)
     if (decayRate > 1 || decayRate < 0)
     { throw std::invalid_argument("Decay rate must be between 0 and 1!"); }
     
-    mods_[DECAY_RATE].setBaseValue(decayRate);
+    _mods[DECAY_RATE].setBaseValue(decayRate);
     
-    decayRate_ = decayRate;
+    _decayRate = decayRate;
 }
 
 double Delay::getDecayRate() const
 {
-    if (mods_[DECAY_RATE].inUse())
+    if (_mods[DECAY_RATE].inUse())
     {
-        return mods_[DECAY_RATE].getBaseValue();
+        return _mods[DECAY_RATE].getBaseValue();
     }
     
-    else return decayRate_;
+    else return _decayRate;
 }
 
 void Delay::setDelayTime(double delayTime)
 {
     delayTime *= Global::samplerate;
     
-    if (delayTime < 0 || delayTime >= buffer_.size())
+    if (delayTime < 0 || delayTime >= _buffer.size())
     {
         throw std::invalid_argument("Delay line length cannot be less than 0 or greater the delay line capacity!");
     }
     
     // Cast to int
-    readIntegral_ = delayTime;
+    _readIntegral = delayTime;
     
     // delayLength is double so get the fractional part
     // by subtracting the integer part
-    readFractional_ = delayTime - readIntegral_;
+    _readFractional = delayTime - _readIntegral;
     
-    calcDecay_();
+    _calcDecay();
 }
 
 double Delay::getDelayTime() const
 {
     // seconds not samples
-    return buffer_.size() / (static_cast<double>(Global::samplerate));
+    return _buffer.size() / (static_cast<double>(Global::samplerate));
 }
 
 void Delay::setFeedback(double feedbackLevel)
@@ -173,19 +173,19 @@ void Delay::setFeedback(double feedbackLevel)
         throw std::invalid_argument("Feedback level must be between 0 and 1!");
     }
 
-    mods_[FEEDBACK].setBaseValue(feedbackLevel);
+    _mods[FEEDBACK].setBaseValue(feedbackLevel);
     
-    feedback_ = feedbackLevel;
+    _feedback = feedbackLevel;
 }
 
 double Delay::getFeedback() const
 {
-    if (mods_[FEEDBACK].inUse())
+    if (_mods[FEEDBACK].inUse())
     {
-        return mods_[FEEDBACK].getBaseValue();
+        return _mods[FEEDBACK].getBaseValue();
     }
     
-    else return feedback_;
+    else return _feedback;
 }
 
 void Delay::setDecayTime(double decayTime)
@@ -195,106 +195,106 @@ void Delay::setDecayTime(double decayTime)
     if (decayTime < 0)
     { throw std::invalid_argument("Decay time must be greater or equal 0!"); }
 
-    mods_[DECAY_TIME].setBaseValue(decayTime);
+    _mods[DECAY_TIME].setBaseValue(decayTime);
     
-    decayTime_ = decayTime;
+    _decayTime = decayTime;
     
-    calcDecay_();
+    _calcDecay();
 }
 
 double Delay::getDecayTime() const
 {
-    if (mods_[DECAY_TIME].inUse())
+    if (_mods[DECAY_TIME].inUse())
     {
-        return mods_[DECAY_TIME].getBaseValue() / Global::samplerate;
+        return _mods[DECAY_TIME].getBaseValue() / Global::samplerate;
     }
     
     // return seconds, not samples
-    else return decayTime_ / Global::samplerate;
+    else return _decayTime / Global::samplerate;
 }
 
-void Delay::calcDecay_()
+void Delay::_calcDecay()
 {
-    if (! decayTime_)
+    if (! _decayTime)
     {
-        decayValue_ = 1;
+        _decayValue = 1;
     }
     
     else
     {
-        double decayExponent = static_cast<double>(readIntegral_) / decayTime_;
+        double decayExponent = static_cast<double>(_readIntegral) / _decayTime;
     
-        decayValue_ = pow(decayRate_, decayExponent);
+        _decayValue = pow(_decayRate, decayExponent);
     }
 }
 
 double Delay::offset(unsigned int offset)
 {
-    iterator ret = write_ - offset;
+    iterator ret = _write - offset;
     
-    if (ret < buffer_.begin())
+    if (ret < _buffer.begin())
     {
-        ret += buffer_.size();
+        ret += _buffer.size();
     }
     
     return *ret;
 }
 
-void Delay::writeAndIncrement_(double sample)
+void Delay::_writeAndIncrement(double sample)
 {
-    *write_ = sample;
+    *_write = sample;
     
-    if (++write_ >= buffer_.end())
+    if (++_write >= _buffer.end())
     {
-        write_ -= buffer_.size();
+        _write -= _buffer.size();
     }
 }
 
 double Delay::process(double sample)
 {
-    if (mods_[DECAY_TIME].inUse() ||
-        mods_[DECAY_RATE].inUse())
+    if (_mods[DECAY_TIME].inUse() ||
+        _mods[DECAY_RATE].inUse())
     {
         // Modulate decay time
-        if (mods_[DECAY_TIME].inUse())
+        if (_mods[DECAY_TIME].inUse())
         {
-            decayTime_ = mods_[DECAY_TIME].tick();
+            _decayTime = _mods[DECAY_TIME].tick();
         }
         
         // Modulate decay rate
-        if (mods_[DECAY_RATE].inUse())
+        if (_mods[DECAY_RATE].inUse())
         {
-            decayRate_ = mods_[DECAY_RATE].tick();
+            _decayRate = _mods[DECAY_RATE].tick();
         }
         
-        calcDecay_();
+        _calcDecay();
     }
     
     // Modulate feedback value
-    if (mods_[FEEDBACK].inUse())
+    if (_mods[FEEDBACK].inUse())
     {
-        feedback_ = mods_[FEEDBACK].tick();
+        _feedback = _mods[FEEDBACK].tick();
     }
     
     // Modulate dry wet value
-    if (mods_[DRYWET].inUse())
+    if (_mods[DRYWET].inUse())
     {
-        dw_ = mods_[DRYWET].tick();
+        _dw = _mods[DRYWET].tick();
     }
     
-    const_iterator read = write_ - readIntegral_;
+    const_iterator read = _write - _readIntegral;
     
     // Check if we need to wrap around
-    if (read < buffer_.begin())
+    if (read < _buffer.begin())
     {
-        read += buffer_.size();
+        read += _buffer.size();
     }
     
     // If the read index is equal to the write index
     // we need to first write the new sample and increment
-    if (! readIntegral_)
+    if (! _readIntegral)
     {
-        writeAndIncrement_(sample);
+        _writeAndIncrement(sample);
     }
     
     // First add integer part
@@ -303,42 +303,42 @@ double Delay::process(double sample)
     // Check if the current read position is the beginning
     // of the buffer (in which case incrementing means going
     // to the last index), else the iterator is decremented
-    if (--read < buffer_.begin())
+    if (--read < _buffer.begin())
     {
-        read += buffer_.size();
+        read += _buffer.size();
     }
     
     // And finally add the fractional part of the
     // previous sample
-    output += (*read - output) * readFractional_;
+    output += (*read - output) * _readFractional;
     
     // Apply decay
-    output *= decayValue_;
+    output *= _decayValue;
 
     // If the sample hasn't been written yet, write it now
-    if (readIntegral_)
+    if (_readIntegral)
     {
-        writeAndIncrement_(sample + (output * feedback_));
+        _writeAndIncrement(sample + (output * _feedback));
     }
     
-    return dryWet_(sample, output);
+    return _dryWet(sample, output);
 }
 
 double AllPassDelay::process(double sample)
 {
-    const_iterator read = write_ - readIntegral_;
+    const_iterator read = _write - _readIntegral;
     
     // Check if we need to wrap around
-    if (read < buffer_.begin())
+    if (read < _buffer.begin())
     {
-        read += buffer_.size();
+        read += _buffer.size();
     }
     
     // If the read index is equal to the write index
     // we need to first write the new sample
-    if (! readIntegral_)
+    if (! _readIntegral)
     {
-        writeAndIncrement_(sample);
+        _writeAndIncrement(sample);
     }
     
     // First add integer part
@@ -347,22 +347,22 @@ double AllPassDelay::process(double sample)
     // Check if the current read position is the beginning
     // of the buffer (in which case incrementing means going
     // to the last index), else the iterator is decremented
-    if (read-- == buffer_.begin())
+    if (read-- == _buffer.begin())
     {
-        read = buffer_.end() - 1;
+        read = _buffer.end() - 1;
     }
     
     // And finally add the fractional part of the
     // previous sample
-    outputA += (*read - outputA) * readFractional_;
+    outputA += (*read - outputA) * _readFractional;
     
-    double outputB = sample - (outputA * decayValue_);
+    double outputB = sample - (outputA * _decayValue);
     
     // If the sample hasn't been written yet, write it now
-    if (readIntegral_)
+    if (_readIntegral)
     {
-        writeAndIncrement_(outputB);
+        _writeAndIncrement(outputB);
     }
     
-    return outputA + (outputB * decayValue_);
+    return outputA + (outputB * _decayValue);
 }

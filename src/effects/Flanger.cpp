@@ -10,20 +10,20 @@ Flanger::Flanger(double center,
                  double rate,
                  double feedback)
 : EffectUnit(),
-  center_(center),
-  feedback_(feedback),
-  lfo_(new LFO(WavetableDatabase::SINE,rate,depth)),
-  delay_(new Delay(center,0,0,0,1))
+  _center(center),
+  _feedback(feedback),
+  _lfo(new LFO(WavetableDatabase::SINE,rate,depth)),
+  _delay(new Delay(center,0,0,0,1))
 {
-    lfo_->setActive(true);
+    _lfo->setActive(true);
 }
 
 Flanger::Flanger(const Flanger& other)
 : EffectUnit(other),
-  center_(other.center_),
-  feedback_(other.feedback_),
-  lfo_(new LFO(*other.lfo_)),
-  delay_(new Delay(*other.delay_))
+  _center(other._center),
+  _feedback(other._feedback),
+  _lfo(new LFO(*other._lfo)),
+  _delay(new Delay(*other._delay))
 { }
 
 Flanger::~Flanger()
@@ -37,13 +37,13 @@ Flanger& Flanger::operator= (const Flanger& other)
     {
         EffectUnit::operator=(other);
         
-        center_ = other.center_;
+        _center = other._center;
         
-        feedback_ = other.feedback_;
+        _feedback = other._feedback;
         
-        *lfo_ = *other.lfo_;
+        *_lfo = *other._lfo;
         
-        *delay_ = *other.delay_;
+        *_delay = *other._delay;
     }
     
     return *this;
@@ -51,34 +51,34 @@ Flanger& Flanger::operator= (const Flanger& other)
 
 void Flanger::setRate(double rate)
 {
-    lfo_->setFrequency(rate);
+    _lfo->setFrequency(rate);
 }
 
 double Flanger::getRate() const
 {
-    return lfo_->getFrequency();
+    return _lfo->getFrequency();
 }
 
 void Flanger::setCenter(double center)
 {
-    center_ = center;
+    _center = center;
     
-    delay_->setDelayTime(center_);
+    _delay->setDelayTime(_center);
 }
 
 double Flanger::getCenter() const
 {
-    return center_;
+    return _center;
 }
 
 void Flanger::setDepth(double depth)
 {
-    lfo_->setAmp(depth);
+    _lfo->setAmp(depth);
 }
 
 double Flanger::getDepth() const
 {
-    return lfo_->getAmp();
+    return _lfo->getAmp();
 }
 
 void Flanger::setFeedback(double feedback)
@@ -86,7 +86,7 @@ void Flanger::setFeedback(double feedback)
     if (feedback < 0 || feedback > 1)
     { throw std::invalid_argument("Flanger feedback must be between 0 and 1!"); }
     
-    feedback_ = feedback;
+    _feedback = feedback;
 }
 
 double Flanger::process(double sample)
@@ -94,25 +94,25 @@ double Flanger::process(double sample)
     double output = sample;
     
     // Check for feedback
-    if (feedback_)
+    if (_feedback)
     {
-        output -= delay_->offset(center_) * feedback_;
+        output -= _delay->offset(_center) * _feedback;
     }
     
     // Calculate new length by modulation. Modulation
     // depth and maximum are 1 because the LFO's amplitude
     // is the delay depth value
-    double length = lfo_->modulate(center_, 1, 1);
+    double length = _lfo->modulate(_center, 1, 1);
     
     // Increment LFO
-    lfo_->update();
+    _lfo->update();
     
     // Set the new length
-    delay_->setDelayTime(length);
+    _delay->setDelayTime(length);
     
     // Retrieve new sample
-    output += delay_->process(output);
+    output += _delay->process(output);
     
     // Apply dry/wet
-    return dryWet_(sample, output);
+    return _dryWet(sample, output);
 }

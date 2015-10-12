@@ -23,43 +23,43 @@ Operator::Operator(unsigned short wt,
                    double ratio)
 
 : Oscillator(wt, 0, phaseOffset),
-  ratio_(ratio),
+  _ratio(ratio),
   GenUnit(1),
-  noteFreq_(0),
-  note_(0),
-  modOffset_(0),
-  semitoneOffset_(0),
-  freqOffset_(0),
-  realFreq_(0),
-  level_(0)
+  _noteFreq(0),
+  _note(0),
+  _modOffset(0),
+  _semitoneOffset(0),
+  _freqOffset(0),
+  _realFreq(0),
+  _level(0)
 {
     setFrequencyOffset(freqOffset);
     
     // setMode only works if the modes are different
-    mode_ = (mode == Mode::FM) ? Mode::ADDITIVE : Mode::FM;
+    _mode = (mode == Mode::FM) ? Mode::ADDITIVE : Mode::FM;
     
     setMode(mode);
     
-    mods_[LEVEL].setLowerBoundary(0);
-    mods_[LEVEL].setBaseValue(level);
+    _mods[LEVEL].setLowerBoundary(0);
+    _mods[LEVEL].setBaseValue(level);
     
     setLevel(level);
 }
 
 void Operator::setMode(Mode mode)
 {
-    if (mode_ == mode) return;
+    if (_mode == mode) return;
     
-    mode_ = mode;
+    _mode = mode;
     
     switch(mode)
     {
         case Mode::FM:
         {
-            setLevel(level_ * 10);
+            setLevel(_level * 10);
             
             // Index of modulation, between 0 and 10
-            boundary_ = 10;
+            _boundary = 10;
             
             break;
         }
@@ -70,64 +70,64 @@ void Operator::setMode(Mode mode)
             // Factor 10 because of the different
             // ranges depending on the mode (0-1
             // for additive, 0-10 for FM)
-            level_ /= 10;
+            _level /= 10;
             
-            amp_ = level_;
+            _amp = _level;
             
-            mods_[LEVEL].setBaseValue(level_);
+            _mods[LEVEL].setBaseValue(_level);
             
             // Like amplitude, between 0 and 1
-            boundary_ = 1;
+            _boundary = 1;
             
             break;
         }
     }
     
-    mods_[LEVEL].setHigherBoundary(boundary_);
+    _mods[LEVEL].setHigherBoundary(_boundary);
 }
 
 Operator::Mode Operator::getMode() const
 {
-    return mode_;
+    return _mode;
 }
 
 void Operator::setSilent()
 {
     // 0 frequency means no increment and thus silence
-    noteFreq_ = freq_ = incr_ = index_ = note_ = modOffset_ = 0;
+    _noteFreq = _freq = _incr = _index = _note = _modOffset = 0;
     
-    realFreq_ = freqOffset_;
+    _realFreq = _freqOffset;
 }
 
 void Operator::setLevel(double level)
 {
-    if (level > boundary_ || level < -boundary_)
+    if (level > _boundary || level < -_boundary)
     { throw std::invalid_argument("Level out of range!"); }
 
-    level_ = level;
+    _level = level;
     
     // For FM Mode, the level is the index of modulation beta,
     // and the amplitude is the beta times the current real
     // frequency, as beta = amplitude/frequency. For Additive
     // Mode, the amplitude is simply the usual range from 0 to 1
-    amp_ = (mode_ == Mode::FM) ? level * realFreq_ : level;
+    _amp = (_mode == Mode::FM) ? level * _realFreq : level;
     
-    mods_[LEVEL].setBaseValue(level);
+    _mods[LEVEL].setBaseValue(level);
 }
 
 double Operator::getLevel() const
 {
-    if (mods_[LEVEL].inUse())
+    if (_mods[LEVEL].inUse())
     {
-        return mods_[LEVEL].getBaseValue();
+        return _mods[LEVEL].getBaseValue();
     }
     
-    else return level_;
+    else return _level;
 }
 
 void Operator::modulateFrequency(double value)
 {
-    modOffset_ = Global::tableIncrement * value;
+    _modOffset = Global::tableIncrement * value;
 }
 
 void Operator::setNote(note_t note)
@@ -136,91 +136,91 @@ void Operator::setNote(note_t note)
     { throw std::invalid_argument("Invalid note supplied, must be between 0 and 127!"); }
     
     // Convert note to frequency
-    noteFreq_ = notetable[note];
+    _noteFreq = notetable[note];
     
-    freq_ = noteFreq_ * ratio_;
+    _freq = _noteFreq * _ratio;
     
-    realFreq_ = freq_ + freqOffset_;
+    _realFreq = _freq + _freqOffset;
     
-    if (mode_ == Mode::FM) amp_ = level_ * realFreq_;
+    if (_mode == Mode::FM) _amp = _level * _realFreq;
     
-    incr_ = Global::tableIncrement * freq_;
+    _incr = Global::tableIncrement * _freq;
     
-    semitoneOffset_ = Util::freqToSemitones(freq_, realFreq_);
+    _semitoneOffset = Util::freqToSemitones(_freq, _realFreq);
     
-    note_ = note;
+    _note = note;
 }
 
 Operator::note_t Operator::getNote() const
 {
-    return note_;
+    return _note;
 }
 
 void Operator::setFrequencyOffset(double Hz)
 {
-    freqOffset_ = Hz;
+    _freqOffset = Hz;
     
-    realFreq_ = freq_ + freqOffset_;
+    _realFreq = _freq + _freqOffset;
     
-    if (mode_ == Mode::FM) amp_ = level_ * realFreq_;
+    if (_mode == Mode::FM) _amp = _level * _realFreq;
     
-    indexOffset_ = Global::tableIncrement * freqOffset_;
+    _indexOffset = Global::tableIncrement * _freqOffset;
     
-    semitoneOffset_ = Util::freqToSemitones(freq_, realFreq_);
+    _semitoneOffset = Util::freqToSemitones(_freq, _realFreq);
 }
 
 double Operator::getFrequencyOffset() const
 {
-    return freqOffset_;
+    return _freqOffset;
 }
 
 double Operator::getFrequency() const
 {
-    return realFreq_;
+    return _realFreq;
 }
 
 void Operator::setSemitoneOffset(double semitones)
 {
-    freqOffset_ = Util::semitonesToFreq(freq_, semitones);
+    _freqOffset = Util::semitonesToFreq(_freq, semitones);
     
     // More efficient to do things here
     // than to call setFrequencyOffset
     
-    realFreq_ = freq_ + freqOffset_;
+    _realFreq = _freq + _freqOffset;
     
-    if (mode_ == Mode::FM) amp_ = level_ * realFreq_;
+    if (_mode == Mode::FM) _amp = _level * _realFreq;
     
-    indexOffset_ = Global::tableIncrement * freqOffset_;
+    _indexOffset = Global::tableIncrement * _freqOffset;
     
-    semitoneOffset_ = semitones;
+    _semitoneOffset = semitones;
 }
 
 double Operator::getSemitoneOffset() const
 {
-    return semitoneOffset_;
+    return _semitoneOffset;
 }
 
 void Operator::setRatio(double ratio)
 {
-    if (ratio_ < 0)
+    if (_ratio < 0)
     { throw std::invalid_argument("Frequency ratio cannot be less than zero!"); }
     
-    ratio_ = ratio;
+    _ratio = ratio;
     
-    freq_ = noteFreq_ * ratio;
+    _freq = _noteFreq * ratio;
     
-    realFreq_ = freq_ + freqOffset_;
+    _realFreq = _freq + _freqOffset;
     
-    if (mode_ == Mode::FM) amp_ = level_ * realFreq_;
+    if (_mode == Mode::FM) _amp = _level * _realFreq;
     
-    incr_ = Global::tableIncrement * freq_;
+    _incr = Global::tableIncrement * _freq;
     
-    semitoneOffset_ = Util::freqToSemitones(freq_, realFreq_);
+    _semitoneOffset = Util::freqToSemitones(_freq, _realFreq);
 }
 
 double Operator::getRatio() const
 {
-    return ratio_;
+    return _ratio;
 }
 
 void Operator::update()
@@ -228,19 +228,19 @@ void Operator::update()
     // Normal frequency index increment     +
     // Index increment for frequency offset +
     // Index increment for frequency modulation value
-    increment_(incr_ + indexOffset_ + modOffset_);
+    _increment(_incr + _indexOffset + _modOffset);
 }
 
 double Operator::tick()
 {
-    if (mods_[LEVEL].inUse())
+    if (_mods[LEVEL].inUse())
     {
-        level_ = mods_[LEVEL].tick();
+        _level = _mods[LEVEL].tick();
         
-        amp_ = level_;
+        _amp = _level;
         
-        if (mode_ == Mode::FM) amp_ *= realFreq_;
+        if (_mode == Mode::FM) _amp *= _realFreq;
     }
     
-    return Oscillator::tick() * amp_;
+    return Oscillator::tick() * _amp;
 }

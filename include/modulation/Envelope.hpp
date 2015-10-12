@@ -258,19 +258,19 @@ private:
     enum Hidden { CONNECTOR = 6 };
     
     /*! Changes the current segment in the sequence */
-    void changeSegment_(segmentItr itr);
+    void _changeSegment(segmentItr itr);
     
     /*! Does the actual work for modulate() */
-    double tick_();
+    double _tick();
     
     /*! Resets the loop segments and changes to hidden connector segment */
-    void resetLoop_();
+    void _resetLoop();
     
     /*! The last ticked value */
-    double lastTick_;
+    double _lastTick;
     
     /*! Whether or not to return the last tick forever after SEG_C finished */
-    bool sustainEnabled_;
+    bool _sustainEnabled;
 };
 
 #endif /* defined(__Anthem__Envelope__) */

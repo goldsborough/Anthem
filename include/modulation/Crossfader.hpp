@@ -137,19 +137,19 @@ public:
 protected:
     
     /*! Current index in the lookup table. Double because of interpolation. */
-    double index_;
+    double _index;
     
     /*! The crossfading type */
-    unsigned short type_;
+    unsigned short _type;
     
     /*! Whether or not a scaled table is used */
-    bool scalingEnabled_;
+    bool _scalingEnabled;
     
     /*! The current Sample from the Pantable */
-    Sample curr_;
+    Sample _curr;
     
     /*! Array of Sample tables for crossfading values */
-    std::shared_ptr<Pantable> table_;
+    std::shared_ptr<Pantable> _table;
 };
 
 /*********************************************************************************************//*!
@@ -244,10 +244,10 @@ public:
 private:
 
     /*! The pointer to the left GenUnit */
-    ModUnit* leftUnit_;
+    ModUnit* _leftUnit;
     
     /*! The pointer to the right GenUnit */
-    ModUnit* rightUnit_;
+    ModUnit* _rightUnit;
 };
 
 #endif /* defined(__Anthem__Crossfade__) */

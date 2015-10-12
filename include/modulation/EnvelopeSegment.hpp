@@ -122,7 +122,7 @@ public:
     *  @param       rate The rate of the segment. 0 < r < 1 is radical, 1 is
     *               linear and 1 < r < 10 is power.
     *
-    *  @see         calculateRate_()
+    *  @see         _calculateRate()
     *
     *  @exception   Throws std::invalid_argument if the range is not between 0 and 2
     *
@@ -229,32 +229,32 @@ public:
     
 private:
     
-    /*! Calculates the amplitude range and assigns it to range_ */
-    void calculateRange_();
+    /*! Calculates the amplitude range and assigns it to _range */
+    void _calculateRange();
     
-    /*! Calculates the increment for curr_ and assigns it to incr_ */
-    void calculateIncr_();
+    /*! Calculates the increment for _curr and assigns it to _incr */
+    void _calculateIncr();
     
     /*! The rate determining the type (lin,log,exp) */
-    double rate_;
+    double _rate;
     
     /*! Starting amplitude */
-    double startLevel_;
+    double _startLevel;
     
     /*! End amplitude */
-    double endLevel_;
+    double _endLevel;
     
     /*! Difference between end and start amplitude */
-    double range_;
+    double _range;
 
     /*! Current segment value */
-    double curr_;
+    double _curr;
     
-    /*! Increment value for curr_ */
-    double incr_;
+    /*! Increment value for _curr */
+    double _incr;
     
     /*! Length of segment in samples */
-    length_t len_;
+    length_t _len;
 };
 
 /******************************************************************************//*!
@@ -513,37 +513,37 @@ protected:
     typedef std::vector<EnvelopeSegment>::iterator segmentItr;
     
     /*! Changes the current segment in the sequence */
-    virtual void changeSegment_(segmentItr segment);
+    virtual void _changeSegment(segmentItr segment);
     
     /*! Executes various steps to reset a loop (go from end back to start) */
-    virtual void resetLoop_();
+    virtual void _resetLoop();
     
     /*! The number of samples passed since starting the current segment */
-    unsigned long currSample_;
+    unsigned long _currSample;
     
     /*! Number of the current segment in the sequence */
-    segment_t currSegmentNum_;
+    segment_t _currSegmentNum;
     
     /*! Iterator pointing to the current segment */
-    segmentItr currSegment_;
+    segmentItr _currSegment;
     
     /*! Iterator pointing to the loop start segment */
-    segmentItr loopStart_;
+    segmentItr _loopStart;
     
     /*! Iterator pointing to the loop end segment */
-    segmentItr loopEnd_;
+    segmentItr _loopEnd;
     
     /*! Current number of loops executed */
-    segment_t loopCount_;
+    segment_t _loopCount;
     
     /*! Maximum number of loops */
-    segment_t loopMax_;
+    segment_t _loopMax;
  
     /*! Boolean whether or not to loop infinitely */
-    bool loopInf_;
+    bool _loopInf;
     
     /*! The segment sequence */
-    std::vector<EnvelopeSegment> segments_;
+    std::vector<EnvelopeSegment> _segments;
 };
 
 

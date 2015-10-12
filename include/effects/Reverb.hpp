@@ -125,19 +125,19 @@ public:
 private:
     
     /*! The input signal attenuation factor */
-    double attenuation_;
+    double _attenuation;
     
     /*! The *suprise* reverb time */
-    double reverbTime_;
+    double _reverbTime;
     
     /*! Exactly that. */
-    double reverbRate_;
+    double _reverbRate;
     
     /*! The array of delay lines */
-    std::unique_ptr<Delay[]> delays_;
+    std::unique_ptr<Delay[]> _delays;
     
     /*! The array of all-pass delays */
-    std::unique_ptr<AllPassDelay[]> allPasses_;
+    std::unique_ptr<AllPassDelay[]> _allPasses;
 };
 
 #endif /* defined(__Anthem__Reverb__) */
